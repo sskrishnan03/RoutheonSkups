@@ -442,7 +442,7 @@ def reset_token(token):
 @main_bp.route('/auth/google')
 def google_login():
     oauth = current_app.extensions['authlib.integrations.flask_client']
-    redirect_uri = url_for('main.google_callback', _external=True)
+    redirect_uri = "https://routheonskups.onrender.com/auth/google/callback"
     return oauth.google.authorize_redirect(redirect_uri, prompt='select_account')
 
 @main_bp.route('/auth/google/callback')
