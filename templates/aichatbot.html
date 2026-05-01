@@ -1,0 +1,1201 @@
+<html class="scroll-smooth" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Skupheon AI - {{ data.name }} Expert Guide - 4K</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Leaflet Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3B82F6",
+                        "sage-tint": "#F1F5F2",
+                        "cream-tint": "#FAF9F6",
+                        "brand-green": "#E8F3EB",
+                        "text-main-light": "#1E293B",
+                        "text-main-dark": "#F1F5F9",
+                        "surface-dark": "#1E293B",
+                        "background-dark": "#0F172A",
+                    },
+                    fontFamily: {
+                        sans: ["Plus Jakarta Sans", "sans-serif"],
+                    },
+                    borderRadius: {
+                        'custom': '2rem',
+                        'chat': '1.5rem',
+                    },
+                    boxShadow: {
+                        'premium': '0 20px 50px -12px rgba(0, 0, 0, 0.05)',
+                        'hover-lift': '0 30px 60px -15px rgba(0, 0, 0, 0.12)',
+                        'bubble': '0 4px 20px rgba(0, 0, 0, 0.03)',
+                    }
+                },
+            },
+        };
+    </script>
+    <style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply bg-slate-50 text-slate-800 antialiased;
+            }
+        }
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(24px);
+        }
+        .hero-gradient {
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.7) 100%);
+        }
+        .glass-pill {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        #leaflet-map {
+            height: 400px;
+            width: 100%;
+            z-index: 10;
+        }
+        .info-card {
+            @apply bg-white p-8 rounded-custom border border-slate-50 shadow-soft hover:shadow-premium transition-all duration-500;
+        }
+        .shadow-soft {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
+        }
+        .active-tab {
+            @apply text-emerald-600 relative after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-8 after:h-0.5 after:bg-emerald-600;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .masonry-grid {
+            columns: 3;
+            column-gap: 1.5rem;
+        }
+        .masonry-grid div {
+            break-inside: avoid;
+            margin-bottom: 1.5rem;
+        }
+        @media (max-width: 1024px) {
+            .masonry-grid { columns: 2; }
+        }
+        @media (max-width: 640px) {
+            .masonry-grid { columns: 1; }
+        }
+        .typing-dot {
+            @apply w-1.5 h-1.5 bg-slate-400 rounded-full;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+        .chat-container {
+            height: 600px;
+        }
+	        .message-bubble {
+	            @apply rounded-[2rem] px-6 py-4 max-w-[80%];
+	        }
+	        .ai-bubble {
+	            @apply bg-white border border-slate-100 shadow-bubble text-slate-700 rounded-bl-none;
+	        }
+	        .user-bubble {
+	            @apply bg-emerald-600 text-white shadow-lg shadow-emerald-100 rounded-br-none;
+	        }
+	        .message-actions {
+	            /* Reserve space so bubbles don't "jump" on hover */
+	            @apply h-8 flex items-center gap-2 opacity-0 pointer-events-none transition-opacity;
+	        }
+	        .chat-row:hover .message-actions,
+	        .chat-row:focus-within .message-actions {
+	            @apply opacity-100 pointer-events-auto;
+	        }
+	        .msg-action-btn {
+	            @apply w-8 h-8 inline-flex items-center justify-center rounded-full text-slate-400 hover:text-emerald-700 hover:bg-slate-50 transition-colors;
+	        }
+	        .msg-action-btn.is-active {
+	            @apply text-emerald-700 bg-emerald-50;
+	        }
+	        .msg-menu {
+	            @apply absolute right-0 mt-2 w-44 bg-white border border-slate-100 rounded-2xl shadow-premium overflow-hidden z-20 hidden;
+	        }
+	        .msg-menu.open {
+	            @apply block;
+	        }
+	        .msg-menu-item {
+	            @apply w-full text-left px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors;
+	        }
+	        .msg-menu-item.danger {
+	            @apply text-rose-600 hover:bg-rose-50;
+	        }
+	        #story-modal {
+	            display: none;
+	            position: fixed;
+	            inset: 0;
+	            z-index: 100;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        .story-gradient {
+            background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+        }
+        @keyframes modal-pop {
+            from { opacity: 0; transform: scale(0.95) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .animate-pop {
+            animation: modal-pop 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+    </style>
+
+
+    {% include 'components/navbar.html' %}
+    <main class="pb-20">
+        <section class="relative h-[75vh] w-full overflow-hidden mb-12 shadow-2xl group">
+            <img alt="{{ data.name }}"
+                class="absolute inset-0 w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-1000"
+                src="{{ data.hero_image }}" />
+            <div class="absolute inset-0 hero-gradient"></div>
+            <div class="absolute top-28 left-10 md:left-12">
+                <div class="glass-pill px-6 py-2.5 rounded-full flex items-center gap-2">
+                    <span class="material-symbols-outlined text-white text-sm">location_on</span>
+                    <span class="text-white text-xs font-bold tracking-[0.2em] uppercase">{{ data.state | upper }},
+                        INDIA • {{ data.coordinates }}</span>
+                </div>
+            </div>
+            <div class="absolute bottom-12 left-10 md:left-12">
+                <h1 class="text-5xl md:text-7xl font-extrabold text-white tracking-tighter mb-4">{{ data.name }}, {{ data.state
+                    }}</h1>
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center border border-white/20">
+                        <span class="material-symbols-outlined text-white text-lg">smart_toy</span>
+                    </div>
+                    <p class="text-xl md:text-2xl text-white/95 font-medium">Destination Expert: Skupheon AI</p>
+                </div>
+            </div>
+            <div class="absolute bottom-12 right-10 md:right-12 flex items-center gap-3">
+                <button id="save-btn"
+                    class="glass-pill px-8 py-3.5 rounded-full text-white font-bold flex items-center gap-2 hover:bg-white hover:text-emerald-900 transition-all">
+                    <span class="material-symbols-outlined">bookmark</span>
+                    <span class="btn-text">Save</span>
+                </button>
+                <button id="share-btn"
+                    class="glass-pill w-14 h-14 rounded-full text-white flex items-center justify-center hover:bg-white hover:text-emerald-900 transition-all">
+                    <span class="material-symbols-outlined">share</span>
+                </button>
+                <button id="story-btn"
+                    class="glass-pill px-8 py-3.5 rounded-full text-white font-bold flex items-center gap-2 hover:bg-white hover:text-emerald-900 transition-all">
+                    <span class="material-symbols-outlined">auto_stories</span>
+                    Story
+                </button>
+            </div>
+        </section>
+        <div class="max-w-[1600px] mx-auto px-6">
+            <nav class="mb-16 flex justify-center sticky top-28 z-40">
+                <div
+                    class="bg-white/90 backdrop-blur-xl rounded-full p-2 shadow-2xl flex items-center gap-1 border border-white/50">
+                    <button data-tab="overview"
+                        class="tab-btn px-8 py-4 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors">Overview</button>
+                    <button data-tab="attractions"
+                        class="tab-btn px-8 py-4 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors">Attractions</button>
+                    <button data-tab="itinerary"
+                        class="tab-btn px-8 py-4 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors">Itinerary</button>
+                    <button data-tab="photos"
+                        class="tab-btn px-8 py-4 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors">Photos
+                        &amp; Gallery</button>
+                    <button data-tab="chat"
+                        class="tab-btn px-8 py-4 text-xs font-black uppercase tracking-widest active-tab">AI
+                        CHATBOT</button>
+                </div>
+            </nav>
+
+            <!-- Overview Tab -->
+            <div id="tab-overview" class="tab-content">
+                <div class="grid grid-cols-12 gap-10">
+                    <!-- Main Content -->
+                    <div class="col-span-12 lg:col-span-8 space-y-12">
+                        <section class="info-card">
+                            <div class="flex items-center gap-3 mb-6">
+                                <span
+                                    class="px-3 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-md uppercase tracking-wider">{{
+                                    data.tag }}</span>
+                                <h2 class="text-3xl font-extrabold tracking-tight text-slate-800">About {{ data.name }}
+                                </h2>
+                            </div>
+                            <div class="prose prose-slate max-w-none text-slate-600 leading-relaxed text-lg space-y-4">
+                                <p>{{ data.overview_p1 }}</p>
+                                <p>{{ data.overview_p2 }}</p>
+                            </div>
+                        </section>
+
+                        <section class="info-card">
+                            <h2 class="text-3xl font-extrabold tracking-tight mb-8 text-slate-800">Must-Do Highlights
+                            </h2>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                {% for highlight in data.highlights %}
+                                <div class="group cursor-pointer">
+                                    <div class="relative h-40 rounded-2xl overflow-hidden mb-3">
+                                        <img src="{{ highlight.image }}"
+                                            class="w-full h-full object-cover transition-transform group-hover:scale-110"
+                                            alt="{{ highlight.name }}">
+                                    </div>
+                                    <p class="font-bold text-sm leading-tight text-slate-800">{{ highlight.name }}</p>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <aside class="col-span-12 lg:col-span-4 space-y-8">
+                        <!-- Live Weather -->
+                        <section class="info-card !p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="font-extrabold text-xl tracking-tight text-slate-800">Live Weather</h3>
+                                <span class="text-xs font-bold text-emerald-600 flex items-center gap-1">
+                                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse inline-block"></span> 
+                                    LIVE
+                                </span>
+                            </div>
+                            {% if weather and weather.forecast and weather.forecast.forecastday %}
+                            <div class="flex items-center gap-5 mb-6 p-4 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100/50">
+                                <img src="{{ weather.forecast.forecastday[0].day.condition.icon }}" alt="weather" class="w-16 h-16" />
+                                <div>
+                                    <div class="text-4xl font-extrabold text-slate-800">{{ weather.forecast.forecastday[0].day.avgtemp_c }}°C</div>
+                                    <span class="text-emerald-600 font-bold text-sm">{{ weather.forecast.forecastday[0].day.condition.text }}</span>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3 mb-6">
+                                <div class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl">
+                                    <span class="material-symbols-outlined text-blue-500 text-lg">water_drop</span>
+                                    <div>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase">Humidity</p>
+                                        <p class="text-sm font-bold text-slate-800">{{ weather.forecast.forecastday[0].day.humidity }}%</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl">
+                                    <span class="material-symbols-outlined text-slate-500 text-lg">air</span>
+                                    <div>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase">Wind</p>
+                                        <p class="text-sm font-bold text-slate-800">{{ weather.forecast.forecastday[0].day.wind_kph }} km/h</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if weather.forecast.forecastday|length > 1 %}
+                            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-3 text-center">5-Day Forecast</p>
+                            <div class="flex justify-between gap-1">
+                                {% for fday in weather.forecast.forecastday %}
+                                <div class="flex flex-col items-center gap-1 p-2 {% if loop.first %}bg-emerald-50 border border-emerald-100{% else %}bg-slate-50{% endif %} rounded-xl flex-1">
+                                    <span class="text-[10px] font-bold {% if loop.first %}text-emerald-600{% else %}text-slate-400{% endif %} uppercase">{{ fday.date_label }}</span>
+                                    <img src="{{ fday.day.condition.icon }}" alt="" class="w-8 h-8" />
+                                    <span class="text-xs font-extrabold text-slate-800">{{ fday.day.avgtemp_c }}°</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            {% else %}
+                            <div class="p-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                                <span class="material-symbols-outlined text-slate-300 text-4xl mb-3">cloud_off</span>
+                                <p class="text-sm text-slate-400 font-medium">Weather data temporarily unavailable</p>
+                            </div>
+                            {% endif %}
+                        </section>
+
+                        <!-- Location Map -->
+                        <section class="info-card !p-6 overflow-hidden">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="font-extrabold text-xl tracking-tight text-slate-800">Location Map</h3>
+                                <span class="material-symbols-outlined text-emerald-600">map</span>
+                            </div>
+                            <div class="relative w-full rounded-2xl overflow-hidden shadow-soft border border-slate-100">
+                                <div id="leaflet-map" class="h-64"></div>
+                                <div class="absolute bottom-4 left-4 right-4 p-4 bg-white/90 backdrop-blur-md rounded-xl shadow-lg border border-white/50 z-[1000]">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
+                                            <span class="material-symbols-outlined text-emerald-600 text-sm">explore</span>
+                                        </div>
+                                        <div>
+                                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Coordinates</p>
+                                            <p class="text-xs font-bold text-slate-700">{{ data.coordinates }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </aside>
+                </div>
+            </div>
+
+            <!-- Attractions Tab -->
+            <div id="tab-attractions" class="tab-content">
+                <div id="attractions-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
+                    <!-- Loading Skeleton -->
+                    <div class="bg-white rounded-custom h-80 animate-pulse"></div>
+                    <div class="bg-white rounded-custom h-80 animate-pulse"></div>
+                    <div class="bg-white rounded-custom h-80 animate-pulse"></div>
+                </div>
+            </div>
+
+            <!-- Itinerary Tab -->
+            <div id="tab-itinerary" class="tab-content">
+                <div id="itinerary-timeline" class="max-w-4xl mx-auto mb-24">
+                    <!-- Loading Skeleton -->
+                    <div class="bg-white rounded-custom h-96 animate-pulse"></div>
+                </div>
+            </div>
+
+            <!-- Photos & Gallery Tab -->
+            <div id="tab-photos" class="tab-content">
+                <div id="gallery-grid" class="masonry-grid mb-24">
+                    <!-- Loading Skeleton -->
+                    <div class="bg-white rounded-custom h-64 animate-pulse"></div>
+                    <div class="bg-white rounded-custom h-48 animate-pulse"></div>
+                    <div class="bg-white rounded-custom h-56 animate-pulse"></div>
+                </div>
+            </div>
+
+            <!-- AI Chatbot Tab -->
+            <div id="tab-chat" class="tab-content active">
+                <div class="px-10 py-8 border-b border-slate-100 flex items-center justify-between bg-white">
+                    <div class="flex items-center gap-5">
+                        <div class="relative">
+                            <div
+                                class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center border border-emerald-100">
+                                <span class="material-symbols-outlined text-emerald-600 text-3xl">smart_toy</span>
+                            </div>
+                            <div
+                                class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-[3px] border-white rounded-full">
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-extrabold text-xl text-slate-800">Skupheon AI</h3>
+                            <p class="text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em]">{{ data.name
+                                }}
+                                Destination Expert</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <button
+                            class="w-10 h-10 flex items-center justify-center hover:bg-slate-50 rounded-full text-slate-400 transition-colors"><span
+                                class="material-symbols-outlined">restart_alt</span></button>
+                        <button
+                            class="w-10 h-10 flex items-center justify-center hover:bg-slate-50 rounded-full text-slate-400 transition-colors"><span
+                                class="material-symbols-outlined">more_vert</span></button>
+                    </div>
+                </div>
+	                <div class="chat-container overflow-y-auto p-10 flex flex-col gap-8" id="chat-messages">
+	                    <div class="chat-row flex gap-5" data-role="assistant" data-msg-id="initial-assistant">
+	                        <div class="w-10 h-10 bg-emerald-50 rounded-xl flex-shrink-0 flex items-center justify-center mt-2">
+	                            <span class="material-symbols-outlined text-emerald-600 text-lg">smart_toy</span>
+	                        </div>
+	                        <div class="flex flex-col gap-2 max-w-[80%]">
+	                            <div class="message-bubble ai-bubble">
+	                                <p class="leading-relaxed text-base">Namaste! I'm your Skupheon AI guide for {{ data.name }}. I can help you discover the hidden gems, explore {{ data.tag.lower() }} highlights, or plan the perfect adventure here. How can I make your {{ data.name }} trip unforgettable today?</p>
+	                            </div>
+	                            <div class="message-actions assistant-actions">
+	                                <button type="button" class="msg-action-btn" data-action="copy" title="Copy">
+	                                    <span class="material-symbols-outlined text-[18px]">content_copy</span>
+	                                </button>
+	                                <button type="button" class="msg-action-btn" data-action="thumb-up" title="Thumbs up">
+	                                    <span class="material-symbols-outlined text-[18px]">thumb_up</span>
+	                                </button>
+	                                <button type="button" class="msg-action-btn" data-action="thumb-down" title="Thumbs down">
+	                                    <span class="material-symbols-outlined text-[18px]">thumb_down</span>
+	                                </button>
+	                                <div class="relative">
+	                                    <button type="button" class="msg-action-btn" data-action="menu" aria-haspopup="true" aria-expanded="false" title="More">
+	                                        <span class="material-symbols-outlined text-[18px]">more_horiz</span>
+	                                    </button>
+	                                    <div class="msg-menu" role="menu">
+	                                        <button type="button" class="msg-menu-item" data-action="share">Share this message</button>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <div class="flex flex-wrap gap-3 ml-15 pl-15" id="chat-suggestions">
+	                        {% for highlight in data.highlights[:3] %}
+	                        <button
+	                            class="suggestion-chip px-6 py-3 bg-slate-50 border border-slate-100 rounded-full text-sm font-bold text-slate-600 hover:border-emerald-300 hover:bg-emerald-50/30 hover:text-emerald-600 transition-all">
+                            Tell me more about {{ highlight.name }}
+                        </button>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="px-10 py-10 bg-slate-50/30 border-t border-slate-50">
+                    <form id="chat-form"
+                        class="relative bg-white rounded-[2rem] p-3 shadow-premium border border-slate-100 flex items-center gap-3">
+                        <button
+                            class="w-12 h-12 flex items-center justify-center text-slate-400 hover:text-emerald-600 transition-colors"
+                            type="button">
+                            <span class="material-symbols-outlined">attach_file</span>
+                        </button>
+                        <input id="chat-input"
+                            class="w-full bg-transparent border-none focus:ring-0 text-slate-700 font-semibold px-2 placeholder:text-slate-300"
+                            placeholder="Ask about {{ data.name }}'s secret trails..." type="text" />
+                        <button
+                            class="w-14 h-14 bg-emerald-600 text-white rounded-[1.5rem] hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200 flex items-center justify-center group"
+                            type="submit">
+                            <span
+                                class="material-symbols-outlined group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">send</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const DEST_NAME = '{{ data.name }}';
+            const saveBtn = document.getElementById('save-btn');
+            const shareBtn = document.getElementById('share-btn');
+            const storyBtn = document.getElementById('story-btn');
+
+            // --- Map Initialization ---
+            const centerLat = {{ data.center_coords.lat if data.center_coords else 20.5937 }};
+            const centerLng = {{ data.center_coords.lng if data.center_coords else 78.9629 }};
+            
+            if (document.getElementById('leaflet-map')) {
+                const map = L.map('leaflet-map', {
+                    scrollWheelZoom: false,
+                    attributionControl: false
+                }).setView([centerLat, centerLng], 12);
+
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                    maxZoom: 19
+                }).addTo(map);
+
+                const customIcon = L.divIcon({
+                    className: 'custom-marker',
+                    html: `<div class="w-8 h-8 bg-emerald-600 rounded-full border-4 border-white shadow-lg flex items-center justify-center">
+                            <span class="material-symbols-outlined text-white text-sm">location_on</span>
+                           </div>`,
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 32]
+                });
+
+                L.marker([centerLat, centerLng], { icon: customIcon }).addTo(map);
+
+                // Fix for map not rendering correctly in hidden tabs
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            map.invalidateSize();
+                        }
+                    });
+                });
+                observer.observe(document.getElementById('leaflet-map'));
+            }
+
+            let attractionsLoaded = false;
+            let itineraryLoaded = false;
+            let galleryLoaded = false;
+
+            // --- Tab Switching ---
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const tabId = this.dataset.tab;
+                    // Update button styles
+                    tabBtns.forEach(b => {
+                        b.classList.remove('active-tab');
+                        b.classList.add('text-slate-400');
+                    });
+                    this.classList.add('active-tab');
+                    this.classList.remove('text-slate-400');
+                    // Show correct tab content
+                    tabContents.forEach(tc => tc.classList.remove('active'));
+                    const target = document.getElementById('tab-' + tabId);
+                    if (target) target.classList.add('active');
+
+                    // Load data on first click
+                    if (tabId === 'attractions' && !attractionsLoaded) {
+                        loadAttractions();
+                    }
+                    if (tabId === 'itinerary' && !itineraryLoaded) {
+                        loadItinerary();
+                    }
+                    if (tabId === 'photos' && !galleryLoaded) {
+                        loadGallery();
+                    }
+                });
+            });
+
+            // --- Load Attractions ---
+            function loadAttractions() {
+                attractionsLoaded = true;
+                const grid = document.getElementById('attractions-grid');
+                fetch(`/api/destination-attractions?name=${encodeURIComponent(DEST_NAME)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.error) {
+                            grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500">${data.error}</div>`;
+                        } else {
+                            renderAttractions(data.attractions);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error:', err);
+                        grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500">Failed to load attractions.</div>`;
+                    });
+            }
+
+            function renderAttractions(attractions) {
+                const grid = document.getElementById('attractions-grid');
+                grid.innerHTML = attractions.map(attr => `
+                    <div class="bg-white rounded-custom overflow-hidden border border-slate-100 shadow-premium hover:-translate-y-2 transition-all duration-300">
+                        <div class="h-48 overflow-hidden">
+                            <img src="${attr.image}" alt="${attr.name}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="font-bold text-xl mb-2 text-slate-800">${attr.name}</h3>
+                            <p class="text-slate-500 text-sm mb-4 line-clamp-2">${attr.description}</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-emerald-600 uppercase tracking-widest">${attr.tag}</span>
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">${attr.entry_fee || 'Free'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // --- Load Itinerary ---
+            function loadItinerary() {
+                itineraryLoaded = true;
+                const container = document.getElementById('itinerary-timeline');
+                fetch(`/api/destination-itinerary?name=${encodeURIComponent(DEST_NAME)}&days=3`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.error) {
+                            container.innerHTML = `<div class="text-center py-12 text-slate-500">${data.error}</div>`;
+                        } else {
+                            renderItinerary(data.days);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error:', err);
+                        container.innerHTML = `<div class="text-center py-12 text-slate-500">Failed to load itinerary.</div>`;
+                    });
+            }
+
+            function renderItinerary(days) {
+                const container = document.getElementById('itinerary-timeline');
+                let html = '<div class="space-y-12 pl-8 border-l-2 border-emerald-100 relative">';
+                days.forEach(day => {
+                    html += `
+                        <div class="relative">
+                            <div class="absolute -left-[2.55rem] top-0 w-5 h-5 bg-emerald-600 rounded-full border-4 border-white"></div>
+                            <div class="mb-4">
+                                <span class="px-4 py-1 bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest rounded-full">Day ${day.day_number}</span>
+                            </div>
+                            <h3 class="text-2xl font-extrabold text-slate-800 mb-6">${day.title}</h3>
+                            <div class="space-y-6">
+                                ${day.activities.map(act => `
+                                    <div class="flex gap-6 items-start">
+                                        <div class="w-16 h-16 rounded-2xl overflow-hidden shrink-0">
+                                            <img src="${act.image}" class="w-full h-full object-cover" alt="${act.name}">
+                                        </div>
+                                        <div>
+                                            <div class="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">${act.time}</div>
+                                            <h4 class="font-bold text-slate-800 mb-1">${act.name}</h4>
+                                            <p class="text-sm text-slate-500">${act.description}</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                container.innerHTML = html;
+            }
+
+            // --- Load Gallery ---
+            function loadGallery() {
+                galleryLoaded = true;
+                const grid = document.getElementById('gallery-grid');
+                fetch(`/api/destination-gallery?name=${encodeURIComponent(DEST_NAME)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.error) {
+                            grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500">${data.error}</div>`;
+                        } else {
+                            renderGallery(data.images);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error:', err);
+                        grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500">Failed to load gallery.</div>`;
+                    });
+            }
+
+            function renderGallery(images) {
+                const grid = document.getElementById('gallery-grid');
+                grid.innerHTML = images.map(img => `
+                    <div class="gallery-item mb-4 cursor-pointer" onclick="openLightbox('${img}')">
+                        <div class="rounded-3xl overflow-hidden shadow-soft hover:shadow-premium transition-all duration-500">
+                            <img src="${img}" class="w-full h-auto object-cover" alt="{{ data.name }} Photo">
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            window.openLightbox = function(src) {
+                const lightbox = document.getElementById('lightbox-modal');
+                const img = document.getElementById('lightbox-image');
+                img.src = src;
+                lightbox.classList.remove('hidden');
+                lightbox.classList.add('flex');
+            };
+
+            window.closeLightbox = function() {
+                const lightbox = document.getElementById('lightbox-modal');
+                lightbox.classList.add('hidden');
+                lightbox.classList.remove('flex');
+            };
+
+            // Enhanced Modal Closing (Backdrop + Esc)
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeLightbox();
+                    closeStory();
+                }
+            });
+
+            // Handle backdrop clicks for Lightbox
+            document.getElementById('lightbox-modal').addEventListener('click', function(e) {
+                if (e.target === this || e.target.closest('.max-w-5xl')) {
+                    if (e.target.tagName !== 'IMG') {
+                        closeLightbox();
+                    }
+                }
+            });
+
+            // Handle backdrop clicks for Story Modal
+            document.getElementById('story-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeStory();
+                }
+            });
+
+            // --- Chatbot Functionality ---
+	            const chatForm = document.getElementById('chat-form');
+	            const chatInput = document.getElementById('chat-input');
+	            const chatMessages = document.getElementById('chat-messages');
+	            const attachBtn = chatForm ? chatForm.querySelector('button[type=\"button\"]') : null;
+	            let chatHistory = [];
+	            let editingTarget = null; // { rowEl, textEl, originalText }
+	            let openMenuEl = null;
+
+	            if (chatInput) {
+	                chatInput.addEventListener('keydown', function (e) {
+	                    if (e.key === 'Escape' && editingTarget) {
+	                        editingTarget = null;
+	                        chatInput.value = '';
+	                        if (attachBtn) attachBtn.classList.remove('hidden');
+	                    }
+	                });
+	            }
+
+	            if (chatForm) {
+	                chatForm.addEventListener('submit', function (e) {
+	                    e.preventDefault();
+	                    const msg = chatInput.value.trim();
+	                    if (!msg) return;
+
+	                    // If we're editing a previous user message, update it in-place and re-send.
+	                    if (editingTarget) {
+	                        editingTarget.textEl.textContent = msg;
+	                        editingTarget.rowEl.dataset.text = msg;
+	                        editingTarget = null;
+	                        if (attachBtn) attachBtn.classList.remove('hidden');
+	                    } else {
+	                        addMessage('user', msg);
+	                    }
+	                    chatInput.value = '';
+
+	                    // Remove suggestions on first message
+	                    const suggestions = document.getElementById('chat-suggestions');
+                    if (suggestions) suggestions.remove();
+
+                    // Show typing indicator
+                    const typingId = showTypingIndicator();
+
+                    fetch('/api/destination-chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            destination: DEST_NAME,
+                            message: msg,
+                            history: chatHistory
+                        })
+                    })
+	                        .then(res => res.json())
+	                        .then(data => {
+	                            removeTypingIndicator(typingId);
+	                            const reply = data.reply || "I'm sorry, I couldn't process that.";
+	                            addMessage('assistant', reply);
+	                            chatHistory.push({ role: 'user', content: msg });
+	                            chatHistory.push({ role: 'assistant', content: reply });
+	                        })
+                        .catch(err => {
+                            console.error('Chat error:', err);
+                            removeTypingIndicator(typingId);
+                            addMessage('assistant', "Oops! Something went wrong. Please try again.");
+                        });
+                });
+	            }
+
+	            function isDeletableMessage(role, text) {
+	                // User asked for delete only for specific chats (example: "PAC" questions).
+	                return role === 'user' && /\bpac\b/i.test(text || '');
+	            }
+
+	            async function copyToClipboard(text) {
+	                const value = (text || '').trim();
+	                if (!value) return;
+	                try {
+	                    await navigator.clipboard.writeText(value);
+	                    return true;
+	                } catch {
+	                    try {
+	                        const ta = document.createElement('textarea');
+	                        ta.value = value;
+	                        ta.style.position = 'fixed';
+	                        ta.style.left = '-9999px';
+	                        document.body.appendChild(ta);
+	                        ta.select();
+	                        document.execCommand('copy');
+	                        document.body.removeChild(ta);
+	                        return true;
+	                    } catch {
+	                        return false;
+	                    }
+	                }
+	            }
+
+	            function closeOpenMenu() {
+	                if (!openMenuEl) return;
+	                openMenuEl.classList.remove('open');
+	                const btn = openMenuEl.parentElement?.querySelector('[data-action=\"menu\"]');
+	                if (btn) btn.setAttribute('aria-expanded', 'false');
+	                openMenuEl = null;
+	            }
+
+	            document.addEventListener('click', function (e) {
+	                // Close overflow menu when clicking outside.
+	                if (openMenuEl && !e.target.closest('.msg-menu') && !e.target.closest('[data-action=\"menu\"]')) {
+	                    closeOpenMenu();
+	                }
+	            });
+
+	            // Suggestion Chips - Using event delegation for robustness
+	            const suggestionsContainer = document.getElementById('chat-suggestions');
+	            if (suggestionsContainer) {
+                suggestionsContainer.addEventListener('click', function (e) {
+                    const chip = e.target.closest('.suggestion-chip');
+                    if (chip) {
+                        chatInput.value = chip.textContent.trim();
+                        // Trigger submit
+                        chatForm.requestSubmit();
+                    }
+                });
+	            }
+
+	            function addMessage(role, text) {
+	                const msgId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + '-' + Math.random().toString(16).slice(2);
+	                const div = document.createElement('div');
+	                div.className = role === 'user' ? 'chat-row flex flex-row-reverse gap-5' : 'chat-row flex gap-5';
+	                div.dataset.role = role;
+	                div.dataset.msgId = msgId;
+	                div.dataset.text = text;
+
+	                let icon = '';
+	                if (role === 'assistant') {
+	                    icon = `<div class="w-10 h-10 bg-emerald-50 rounded-xl flex-shrink-0 flex items-center justify-center mt-2"><span class="material-symbols-outlined text-emerald-600 text-lg">smart_toy</span></div>`;
+	                }
+
+	                const userMenuBtn = isDeletableMessage(role, text) ? `
+	                        <div class="relative">
+	                            <button type="button" class="msg-action-btn" data-action="menu" aria-haspopup="true" aria-expanded="false" title="More">
+	                                <span class="material-symbols-outlined text-[18px]">more_horiz</span>
+	                            </button>
+	                            <div class="msg-menu" role="menu">
+	                                <button type="button" class="msg-menu-item danger" data-action="delete">Delete this message</button>
+	                            </div>
+	                        </div>
+	                ` : '';
+
+	                div.innerHTML = `
+	                    ${icon}
+	                    <div class="flex flex-col gap-2 max-w-[80%] ${role === 'user' ? 'items-end' : ''}">
+	                        <div class="message-bubble ${role === 'user' ? 'user-bubble' : 'ai-bubble'}">
+	                            <p class="leading-relaxed text-base ${role === 'user' ? 'font-medium' : ''}">${text}</p>
+	                        </div>
+	                        ${role === 'user' ? `
+	                            <div class="message-actions user-actions self-start">
+	                                <button type="button" class="msg-action-btn" data-action="copy" title="Copy">
+	                                    <span class="material-symbols-outlined text-[18px]">content_copy</span>
+	                                </button>
+	                                <button type="button" class="msg-action-btn" data-action="edit" title="Edit">
+	                                    <span class="material-symbols-outlined text-[18px]">edit</span>
+	                                </button>
+	                                ${userMenuBtn}
+	                            </div>
+	                        ` : `
+	                            <div class="message-actions assistant-actions">
+	                                <button type="button" class="msg-action-btn" data-action="copy" title="Copy">
+	                                    <span class="material-symbols-outlined text-[18px]">content_copy</span>
+	                                </button>
+	                                <button type="button" class="msg-action-btn" data-action="thumb-up" title="Thumbs up">
+	                                    <span class="material-symbols-outlined text-[18px]">thumb_up</span>
+	                                </button>
+	                                <button type="button" class="msg-action-btn" data-action="thumb-down" title="Thumbs down">
+	                                    <span class="material-symbols-outlined text-[18px]">thumb_down</span>
+	                                </button>
+	                                <div class="relative">
+	                                    <button type="button" class="msg-action-btn" data-action="menu" aria-haspopup="true" aria-expanded="false" title="More">
+	                                        <span class="material-symbols-outlined text-[18px]">more_horiz</span>
+	                                    </button>
+	                                    <div class="msg-menu" role="menu">
+	                                        <button type="button" class="msg-menu-item" data-action="share">Share this message</button>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        `}
+	                    </div>
+	                `;
+
+	                chatMessages.appendChild(div);
+	                chatMessages.scrollTop = chatMessages.scrollHeight;
+	            }
+
+	            if (chatMessages) {
+	                chatMessages.addEventListener('click', async function (e) {
+	                    const btn = e.target.closest('[data-action]');
+	                    if (!btn) return;
+
+	                    const action = btn.dataset.action;
+	                    const row = btn.closest('.chat-row');
+	                    if (!row) return;
+
+	                    const role = row.dataset.role || (row.classList.contains('flex-row-reverse') ? 'user' : 'assistant');
+	                    const textEl = row.querySelector('p');
+	                    const text = (textEl ? textEl.textContent : row.dataset.text) || '';
+
+	                    if (action === 'copy') {
+	                        await copyToClipboard(text);
+	                        return;
+	                    }
+
+	                    if (action === 'edit') {
+	                        if (role !== 'user') return;
+	                        editingTarget = { rowEl: row, textEl, originalText: text };
+	                        chatInput.value = text;
+	                        chatInput.focus();
+	                        // User asked: when editing, only "send" should remain visible.
+	                        if (attachBtn) attachBtn.classList.add('hidden');
+	                        closeOpenMenu();
+	                        return;
+	                    }
+
+	                    if (action === 'thumb-up' || action === 'thumb-down') {
+	                        // Visual-only feedback toggle (no backend in this template).
+	                        const isUp = action === 'thumb-up';
+	                        const upBtn = row.querySelector('[data-action=\"thumb-up\"]');
+	                        const downBtn = row.querySelector('[data-action=\"thumb-down\"]');
+	                        if (isUp) {
+	                            if (upBtn) upBtn.classList.toggle('is-active');
+	                            if (downBtn) downBtn.classList.remove('is-active');
+	                        } else {
+	                            if (downBtn) downBtn.classList.toggle('is-active');
+	                            if (upBtn) upBtn.classList.remove('is-active');
+	                        }
+	                        return;
+	                    }
+
+	                    if (action === 'menu') {
+	                        const menu = btn.parentElement?.querySelector('.msg-menu');
+	                        if (!menu) return;
+	                        if (openMenuEl && openMenuEl !== menu) closeOpenMenu();
+	                        const willOpen = !menu.classList.contains('open');
+	                        menu.classList.toggle('open', willOpen);
+	                        btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+	                        openMenuEl = willOpen ? menu : null;
+	                        return;
+	                    }
+
+	                    if (action === 'share') {
+	                        closeOpenMenu();
+	                        const shareData = {
+	                            title: 'Chat message',
+	                            text: text
+	                        };
+	                        if (navigator.share) {
+	                            try { await navigator.share(shareData); } catch { /* ignore */ }
+	                        } else {
+	                            await copyToClipboard(text);
+	                            alert('Message copied to clipboard!');
+	                        }
+	                        return;
+	                    }
+
+	                    if (action === 'delete') {
+	                        closeOpenMenu();
+	                        // Delete only allowed for specific user chats (e.g., "PAC" questions).
+	                        if (!isDeletableMessage(role, text)) return;
+	                        row.remove();
+	                        if (editingTarget && editingTarget.rowEl === row) {
+	                            editingTarget = null;
+	                            if (attachBtn) attachBtn.classList.remove('hidden');
+	                            chatInput.value = '';
+	                        }
+	                        return;
+	                    }
+	                });
+	            }
+
+	            function showTypingIndicator() {
+	                const id = 'typing-' + Date.now();
+	                const div = document.createElement('div');
+                div.id = id;
+                div.className = 'flex gap-5';
+                div.innerHTML = `
+                    <div class="w-10 h-10 bg-emerald-50 rounded-xl flex-shrink-0 flex items-center justify-center mt-2"><span class="material-symbols-outlined text-emerald-600 text-lg">smart_toy</span></div>
+                    <div class="message-bubble ai-bubble flex items-center justify-center h-14 min-w-[80px]">
+                        <div class="flex gap-1.5 items-center">
+                            <span class="typing-dot"></span>
+                            <span class="typing-dot"></span>
+                            <span class="typing-dot"></span>
+                        </div>
+                    </div>
+                `;
+                chatMessages.appendChild(div);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                return id;
+            }
+
+            // --- Initial Save Check ---
+            fetch(`/api/check-saved?name=${encodeURIComponent(DEST_NAME)}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.saved) {
+                        saveBtn.classList.add('bg-white', 'text-emerald-900');
+                        saveBtn.querySelector('.material-symbols-outlined').style.fontVariationSettings = "'FILL' 1";
+                        saveBtn.querySelector('.btn-text').textContent = 'Saved';
+                    }
+                });
+
+            // --- Save Logic ---
+            saveBtn.addEventListener('click', function () {
+                const icon = this.querySelector('.material-symbols-outlined');
+                const text = this.querySelector('.btn-text');
+
+                fetch('/api/save-destination', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: DEST_NAME,
+                        description: "{{ data.tagline }}",
+                        tag: "{{ data.tag }}",
+                        icon: "landscape",
+                        image_url: "{{ data.hero_image }}"
+                    })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            if (data.saved) {
+                                this.classList.add('bg-white', 'text-emerald-900');
+                                icon.style.fontVariationSettings = "'FILL' 1";
+                                text.textContent = 'Saved';
+                            } else {
+                                this.classList.remove('bg-white', 'text-emerald-900');
+                                icon.style.fontVariationSettings = "'FILL' 0";
+                                text.textContent = 'Save';
+                            }
+                        }
+                    });
+            });
+
+            // --- Share Logic ---
+            shareBtn.addEventListener('click', function () {
+                const shareData = {
+                    title: 'Explore ' + DEST_NAME,
+                    text: 'Check out this amazing destination on RoutheonSkups!',
+                    url: window.location.href
+                };
+
+                if (navigator.share) {
+                    navigator.share(shareData);
+                } else {
+                    navigator.clipboard.writeText(window.location.href);
+                    alert('Link copied to clipboard!');
+                }
+            });
+
+            // --- Story Logic ---
+            let currentAudio = null;
+            let isPlaying = false;
+
+            storyBtn.addEventListener('click', function () {
+                const modal = document.getElementById('story-modal');
+                const title = document.getElementById('story-title');
+                const content = document.getElementById('story-content');
+                const quote = document.getElementById('story-quote');
+                const img = document.getElementById('story-image');
+                const voiceBtn = document.getElementById('voice-btn');
+                const voiceIcon = document.getElementById('voice-icon');
+
+                title.textContent = 'Generating Story...';
+                content.innerHTML = '<div class="flex gap-2"><span class="animate-bounce w-2 h-2 bg-emerald-400 rounded-full"></span><span class="animate-bounce w-2 h-2 bg-emerald-400 rounded-full" style="animation-delay: 0.2s"></span><span class="animate-bounce w-2 h-2 bg-emerald-400 rounded-full" style="animation-delay: 0.4s"></span></div>';
+                quote.textContent = '';
+                img.src = "https://lh3.googleusercontent.com/aida-public/AB6AXuDLKtXxuYjbFfOEc40HZ_bJ9CE78Whqg0arv2Xv-UWpf65IDRpopY29tMsftfowAiO_BaKvcgTR8JVbdqNZZr9euynw2YR9VX_h2Eesz2Z0W2YzyfmTWYDm614oHnLkmh_Kxbp1Vlwzz7eT9KadPzuPJ7ZDmL4WUIBE907oT3zedLSe86ZfyFXVQWLPKq0wK4L7fwcWelsgTAujSvllrK7zXuycXkzOH5cWGXkoSnEw9KaxoW0Ra5tRRcClc6tS8GpVtAnu92XlDprU";
+                
+                // Reset voice button
+                voiceBtn.style.display = 'none';
+                stopAudio();
+
+                modal.style.display = 'flex';
+
+                fetch(`/api/get-destination-story?name=${encodeURIComponent(DEST_NAME)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        title.textContent = data.name;
+                        content.innerHTML = data.story.split('\n\n').map(p => `<p>${p}</p>`).join('');
+                        quote.textContent = `"${data.closing_quote}"`;
+                        
+                        // Show voice button and setup click
+                        voiceBtn.style.display = 'flex';
+                        voiceBtn.onclick = function() {
+                            if (isPlaying) {
+                                stopAudio();
+                            } else {
+                                playAudio(data.story);
+                            }
+                        };
+                    });
+            });
+
+            function playAudio(text) {
+                const voiceIcon = document.getElementById('voice-icon');
+                const voiceBtn = document.getElementById('voice-btn');
+                
+                voiceIcon.textContent = 'hourglass_empty';
+                voiceBtn.classList.add('animate-pulse');
+                
+                currentAudio = new Audio(`/api/get-story-voice?text=${encodeURIComponent(text)}`);
+                currentAudio.onplay = () => {
+                    isPlaying = true;
+                    voiceIcon.textContent = 'stop';
+                    voiceBtn.classList.remove('animate-pulse');
+                    voiceBtn.classList.replace('bg-emerald-50', 'bg-red-50');
+                    voiceBtn.classList.replace('text-emerald-600', 'text-red-600');
+                };
+                currentAudio.onended = () => {
+                    stopAudio();
+                };
+                currentAudio.onerror = () => {
+                    stopAudio();
+                    alert('Could not load voice story.');
+                };
+                currentAudio.play();
+            }
+
+            function stopAudio() {
+                const voiceIcon = document.getElementById('voice-icon');
+                const voiceBtn = document.getElementById('voice-btn');
+                
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio = null;
+                }
+                isPlaying = false;
+                if (voiceIcon) voiceIcon.textContent = 'play_arrow';
+                if (voiceBtn) {
+                    voiceBtn.classList.remove('animate-pulse');
+                    voiceBtn.classList.replace('bg-red-50', 'bg-emerald-50');
+                    voiceBtn.classList.replace('text-red-600', 'text-emerald-600');
+                }
+            }
+
+            window.closeStory = function () {
+                stopAudio();
+                document.getElementById('story-modal').style.display = 'none';
+            };
+
+            function removeTypingIndicator(id) {
+                const el = document.getElementById(id);
+                if (el) el.remove();
+            }
+        });
+    </script>
+
+    <!-- Story Modal -->
+    <div id="story-modal">
+        <div class="bg-white w-full max-w-4xl max-h-[90vh] rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl animate-pop relative flex flex-col md:flex-row">
+            <button onclick="closeStory()"
+                class="absolute top-4 right-4 md:top-8 md:right-8 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-black/5 md:bg-slate-100 text-slate-500 hover:bg-red-50 hover:text-red-500 transition-all z-20">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <div class="w-full md:w-1/2 h-64 md:h-auto relative overflow-hidden shrink-0">
+                <img id="story-image" src="" alt="Destination" class="absolute inset-0 w-full h-full object-cover">
+                <div class="absolute inset-0 story-gradient opacity-20"></div>
+            </div>
+            <div class="w-full md:w-1/2 p-8 md:p-12 overflow-y-auto custom-scrollbar flex flex-col">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-[10px] font-black text-emerald-600 uppercase tracking-[0.3em] block">AI Generated Story</span>
+                            <button id="voice-btn" class="w-10 h-10 flex items-center justify-center rounded-full bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-all shadow-sm" title="Listen to Story">
+                                <span class="material-symbols-outlined" id="voice-icon">play_arrow</span>
+                            </button>
+                        </div>
+                        <h2 id="story-title" class="text-4xl font-extrabold text-slate-800 tracking-tight"></h2>
+                    <div id="story-content"
+                        class="text-slate-600 leading-relaxed text-lg space-y-6 mb-10 max-h-[400px] overflow-y-auto pr-4 custom-scrollbar">
+                        <!-- Content here -->
+                    </div>
+                        <div>
+                            <p id="story-quote" class="italic text-slate-400 font-medium text-lg leading-relaxed"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox-modal" class="fixed inset-0 z-[110] bg-slate-900/95 backdrop-blur-xl hidden flex-col items-center justify-center p-4">
+        <button onclick="closeLightbox()" class="absolute top-8 right-8 text-white hover:text-emerald-400 transition-colors z-[120]">
+            <span class="material-symbols-outlined text-4xl">close</span>
+        </button>
+        <div class="max-w-5xl w-full h-full flex items-center justify-center">
+            <img id="lightbox-image" src="" alt="Gallery Image" class="max-w-full max-h-[90vh] rounded-3xl object-contain shadow-2xl animate-pop">
+        </div>
+    </div>
+
+    {% include 'components/footer.html' %}
+
+</body>
+
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Plan a Trip - RoutheonSkups</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3B82F6",
+                        "primary-hover": "#2563EB",
+                        "background-light": "#FFFFFF",
+                        "text-main-light": "#1E293B",
+                        "text-muted-light": "#64748B",
+                        "border-light": "#E2E8F0",
+                    },
+                    fontFamily: {
+                        display: ["'Plus Jakarta Sans'", "sans-serif"],
+                        body: ["'Plus Jakarta Sans'", "sans-serif"],
+                    },
+                    borderRadius: {
+                        '3xl': '2rem',
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'premium': '0 20px 50px -12px rgba(0, 0, 0, 0.08)',
+                    }
+                },
+            },
+        };
+    </script>
+    <style type="text/tailwindcss">
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+
+<body class="bg-white text-text-main-light min-h-screen flex flex-col">
+    {% include 'components/navbar.html' %}
+    <main class="flex-grow flex flex-col items-center justify-center px-4 pt-40 pb-20 bg-white">
+        <div class="w-full max-w-4xl relative">
+            <div class="flex justify-center mb-12">
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2">
+                        <span
+                            class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold">1</span>
+                        <span class="text-sm font-bold text-text-main-light">Destination</span>
+                    </div>
+                    <div class="w-12 h-[2px] bg-gray-100"></div>
+                    <div class="flex items-center gap-2">
+                        <span
+                            class="w-8 h-8 rounded-full bg-gray-100 text-text-muted-light flex items-center justify-center text-sm font-bold">2</span>
+                        <span class="text-sm font-bold text-text-muted-light">Dates</span>
+                    </div>
+                    <div class="w-12 h-[2px] bg-gray-100"></div>
+                    <div class="flex items-center gap-2">
+                        <span
+                            class="w-8 h-8 rounded-full bg-gray-100 text-text-muted-light flex items-center justify-center text-sm font-bold">3</span>
+                        <span class="text-sm font-bold text-text-muted-light">Preferences</span>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mb-12">
+                <h1 class="text-4xl md:text-5xl font-extrabold text-text-main-light tracking-tight mb-4">
+                    Where would you like to explore?
+                </h1>
+                <p class="text-text-muted-light text-lg">Every great journey begins with a single destination.</p>
+            </div>
+            <div class="mb-10">
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-8 flex items-center pointer-events-none">
+                        <span
+                            class="material-symbols-outlined text-gray-400 group-focus-within:text-primary transition-colors text-2xl">location_on</span>
+                    </div>
+                    <input
+                        class="w-full pl-20 pr-8 py-7 bg-white border border-gray-100 rounded-3xl text-xl shadow-premium focus:ring-4 focus:ring-primary/5 focus:border-primary/20 transition-all placeholder:text-gray-300 font-medium"
+                        placeholder="Search states, cities or specific destinations..." type="text" />
+                </div>
+            </div>
+            <div class="flex flex-col items-center gap-6">
+                <h2 class="text-sm font-bold uppercase tracking-widest text-text-muted-light">Popular Destinations</h2>
+                <div class="flex flex-wrap justify-center gap-3">
+                    {% for destination in popular_destinations %}
+                    <button type="button"
+                        class="px-6 py-2.5 bg-white border border-gray-200 rounded-full text-sm font-semibold text-text-main-light hover:border-primary hover:text-primary transition-all shadow-sm">
+                        {{ destination }}
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="mt-20 flex justify-end">
+                <a href="#" id="next-step-btn"
+                    class="px-12 py-4 bg-primary hover:bg-primary-hover text-white rounded-full font-bold shadow-lg shadow-blue-500/30 flex items-center gap-3 transition-all transform hover:-translate-y-0.5 group no-underline">
+                    <span>Next Step</span>
+                    <span
+                        class="material-icons-round text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                </a>
+            </div>
+        </div>
+    </main>
+    <footer class="bg-white py-12 border-t border-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-xs text-text-muted-light font-medium tracking-wide">
+                © 2026 RoutheonSkups. Step 1 of your journey.
+            </p>
+        </div>
+    </footer>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const inputField = document.querySelector('input[type="text"]');
+            const popularButtons = document.querySelectorAll('.flex-wrap button');
+            const nextButton = document.getElementById('next-step-btn');
+
+            popularButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    inputField.value = btn.innerText.trim();
+                    nextButton.click(); // Auto-advance to the next step
+                });
+            });
+
+            nextButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                const dest = inputField.value.trim();
+                if (!dest) {
+                    alert('Please provide a destination to continue!');
+                    return;
+                }
+                window.location.href = "{{ url_for('main.plan_trip_step2') }}?destination=" + encodeURIComponent(dest);
+            });
+        });
+    </script>
+</body>
+
+</html>

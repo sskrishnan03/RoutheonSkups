@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQs - RoutheonSkups</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3B82F6",
+                    },
+                    fontFamily: {
+                        sans: ["Plus Jakarta Sans", "sans-serif"],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-20..200&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .faq-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .faq-content.open { max-height: 500px; }
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-900">
+    {% include 'components/navbar.html' %}
+    
+    <!-- AI Chat Button -->
+    <button id="ai-chat-toggle" onclick="toggleAIChat()" class="fixed bottom-6 right-6 z-50 w-16 h-16 bg-blue-500 text-white rounded-full shadow-lg shadow-blue-500/30 flex items-center justify-center hover:bg-blue-600 hover:scale-110 transition-all">
+        <span class="material-icons-round text-3xl">chat</span>
+    </button>
+    
+    <!-- AI Chat Panel -->
+    <div id="ai-chat-panel" class="fixed bottom-24 right-6 z-50 w-96 bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden hidden">
+        <div class="bg-blue-500 p-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                    <span class="material-icons-round text-white">smart_toy</span>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white">Skupheon FAQ</h3>
+                    <p class="text-xs text-blue-100">AI Assistant</p>
+                </div>
+            </div>
+            <button onclick="toggleAIChat()" class="text-white/80 hover:text-white">
+                <span class="material-icons-round">close</span>
+            </button>
+        </div>
+        <div id="faq-chat-messages" class="h-80 overflow-y-auto p-4 space-y-4 bg-gray-50"></div>
+        <div class="p-4 border-t border-gray-200 bg-white">
+            <div class="flex items-center gap-2">
+                <input type="text" id="faq-chat-input" placeholder="Ask a question..." 
+                    class="flex-1 px-4 py-3 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    onkeypress="handleFAQChat(event)">
+                <button onclick="sendFAQChat()" class="w-12 h-12 bg-blue-500 text-white rounded-2xl flex items-center justify-center hover:bg-blue-600 transition-all">
+                    <span class="material-icons-round">send</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <main class="pt-32 pb-20">
+        <!-- Hero Section -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+            <div class="text-center max-w-3xl mx-auto">
+                <span class="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-xs font-bold tracking-widest uppercase mb-6">Help Center</span>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6">Frequently Asked <span class="text-blue-500">Questions</span></h1>
+                <p class="text-lg text-gray-500 leading-relaxed">Find quick answers to common questions about RoutheonSkups. Can't find what you're looking for? <a href="{{ url_for('main.contact') }}" class="text-blue-500 hover:underline">Contact our support team</a>.</p>
+            </div>
+        </section>
+
+        <!-- Search Bar -->
+        <section class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+            <div class="relative">
+                <span class="material-icons-round absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 z-10">search</span>
+                <input type="text" id="faq-search" placeholder="Search for answers..."
+                    class="w-full pl-12 pr-4 py-4 rounded-2xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-lg shadow-sm" autocomplete="off">
+                <div id="faq-suggestions" class="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden hidden z-50 max-h-64 overflow-y-auto"></div>
+            </div>
+        </section>
+
+        <!-- FAQ Categories -->
+        <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Getting Started -->
+            <div class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
+                        <span class="material-icons-round text-blue-500 text-2xl">play_circle</span>
+                    </div>
+                    <h2 class="text-2xl font-bold">Getting Started</h2>
+                </div>
+                <div class="space-y-4">
+                    <div class="faq-item bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <span class="font-semibold text-gray-900">How do I create an account on RoutheonSkups?</span>
+                            <span class="material-icons-round text-gray-400 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="text-gray-600 leading-relaxed">Creating an account is easy! Click the "Sign Up" button on the top right corner of our homepage. You can register using your email address or sign up quickly with your Google account. Fill in your basic details, create a password, and you're all set to start planning your adventures!</p>
+                        </div>
+                    </div>
+                    <div class="faq-item bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <span class="font-semibold text-gray-900">Is RoutheonSkups free to use?</span>
+                            <span class="material-icons-round text-gray-400 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="text-gray-600 leading-relaxed">Yes! RoutheonSkups offers a free tier that lets you explore destinations, access destination guides, and plan basic trips. We also offer Premium plans with enhanced features like unlimited itinerary保存, exclusive destination insights, priority support, and ad-free experience. Check our pricing page for more details.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <span class="font-semibold text-gray-900">How does the AI trip planner work?</span>
+                            <span class="material-icons-round text-gray-400 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="text-gray-600 leading-relaxed">Our AI trip planner uses advanced machine learning to understand your preferences, travel style, budget, and interests. Simply tell us about your dream trip—destinations, duration, activities—and our AI generates personalized itineraries with optimal routes, timing recommendations, and insider tips. You can customize and refine the plan to your heart's content!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account & Profile -->
+            <div class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
+                        <span class="material-icons-round text-blue-500 text-2xl">person</span>
+                    </div>
+                    <h2 class="text-2xl font-bold">Account & Profile</h2>
+                </div>
+                <div class="space-y-4">
+                    <div class="faq-item bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <span class="font-semibold text-gray-900">How do I reset my password?</span>
+                            <span class="material-icons-round text-gray-400 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="text-gray-600 leading-relaxed">Click "Forgot Password" on the login page and enter your registered email address. We'll send you a secure link to create a new password. The link expires after 30 minutes for security reasons. If you don't receive the email, check your spam folder or contact our support team.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <span class="font-semibold text-gray-900">Can I change my profile information?</span>
+                            <span class="material-icons-round text-gray-400 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="text-gray-600 leading-relaxed">Absolutely! Go to your Profile page after logging in. You can update your name, email, profile picture, and travel preferences at any time. Changes are saved automatically. If you need to change your email, you'll need to verify the new address.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <span class="font-semibold text-gray-900">How do I delete my account?</span>
+                            <span class="material-icons-round text-gray-400 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="text-gray-600 leading-relaxed">We understand that sometimes you might need to part ways. To delete your account, go to Settings > Privacy > Delete Account. Please note that this action is irreversible and will permanently remove all your data, saved trips, and preferences. If you have an active subscription, cancel it first.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trip Planning -->
+            <div class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
+                        <span class="material-icons-round text-blue-500 text-2xl">map</span>
+                    </div>
+                    <h2 class="text-2xl font-bold">Trip Planning</h2>
+                </div>
+                <div class="space-y-4">
+                    <div class="faq-item bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <span class="font-semibold text-gray-900">Can I save and share my travel itineraries?</span>
+                            <span class="material-icons-round text-gray-400 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="text-gray-600 leading-relaxed">Yes! All your planned trips are automatically saved to your account. You can access them anytime from the "Saved" section. Sharing is easy too—generate a shareable link or export your itinerary as PDF to share with travel companions. Premium users get enhanced sharing options.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <span class="font-semibold text-gray-900">How accurate are the destination recommendations?</span>
+                            <span class="material-icons-round text-gray-400 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="text-gray-600 leading-relaxed">We pride ourselves on accurate, up-to-date information! Our content team regularly updates destination guides, and our AI recommendations are refined based on real traveler reviews and local insights. We source information from verified local partners, tourism boards, and experienced travelers to ensure authenticity.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <span class="font-semibold text-gray-900">Can I plan trips for groups or families?</span>
+                            <span class="material-icons-round text-gray-400 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="text-gray-600 leading-relaxed">Definitely! When creating a trip, you can specify the number of travelers and their age groups. Our AI considers everyone's preferences to create balanced itineraries. We account for kid-friendly activities, accessibility needs, and varied energy levels to ensure everyone has a great time.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <span class="font-semibold text-gray-900">What if I need to change my itinerary mid-trip?</span>
+                            <span class="material-icons-round text-gray-400 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="text-gray-600 leading-relaxed">No worries! Our mobile-friendly platform lets you modify your plans on the go. Use the AI chat feature to get real-time suggestions for nearby alternatives if plans change. You can also access offline maps and saved itineraries without internet connection.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technical Support -->
+            <div class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
+                        <span class="material-icons-round text-blue-500 text-2xl">build</span>
+                    </div>
+                    <h2 class="text-2xl font-bold">Technical Support</h2>
+                </div>
+                <div class="space-y-4">
+                    <div class="faq-item bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <span class="font-semibold text-gray-900">The app is not loading properly. What should I do?</span>
+                            <span class="material-icons-round text-gray-400 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="text-gray-600 leading-relaxed">Try these troubleshooting steps: 1) Clear your browser cache and cookies, 2) Disable browser extensions temporarily, 3) Try a different browser or incognito mode, 4) Check your internet connection, 5) Update your browser to the latest version. If issues persist, contact our technical support.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <span class="font-semibold text-gray-900">How do I report a bug or suggest a feature?</span>
+                            <span class="material-icons-round text-gray-400 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="text-gray-600 leading-relaxed">We love feedback! Use the feedback form in the app or website footer, or email us at feedback@routheonskups.com. For urgent bugs, contact support directly. Our product team reviews all suggestions for future updates.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Still Have Questions -->
+        <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
+            <div class="bg-blue-500 rounded-3xl p-8 md:p-12 text-center">
+                <span class="material-icons-round text-white text-5xl mb-4">support_agent</span>
+                <h2 class="text-2xl md:text-3xl font-bold text-white mb-4">Still Have Questions?</h2>
+                <p class="text-blue-100 mb-8 max-w-xl mx-auto">Our support team is here to help you 7 days a week. Typically responds within 2 hours.</p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="{{ url_for('main.contact') }}" class="px-8 py-4 bg-white text-blue-600 font-bold rounded-xl hover:bg-blue-50 transition-all shadow-lg">Contact Support</a>
+                    
+                </div>
+            </div>
+        </section>
+    </main>
+    {% include 'components/footer.html' %}
+
+    <script>
+        // FAQ Accordion functionality
+        document.querySelectorAll('.faq-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const faqItem = button.closest('.faq-item');
+                const content = faqItem.querySelector('.faq-content');
+                const icon = button.querySelector('.faq-icon');
+                
+                // Close all other FAQs
+                document.querySelectorAll('.faq-item').forEach(item => {
+                    if (item !== faqItem) {
+                        item.querySelector('.faq-content').classList.remove('open');
+                        item.querySelector('.faq-icon').style.transform = 'rotate(0deg)';
+                    }
+                });
+                
+                // Toggle current FAQ
+                content.classList.toggle('open');
+                icon.style.transform = content.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+            });
+        });
+
+        // FAQ Search functionality with suggestions
+        const faqTopics = [
+            { title: 'How to create an account', category: 'Getting Started' },
+            { title: 'How do I reset my password', category: 'Account' },
+            { title: 'Can I use Google login', category: 'Account' },
+            { title: 'How to plan a trip', category: 'Planning' },
+            { title: 'How to save destinations', category: 'Features' },
+            { title: 'How does AI planner work', category: 'AI Features' },
+            { title: 'Can I edit my itinerary', category: 'Planning' },
+            { title: 'How to delete my account', category: 'Account' },
+            { title: 'What payment methods', category: 'Billing' },
+            { title: 'Refund policy', category: 'Billing' },
+            { title: 'How to contact support', category: 'Support' },
+            { title: 'Privacy settings', category: 'Account' }
+        ];
+
+        const faqSearch = document.getElementById('faq-search');
+        const faqSuggestions = document.getElementById('faq-suggestions');
+
+        if (faqSearch && faqSuggestions) {
+            faqSearch.addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                if (query.length < 1) {
+                    faqSuggestions.classList.add('hidden');
+                    return;
+                }
+                const filtered = faqTopics.filter(t => t.title.toLowerCase().includes(query) || t.category.toLowerCase().includes(query));
+                if (filtered.length > 0) {
+                    faqSuggestions.innerHTML = filtered.slice(0, 8).map(t => `
+                        <div class="px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors border-b border-gray-50 last:border-b-0" onclick="searchFAQ('${t.title}')">
+                            <p class="text-sm font-medium text-gray-900">${t.title}</p>
+                            <p class="text-xs text-gray-500">${t.category}</p>
+                        </div>
+                    `).join('');
+                    faqSuggestions.classList.remove('hidden');
+                } else {
+                    faqSuggestions.classList.add('hidden');
+                }
+            });
+
+            document.addEventListener('click', e => {
+                if (!faqSearch.contains(e.target) && !faqSuggestions.contains(e.target)) {
+                    faqSuggestions.classList.add('hidden');
+                }
+            });
+        }
+
+        function searchFAQ(term) {
+            faqSearch.value = term;
+            faqSuggestions.classList.add('hidden');
+            const searchTerm = term.toLowerCase();
+            document.querySelectorAll('.faq-item').forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(searchTerm) ? 'block' : 'none';
+            });
+        }
+
+        // Original search functionality
+        document.getElementById('faq-search').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            document.querySelectorAll('.faq-item').forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(searchTerm) ? 'block' : 'none';
+            });
+        });
+        
+        // FAQ AI Chat functionality
+        let faqChatOpen = false;
+        
+        function toggleAIChat() {
+            const panel = document.getElementById('ai-chat-panel');
+            const btn = document.getElementById('ai-chat-toggle');
+            faqChatOpen = !faqChatOpen;
+            if (faqChatOpen) {
+                panel.classList.remove('hidden');
+                btn.classList.add('hidden');
+                // Show welcome message if chat is empty
+                const messages = document.getElementById('faq-chat-messages');
+                if (messages.children.length === 0) {
+                    appendFAQMessage('Hi! I\'m Skupheon, your AI travel assistant. Ask me anything about RoutheonSkups - trip planning, features, account, billing, or any travel-related questions!', 'ai');
+                }
+            } else {
+                panel.classList.add('hidden');
+                btn.classList.remove('hidden');
+            }
+        }
+        
+        function appendFAQMessage(text, sender) {
+            const container = document.getElementById('faq-chat-messages');
+            const div = document.createElement('div');
+            div.className = sender === 'user' ? 'flex justify-end' : 'flex justify-start';
+            
+            if (sender === 'user') {
+                div.innerHTML = `<div class="bg-blue-500 text-white rounded-2xl rounded-br-none px-4 py-2 max-w-[80%] text-sm">${text}</div>`;
+            } else {
+                div.innerHTML = `<div class="bg-white border border-gray-200 rounded-2xl rounded-bl-none px-4 py-2 max-w-[80%] text-sm text-gray-700">${text}</div>`;
+            }
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        async function sendFAQChat() {
+            const input = document.getElementById('faq-chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            appendFAQMessage(message, 'user');
+            input.value = '';
+            
+            // Show typing indicator
+            const container = document.getElementById('faq-chat-messages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'flex justify-start';
+            typingDiv.id = 'faq-typing';
+            typingDiv.innerHTML = `<div class="bg-white border border-gray-200 rounded-2xl rounded-bl-none px-4 py-2 text-gray-400 text-sm"><span class="inline-flex gap-1"><span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span><span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></span><span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></span></span></div>`;
+            container.appendChild(typingDiv);
+            container.scrollTop = container.scrollHeight;
+            
+            try {
+                console.log('Sending message to FAQ chat API...');
+                const response = await fetch('/api/faq-chat', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+                
+                console.log('Response status:', response.status);
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                document.getElementById('faq-typing')?.remove();
+                
+                if (data.response) {
+                    appendFAQMessage(data.response, 'ai');
+                } else {
+                    appendFAQMessage('Sorry, I encountered an error. Please try again or contact support.', 'ai');
+                }
+            } catch (error) {
+                console.error('Chat error:', error);
+                document.getElementById('faq-typing')?.remove();
+                appendFAQMessage('Sorry, I\'m having trouble connecting right now. Please try again later.', 'ai');
+            }
+        }
+        
+        function handleFAQChat(event) {
+            if (event.key === 'Enter') {
+                sendFAQChat();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Plan a Trip - Choose Planning Method | RoutheonSkups</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3B82F6",
+                        "primary-hover": "#2563EB",
+                        "background-light": "#FFFFFF",
+                        "background-dark": "#0F172A",
+                        "surface-light": "#F8FAFC",
+                        "surface-dark": "#1E293B",
+                        "text-main-light": "#1E293B",
+                        "text-main-dark": "#F1F5F9",
+                        "text-muted-light": "#64748B",
+                        "text-muted-dark": "#94A3B8",
+                        "border-light": "#E2E8F0",
+                        "border-dark": "#334155",
+                    },
+                    fontFamily: {
+                        display: ["'Plus Jakarta Sans'", "sans-serif"],
+                        body: ["'Plus Jakarta Sans'", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        'xl': '1rem',
+                        '2xl': '1.5rem',
+                        '3xl': '2rem',
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'hover': '0 20px 40px -10px rgba(0, 0, 0, 0.08)',
+                        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
+                    }
+                },
+            },
+        };
+    </script>
+    <style type="text/tailwindcss">
+        @layer base {
+            html { scroll-behavior: smooth; }
+            body { @apply font-body bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark transition-colors duration-300; }
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+    {% include 'components/navbar.html' %}
+    <main
+        class="min-h-[calc(100vh-180px)] flex flex-col items-center justify-center mt-40 pb-16 px-4 relative overflow-hidden">
+        <div class="absolute inset-0 z-0 pointer-events-none">
+            <div
+                class="absolute top-1/4 -right-20 w-[600px] h-[600px] bg-blue-50/40 dark:bg-blue-900/10 blur-[120px] rounded-full">
+            </div>
+            <div
+                class="absolute bottom-1/4 -left-20 w-[500px] h-[500px] bg-cyan-50/40 dark:bg-cyan-900/10 blur-[120px] rounded-full">
+            </div>
+        </div>
+        <div class="relative z-10 w-full max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <span
+                    class="inline-block px-4 py-1.5 mb-6 text-xs font-bold tracking-widest uppercase bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 rounded-full">
+                    Step 1: Choose Planning Method
+                </span>
+                <h1
+                    class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-main-light dark:text-white tracking-tight leading-tight">
+                    How would you like to<br class="hidden md:block" /> plan your journey?
+                </h1>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8 lg:gap-12 max-w-5xl mx-auto">
+                <div
+                    class="group relative bg-white dark:bg-surface-dark p-10 lg:p-12 rounded-3xl border border-border-light dark:border-border-dark shadow-soft hover:shadow-hover transition-all duration-500 hover:-translate-y-2 cursor-pointer">
+                    <div
+                        class="mb-8 w-20 h-20 rounded-2xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-500">
+                        <span class="material-symbols-outlined text-5xl">edit_note</span>
+                    </div>
+                    <h2 class="text-2xl lg:text-3xl font-bold mb-4 text-text-main-light dark:text-white">Guided
+                        Experience</h2>
+                    <p class="text-text-muted-light dark:text-text-muted-dark text-lg leading-relaxed mb-10">
+                        A step-by-step process to help you refine your destination, dates, and style.
+                    </p>
+                    <a href="{{ url_for('main.create_trip') }}"
+                        class="w-full py-4 bg-surface-light dark:bg-white/5 group-hover:bg-primary text-text-main-light dark:text-white group-hover:text-white rounded-2xl font-bold text-lg transition-all duration-300 flex items-center justify-center gap-3 no-underline">
+                        Start Guided Plan
+                        <span
+                            class="material-icons-round text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                    </a>
+                </div>
+                <div
+                    class="group relative bg-white dark:bg-surface-dark p-10 lg:p-12 rounded-3xl border border-border-light dark:border-border-dark shadow-soft hover:shadow-hover transition-all duration-500 hover:-translate-y-2 cursor-pointer">
+                    <div class="absolute top-8 right-8">
+                        <span class="flex h-3 w-3 relative">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
+                        </span>
+                    </div>
+                    <div
+                        class="mb-8 w-20 h-20 rounded-2xl bg-cyan-50 dark:bg-cyan-900/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400 group-hover:scale-110 transition-transform duration-500">
+                        <span class="material-symbols-outlined text-5xl">auto_fix_high</span>
+                    </div>
+                    <h2 class="text-2xl lg:text-3xl font-bold mb-4 text-text-main-light dark:text-white">AI Prompt</h2>
+                    <p class="text-text-muted-light dark:text-text-muted-dark text-lg leading-relaxed mb-10">
+                        Describe your dream trip in your own words and let Skupheon craft it instantly.
+                    </p>
+                    <a href="{{ url_for('main.ai_prompt') }}"
+                        class="w-full py-4 bg-primary hover:bg-primary-hover text-white rounded-2xl font-bold text-lg shadow-lg shadow-blue-500/30 transition-all duration-300 flex items-center justify-center gap-3 no-underline">
+                        Try AI Prompt
+                        <span
+                            class="material-icons-round text-xl group-hover:rotate-12 transition-transform">auto_awesome</span>
+                    </a>
+                </div>
+            </div>
+            <div class="mt-16 text-center">
+                <p
+                    class="text-text-muted-light dark:text-text-muted-dark flex items-center justify-center gap-2 text-sm font-medium">
+                    <span class="material-icons-round text-primary text-lg">info</span>
+                    You can switch planning methods at any time during the process.
+                </p>
+            </div>
+        </div>
+    </main>
+    {% include 'components/footer.html' %}
+
+</body>
+
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sign Up | RoutheonSkups</title>
+
+<!-- Corporate Font -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+* {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.card-animate {
+  animation: fadeSlide 0.4s ease forwards;
+}
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(25px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.floating-input {
+  position: relative;
+}
+
+.floating-input input {
+  background: transparent;
+}
+
+.floating-input label {
+  position: absolute;
+  left: 12px;
+  top: 9px;
+  font-size: 14px;
+  color: #6b7280;
+  transition: all 0.2s ease;
+  pointer-events: none;
+  font-weight: 500;
+}
+
+.floating-input input:focus + label,
+.floating-input input:not(:placeholder-shown) + label {
+  top: -8px;
+  left: 10px;
+  font-size: 11px;
+  background: white;
+  padding: 0 4px;
+  color: black;
+}
+
+/* Flash messages */
+.flash-msg {
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.flash-danger {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+.flash-success {
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+</style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 p-4">
+
+<div class="w-full max-w-sm">
+
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+  {% for category, message in messages %}
+    <div class="flash-msg flash-{{ category }}">{{ message }}</div>
+  {% endfor %}
+{% endif %}
+{% endwith %}
+
+<!-- MAIN VIEW -->
+<div id="mainView" class="relative bg-white/95 rounded-2xl border shadow-xl p-8 card-animate overflow-hidden">
+
+<div class="flex justify-center mb-6">
+  <div class="w-16 h-16 border border-gray-300 rounded-xl flex items-center justify-center bg-white shadow-sm overflow-hidden">
+    <img src="{{ url_for('static', filename='img/logo.png') }}" class="w-11 h-11 object-contain">
+  </div>
+</div>
+
+<div class="text-center">
+  <h1 class="text-2xl font-semibold tracking-wide">
+    Join RoutheonSkups
+  </h1>
+  <p class="text-sm text-gray-500 mt-1 font-medium">
+    Create an account to start planning.
+  </p>
+</div>
+
+<div class="mt-8 space-y-4">
+
+<a href="{{ url_for('main.google_login') }}" class="w-full flex items-center justify-center gap-3 h-11 bg-white border rounded-xl text-sm font-medium hover:shadow-md hover:scale-[1.03] transition-all duration-300 no-underline text-black">
+<svg width="18" height="18" viewBox="0 0 48 48">
+<path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.2 3.61l6.86-6.86C35.7 2.09 30.3 0 24 0 14.63 0 6.36 5.48 2.44 13.44l7.98 6.19C12.42 13.1 17.74 9.5 24 9.5z"/>
+<path fill="#4285F4" d="M46.14 24.5c0-1.64-.15-3.21-.42-4.73H24v9h12.4c-.53 2.86-2.13 5.28-4.53 6.9l7.04 5.47C43.95 36.68 46.14 31.09 46.14 24.5z"/>
+<path fill="#FBBC05" d="M10.42 28.63a14.5 14.5 0 010-9.26l-7.98-6.19A23.93 23.93 0 000 24c0 3.87.92 7.53 2.56 10.82l7.86-6.19z"/>
+<path fill="#34A853" d="M24 48c6.3 0 11.7-2.08 15.6-5.66l-7.04-5.47c-2 1.35-4.55 2.13-8.56 2.13-6.26 0-11.58-3.6-13.58-8.83l-7.86 6.19C6.36 42.52 14.63 48 24 48z"/>
+</svg>
+Sign Up with Google
+</a>
+
+<div class="relative">
+<div class="absolute inset-0 flex items-center">
+<span class="w-full border-t"></span>
+</div>
+<div class="relative flex justify-center text-xs uppercase font-medium">
+<span class="bg-white px-3 text-gray-400">or</span>
+</div>
+</div>
+
+<button onclick="showEmail()"
+class="w-full flex items-center justify-center gap-2 h-11 border rounded-xl text-sm font-medium hover:bg-gray-100 hover:scale-[1.03] transition-all duration-300">
+<i data-lucide="mail" class="w-4 h-4"></i>
+Sign Up with Email
+</button>
+
+</div>
+
+<div class="mt-6 text-center">
+<a href="{{ url_for('main.home') }}" class="text-sm text-gray-400 hover:text-black transition font-medium">
+Continue without signing in
+</a>
+</div>
+
+</div>
+
+<!-- EMAIL SIGNUP -->
+<div id="emailView" class="hidden relative bg-white/95 rounded-2xl border shadow-xl p-8 card-animate overflow-hidden">
+
+<div class="flex justify-center mb-6">
+  <div class="w-16 h-16 border border-gray-300 rounded-xl flex items-center justify-center bg-white shadow-sm overflow-hidden">
+    <img src="{{ url_for('static', filename='img/logo.png') }}" class="w-11 h-11 object-contain">
+  </div>
+</div>
+
+<h2 class="text-2xl font-semibold text-center">
+Create Account
+</h2>
+
+<form method="POST" action="{{ url_for('main.register') }}" class="mt-8 space-y-6">
+
+<div class="floating-input">
+<input type="text" name="name" placeholder=" " required
+class="w-full h-11 border rounded-xl px-3 text-sm focus:outline-none focus:ring-2 focus:ring-black"/>
+<label>Full Name</label>
+</div>
+
+<div class="floating-input">
+<input type="email" name="email" placeholder=" " required
+class="w-full h-11 border rounded-xl px-3 text-sm focus:outline-none focus:ring-2 focus:ring-black"/>
+<label>Email address</label>
+</div>
+
+<div class="floating-input">
+<input type="password" name="password" placeholder=" " required
+class="w-full h-11 border rounded-xl px-3 text-sm focus:outline-none focus:ring-2 focus:ring-black"/>
+<label>Password</label>
+</div>
+
+<button type="submit" class="w-full h-11 bg-black text-white rounded-xl text-sm font-medium hover:scale-[1.03] transition-all duration-300">
+Create Account
+</button>
+
+</form>
+
+<div class="mt-6 text-center">
+<button onclick="goHome()" class="text-sm text-gray-500 hover:text-black font-medium">
+Back
+</button>
+</div>
+
+</div>
+
+<!-- LOGIN LINK -->
+<div class="mt-4 text-center">
+<p class="text-sm text-gray-500 font-medium">
+  Already have an account?
+  <a href="{{ url_for('main.login') }}" class="text-black hover:underline font-semibold">Sign In</a>
+</p>
+</div>
+
+</div>
+
+<script>
+lucide.createIcons();
+
+function showEmail() {
+mainView.classList.add("hidden");
+emailView.classList.remove("hidden");
+}
+
+function goHome() {
+mainView.classList.remove("hidden");
+emailView.classList.add("hidden");
+}
+</script>
+
+</body>
+</html>

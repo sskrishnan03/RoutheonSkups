@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>RoutheonSkups - AI-Powered Travel Hub</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3B82F6",
+                        "primary-hover": "#2563EB",
+                        "background-light": "#FFFFFF",
+                        "background-dark": "#0F172A",
+                        "surface-light": "#F8FAFC",
+                        "surface-dark": "#1E293B",
+                        "text-main-light": "#1E293B",
+                        "text-main-dark": "#F1F5F9",
+                        "text-muted-light": "#64748B",
+                        "text-muted-dark": "#94A3B8",
+                        "border-light": "#E2E8F0",
+                        "border-dark": "#334155",
+                    },
+                    fontFamily: {
+                        display: ["'Plus Jakarta Sans'", "sans-serif"],
+                        body: ["'Plus Jakarta Sans'", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        'xl': '1rem',
+                        '2xl': '1.5rem',
+                        '3xl': '2rem',
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'hover': '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.01)',
+                        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
+                    }
+                },
+            },
+        };
+    </script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #CBD5E1;
+            border-radius: 20px;
+        }
+
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #475569;
+        }
+
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .dark .glassmorphism {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: 1000;
+            }
+        }
+
+        .map-texture {
+            mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+        }
+
+        details>summary {
+            list-style: none;
+        }
+
+        details>summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details[open] summary~* {
+            animation: sweep .3s ease-in-out;
+        }
+
+        @keyframes sweep {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px)
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark transition-colors duration-300">
+    {% include 'components/navbar.html' %}
+    <section class="relative pt-24 pb-20 overflow-hidden">
+        <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+            <div
+                class="absolute -top-[30%] -right-[10%] w-[70%] h-[100%] rounded-full bg-gradient-to-br from-blue-100/40 via-purple-100/30 to-transparent dark:from-blue-900/10 dark:via-purple-900/10 blur-[80px]">
+            </div>
+            <div
+                class="absolute top-[20%] -left-[10%] w-[50%] h-[80%] rounded-full bg-gradient-to-tr from-cyan-100/40 via-blue-50/20 to-transparent dark:from-cyan-900/10 dark:via-blue-900/5 blur-[60px]">
+            </div>
+            <svg class="absolute bottom-0 left-0 w-full h-[300px] text-gray-50/50 dark:text-slate-800/20"
+                preserveAspectRatio="none" viewBox="0 0 1440 320">
+                <path
+                    d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,197.3C1248,171,1344,149,1392,138.7L1440,128V320H1392C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320H0Z"
+                    fill="currentColor" fill-opacity="1"></path>
+            </svg>
+        </div>
+        <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
+            <div
+                class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/50 dark:bg-white/5 backdrop-blur-sm border border-blue-100 dark:border-blue-800 mb-8 shadow-sm">
+                <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+                <span class="text-xs font-semibold text-primary tracking-wide uppercase">Discover India's
+                    Treasures</span>
+            </div>
+            <h1
+                class="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 text-text-main-light dark:text-text-main-dark drop-shadow-sm">
+                Discover Your Next <br />
+                <span
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-500 animate-[pulse_4s_infinite]">Journey</span>
+            </h1>
+            <p
+                class="text-lg md:text-xl text-text-muted-light dark:text-text-muted-dark mb-10 max-w-2xl mx-auto leading-relaxed">
+                Plan trips, explore destinations, and build memories across India and beyond with our comprehensive
+                itinerary planner.
+            </p>
+            <div
+                class="bg-white dark:bg-surface-dark p-2 rounded-full shadow-lg border border-border-light dark:border-border-dark flex items-center max-w-2xl mx-auto mb-10 transition-shadow focus-within:ring-2 focus-within:ring-primary/20 relative z-20">
+                <span
+                    class="material-icons-round text-text-muted-light dark:text-text-muted-dark ml-4 text-2xl">search</span>
+                <input id="landing-search" list="india-states-list"
+                    class="w-full border-none focus:ring-0 bg-transparent text-text-main-light dark:text-text-main-dark placeholder-gray-400 dark:placeholder-gray-500 text-base px-4"
+                    placeholder="Search destinations, experiences, or trips" type="text" />
+                <datalist id="india-states-list">
+                    <option value="Andhra Pradesh">
+                    <option value="Arunachal Pradesh">
+                    <option value="Assam">
+                    <option value="Bihar">
+                    <option value="Chhattisgarh">
+                    <option value="Goa">
+                    <option value="Gujarat">
+                    <option value="Haryana">
+                    <option value="Himachal Pradesh">
+                    <option value="Jharkhand">
+                    <option value="Karnataka">
+                    <option value="Kerala">
+                    <option value="Madhya Pradesh">
+                    <option value="Maharashtra">
+                    <option value="Manipur">
+                    <option value="Meghalaya">
+                    <option value="Mizoram">
+                    <option value="Nagaland">
+                    <option value="Odisha">
+                    <option value="Punjab">
+                    <option value="Rajasthan">
+                    <option value="Sikkim">
+                    <option value="Tamil Nadu">
+                    <option value="Telangana">
+                    <option value="Tripura">
+                    <option value="Uttar Pradesh">
+                    <option value="Uttarakhand">
+                    <option value="West Bengal">
+                    <option value="Andaman and Nicobar Islands">
+                    <option value="Chandigarh">
+                    <option value="Dadra and Nagar Haveli and Daman and Diu">
+                    <option value="Delhi">
+                    <option value="Jammu and Kashmir">
+                    <option value="Ladakh">
+                    <option value="Lakshadweep">
+                    <option value="Puducherry">
+                </datalist>
+                <div class="flex items-center border-l border-gray-200 dark:border-gray-700 pl-2 pr-2 gap-1">
+                    <button
+                        class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 text-text-muted-light dark:text-text-muted-dark transition-colors"
+                        title="Voice Search">
+                        <span class="material-icons-round text-xl">mic</span>
+                    </button>
+                </div>
+                <button onclick="handleLandingSearch()"
+                    class="bg-primary hover:bg-primary-hover text-white px-8 py-3 rounded-full font-semibold transition-all shadow-lg shadow-blue-500/30">
+                    Search
+                </button>
+            </div>
+            <script>
+                function handleLandingSearch() {
+                    const query = document.getElementById('landing-search').value.trim();
+                    window.location.href = `/explore?q=${encodeURIComponent(query)}`;
+                }
+                // Allow enter key
+                document.getElementById('landing-search')?.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') handleLandingSearch();
+                });
+            </script>
+            <div class="flex justify-center gap-4">
+                <a href="{{ url_for('main.explore') }}"
+                    class="flex items-center gap-2 px-6 py-3 bg-white/80 dark:bg-surface-dark/80 backdrop-blur border border-border-light dark:border-border-dark rounded-xl font-medium text-text-main-light dark:text-text-main-dark hover:shadow-md transition-all no-underline">
+                    <span class="text-blue-500 text-xl material-icons-round">explore</span>
+                    Explore Destinations
+                </a>
+                <a href="{{ url_for('main.plan_trip') }}"
+                    class="flex items-center gap-2 px-6 py-3 bg-white/80 dark:bg-surface-dark/80 backdrop-blur border border-border-light dark:border-border-dark rounded-xl font-medium text-text-main-light dark:text-text-main-dark hover:shadow-md transition-all no-underline">
+                    <span class="text-red-500 text-xl material-icons-round">backpack</span>
+                    Plan a Trip
+                </a>
+            </div>
+        </div>
+    </section>
+    <section class="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-3 gap-8">
+            <div
+                class="group relative bg-white dark:bg-surface-dark p-8 rounded-3xl border border-border-light dark:border-border-dark shadow-sm hover:shadow-hover transition-all duration-300 overflow-hidden">
+                <div
+                    class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-100/50 to-transparent dark:from-blue-900/20 rounded-bl-full -mr-8 -mt-8 opacity-50 group-hover:scale-125 transition-transform duration-700">
+                </div>
+                <div class="relative z-10">
+                    <div
+                        class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-900/20 dark:to-blue-800/10 flex items-center justify-center mb-6 text-primary group-hover:scale-110 transition-transform duration-300 shadow-sm border border-blue-100/50 dark:border-blue-700/20">
+                        <span
+                            class="material-icons-round text-3xl bg-clip-text text-transparent bg-gradient-to-tr from-blue-600 to-cyan-500">alt_route</span>
+                    </div>
+                    <h3
+                        class="text-xl font-bold mb-3 text-text-main-light dark:text-text-main-dark group-hover:text-primary transition-colors">
+                        Route-Based Journey Planning</h3>
+                    <p class="text-text-muted-light dark:text-text-muted-dark text-sm leading-relaxed">
+                        Visualise your complete itinerary on an interactive map. Connect destinations logically with
+                        smart routing tailored for exploration and efficiency.
+                    </p>
+                </div>
+            </div>
+            <div
+                class="group relative bg-white dark:bg-surface-dark p-8 rounded-3xl border border-border-light dark:border-border-dark shadow-sm hover:shadow-hover transition-all duration-300 overflow-hidden">
+                <div
+                    class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-100/50 to-transparent dark:from-purple-900/20 rounded-bl-full -mr-8 -mt-8 opacity-50 group-hover:scale-125 transition-transform duration-700">
+                </div>
+                <div class="relative z-10">
+                    <div
+                        class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-900/20 dark:to-purple-800/10 flex items-center justify-center mb-6 text-purple-600 group-hover:scale-110 transition-transform duration-300 shadow-sm border border-purple-100/50 dark:border-purple-700/20">
+                        <span
+                            class="material-icons-round text-3xl bg-clip-text text-transparent bg-gradient-to-tr from-purple-600 to-fuchsia-500">view_timeline</span>
+                    </div>
+                    <h3
+                        class="text-xl font-bold mb-3 text-text-main-light dark:text-text-main-dark group-hover:text-purple-600 transition-colors">
+                        Day-Wise Travel Roadmaps</h3>
+                    <p class="text-text-muted-light dark:text-text-muted-dark text-sm leading-relaxed">
+                        Get structured, day-by-day breakdowns of your trip. We organise your activities and sights into
+                        a balanced schedule for a stress-free experience.
+                    </p>
+                </div>
+            </div>
+            <div
+                class="group relative bg-white dark:bg-surface-dark p-8 rounded-3xl border border-border-light dark:border-border-dark shadow-sm hover:shadow-hover transition-all duration-300 overflow-hidden">
+                <div
+                    class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-100/50 to-transparent dark:from-emerald-900/20 rounded-bl-full -mr-8 -mt-8 opacity-50 group-hover:scale-125 transition-transform duration-700">
+                </div>
+                <div class="relative z-10">
+                    <div
+                        class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-900/20 dark:to-emerald-800/10 flex items-center justify-center mb-6 text-emerald-600 group-hover:scale-110 transition-transform duration-300 shadow-sm border border-emerald-100/50 dark:border-emerald-700/20">
+                        <span
+                            class="material-icons-round text-3xl bg-clip-text text-transparent bg-gradient-to-tr from-emerald-600 to-teal-500">tips_and_updates</span>
+                    </div>
+                    <h3
+                        class="text-xl font-bold mb-3 text-text-main-light dark:text-text-main-dark group-hover:text-emerald-600 transition-colors">
+                        Destination Intelligence</h3>
+                    <p class="text-text-muted-light dark:text-text-muted-dark text-sm leading-relaxed">
+                        Gain expert context before you go. Access data-driven insights, local tips, and cultural nuances
+                        to truly understand the places you visit.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-end mb-8">
+            <div>
+                <h2 class="text-2xl font-bold text-text-main-light dark:text-text-main-dark mb-1">Travel Categories</h2>
+                <p class="text-text-muted-light dark:text-text-muted-dark">Find the perfect vibe for your next trip.</p>
+            </div>
+            <a class="group flex items-center gap-1.5 text-sm font-bold text-primary hover:text-primary-hover transition-colors no-underline"
+                href="{{ url_for('main.explore') }}">
+                View All
+                <span
+                    class="material-icons-round text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            </a>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg no-underline"
+                href="{{ url_for('main.explore') }}?q=City">
+                <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">🏙️</div>
+                <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">City</span>
+            </a>
+            <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg no-underline"
+                href="{{ url_for('main.explore') }}?q=Beach">
+                <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">🏖️</div>
+                <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">Beach</span>
+            </a>
+            <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg no-underline"
+                href="{{ url_for('main.explore') }}?q=Hill%20Station">
+                <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">⛰️</div>
+                <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">Hill
+                    Station</span>
+            </a>
+            <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg no-underline"
+                href="{{ url_for('main.explore') }}?q=Heritage">
+                <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">🏰</div>
+                <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">Heritage</span>
+            </a>
+            <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg no-underline"
+                href="{{ url_for('main.explore') }}?q=Temple">
+                <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">🕌</div>
+                <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">Temple</span>
+            </a>
+            <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg no-underline"
+                href="{{ url_for('main.explore') }}?q=Wildlife">
+                <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">🦁</div>
+                <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">Wildlife</span>
+            </a>
+        </div>
+    </section>
+    <section class="py-24 bg-surface-light dark:bg-surface-dark/50 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 relative">
+                <div
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-blue-500/10 rounded-full blur-3xl">
+                </div>
+                <span
+                    class="relative z-10 inline-block py-1 px-3 rounded-full bg-blue-50 dark:bg-blue-900/20 text-primary font-bold tracking-widest text-xs uppercase mb-3">Top
+                    Picks</span>
+                <h2
+                    class="relative z-10 text-3xl md:text-4xl font-extrabold text-text-main-light dark:text-text-main-dark tracking-tight">
+                    Popular Destinations</h2>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div
+                    class="group relative bg-white dark:bg-surface-dark rounded-[2rem] p-3 border border-border-light dark:border-border-dark shadow-soft hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 cursor-pointer">
+                    <div class="relative h-72 rounded-[1.5rem] overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80">
+                        </div>
+                        <img alt="Srinagar Dal Lake"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9zhUwyShL6i4GwLBCdWD9vCt8R90U0DSx6Ce46pKWiddBdMkua0VTAdUPt2GprEHgQ6qhXch5bGmDBob3QfNA8C6tETTjRz_LsE1kTNsw827EvYS4vqVelzWH1l3MpayymVmMaNomv_U9b6fDk3OIKB9mLSs9CBGGVkbFPidf5Z81_78SdKaVGBxeh8Z6mjfJsSO9KL0AoHbopDw6P7suR9WvV8QO7Um6OJiX3DOrCoIhr1tjCkdQIoBnJV6mqipvRsj67jctm9GU" />
+                        <div class="absolute top-4 right-4 z-20">
+                            <button
+                                class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/40 transition-colors">
+                                <span class="material-icons-round text-lg">favorite_border</span>
+                            </button>
+                        </div>
+                        <div class="absolute top-4 left-4 z-20">
+                            <span
+                                class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-white text-xs font-semibold shadow-sm">
+                                <span class="material-icons-round text-[14px]">landscape</span> Scenic
+                            </span>
+                        </div>
+                        <div class="absolute bottom-4 left-4 right-4 z-20">
+                            <h3 class="text-xl font-bold text-white mb-1">Srinagar</h3>
+                            <div class="flex items-center gap-1 text-white/90 text-xs font-medium">
+                                <span class="material-icons-round text-sm">location_on</span> Jammu &amp; Kashmir
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p
+                            class="text-sm text-text-muted-light dark:text-text-muted-dark leading-relaxed mb-6 line-clamp-2">
+                            Best for natural beauty and scenic landscapes, Dal Lake, houseboats, Mughal gardens.</p>
+                        <a href="{{ url_for('main.destination_info', name='North Goa') }}"
+                            class="w-full py-3.5 px-6 rounded-xl bg-surface-light dark:bg-white/5 border border-transparent hover:border-blue-100 dark:hover:border-blue-800 text-primary dark:text-blue-400 font-bold text-sm flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-sm group-hover:shadow-lg group-hover:shadow-blue-500/25 no-underline">
+                            View Destination <span
+                                class="material-icons-round text-lg group-hover:translate-x-1 transition-transform">arrow_right_alt</span>
+                        </a>
+                    </div>
+                </div>
+                <div
+                    class="group relative bg-white dark:bg-surface-dark rounded-[2rem] p-3 border border-border-light dark:border-border-dark shadow-soft hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 cursor-pointer">
+                    <div class="relative h-72 rounded-[1.5rem] overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80">
+                        </div>
+                        <img alt="Manali Mountains"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBebijPpM746uiyho2fxPmPcLjh5I4MLSuV7C50gLfqhU52iaDNYokLe7CjQ-qEZJnO6iyCKzt8MgUWX7U3Y3-MQ1COVMQ5TTmF_vejkFBpXjCoEFzQhKK3mSkQMy8D-3QaJ9rV15HxFC7z1ZxXvU1Ve3C3fdjJrYRZ7FMmHZoZPbUIneHjFfT9FE50HCyttiQLGhamy1mYGEjit6Wu_Q-OEsrFYU8A7Dar98u_YQhwLvct2piFBNMs7fm0tzPIvakcKalLFjpsOqGi" />
+                        <div class="absolute top-4 right-4 z-20">
+                            <button
+                                class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/40 transition-colors">
+                                <span class="material-icons-round text-lg">favorite_border</span>
+                            </button>
+                        </div>
+                        <div class="absolute top-4 left-4 z-20">
+                            <span
+                                class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-white text-xs font-semibold shadow-sm">
+                                <span class="material-icons-round text-[14px]">landscape</span> Scenic
+                            </span>
+                        </div>
+                        <div class="absolute bottom-4 left-4 right-4 z-20">
+                            <h3 class="text-xl font-bold text-white mb-1">Manali</h3>
+                            <div class="flex items-center gap-1 text-white/90 text-xs font-medium">
+                                <span class="material-icons-round text-sm">location_on</span> Himachal Pradesh
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p
+                            class="text-sm text-text-muted-light dark:text-text-muted-dark leading-relaxed mb-6 line-clamp-2">
+                            Most popular hill destination, Snowfall, adventure sports, mountain views.</p>
+                        <button
+                            class="w-full py-3.5 px-6 rounded-xl bg-surface-light dark:bg-white/5 border border-transparent hover:border-blue-100 dark:hover:border-blue-800 text-primary dark:text-blue-400 font-bold text-sm flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-sm group-hover:shadow-lg group-hover:shadow-blue-500/25">
+                            View Destination <span
+                                class="material-icons-round text-lg group-hover:translate-x-1 transition-transform">arrow_right_alt</span>
+                        </button>
+                    </div>
+                </div>
+                <div
+                    class="group relative bg-white dark:bg-surface-dark rounded-[2rem] p-3 border border-border-light dark:border-border-dark shadow-soft hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 cursor-pointer">
+                    <div class="relative h-72 rounded-[1.5rem] overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80">
+                        </div>
+                        <img alt="Rishikesh River Rafting"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-ZW9_Vd_v31a0IgUCRixg3DLHo6xpChPIFQ_lOC-kAW9JzseSRl27zTBq_aKEEGD-mAdffUo2ccSxMuhv-CSc_oIUc4I7R49g4a6Hi1H3bYD62oFp38ez-wr_kA8OalPbasnRlQWF7iorOFdFwy8luIyOFJsfQvIIYp19LuHLpqTF294bdHDpSYJUQ8Qr2O2Hn4MFhaRlB_R5JxkeFU7h0_OS1w0acCbgCBS9cWcXHRCE41YYWOPpSGhsDDmFfK3Borj4cBLWAJfA" />
+                        <div class="absolute top-4 right-4 z-20">
+                            <button
+                                class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/40 transition-colors">
+                                <span class="material-icons-round text-lg">favorite_border</span>
+                            </button>
+                        </div>
+                        <div class="absolute top-4 left-4 z-20">
+                            <span
+                                class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-white text-xs font-semibold shadow-sm">
+                                <span class="material-icons-round text-[14px]">landscape</span> Scenic
+                            </span>
+                        </div>
+                        <div class="absolute bottom-4 left-4 right-4 z-20">
+                            <h3 class="text-xl font-bold text-white mb-1">Rishikesh</h3>
+                            <div class="flex items-center gap-1 text-white/90 text-xs font-medium">
+                                <span class="material-icons-round text-sm">location_on</span> Uttarakhand
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p
+                            class="text-sm text-text-muted-light dark:text-text-muted-dark leading-relaxed mb-6 line-clamp-2">
+                            Best spiritual and adventure destination, Yoga capital &amp; river rafting.</p>
+                        <button
+                            class="w-full py-3.5 px-6 rounded-xl bg-surface-light dark:bg-white/5 border border-transparent hover:border-blue-100 dark:hover:border-blue-800 text-primary dark:text-blue-400 font-bold text-sm flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-sm group-hover:shadow-lg group-hover:shadow-blue-500/25">
+                            View Destination <span
+                                class="material-icons-round text-lg group-hover:translate-x-1 transition-transform">arrow_right_alt</span>
+                        </button>
+                    </div>
+                </div>
+                <div
+                    class="group relative bg-white dark:bg-surface-dark rounded-[2rem] p-3 border border-border-light dark:border-border-dark shadow-soft hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 cursor-pointer">
+                    <div class="relative h-72 rounded-[1.5rem] overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80">
+                        </div>
+                        <img alt="Jaipur Palace"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5Eh7qdr-mAFRhgm0erlpcmI3538EGmOBCvXI1qyasuZsmzrCdolgauC18o0aAAN2qfcxZ_SgnQ0vGef5AbNaGeoH9yhYmxtNcdOn7Q_hDimZb92cvNfjtkE3lA6a2B4HArKNUUrJnXnZx_b0XIdRD51mrXH922YneBBtlyHaBo0kpn0qZAmcTDWvlIuGssNfRrylb95WuWfrbERR3Kstt3OJzrmeMHO4WSwDhawm87T0M5TKurMoP00ShXuJYBua5DHLybWs3DLAo" />
+                        <div class="absolute top-4 right-4 z-20">
+                            <button
+                                class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/40 transition-colors">
+                                <span class="material-icons-round text-lg">favorite_border</span>
+                            </button>
+                        </div>
+                        <div class="absolute top-4 left-4 z-20">
+                            <span
+                                class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-white text-xs font-semibold shadow-sm">
+                                <span class="material-icons-round text-[14px]">landscape</span> Scenic
+                            </span>
+                        </div>
+                        <div class="absolute bottom-4 left-4 right-4 z-20">
+                            <h3 class="text-xl font-bold text-white mb-1">Jaipur</h3>
+                            <div class="flex items-center gap-1 text-white/90 text-xs font-medium">
+                                <span class="material-icons-round text-sm">location_on</span> Rajasthan
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p
+                            class="text-sm text-text-muted-light dark:text-text-muted-dark leading-relaxed mb-6 line-clamp-2">
+                            Best heritage city, Royal forts, palaces, rich Rajasthani culture.</p>
+                        <button
+                            class="w-full py-3.5 px-6 rounded-xl bg-surface-light dark:bg-white/5 border border-transparent hover:border-blue-100 dark:hover:border-blue-800 text-primary dark:text-blue-400 font-bold text-sm flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-sm group-hover:shadow-lg group-hover:shadow-blue-500/25">
+                            View Destination <span
+                                class="material-icons-round text-lg group-hover:translate-x-1 transition-transform">arrow_right_alt</span>
+                        </button>
+                    </div>
+                </div>
+                <div
+                    class="group relative bg-white dark:bg-surface-dark rounded-[2rem] p-3 border border-border-light dark:border-border-dark shadow-soft hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 cursor-pointer">
+                    <div class="relative h-72 rounded-[1.5rem] overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80">
+                        </div>
+                        <img alt="Goa Beach"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKk_TSasWCvr4F5m8b_0ggJC2etSUhRZADsnHYPVK-Vnvp5nZsOY5-1a1fEm1uqDsFLRP4DdwQv7rtLMnpUianvRbz9s0VcXxuLW27RAo1wUk0vOJUpYnrXoK6sxl5ag3LdST2h2vh9kmhCu6lOCUqnQKNUE8t2TvAy9OWjVIJFlwy4ZBNn8_Ex1TKEe2GmiCjBFR-cI_SO5enEleXykBHPPgHZ0F0zxx487hmy3cSherytYsZ5aOutEVhzLhNkUfUE_dOz3uDcEKV" />
+                        <div class="absolute top-4 right-4 z-20">
+                            <button
+                                class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/40 transition-colors">
+                                <span class="material-icons-round text-lg">favorite_border</span>
+                            </button>
+                        </div>
+                        <div class="absolute top-4 left-4 z-20">
+                            <span
+                                class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-white text-xs font-semibold shadow-sm">
+                                <span class="material-icons-round text-[14px]">landscape</span> Scenic
+                            </span>
+                        </div>
+                        <div class="absolute bottom-4 left-4 right-4 z-20">
+                            <h3 class="text-xl font-bold text-white mb-1">North Goa</h3>
+                            <div class="flex items-center gap-1 text-white/90 text-xs font-medium">
+                                <span class="material-icons-round text-sm">location_on</span> Goa
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p
+                            class="text-sm text-text-muted-light dark:text-text-muted-dark leading-relaxed mb-6 line-clamp-2">
+                            Best beach destination, Beaches, nightlife, water sports, Ideal for friends.</p>
+                        <button
+                            class="w-full py-3.5 px-6 rounded-xl bg-surface-light dark:bg-white/5 border border-transparent hover:border-blue-100 dark:hover:border-blue-800 text-primary dark:text-blue-400 font-bold text-sm flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-sm group-hover:shadow-lg group-hover:shadow-blue-500/25">
+                            View Destination <span
+                                class="material-icons-round text-lg group-hover:translate-x-1 transition-transform">arrow_right_alt</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-20 relative overflow-hidden bg-gradient-to-b from-amber-50 to-orange-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-100 border border-amber-300 text-amber-800 text-[10px] font-extrabold uppercase tracking-widest shadow-sm mb-4">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-600 animate-pulse"></span> Interactive Route
+                </span>
+                <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">Visualise Your Journey</h2>
+                <p class="text-slate-700 font-semibold mt-3 text-lg">Craft Your Perfect Adventure Across India's Stunning Landscapes</p>
+            </div>
+
+            <div class="relative rounded-3xl overflow-hidden shadow-[0_30px_60px_-15px_rgba(180,83,9,0.35)] h-[680px] border-8 border-amber-800/30">
+                <!-- Wood frame effect -->
+                <div class="absolute inset-0 border-[12px] border-amber-900/20 rounded-3xl pointer-events-none z-30"></div>
+                <div class="absolute inset-0 border-[8px] border-amber-700/15 rounded-3xl pointer-events-none z-30"></div>
+                
+                <!-- Map background with better integration -->
+                <div class="absolute inset-0 bg-gradient-to-br from-amber-100/90 via-orange-50/85 to-yellow-100/90"></div>
+                <img alt="Full India Map"
+                    class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-multiply"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYaiqbvuPg3uSXoWnLeDNxd2FzvVD1CY6l1bWQR8B5GIbmWPywCPJ5_M5-Iu9upbUdIOWSB22rEH5vxmEVN7IdeGwB7GuHeFqTikb3Gl3qmrMJfRhW6uG6KjhHf9bFpzGwo9ABjME8FUbOKuAPuapRaIkdNc9sQp6CQ4n0iPYkFRLlNSdplXt0eB3543s4NUfWjxetvBfOhuzxRNr3BP_HNnsS6ndTaP-A8YBJF-ciYqCaf-5QkA6yO45Vj4MpnyIvDfeKAMCe7mYK" />
+                
+                <!-- Integrated route visualization -->
+                <svg class="absolute inset-0 w-full h-full pointer-events-none z-10" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1000 600">
+                    <defs>
+                        <linearGradient id="routeGradientJourneyB" x1="0%" x2="100%" y1="0%" y2="0%">
+                            <stop offset="0%" stop-color="#DC2626"></stop>
+                            <stop offset="50%" stop-color="#EA580C"></stop>
+                            <stop offset="100%" stop-color="#D97706"></stop>
+                        </linearGradient>
+                        <filter id="glowB">
+                            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    <path d="M 150 390 C 280 330, 430 320, 550 255 S 760 250, 930 300" fill="none" stroke="url(#routeGradientJourneyB)" stroke-width="6" stroke-dasharray="12 6" filter="url(#glowB)"></path>
+                    <circle cx="150" cy="390" r="12" fill="#DC2626" stroke="#fff" stroke-width="3" filter="url(#glowB)"></circle>
+                    <circle cx="550" cy="255" r="12" fill="#EA580C" stroke="#fff" stroke-width="3" filter="url(#glowB)"></circle>
+                    <circle cx="930" cy="300" r="12" fill="#D97706" stroke="#fff" stroke-width="3" filter="url(#glowB)"></circle>
+                </svg>
+
+                <!-- Integrated destination cards with photo thumbnails -->
+                <div class="absolute top-[52%] left-[7%] z-20">
+                    <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border-2 border-amber-200 overflow-hidden w-48 transform hover:scale-105 transition-transform duration-300">
+                        <div class="h-24 bg-gradient-to-br from-red-400 to-orange-400 relative overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1569396116180-5c553e9587d0?w=300&h=200&fit=crop" class="w-full h-full object-cover opacity-90" alt="Kochi">
+                            <div class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-full">Day 1-2</div>
+                        </div>
+                        <div class="p-3">
+                            <h3 class="font-bold text-slate-900 text-sm">Kochi Fort</h3>
+                            <p class="text-xs text-slate-600 mt-1">Colonial heritage & backwaters</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="absolute top-[28%] left-[42%] z-20">
+                    <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border-2 border-orange-200 overflow-hidden w-48 transform hover:scale-105 transition-transform duration-300">
+                        <div class="h-24 bg-gradient-to-br from-orange-400 to-amber-400 relative overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=300&h=200&fit=crop" class="w-full h-full object-cover opacity-90" alt="Munnar">
+                            <div class="absolute top-2 left-2 bg-orange-600 text-white text-[10px] font-bold px-2 py-1 rounded-full">Day 3-4</div>
+                        </div>
+                        <div class="p-3">
+                            <h3 class="font-bold text-slate-900 text-sm">Munnar Hills</h3>
+                            <p class="text-xs text-slate-600 mt-1">Tea gardens & misty peaks</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="absolute top-[32%] right-[7%] z-20">
+                    <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border-2 border-amber-200 overflow-hidden w-48 transform hover:scale-105 transition-transform duration-300">
+                        <div class="h-24 bg-gradient-to-br from-amber-400 to-yellow-400 relative overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1628151016007-1c8e9b4c3d5f?w=300&h=200&fit=crop" class="w-full h-full object-cover opacity-90" alt="Thekkady">
+                            <div class="absolute top-2 left-2 bg-amber-600 text-white text-[10px] font-bold px-2 py-1 rounded-full">Day 5</div>
+                        </div>
+                        <div class="p-3">
+                            <h3 class="font-bold text-slate-900 text-sm">Thekkady</h3>
+                            <p class="text-xs text-slate-600 mt-1">Wildlife sanctuary trails</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats bar with integrated design -->
+                <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-6 bg-gradient-to-r from-amber-900/95 via-orange-900/95 to-amber-900/95 backdrop-blur-xl px-10 py-5 rounded-2xl shadow-2xl border-2 border-amber-600/50 z-20">
+                    <div class="flex flex-col items-center px-5 border-r border-amber-500/30">
+                        <span class="text-[10px] uppercase tracking-wider font-bold text-amber-200 mb-1">Total Distance</span>
+                        <span class="text-xl font-extrabold text-white font-display">450 km</span>
+                    </div>
+                    <div class="flex flex-col items-center px-5 border-r border-amber-500/30">
+                        <span class="text-[10px] uppercase tracking-wider font-bold text-amber-200 mb-1">Travel Time</span>
+                        <span class="text-xl font-extrabold text-white font-display">12h 30m</span>
+                    </div>
+                    <div class="flex flex-col items-center px-5">
+                        <span class="text-[10px] uppercase tracking-wider font-bold text-amber-200 mb-1">Modes</span>
+                        <div class="flex gap-2 text-amber-300">
+                            <span class="material-icons-round text-2xl bg-amber-800/50 p-1.5 rounded-lg">directions_car</span>
+                            <span class="material-icons-round text-2xl bg-amber-800/50 p-1.5 rounded-lg">train</span>
+                            <span class="material-icons-round text-2xl bg-amber-800/50 p-1.5 rounded-lg">directions_boat</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section
+        class="py-24 relative overflow-hidden bg-white dark:from-surface-dark dark:to-[#0B1221]">
+        <div class="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none">
+            <div class="absolute top-1/4 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-cyan-500/5 rounded-full blur-3xl"></div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="order-2 lg:order-1 relative">
+                    <div class="relative w-full aspect-square max-w-[500px] mx-auto">
+                        <div
+                            class="absolute inset-0 border border-primary/20 rounded-full animate-[spin_10s_linear_infinite]">
+                        </div>
+                        <div
+                            class="absolute inset-[15%] border border-cyan-400/20 rounded-full animate-[spin_15s_linear_infinite_reverse]">
+                        </div>
+                        <div
+                            class="absolute inset-[30%] border border-purple-500/20 rounded-full animate-[spin_20s_linear_infinite]">
+                        </div>
+                        <div
+                            class="absolute inset-[20%] bg-white/10 dark:bg-white/5 backdrop-blur-xl rounded-full shadow-2xl flex items-center justify-center border border-white/20">
+                            <div class="relative w-32 h-32 flex items-center justify-center">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full blur-xl opacity-50 animate-pulse">
+                                </div>
+                                <div
+                                    class="relative z-10 w-24 h-24 bg-gradient-to-br from-white to-blue-50 dark:from-surface-dark dark:to-black rounded-full flex items-center justify-center border border-blue-100 dark:border-blue-900/50 shadow-inner">
+                                    <span
+                                        class="material-icons-round text-5xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500">smart_toy</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="absolute top-[0%] left-[0%] bg-white dark:bg-surface-dark p-3 rounded-xl shadow-lg border border-gray-100 dark:border-white/10 animate-bounce"
+                            style="animation-duration: 3s;">
+                            <div class="flex items-center gap-2 mb-1">
+                                <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                                <span class="text-[10px] text-text-muted-light uppercase font-bold">Skupheon
+                                    thinking...</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="material-icons-round text-amber-500 text-sm">bolt</span>
+                                <span class="text-xs font-bold text-text-main-light dark:text-text-main-dark">Instant
+                                    Planning</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-1 lg:order-2">
+                    <div
+                        class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-100/50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 mb-6">
+                        <span class="material-icons-round text-sm text-primary">auto_awesome</span>
+                        <span class="text-xs font-bold text-primary tracking-wide uppercase">Introducing Skupheon</span>
+                    </div>
+                    <h2
+                        class="text-4xl md:text-5xl font-extrabold text-text-main-light dark:text-text-main-dark mb-6 leading-tight">
+                        Meet <span
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">Skupheon</span>,<br />Your
+                        AI Travel Assistant
+                    </h2>
+                    <p class="text-lg text-text-muted-light dark:text-text-muted-dark mb-8 leading-relaxed">
+                        Experience seamless planning powered by AI. Skupheon analyzes your preferences, budget, and
+                        travel style to curate personalized itineraries in seconds. Your entire journey, guided by
+                        intelligence.
+                    </p>
+                    <div class="flex gap-4 mb-8">
+                        <div
+                            class="flex items-center gap-1.5 bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 px-3 py-1.5 rounded-lg">
+                            <span class="material-icons-round text-green-600 text-sm">shield</span>
+                            <span class="text-xs font-bold text-green-700 dark:text-green-400">Secure &amp;
+                                Private</span>
+                        </div>
+                    </div>
+                    <div class="space-y-4 mb-10">
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mt-1">
+                                <span class="material-icons-round text-primary text-sm">check</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-text-main-light dark:text-text-main-dark text-lg">Personalized
+                                    Recommendations</h4>
+                                <p class="text-sm text-text-muted-light dark:text-text-muted-dark">Tailored suggestions
+                                    for hotels, dining, and activities based on what you love.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mt-1">
+                                <span class="material-icons-round text-primary text-sm">check</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-text-main-light dark:text-text-main-dark text-lg">Real-Time
+                                    Adjustments</h4>
+                                <p class="text-sm text-text-muted-light dark:text-text-muted-dark">Adapts your schedule
+                                    instantly if your plans change or delays occur.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('main.explore') }}"
+                        class="px-8 py-4 bg-primary hover:bg-primary-hover text-white rounded-xl font-bold shadow-lg shadow-blue-500/30 flex items-center gap-3 transition-all transform hover:-translate-y-1 group no-underline">
+                        <span>Explore Destinations</span>
+                        <span
+                            class="material-icons-round text-lg group-hover:translate-x-1 transition-transform">chat_bubble</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-24 relative overflow-hidden bg-white dark:from-background-dark dark:via-background-dark dark:to-background-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2
+                    class="text-3xl md:text-4xl font-extrabold text-text-main-light dark:text-text-main-dark tracking-tight mb-3">
+                    One Destination, One Story</h2>
+                <p class="text-text-muted-light dark:text-text-muted-dark font-medium">Authentic experiences through the
+                    eyes of fellow travelers</p>
+            </div>
+            <div
+                class="relative min-h-[500px] w-full rounded-[2.5rem] overflow-hidden group shadow-2xl flex items-center bg-surface-light dark:bg-surface-dark/50 border border-border-light dark:border-white/5">
+                <div class="absolute inset-0 w-full h-full lg:w-3/5 overflow-hidden">
+                    <img alt="Munnar Tea Plantations at Sunrise"
+                        class="w-full h-full object-cover transition-transform duration-[10s] group-hover:scale-110"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5aXaXDODnETKn5NDWekjW7nTcF3wkPqDkTMYpuc04DbRNOErLdBEoFYKrnMwmSWP0XMbelDodedwmVTuvmk8sxYZu-9h0Yn0Ut_RrIQ9ZCk3m4J-WeCMZqm_zpqPCUP8bvvfajqfLlaxi4OT5mf-Rl-BRBaAIwnAwnGsooUOLXdQ4Te1FQJQXC-wHoTBPYIv_eufy9akRS5waxa3p8lKOWAp_ENvtRTPG51uPjJUL4MbKqbUSeFYxy-veu_79dL1d67a2P8eKqCEN" />
+                    <div
+                        class="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-slate-50 dark:to-surface-dark hidden lg:block">
+                    </div>
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent lg:hidden">
+                    </div>
+                </div>
+                <div class="relative z-20 w-full lg:w-1/2 ml-auto p-8 md:p-16 lg:pr-24">
+                    <div
+                        class="inline-flex items-center gap-2 mb-6 text-primary font-bold text-xs uppercase tracking-widest bg-white/80 dark:bg-blue-900/20 px-3 py-1 rounded-full border border-blue-100 shadow-sm">
+                        <span class="material-icons-round text-sm">history_edu</span> Featured Story
+                    </div>
+                    <h3
+                        class="text-5xl md:text-7xl font-extrabold text-text-main-light dark:text-white mb-6 font-display tracking-tight leading-none">
+                        Munnar</h3>
+                    <p
+                        class="text-lg md:text-xl text-text-muted-light dark:text-gray-300 leading-relaxed mb-10 font-medium italic">
+                        "The world didn't wake up all at once. It began with a whisper of mist over the emerald waves of
+                        tea leaves, and for a moment, the only sound was the mountain breathing. In the stillness of a
+                        Munnar dawn, I didn't just see the hills; I felt them."
+                    </p>
+                    <a class="inline-flex items-center text-primary font-extrabold text-xl hover:text-primary-hover transition-colors gap-2 group/link"
+                        href="#">
+                        Explore Story <span
+                            class="material-icons-round group-hover/link:translate-x-2 transition-transform">east</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-20 bg-surface-light dark:bg-surface-dark/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div
+                class="bg-white dark:bg-surface-dark rounded-[2.5rem] p-8 md:p-16 border border-border-light dark:border-border-dark shadow-sm">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <div
+                        class="inline-block px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/20 text-primary font-bold text-xs tracking-widest uppercase mb-6">
+                        Why RoutheonSkups?
+                    </div>
+                    <h2
+                        class="text-4xl md:text-5xl font-bold mb-6 text-text-main-light dark:text-text-main-dark leading-tight">
+                        Smarter Planning, <br /> Better Journeys
+                    </h2>
+                    <p class="text-text-muted-light dark:text-text-muted-dark text-lg leading-relaxed">
+                        We combine cutting-edge AI with local expert knowledge to deliver travel guidance that is
+                        seamless, personalized, and insightful, empowering you to plan with confidence.
+                    </p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div
+                        class="group bg-surface-light dark:bg-[#15202e] p-8 rounded-2xl border border-border-light dark:border-border-dark hover:shadow-lg hover:border-primary/30 transition-all duration-300">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+                            <span class="material-icons-round text-2xl">explore</span>
+                        </div>
+                        <h4 class="font-bold text-lg text-text-main-light dark:text-text-main-dark mb-3">Smart Itinerary
+                            Builder</h4>
+                        <p class="text-sm text-text-muted-light dark:text-text-muted-dark leading-relaxed">Create
+                            detailed day-wise plans automatically tailored to your specific preferences, pace, and
+                            interests.</p>
+                    </div>
+                    <div
+                        class="group bg-surface-light dark:bg-[#15202e] p-8 rounded-2xl border border-border-light dark:border-border-dark hover:shadow-lg hover:border-primary/30 transition-all duration-300">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 mb-6 group-hover:scale-110 transition-transform">
+                            <span class="material-icons-round text-2xl">cloud_sync</span>
+                        </div>
+                        <h4 class="font-bold text-lg text-text-main-light dark:text-text-main-dark mb-3">Live Weather Insights</h4>
+                        <p class="text-sm text-text-muted-light dark:text-text-muted-dark leading-relaxed">Get destination weather forecasts integrated into planning so your itinerary adapts to season, rain, and temperature conditions.</p>
+                    </div>
+                    <div
+                        class="group bg-surface-light dark:bg-[#15202e] p-8 rounded-2xl border border-border-light dark:border-border-dark hover:shadow-lg hover:border-primary/30 transition-all duration-300">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center text-rose-500 mb-6 group-hover:scale-110 transition-transform">
+                            <span class="material-icons-round text-2xl">support_agent</span>
+                        </div>
+                        <h4 class="font-bold text-lg text-text-main-light dark:text-text-main-dark mb-3">24/7 Global
+                            Support</h4>
+                        <p class="text-sm text-text-muted-light dark:text-text-muted-dark leading-relaxed">Access
+                            real-time assistance and expert advice anytime, anywhere via chat to help guide your journey
+                            smoothly.</p>
+                    </div>
+                    <div
+                        class="group bg-surface-light dark:bg-[#15202e] p-8 rounded-2xl border border-border-light dark:border-border-dark hover:shadow-lg hover:border-primary/30 transition-all duration-300">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 mb-6 group-hover:scale-110 transition-transform">
+                            <span class="material-icons-round text-2xl">calendar_month</span>
+                        </div>
+                        <h4 class="font-bold text-lg text-text-main-light dark:text-text-main-dark mb-3">Upcoming Trips
+                        </h4>
+                        <p class="text-sm text-text-muted-light dark:text-text-muted-dark leading-relaxed">Organize all
+                            your plans, saved locations, and reminders in one accessible, easy-to-manage dashboard.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-20 bg-white dark:bg-background-dark">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <div
+                    class="inline-block px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/20 text-primary font-bold text-xs tracking-widest uppercase mb-4">
+                    Support
+                </div>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-text-main-light dark:text-text-main-dark mb-4">
+                    Frequently Asked Questions
+                </h2>
+                <p class="text-text-muted-light dark:text-text-muted-dark text-lg">
+                    Find answers to common questions about planning your journey with us.
+                </p>
+            </div>
+            <div class="space-y-4">
+                <details
+                    class="group bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-soft">
+                    <summary
+                        class="flex cursor-pointer items-center justify-between p-6 text-lg font-bold text-text-main-light dark:text-text-main-dark select-none">
+                        How does Skupheon build my itinerary?
+                        <div
+                            class="ml-4 flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 text-primary group-open:-rotate-180 transition-transform duration-300">
+                            <span class="material-icons-round">expand_more</span>
+                        </div>
+                    </summary>
+                    <div class="px-6 pb-6 text-text-muted-light dark:text-text-muted-dark leading-relaxed">
+                        Skupheon uses your destination, travel dates, budget, and interests to generate a practical
+                        day-wise plan with places to visit, pacing recommendations, and activity flow tailored to your
+                        trip style.
+                    </div>
+                </details>
+                <details
+                    class="group bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-soft">
+                    <summary
+                        class="flex cursor-pointer items-center justify-between p-6 text-lg font-bold text-text-main-light dark:text-text-main-dark select-none">
+                        Can I edit and save my generated trip plan?
+                        <div
+                            class="ml-4 flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 text-primary group-open:-rotate-180 transition-transform duration-300">
+                            <span class="material-icons-round">expand_more</span>
+                        </div>
+                    </summary>
+                    <div class="px-6 pb-6 text-text-muted-light dark:text-text-muted-dark leading-relaxed">
+                        Yes. After generating a plan, you can save it to your account, revisit it from your trips
+                        section, and adjust details like dates, preferences, and destination choices as your plan evolves.
+                    </div>
+                </details>
+                <details
+                    class="group bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-soft">
+                    <summary
+                        class="flex cursor-pointer items-center justify-between p-6 text-lg font-bold text-text-main-light dark:text-text-main-dark select-none">
+                        How do notifications and reminders work?
+                        <div
+                            class="ml-4 flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 text-primary group-open:-rotate-180 transition-transform duration-300">
+                            <span class="material-icons-round">expand_more</span>
+                        </div>
+                    </summary>
+                    <div class="px-6 pb-6 text-text-muted-light dark:text-text-muted-dark leading-relaxed">
+                        Notification settings let you turn alerts on or off and choose types such as trip alerts, AI
+                        suggestions, system updates, and seasonal recommendations. You can manage everything from your
+                        settings page.
+                    </div>
+                </details>
+                <details
+                    class="group bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-soft">
+                    <summary
+                        class="flex cursor-pointer items-center justify-between p-6 text-lg font-bold text-text-main-light dark:text-text-main-dark select-none">
+                        Does RoutheonSkups provide weather and seasonal insights?
+                        <div
+                            class="ml-4 flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 text-primary group-open:-rotate-180 transition-transform duration-300">
+                            <span class="material-icons-round">expand_more</span>
+                        </div>
+                    </summary>
+                    <div class="px-6 pb-6 text-text-muted-light dark:text-text-muted-dark leading-relaxed">
+                        Yes. The platform includes destination weather support and season-aware suggestions so you can
+                        make better decisions about what to do, when to travel, and how to structure each day comfortably.
+                    </div>
+                </details>
+                <details
+                    class="group bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-soft">
+                    <summary
+                        class="flex cursor-pointer items-center justify-between p-6 text-lg font-bold text-text-main-light dark:text-text-main-dark select-none">
+                        Is my trip data private in RoutheonSkups?
+                        <div
+                            class="ml-4 flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 text-primary group-open:-rotate-180 transition-transform duration-300">
+                            <span class="material-icons-round">expand_more</span>
+                        </div>
+                    </summary>
+                    <div class="px-6 pb-6 text-text-muted-light dark:text-text-muted-dark leading-relaxed">
+                        Your saved trips, profile preferences, and itinerary data are account-based and intended only for
+                        your planning experience. We use this information to improve personalization inside your own
+                        dashboard.
+                    </div>
+                </details>
+            </div>
+        </div>
+    </section>
+    <section class="py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div
+                class="bg-gradient-to-b from-blue-50 to-white dark:from-[#172033] dark:to-background-dark rounded-[3rem] p-12 md:p-20 text-center border border-blue-50 dark:border-blue-900/20">
+                <h2 class="text-4xl md:text-5xl font-extrabold text-text-main-light dark:text-text-main-dark mb-6">
+                    Ready to start your journey?
+                </h2>
+                <p class="text-text-muted-light dark:text-text-muted-dark text-lg mb-12 max-w-2xl mx-auto">
+                    Plan your next adventure with RoutheonSkups.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4 mb-16">
+                    <a href="{{ url_for('main.plan_trip') }}"
+                        class="px-8 py-4 bg-primary hover:bg-primary-hover text-white rounded-xl font-bold shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5 no-underline">
+                        <span>🚀</span> Get Started
+                    </a>
+                    <a href="{{ url_for('main.explore') }}"
+                        class="px-8 py-4 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-main-light dark:text-text-main-dark rounded-xl font-bold shadow-sm hover:shadow-md flex items-center justify-center gap-2 transition-all no-underline">
+                        <span>📍</span> Explore Destinations
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer class="bg-white dark:bg-background-dark pt-16 pb-8 border-t border-border-light dark:border-border-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="w-6 h-6 bg-primary rounded flex items-center justify-center text-white">
+                            <span class="material-icons-round text-sm">travel_explore</span>
+                        </div>
+                        <span class="font-bold text-lg dark:text-white">RoutheonSkups</span>
+                    </div>
+                    <p class="text-sm text-text-muted-light dark:text-text-muted-dark mb-6 leading-relaxed">
+                        Your personal assistant for discovering and planning the perfect Indian getaway. Crafted with
+                        love for travelers.
+                    </p>
+                    <div class="flex gap-4">
+                        <a class="w-10 h-10 rounded-full border border-border-light dark:border-border-dark flex items-center justify-center text-text-muted-light dark:text-text-muted-dark hover:text-primary hover:border-primary transition-all bg-white dark:bg-surface-dark"
+                            href="#">
+                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                <path
+                                    d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.791-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z">
+                                </path>
+                            </svg>
+                        </a>
+                        <a class="w-10 h-10 rounded-full border border-border-light dark:border-border-dark flex items-center justify-center text-text-muted-light dark:text-text-muted-dark hover:text-primary hover:border-primary transition-all bg-white dark:bg-surface-dark"
+                            href="#">
+                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204 013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z">
+                                </path>
+                            </svg>
+                        </a>
+                        <a class="w-10 h-10 rounded-full border border-border-light dark:border-border-dark flex items-center justify-center text-text-muted-light dark:text-text-muted-dark hover:text-primary hover:border-primary transition-all bg-white dark:bg-surface-dark"
+                            href="#">
+                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                <path
+                                    d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z">
+                                </path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-6 text-text-main-light dark:text-text-main-dark">Company</h4>
+                    <ul class="space-y-4 text-sm text-text-muted-light dark:text-text-muted-dark">
+                        <li><a class="hover:text-primary transition-colors" href="#">About Us</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Contact</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Careers</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Blog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-6 text-text-main-light dark:text-text-main-dark">Support</h4>
+                    <ul class="space-y-4 text-sm text-text-muted-light dark:text-text-muted-dark">
+                        <li><a class="hover:text-primary transition-colors" href="#">FAQs</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Safety Information</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Planning Help</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Help Center</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-6 text-text-main-light dark:text-text-main-dark">Legal</h4>
+                    <ul class="space-y-4 text-sm text-text-muted-light dark:text-text-muted-dark">
+                        <li><a class="hover:text-primary transition-colors" href="#">Terms &amp; Conditions</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="#">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-border-light dark:border-border-dark pt-8 text-center">
+                <p class="text-xs text-text-muted-light dark:text-text-muted-dark font-medium">
+                    © 2026 RoutheonSkups Destination Intelligence. Made with <span class="text-red-500">❤️</span> for India.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>RoutheonSkups - Profile Hub</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3B82F6",
+                        "primary-hover": "#2563EB",
+                        "background-light": "#FFFFFF",
+                        "surface-light": "#F8FAFC",
+                        "text-main-light": "#1E293B",
+                        "text-muted-light": "#64748B",
+                        "border-light": "#E2E8F0",
+                    },
+                    fontFamily: {
+                        display: ["'Plus Jakarta Sans'", "sans-serif"],
+                        body: ["'Plus Jakarta Sans'", "sans-serif"],
+                    },
+                    borderRadius: {
+                        'DEFAULT': '0.5rem',
+                        'xl': '1rem',
+                        '2xl': '1.5rem',
+                        '3xl': '2rem',
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'premium': '0 10px 40px -10px rgba(0, 0, 0, 0.08)',
+                    }
+                },
+            },
+        };
+    </script>
+    <style type="text/tailwindcss">
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-tab {
+            @apply bg-primary text-white shadow-lg shadow-blue-500/30;
+        }
+        .input-field {
+            @apply w-full px-5 py-4 bg-surface-light border border-border-light rounded-2xl text-text-main-light focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-300;
+        }
+        .label-style {
+            @apply block text-sm font-bold text-text-main-light mb-2 ml-1;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light text-text-main-light min-h-screen">
+    {% include 'components/navbar.html' %}
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-10 space-y-8">
+        <section
+            class="bg-white rounded-3xl border border-border-light shadow-premium p-8 md:p-12 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+            <div class="relative z-10 flex flex-col items-center text-center">
+                <div class="relative mb-6">
+                    <div
+                        class="w-32 h-32 rounded-full ring-4 ring-white shadow-xl overflow-hidden bg-surface-light flex items-center justify-center text-primary text-5xl font-bold">
+                        {% if current_user.image_url %}
+                        <img alt="{{ current_user.name }}" class="w-full h-full object-cover"
+                            src="{{ current_user.image_url }}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&q=80&w=2000'" />
+                        {% else %}
+                        {{ current_user.name[0]|upper }}
+                        {% endif %}
+                    </div>
+                </div>
+                <h1 class="text-3xl font-extrabold text-text-main-light mb-2">{{ current_user.name }}</h1>
+                <div class="mb-8"></div>
+                <div class="grid grid-cols-2 gap-12 border-t border-border-light pt-8 w-full max-w-md mx-auto">
+                    <div>
+                        <div class="text-2xl font-extrabold text-text-main-light">{{ trip_count }}</div>
+                        <div class="text-sm font-medium text-text-muted-light">Trips</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-extrabold text-text-main-light">{{ saved_count }}</div>
+                        <div class="text-sm font-medium text-text-muted-light">Saved Destinations</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <nav class="flex justify-center">
+            <div
+                class="flex flex-wrap items-center bg-surface-light p-2 rounded-3xl border border-border-light shadow-sm gap-1">
+                <a href="{{ url_for('main.profile') }}"
+                    class="active-tab px-6 py-3 rounded-2xl text-sm font-bold transition-all">PERSONAL INFO</a>
+                <a href="{{ url_for('main.my_trips') }}"
+                    class="px-6 py-3 rounded-2xl text-sm font-bold text-text-muted-light hover:text-text-main-light hover:bg-white transition-all">MY
+                    TRIPS</a>
+                <a href="{{ url_for('main.calendar') }}"
+                    class="px-6 py-3 rounded-2xl text-sm font-bold text-text-muted-light hover:text-text-main-light hover:bg-white transition-all">CALENDAR</a>
+                <a href="{{ url_for('main.settings') }}"
+                    class="px-6 py-3 rounded-2xl text-sm font-bold text-text-muted-light hover:text-text-main-light hover:bg-white transition-all">SETTINGS</a>
+                <a href="{{ url_for('main.profile_ai') }}"
+                    class="px-6 py-3 rounded-2xl text-sm font-bold text-text-muted-light hover:text-text-main-light hover:bg-white flex items-center gap-2 transition-all">
+                    <span class="material-icons-round text-lg text-primary">smart_toy</span>
+                    AI ASSISTANT
+                </a>
+            </div>
+        </nav>
+        <section class="max-w-5xl mx-auto space-y-8">
+            <form id="profile-image-upload-form" action="{{ url_for('main.upload_profile_image') }}" method="POST" enctype="multipart/form-data"></form>
+            <form id="profile-image-delete-form" action="{{ url_for('main.delete_profile_image') }}" method="POST"></form>
+            <form action="{{ url_for('main.update_profile') }}" method="POST" class="space-y-8">
+            <div class="bg-white rounded-3xl border border-border-light shadow-premium p-8 md:p-10">
+                <div class="flex items-center gap-4 mb-10 pb-6 border-b border-border-light">
+                    <span class="material-icons-round text-primary text-3xl">account_circle</span>
+                    <h2 class="text-xl font-bold">Personal Details</h2>
+                </div>
+                <div class="grid md:grid-cols-12 gap-12">
+                    <div class="md:col-span-12 grid grid-cols-1 md:grid-cols-12 gap-12">
+                        <div class="md:col-span-3 flex flex-col items-center">
+                            <div class="relative group cursor-pointer">
+                                <div
+                                    class="w-32 h-32 rounded-full overflow-hidden border-4 border-surface-light shadow-inner flex items-center justify-center text-primary text-5xl font-bold bg-white">
+                                    {% if current_user.image_url %}
+                                    <img alt="Profile" class="w-full h-full object-cover"
+                                        src="{{ current_user.image_url }}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&q=80&w=2000'" />
+                                    {% else %}
+                                    {{ current_user.name[0]|upper }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <input id="profile-image-input" name="profile_image" type="file" accept="image/*" class="hidden" form="profile-image-upload-form" />
+                            <div class="mt-4 grid grid-cols-2 gap-2 w-full max-w-[220px]">
+                                <button type="button" id="choose-profile-image-btn"
+                                    class="px-3 py-2 text-xs font-bold rounded-xl border border-border-light bg-white hover:bg-slate-50 transition-all">
+                                    {{ 'Edit' if current_user.image_url else 'Upload' }}
+                                </button>
+                                <button type="button" id="upload-profile-image-btn"
+                                    class="px-3 py-2 text-xs font-bold rounded-xl bg-primary text-white hover:bg-primary-hover transition-all">
+                                    Save
+                                </button>
+                                {% if current_user.image_url %}
+                                <button type="button" id="view-profile-image-btn"
+                                    class="px-3 py-2 text-xs font-bold rounded-xl border border-border-light bg-white hover:bg-slate-50 transition-all text-center">
+                                    View
+                                </button>
+                                <button type="submit" form="profile-image-delete-form"
+                                    class="px-3 py-2 text-xs font-bold rounded-xl border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 transition-all"
+                                    onclick="return confirm('Delete profile image?');">
+                                    Delete
+                                </button>
+                                {% else %}
+                                <div class="px-3 py-2 text-xs font-bold rounded-xl border border-border-light bg-slate-50 text-text-muted-light text-center">View</div>
+                                <div class="px-3 py-2 text-xs font-bold rounded-xl border border-border-light bg-slate-50 text-text-muted-light text-center">Delete</div>
+                                {% endif %}
+                            </div>
+                            <p class="text-xs font-medium text-text-muted-light mt-3 text-center">Any image size is supported</p>
+                        </div>
+                        <div class="md:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="col-span-1">
+                                <label class="label-style">Full Name</label>
+                                <input class="input-field" name="name" placeholder="Enter full name" type="text"
+                                    value="{{ current_user.name }}" required />
+                            </div>
+                            <div class="col-span-1">
+                                <label class="label-style">Email Address</label>
+                                <input class="input-field" placeholder="Enter email" type="email"
+                                    value="{{ current_user.email }}" readonly />
+                            </div>
+                            <div class="col-span-1">
+                                <label class="label-style">Phone Number</label>
+                                <input class="input-field" name="phone" placeholder="Enter phone number" type="tel"
+                                    value="{{ current_user.phone or '' }}" />
+                            </div>
+                            <div class="col-span-1">
+                                <label class="label-style">Home City</label>
+                                <input class="input-field" name="city" placeholder="Enter city" type="text"
+                                    value="{{ current_user.city or '' }}" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-3xl border border-border-light shadow-premium p-8 md:p-10">
+                <div class="flex items-center gap-4 mb-10 pb-6 border-b border-border-light">
+                    <span class="material-icons-round text-primary text-3xl">explore</span>
+                    <h2 class="text-xl font-bold">Travel Preferences</h2>
+                </div>
+                <div class="space-y-6">
+                    <div>
+                        <label class="label-style">Preferred Travel Style</label>
+                        <div class="flex flex-wrap gap-3 mt-4" id="preferences-container">
+                            {% set default_prefs = ['Adventure', 'Heritage', 'Luxury', 'Solo Travel', 'Nature & Eco', 'Culinary', 'Wellness', 'Spiritual', 'Family'] %}
+                            
+                            {% for pref in default_prefs %}
+                            <label class="cursor-pointer group">
+                                <input type="checkbox" name="preferences" value="{{ pref }}" class="peer hidden" {% if pref in user_prefs %}checked{% endif %}>
+                                <div class="px-5 py-2.5 rounded-full text-sm font-bold transition-all flex items-center gap-2 select-none
+                                    peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-md peer-checked:shadow-blue-500/20 peer-checked:border-primary
+                                    peer-focus-visible:ring-2 peer-focus-visible:ring-primary/50
+                                    bg-surface-light text-text-muted-light border border-border-light
+                                    hover:bg-primary/5 hover:text-primary">
+                                    {{ pref }}
+                                    <span class="material-icons-round text-sm hidden peer-checked:block">check</span>
+                                </div>
+                            </label>
+                            {% endfor %}
+                            
+                            {% for pref in user_prefs %}
+                                {% if pref not in default_prefs %}
+                                <label class="cursor-pointer group">
+                                    <input type="checkbox" name="preferences" value="{{ pref }}" class="peer hidden" checked>
+                                    <div class="px-5 py-2.5 rounded-full text-sm font-bold transition-all flex items-center gap-2 select-none
+                                        peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-md peer-checked:shadow-blue-500/20 peer-checked:border-primary
+                                        peer-focus-visible:ring-2 peer-focus-visible:ring-primary/50
+                                        bg-surface-light text-text-muted-light border border-border-light
+                                        hover:bg-primary/5 hover:text-primary">
+                                        {{ pref }}
+                                        <span class="material-icons-round text-sm hidden peer-checked:block">check</span>
+                                    </div>
+                                </label>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            <button type="button" id="add-style-btn"
+                                class="px-10 py-2.5 rounded-full border-2 border-dashed border-border-light text-text-muted-light text-sm font-bold hover:border-primary hover:text-primary transition-all flex items-center gap-2">
+                                <span class="material-icons-round text-sm">add</span> Add Style
+                            </button>
+                        </div>
+
+                        <script>
+                            document.getElementById('add-style-btn').addEventListener('click', function() {
+                                const newStyle = prompt("Enter a custom travel style:");
+                                if (newStyle && newStyle.trim() !== '') {
+                                    const prefStr = newStyle.trim();
+                                    const container = document.getElementById('preferences-container');
+                                    const btn = document.getElementById('add-style-btn');
+
+                                    // Prevent duplicates (case-insensitive).
+                                    const existingValues = Array.from(container.querySelectorAll('input[name="preferences"]'))
+                                        .map((el) => (el.value || '').trim().toLowerCase());
+                                    if (existingValues.includes(prefStr.toLowerCase())) {
+                                        alert('This travel style already exists.');
+                                        return;
+                                    }
+                                    
+                                    const newLabel = document.createElement('label');
+                                    newLabel.className = 'cursor-pointer group';
+
+                                    const input = document.createElement('input');
+                                    input.type = 'checkbox';
+                                    input.name = 'preferences';
+                                    input.value = prefStr;
+                                    input.className = 'peer hidden';
+                                    input.checked = true;
+
+                                    const chip = document.createElement('div');
+                                    chip.className = 'px-5 py-2.5 rounded-full text-sm font-bold transition-all flex items-center gap-2 select-none peer-checked:bg-primary peer-checked:text-white peer-checked:shadow-md peer-checked:shadow-blue-500/20 peer-checked:border-primary peer-focus-visible:ring-2 peer-focus-visible:ring-primary/50 bg-surface-light text-text-muted-light border border-border-light hover:bg-primary/5 hover:text-primary';
+                                    chip.append(document.createTextNode(prefStr));
+
+                                    const checkIcon = document.createElement('span');
+                                    checkIcon.className = 'material-icons-round text-sm hidden peer-checked:block';
+                                    checkIcon.innerText = 'check';
+                                    chip.appendChild(checkIcon);
+
+                                    newLabel.appendChild(input);
+                                    newLabel.appendChild(chip);
+                                    container.insertBefore(newLabel, btn);
+                                }
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-4 mt-6">
+                <button type="submit"
+                    class="px-12 py-4 bg-primary text-white font-bold rounded-2xl shadow-xl shadow-blue-500/30 hover:bg-primary-hover transition-all transform hover:-translate-y-1">
+                    Save Changes
+                </button>
+            </div>
+            </form>
+            <div class="bg-white rounded-3xl border border-border-light shadow-premium p-8 md:p-10">
+                <div class="flex items-center justify-between mb-10 pb-6 border-b border-border-light">
+                    <div class="flex items-center gap-4">
+                        <span class="material-icons-round text-primary text-3xl">bookmark</span>
+                        <h2 class="text-xl font-bold">Saved Destinations</h2>
+                    </div>
+                    <span class="text-sm font-bold text-primary">{{ saved_count }} Total</span>
+                </div>
+
+                {% if saved_destinations %}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {% for dest in saved_destinations %}
+                    <div
+                        class="group bg-surface-light rounded-2xl border border-border-light overflow-hidden transition-all hover:shadow-soft hover:border-primary/30">
+                        <div class="aspect-video relative overflow-hidden">
+                            <img src="{{ dest.image_url or 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1' }}"
+                                alt="{{ dest.name }}"
+                                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                            <div
+                                class="absolute top-3 right-3 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-[10px] font-bold text-primary uppercase">
+                                {{ dest.tag or 'Destination' }}
+                            </div>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="font-bold text-text-main-light mb-1">{{ dest.name }}</h3>
+                            <p class="text-xs text-text-muted-light line-clamp-2 mb-4">{{ dest.description }}</p>
+                            <a href="{{ url_for('main.destination_info', name=dest.name) }}"
+                                class="flex items-center justify-center w-full py-2.5 bg-white border border-border-light rounded-xl text-xs font-bold text-text-main-light hover:bg-primary hover:text-white hover:border-primary transition-all">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-12 bg-surface-light rounded-2xl border-2 border-dashed border-border-light">
+                    <span class="material-icons-round text-slate-300 text-5xl mb-4">bookmark_border</span>
+                    <p class="text-text-muted-light font-medium">You haven't saved any itineraries yet.</p>
+                    <a href="{{ url_for('main.explore') }}"
+                        class="inline-block mt-4 text-primary font-bold hover:underline">Explore Destinations</a>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="flex justify-end gap-4 pt-6 pb-20">
+                <a href="{{ url_for('main.logout') }}"
+                    class="px-8 py-4 bg-red-50 text-red-500 font-bold rounded-2xl hover:bg-red-500 hover:text-white border border-red-100 transition-all flex items-center gap-2 no-underline">
+                    <span class="material-icons-round text-lg">logout</span>
+                    Logout
+                </a>
+
+            </div>
+        </section>
+    </main>
+    {% include 'components/footer.html' %}
+    <div id="profile-image-modal" class="hidden fixed inset-0 z-[1200] bg-black/60 backdrop-blur-sm items-center justify-center p-4">
+        <div class="relative w-full max-w-3xl bg-white rounded-2xl shadow-2xl overflow-hidden">
+            <button type="button" id="close-profile-image-modal-btn"
+                class="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 border border-border-light text-text-main-light hover:bg-slate-50 flex items-center justify-center">
+                <span class="material-icons-round text-lg">close</span>
+            </button>
+            {% if current_user.image_url %}
+            <img id="profile-image-modal-img" src="{{ current_user.image_url }}" alt="Profile image preview" class="w-full max-h-[80vh] object-contain bg-slate-50" />
+            {% else %}
+            <div class="p-10 text-center text-text-muted-light font-semibold">No profile image available.</div>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+        (function () {
+            const chooseBtn = document.getElementById('choose-profile-image-btn');
+            const uploadBtn = document.getElementById('upload-profile-image-btn');
+            const fileInput = document.getElementById('profile-image-input');
+            const uploadForm = document.getElementById('profile-image-upload-form');
+            const viewBtn = document.getElementById('view-profile-image-btn');
+            const modal = document.getElementById('profile-image-modal');
+            const closeModalBtn = document.getElementById('close-profile-image-modal-btn');
+
+            if (!chooseBtn || !uploadBtn || !fileInput || !uploadForm) return;
+
+            chooseBtn.addEventListener('click', function () {
+                fileInput.click();
+            });
+
+            uploadBtn.addEventListener('click', function () {
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    alert('Please choose an image first.');
+                    return;
+                }
+                uploadForm.submit();
+            });
+
+            fileInput.addEventListener('change', function () {
+                const hasFile = fileInput.files && fileInput.files.length > 0;
+                uploadBtn.textContent = hasFile ? 'Upload' : 'Save';
+            });
+
+            if (viewBtn && modal) {
+                viewBtn.addEventListener('click', function () {
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                });
+            }
+
+            if (closeModalBtn && modal) {
+                closeModalBtn.addEventListener('click', function () {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                });
+            }
+
+            if (modal) {
+                modal.addEventListener('click', function (e) {
+                    if (e.target === modal) {
+                        modal.classList.add('hidden');
+                        modal.classList.remove('flex');
+                    }
+                });
+            }
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }
+            });
+        })();
+    </script>
+
+</body>
+
+</html>

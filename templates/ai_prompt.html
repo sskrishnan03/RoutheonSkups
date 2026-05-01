@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>AI Trip Planner - Prompt | RoutheonSkups</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3B82F6",
+                        "primary-hover": "#2563EB",
+                        "background-light": "#FFFFFF",
+                        "background-dark": "#0F172A",
+                        "surface-light": "#F8FAFC",
+                        "surface-dark": "#1E293B",
+                        "text-main-light": "#1E293B",
+                        "text-main-dark": "#F1F5F9",
+                        "text-muted-light": "#64748B",
+                        "text-muted-dark": "#94A3B8",
+                        "border-light": "#E2E8F0",
+                        "border-dark": "#334155",
+                    },
+                    fontFamily: {
+                        display: ["'Plus Jakarta Sans'", "sans-serif"],
+                        body: ["'Plus Jakarta Sans'", "sans-serif"],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'hover': '0 20px 40px -10px rgba(0, 0, 0, 0.08)',
+                        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
+                    }
+                },
+            },
+        };
+    </script>
+    <style type="text/tailwindcss">
+        @layer base {
+            html { scroll-behavior: smooth; }
+            body { @apply font-body bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark transition-colors duration-300; }
+        }
+        .glass-card {
+            @apply bg-white/80 dark:bg-surface-dark/80 backdrop-blur-xl border border-white/20 dark:border-white/5;
+        }
+        .ai-loading-gradient {
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), transparent);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite linear;
+        }
+        @keyframes loading {
+            from { background-position: 200% 0; }
+            to { background-position: -200% 0; }
+        }
+    </style>
+</head>
+
+<body class="antialiased min-h-screen flex flex-col">
+    <!-- Navbar (Simplified version of plan_a_trip) -->
+    {% include 'components/navbar.html' %}
+    <main class="flex-grow flex flex-col items-center pt-32 pb-16 px-4 relative overflow-hidden">
+        <!-- Background Elements -->
+        <div class="absolute inset-0 z-0 pointer-events-none">
+            <div
+                class="absolute top-1/4 -right-20 w-[600px] h-[600px] bg-blue-50/40 dark:bg-blue-900/10 blur-[120px] rounded-full">
+            </div>
+            <div
+                class="absolute bottom-1/4 -left-20 w-[500px] h-[500px] bg-cyan-50/40 dark:bg-cyan-900/10 blur-[120px] rounded-full">
+            </div>
+        </div>
+
+        <div class="relative z-10 w-full max-w-4xl mx-auto">
+            <div id="prompt-step" class="text-center transition-all duration-500">
+                <span
+                    class="inline-block px-4 py-1.5 mb-6 text-xs font-bold tracking-widest uppercase bg-cyan-50 text-cyan-600 dark:bg-cyan-900/30 dark:text-cyan-400 rounded-full">
+                    AI Prompt Experience
+                </span>
+                <h1
+                    class="text-3xl md:text-5xl font-extrabold text-text-main-light dark:text-white tracking-tight mb-8">
+                    Describe your dream trip
+                </h1>
+
+                <div class="glass-card p-8 rounded-3xl shadow-soft">
+                    <textarea id="trip-prompt" rows="5"
+                        class="w-full bg-surface-light dark:bg-black/20 border-border-light dark:border-white/10 rounded-2xl p-6 text-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all resize-none"
+                        placeholder="e.g., A 5-day spiritual journey through Varanasi and Bodhgaya with early morning boat rides and temple visits..."></textarea>
+
+                    <div class="mt-8 flex flex-col md:flex-row gap-4 items-center justify-between">
+                        <div class="flex gap-2 flex-wrap justify-center">
+                            <button
+                                onclick="fillPreset('A weekend gateway to Ooty focusing on tea gardens and lake views')"
+                                class="px-4 py-2 rounded-full bg-blue-50 dark:bg-white/5 text-primary dark:text-blue-400 text-xs font-bold hover:bg-primary hover:text-white transition-all">🌿
+                                Weekend Ooty</button>
+                            <button
+                                onclick="fillPreset('10-day adventure in Spiti valley, focusing on monasteries and high altitude treks')"
+                                class="px-4 py-2 rounded-full bg-blue-50 dark:bg-white/5 text-primary dark:text-blue-400 text-xs font-bold hover:bg-primary hover:text-white transition-all">🏔️
+                                Spiti Adventure</button>
+                        </div>
+                        <button id="generate-btn" type="button" onclick="generatePlan()"
+                            class="w-full md:w-auto px-10 py-4 bg-primary hover:bg-primary-hover text-white rounded-2xl font-bold text-lg shadow-lg shadow-blue-500/30 transition-all flex items-center justify-center gap-3">
+                            <span id="btn-text">Generate Plan</span>
+                            <span class="material-icons-round animate-spin hidden" id="loading-icon">autorenew</span>
+                            <span class="material-icons-round" id="sparkle-icon">auto_awesome</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section (Hidden Initially) -->
+            <div id="results-step" class="hidden opacity-0 transform translate-y-8 transition-all duration-700 mt-12">
+                <div class="glass-card p-10 rounded-3xl shadow-hover border-primary/20">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+                        <div>
+                            <h2 id="res-destination"
+                                class="text-3xl font-extrabold text-text-main-light dark:text-white mb-2"></h2>
+                            <p id="res-tagline" class="text-primary font-semibold italic"></p>
+                        </div>
+                        <div
+                            class="px-6 py-3 bg-blue-50 dark:bg-blue-900/40 rounded-2xl border border-blue-100 dark:border-blue-800">
+                            <span id="res-duration" class="text-xl font-bold text-primary"></span>
+                        </div>
+                    </div>
+
+                    <div id="itinerary-grid"
+                        class="grid gap-12 border-l-2 border-blue-100 dark:border-blue-900 pl-8 ml-4 relative">
+                        <!-- Days injected here -->
+                    </div>
+
+                    <div
+                        class="mt-16 p-8 bg-surface-light dark:bg-white/5 rounded-3xl border border-border-light dark:border-white/5">
+                        <h3 class="flex items-center gap-3 text-lg font-bold mb-6">
+                            <span class="material-icons-round text-primary">tips_and_updates</span>
+                            Skupheon's Travel Tips
+                        </h3>
+                        <ul id="res-tips"
+                            class="grid md:grid-cols-3 gap-6 text-sm text-text-muted-light dark:text-text-muted-dark">
+                            <!-- Tips injected here -->
+                        </ul>
+                    </div>
+
+                    <div class="mt-12 flex justify-center gap-4">
+                        <button onclick="resetFlow()"
+                            class="px-8 py-4 bg-surface-light dark:bg-white/10 text-text-main-light dark:text-white rounded-2xl font-bold transition-all hover:bg-gray-200 dark:hover:bg-white/20">Try
+                            New Prompt</button>
+                        <button id="save-itinerary-btn"
+                            class="px-8 py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-blue-500/30 hover:bg-primary-hover transition-all flex items-center gap-2">
+                            <span class="material-icons-round">bookmark</span>
+                            Save Itinerary
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let generatedPlan = null;
+
+        function fillPreset(text) {
+            document.getElementById('trip-prompt').value = text;
+        }
+
+        let isGeneratingPlan = false;
+        async function generatePlan() {
+            if (isGeneratingPlan) return;
+            const prompt = (document.getElementById('trip-prompt').value || '').trim();
+            if (!prompt) {
+                alert("Please enter your trip details first.");
+                return;
+            }
+
+            const btn = document.getElementById('generate-btn');
+            const btnText = document.getElementById('btn-text');
+            const loadingIcon = document.getElementById('loading-icon');
+            const sparkleIcon = document.getElementById('sparkle-icon');
+
+            // UI State
+            isGeneratingPlan = true;
+            btn.disabled = true;
+            btnText.innerText = "Crafting Journey...";
+            loadingIcon.classList.remove('hidden');
+            sparkleIcon.classList.add('hidden');
+
+            try {
+                const response = await fetch('/api/ai-plan', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt })
+                });
+
+                const data = await response.json();
+                if (data.error) throw new Error(data.error);
+
+                renderResults(data);
+            } catch (error) {
+                console.error(error);
+                alert("Failed to generate plan. Please try again.");
+            } finally {
+                isGeneratingPlan = false;
+                btn.disabled = false;
+                btnText.innerText = "Generate Plan";
+                loadingIcon.classList.add('hidden');
+                sparkleIcon.classList.remove('hidden');
+            }
+        }
+
+        function renderResults(data) {
+            generatedPlan = data;
+            document.getElementById('res-destination').innerText = data.destination;
+            document.getElementById('res-tagline').innerText = data.tagline;
+            document.getElementById('res-duration').innerText = data.duration;
+
+            const grid = document.getElementById('itinerary-grid');
+            grid.innerHTML = '';
+
+            data.itinerary.forEach(day => {
+                const dayEl = document.createElement('div');
+                dayEl.className = 'relative';
+                dayEl.innerHTML = `
+                    <div class="absolute -left-[45px] top-0 w-8 h-8 rounded-full bg-primary border-4 border-white dark:border-surface-dark shadow-md flex items-center justify-center text-white text-[10px] font-bold">
+                        ${day.day}
+                    </div>
+                    <div class="mb-2">
+                        <span class="text-xs font-bold uppercase tracking-widest text-primary">Day ${day.day}</span>
+                        <h3 class="text-xl font-bold text-text-main-light dark:text-white mt-1">${day.theme}</h3>
+                    </div>
+                    <div class="space-y-6 mt-6">
+                        ${day.activities.map(act => `
+                            <div class="flex gap-6 group">
+                                <div class="w-12 h-12 shrink-0 rounded-2xl bg-blue-50 dark:bg-white/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                                    <span class="material-icons-round">${act.icon || 'explore'}</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] font-black uppercase tracking-tighter text-text-muted-light group-hover:text-primary">${act.time}</span>
+                                    <h4 class="font-bold text-text-main-light dark:text-white">${act.name}</h4>
+                                    <p class="text-sm text-text-muted-light dark:text-muted-dark mt-1 leading-relaxed">${act.description}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                grid.appendChild(dayEl);
+            });
+
+            const tips = document.getElementById('res-tips');
+            tips.innerHTML = data.travel_tips.map(tip => `
+                <li class="flex items-start gap-3">
+                    <span class="material-icons-round text-cyan-500 text-sm mt-0.5">check_circle</span>
+                    <span>${tip}</span>
+                </li>
+            `).join('');
+
+            // Transition
+            document.getElementById('prompt-step').classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                document.getElementById('prompt-step').classList.add('hidden');
+                const res = document.getElementById('results-step');
+                res.classList.remove('hidden');
+                setTimeout(() => {
+                    res.classList.remove('opacity-0', 'translate-y-8');
+                }, 50);
+            }, 500);
+        }
+
+        function resetFlow() {
+            generatedPlan = null;
+            const res = document.getElementById('results-step');
+            res.classList.add('opacity-0', 'translate-y-8');
+            setTimeout(() => {
+                res.classList.add('hidden');
+                const prompt = document.getElementById('prompt-step');
+                prompt.classList.remove('hidden');
+                setTimeout(() => {
+                    prompt.classList.remove('opacity-0', 'pointer-events-none');
+                }, 50);
+            }, 500);
+        }
+
+        document.getElementById('save-itinerary-btn')?.addEventListener('click', async function () {
+            if (!generatedPlan || !generatedPlan.itinerary) {
+                alert('Generate a plan first.');
+                return;
+            }
+
+            const btn = this;
+            const original = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-icons-round animate-spin">autorenew</span>Saving...';
+
+            try {
+                const response = await fetch('/api/save-itinerary', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        destination: generatedPlan.destination || 'Magic Trip',
+                        budget: generatedPlan.budget || 'Medium',
+                        interests: generatedPlan.interests || 'General',
+                        itinerary: generatedPlan.itinerary || [],
+                        weather: {},
+                        chat: []
+                    })
+                });
+                const result = await response.json();
+                if (!result.success) throw new Error(result.error || 'Save failed');
+                btn.innerHTML = '<span class="material-icons-round">check_circle</span>Saved';
+            } catch (err) {
+                console.error('Save itinerary failed:', err);
+                alert('Failed to save itinerary.');
+                btn.innerHTML = original;
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

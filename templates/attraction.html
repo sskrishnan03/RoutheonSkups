@@ -1,0 +1,459 @@
+<html class="scroll-smooth" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Munnar Details - 5-Tab Navigation Hub Layout</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3B82F6",
+                        "sage-tint": "#F1F5F2",
+                        "cream-tint": "#FAF9F6",
+                        "brand-green": "#E8F3EB",
+                    },
+                    fontFamily: {
+                        sans: ["Plus Jakarta Sans", "sans-serif"],
+                    },
+                    borderRadius: {
+                        'custom': '2rem',
+                        'card': '2rem',
+                    },
+                    boxShadow: {
+                        'premium': '0 20px 50px -12px rgba(0, 0, 0, 0.05)',
+                        'hover-lift': '0 30px 60px -15px rgba(0, 0, 0, 0.12)',
+                    }
+                },
+            },
+        };
+    </script>
+    <style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply bg-white text-slate-800 antialiased font-sans;
+            }
+        }
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(24px);
+        }
+        .hero-gradient {
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%);
+        }
+        .active-tab {
+            @apply text-emerald-600 relative after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-8 after:h-0.5 after:bg-emerald-600;
+        }
+        .attraction-card {
+            @apply bg-white rounded-card overflow-hidden transition-all duration-500 cursor-pointer border border-slate-100;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.04);
+        }
+        .attraction-card:hover {
+            @apply -translate-y-2 shadow-hover-lift border-emerald-100;
+        }
+        .map-container {
+            background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuANbluyXiNWlbgEi5zs4Btj7yQi8rTQJQdXa8LlPCPt_GIlbVMq3cDVW7hjPaZ1aJXKZs47CRgLDoOrfVH3H8fUmVsPJOcBsEuYGR0P7v9dcyTSg1wUQUbRQuR-nis7cCHwCgWrzE8Vdv4ZSuM--VyP0L8YsA4QJOu0r-pHlqZNpDpLmBZfG8iR9kspNHgiYw1kOH0W2rTFPflJQ06vnT_Y_vvdJ1XwZQOe1t2eNplF2yF9NfqfC-6unx80rgQEuNi0HVpt34_F2HOF');
+            background-size: cover;
+            background-position: center;
+        }
+        .map-pin {
+            @apply absolute w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-white border-4 border-white shadow-xl transition-transform hover:scale-110 cursor-pointer;
+        }
+        .pill-dark {
+            @apply bg-black/30 backdrop-blur-md border border-white/20 text-white px-5 py-2.5 rounded-full flex items-center gap-2 hover:bg-black/50 transition-all text-sm font-bold;
+        }
+    </style>
+</head>
+
+<body class="bg-white">
+    {% include 'components/navbar.html' %}
+    <main class="pt-24">
+        <div class="max-w-7xl mx-auto px-6">
+            <section class="relative h-[650px] w-full rounded-custom overflow-hidden mb-12 shadow-2xl">
+                <img alt="Munnar Tea Plantations" class="absolute inset-0 w-full h-full object-cover"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLKtXxuYjbFfOEc40HZ_bJ9CE78Whqg0arv2Xv-UWpf65IDRpopY29tMsftfowAiO_BaKvcgTR8JVbdqNZZr9euynw2YR9VX_h2Eesz2Z0W2YzyfmTWYDm614oHnLkmh_Kxbp1Vlwzz7eT9KadPzuPJ7ZDmL4WUIBE907oT3zedLSe86ZfyFXVQWLPKq0wK4L7fwcWelsgTAujSvllrK7zXuycXkzOH5cWGXkoSnEw9KaxoW0Ra5tRRcClc6tS8GpVtAnu92XlDprU" />
+                <div class="absolute inset-0 hero-gradient"></div>
+                <div class="absolute top-28 left-10 md:left-12">
+                    <div
+                        class="bg-white/20 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full flex items-center gap-2 text-white/95">
+                        <span class="material-symbols-outlined text-sm">location_on</span>
+                        <span class="text-[10px] font-black uppercase tracking-[0.2em]">INDIA • 10.0889° N, 77.0595°
+                            E</span>
+                    </div>
+                </div>
+                <div class="absolute bottom-12 left-12 max-w-2xl">
+                    <h1 class="text-7xl font-extrabold text-white tracking-tighter mb-4 leading-tight">Munnar, Kerala
+                    </h1>
+                    <p class="text-xl text-white/90 font-medium leading-relaxed max-w-lg">Discover the emerald of the
+                        Western Ghats through its misty tea gardens, serene dams, and protected wildlife sanctuaries.
+                    </p>
+                </div>
+                <div class="absolute bottom-12 right-12 flex items-center gap-3">
+                    <button class="pill-dark">
+                        <span class="material-symbols-outlined text-lg">bookmark</span>
+                        Save
+                    </button>
+                    <button class="pill-dark !px-3">
+                        <span class="material-symbols-outlined text-lg">share</span>
+                    </button>
+                    <button class="pill-dark">
+                        <span class="material-symbols-outlined text-lg">auto_awesome</span>
+                        Story
+                    </button>
+                </div>
+            </section>
+            <nav class="mb-12 flex justify-center">
+                <div class="bg-white rounded-full p-2 shadow-premium flex items-center gap-1 border border-slate-50">
+                    <button
+                        class="px-8 py-4 text-xs font-extrabold uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors">Overview</button>
+                    <button
+                        class="px-8 py-4 text-xs font-extrabold uppercase tracking-widest active-tab">Attractions</button>
+                    <button
+                        class="px-8 py-4 text-xs font-extrabold uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors">Itinerary</button>
+                    <button
+                        class="px-8 py-4 text-xs font-extrabold uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors">Photos
+                        &amp; Gallery</button>
+                    <button
+                        class="px-8 py-4 text-xs font-extrabold uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm">smart_toy</span>
+                        AI Chatbot
+                    </button>
+                </div>
+            </nav>
+            <div class="max-w-xl mx-auto mb-16 relative">
+                <div class="relative group">
+                    <span
+                        class="material-symbols-outlined absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-600 transition-colors">search</span>
+                    <input
+                        class="w-full bg-white border border-slate-100 rounded-full py-5 pl-16 pr-24 text-base font-medium shadow-premium focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500/20 transition-all placeholder-slate-400"
+                        placeholder="Search attractions in Munnar..." type="text" />
+                    <div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                        <select onchange="filterByCategory(this.value)"
+                            class="px-4 py-2 bg-slate-50 border-none rounded-full text-xs font-bold text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 transition-colors focus:ring-0 cursor-pointer">
+                            <option value="all">All Categories</option>
+                            <option value="National Park">National Park</option>
+                            <option value="Dam & Lake">Dam & Lake</option>
+                            <option value="Museum">Museum</option>
+                            <option value="Nature">Nature</option>
+                            <option value="Viewpoint">Viewpoint</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
+                <div class="attraction-card group">
+                    <div class="relative h-64">
+                        <img alt="Eravikulam National Park"
+                            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOwxmETi82xms55CUKW1NcsNjXvmhVvuSRnD6Nk1ldRhJE1-FE6W_l58lN8OygmfZI0qSisuB5L9xKLT1q1afXrU8fceSUKfxh61wYnVY4cOndLqa63SND93DBcQEp7sUlIqVDlmT8FXe2WprVl8gOFQEpYnnUVKDKJWVLo3F7isdyTtMis9WU0OmHL54ziUQsEaN9h1gATVZmYU5tivSHmTILxBdFGT1S3-SxlUgGRhCfnfLRZzfPBvWLvxItUcUPKdC_tgjUeRfp" />
+                        <div
+                            class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+                            National Park</div>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-800">Eravikulam National Park</h3>
+                                <p class="text-slate-500 text-xs flex items-center gap-1 mt-1">
+                                    <span class="material-symbols-outlined text-xs text-emerald-600">location_on</span>
+                                    Rajamalai, Munnar
+                                </p>
+                            </div>
+                        </div>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-6 line-clamp-2">Home to the endangered
+                            Nilgiri Tahr, this park offers breathtaking views of the rolling hills.</p>
+                        <div class="flex items-center justify-between border-t border-slate-50 pt-6">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">₹125+</span>
+                            <button
+                                class="flex items-center gap-2 text-emerald-600 font-bold text-sm group-hover:gap-3 transition-all">
+                                Explore Details
+                                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="attraction-card group">
+                    <div class="relative h-64">
+                        <img alt="Mattupetty Dam"
+                            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCG8Cu6kJfiv5mZLE9W5ymPJ7BWMSmg3X8mfqz3JLCyWU3SVSjs_yNvJ_625sTqztKn4sdG3qvbJbU9baxgkVQFjSOnsvd1Te-9uR8K07tXQxdmPKxTMgZSEXePuJFAeP10whTcZP1TH_KTEa92WVROYiQYwo8T4c_U8QPl3omJHnn5XJid8ZqWvG7lLQLVQCNW23bdyCIeWlbrCdDO8Gwtz39agI9VBIFmdfqWc9xJnx-3ihOAbVDW9i855OCa2E9hW_yrgWT6lJHv" />
+                        <div
+                            class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+                            Dam &amp; Lake</div>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-800">Mattupetty Dam</h3>
+                                <p class="text-slate-500 text-xs flex items-center gap-1 mt-1">
+                                    <span class="material-symbols-outlined text-xs text-emerald-600">location_on</span>
+                                    Mattupetty, Munnar
+                                </p>
+                            </div>
+                        </div>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-6 line-clamp-2">A beautiful storage masonry
+                            dam and lake where you can enjoy boating and watch wild elephants.</p>
+                        <div class="flex items-center justify-between border-t border-slate-50 pt-6">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Entry: Free</span>
+                            <button
+                                class="flex items-center gap-2 text-emerald-600 font-bold text-sm group-hover:gap-3 transition-all">
+                                Explore Details
+                                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="attraction-card group">
+                    <div class="relative h-64">
+                        <img alt="Tea Museum"
+                            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBogIElRMShJ-ZexrKT3WMeqDiIHM0EGsB4HXG5TmKArBxtQgAL1YBZTPPKd5dTWEbPZ4MILiGyriymJFRmF50lezHcgHMkLeCkRlCytTK4zjRPxJd7LEnk2bomIuW-iHyzOuYqoyyBxmB1hSjcJ8oe4N4sqiX0luQVL3R8Szkigi_48n1XRPd4Q2I-dQ1Eend2t2u7gXzXUIE3dN1_DK-LGhOT37ma0U8aKNQ5pMgsS5vdax2IHsYlMqemjZPpxcoLdtumTp61ooFF" />
+                        <div
+                            class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+                            Museum</div>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-800">Tata Tea Museum</h3>
+                                <p class="text-slate-500 text-xs flex items-center gap-1 mt-1">
+                                    <span class="material-symbols-outlined text-xs text-emerald-600">location_on</span>
+                                    Nallathanni Estate
+                                </p>
+                            </div>
+                        </div>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-6 line-clamp-2">Trace the history of tea in
+                            Munnar, from the colonial era to the present-day production methods.</p>
+                        <div class="flex items-center justify-between border-t border-slate-50 pt-6">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Entry: ₹75</span>
+                            <button
+                                class="flex items-center gap-2 text-emerald-600 font-bold text-sm group-hover:gap-3 transition-all">
+                                Explore Details
+                                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="attraction-card group">
+                    <div class="relative h-64">
+                        <img alt="Attukad Waterfalls"
+                            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgU42KJN1rOav_i7eVKo99CjDZ5_tEHb1IoHJu0vp5z1PoMmKGCFQZZA78IdgtDBCI9M32NnKqv05-h9xthAvsVWqwTvGSY-qMdLo85XVyZRDP93GiI5lHtl8rw2ZLWpV8dR50OH1YFRDEgsHur5hlUejYL_bMq9TkYhPoCdVWf1CypnOwShqRAyFgPJRf6BFZINQZOKQB872ZwyES2MijOgGOkXvBOldfVPunL-lmXzbDobjkqz9uCl1Y9PYjuAcP0WiDMYiln98h" />
+                        <div
+                            class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+                            Nature</div>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-800">Attukad Waterfalls</h3>
+                                <p class="text-slate-500 text-xs flex items-center gap-1 mt-1">
+                                    <span class="material-symbols-outlined text-xs text-emerald-600">location_on</span>
+                                    Near Pallivasal
+                                </p>
+                            </div>
+                        </div>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-6 line-clamp-2">A scenic waterfall
+                            surrounded by dense jungles and hills, perfect for hiking.</p>
+                        <div class="flex items-center justify-between border-t border-slate-50 pt-6">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Entry: Free</span>
+                            <button
+                                class="flex items-center gap-2 text-emerald-600 font-bold text-sm group-hover:gap-3 transition-all">
+                                Explore Details
+                                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="attraction-card group">
+                    <div class="relative h-64">
+                        <img alt="Pothamedu Viewpoint"
+                            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9fVxxNOYteCaQC7fo7B3UZ32c5uaLkQs84EhyuBiqjxPhri3F_dNVibIdVrWa8t6qfeqNspCvbablBHGPIdy4kTabfo_YpuQg7STzYUbeM6B96zNZe9Kco0iMKpk2dp43bvIdRdnTjR3D09MMWeTk_Xn_ThsjJiy6rWOZzQkJe6ydiShyZstB03F4sfgdpaD3TFcv8glDTusRlrb2ItDi9D-8itK1agYWZwwYuCne1ORzEN7OkdwQqrxAxaNt-CJsNAnmwZa4WJ9d" />
+                        <div
+                            class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+                            Viewpoint</div>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-800">Pothamedu Viewpoint</h3>
+                                <p class="text-slate-500 text-xs flex items-center gap-1 mt-1">
+                                    <span class="material-symbols-outlined text-xs text-emerald-600">location_on</span>
+                                    Pothamedu, Munnar
+                                </p>
+                            </div>
+                        </div>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-6 line-clamp-2">Offers a panoramic view of
+                            Munnar, adorned with tea, coffee, and cardamom plantations.</p>
+                        <div class="flex items-center justify-between border-t border-slate-50 pt-6">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Entry: Free</span>
+                            <button
+                                class="flex items-center gap-2 text-emerald-600 font-bold text-sm group-hover:gap-3 transition-all">
+                                Explore Details
+                                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <section class="mb-24">
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h2 class="text-3xl font-extrabold tracking-tight text-slate-800">Interactive Landmark Map</h2>
+                        <p class="text-slate-500 font-medium">Navigate through the majestic peaks and plantations of
+                            Munnar</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button
+                            class="px-6 py-2 bg-emerald-600 text-white rounded-full text-xs font-bold shadow-lg shadow-emerald-200">View
+                            Fullscreen</button>
+                    </div>
+                </div>
+                <div
+                    class="relative w-full h-[600px] rounded-custom overflow-hidden shadow-premium border border-slate-100">
+                    <div class="absolute inset-0 map-container"></div>
+                    <div class="map-pin top-[25%] left-[35%] group" title="Eravikulam National Park">
+                        <span class="material-symbols-outlined text-lg">park</span>
+                        <div
+                            class="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 bg-white px-4 py-2 rounded-2xl shadow-2xl opacity-0 group-hover:opacity-100 transition-all pointer-events-none whitespace-nowrap border border-slate-100">
+                            <span class="text-xs font-bold text-slate-800">Eravikulam National Park</span>
+                        </div>
+                    </div>
+                    <div class="map-pin top-[48%] left-[65%] group" title="Mattupetty Dam">
+                        <span class="material-symbols-outlined text-lg">water_drop</span>
+                        <div
+                            class="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 bg-white px-4 py-2 rounded-2xl shadow-2xl opacity-0 group-hover:opacity-100 transition-all pointer-events-none whitespace-nowrap border border-slate-100">
+                            <span class="text-xs font-bold text-slate-800">Mattupetty Dam</span>
+                        </div>
+                    </div>
+                    <div class="map-pin top-[58%] left-[28%] group" title="Tea Museum">
+                        <span class="material-symbols-outlined text-lg">museum</span>
+                        <div
+                            class="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 bg-white px-4 py-2 rounded-2xl shadow-2xl opacity-0 group-hover:opacity-100 transition-all pointer-events-none whitespace-nowrap border border-slate-100">
+                            <span class="text-xs font-bold text-slate-800">Tata Tea Museum</span>
+                        </div>
+                    </div>
+                    <div class="map-pin top-[72%] left-[55%] group" title="Attukad Waterfalls">
+                        <span class="material-symbols-outlined text-lg">waves</span>
+                        <div
+                            class="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 bg-white px-4 py-2 rounded-2xl shadow-2xl opacity-0 group-hover:opacity-100 transition-all pointer-events-none whitespace-nowrap border border-slate-100">
+                            <span class="text-xs font-bold text-slate-800">Attukad Waterfalls</span>
+                        </div>
+                    </div>
+                    <div class="map-pin top-[40%] left-[80%] group" title="Pothamedu Viewpoint">
+                        <span class="material-symbols-outlined text-lg">visibility</span>
+                        <div
+                            class="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 bg-white px-4 py-2 rounded-2xl shadow-2xl opacity-0 group-hover:opacity-100 transition-all pointer-events-none whitespace-nowrap border border-slate-100">
+                            <span class="text-xs font-bold text-slate-800">Pothamedu Viewpoint</span>
+                        </div>
+                    </div>
+                    <div class="absolute bottom-10 right-10 flex flex-col gap-3">
+                        <button
+                            class="w-14 h-14 bg-white rounded-2xl shadow-2xl flex items-center justify-center text-slate-600 font-bold text-2xl hover:bg-emerald-50 transition-colors border border-slate-50">+</button>
+                        <button
+                            class="w-14 h-14 bg-white rounded-2xl shadow-2xl flex items-center justify-center text-slate-600 font-bold text-2xl hover:bg-emerald-50 transition-colors border border-slate-50">−</button>
+                    </div>
+                    <div class="absolute top-8 left-8 flex items-center gap-3">
+                        <button
+                            class="px-5 py-3 bg-white shadow-2xl rounded-2xl flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-widest text-slate-800 border-2 border-emerald-500">
+                            <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                            Satellite
+                        </button>
+                        <button
+                            class="px-5 py-3 bg-white/80 backdrop-blur shadow-2xl rounded-2xl flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-widest text-slate-600 hover:bg-white transition-all">
+                            <span class="w-3 h-3 rounded-full bg-slate-200"></span>
+                            Terrain
+                        </button>
+                    </div>
+                    <div
+                        class="absolute bottom-8 left-8 p-6 bg-white/90 backdrop-blur rounded-card shadow-2xl border border-white max-w-xs">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="material-symbols-outlined text-emerald-600 text-lg">info</span>
+                            <h4 class="font-bold text-slate-800">Map Discovery</h4>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed font-medium">Click on any pin to view route
+                            details or save the landmark to your itinerary.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    <footer class="border-t border-slate-100 pt-20 pb-10 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
+                            <span class="material-symbols-outlined text-white text-lg">travel_explore</span>
+                        </div>
+                        <span class="text-xl font-extrabold tracking-tight">RoutheonSkups</span>
+                    </div>
+                    <p class="text-slate-500 leading-relaxed text-sm">Designing the future of travel discovery. Explore,
+                        plan, and experience the world like never before with 4K destination intelligence.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-6 text-slate-800">Explore</h4>
+                    <ul class="space-y-4 text-slate-500 text-sm font-medium">
+                        <li><a class="hover:text-emerald-600 transition-colors" href="#">Destinations</a></li>
+                        <li><a class="hover:text-emerald-600 transition-colors" href="#">Plan a Trip</a></li>
+                        <li><a class="hover:text-emerald-600 transition-colors" href="#">Explore</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-6 text-slate-800">Resources</h4>
+                    <ul class="space-y-4 text-slate-500 text-sm font-medium">
+                        <li><a class="hover:text-emerald-600 transition-colors" href="#">Travel Guides</a></li>
+                        <li><a class="hover:text-emerald-600 transition-colors" href="#">Safety Tips</a></li>
+                        <li><a class="hover:text-emerald-600 transition-colors" href="#">AI Assistant</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-6 text-slate-800">Intelligence</h4>
+                    <p class="text-xs text-slate-500 mb-4 font-medium uppercase tracking-widest">Get Weekly Insights</p>
+                    <div class="flex gap-2">
+                        <input
+                            class="bg-slate-50 border-slate-100 rounded-xl w-full text-sm focus:ring-emerald-500 focus:border-emerald-500 p-3"
+                            placeholder="Email" type="email" />
+                        <button
+                            class="p-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-100">
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-slate-100 gap-4">
+            <div class="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-slate-100 gap-4">
+                <p class="text-sm text-slate-400 font-medium">© 2026 RoutheonSkups Destination Intelligence. Made with <span class="text-red-500">❤️</span> for India.</p>
+            </div>
+            </div>
+        </div>
+    </footer>
+    <script>
+        function filterByCategory(category) {
+            const cards = document.querySelectorAll('.attraction-card:not(.bg-slate-50\\/30)');
+            cards.forEach(card => {
+                const tagEl = card.querySelector('.absolute.top-4.right-4');
+                if (!tagEl) return;
+                const tag = tagEl.textContent.trim();
+                if (category === 'all' || tag === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

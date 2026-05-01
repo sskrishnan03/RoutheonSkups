@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Plan a Trip - Step 4 | RoutheonSkups</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3B82F6",
+                        "primary-hover": "#2563EB",
+                        "background-light": "#FFFFFF",
+                        "background-dark": "#0F172A",
+                        "surface-light": "#F8FAFC",
+                        "surface-dark": "#1E293B",
+                        "text-main-light": "#1E293B",
+                        "text-main-dark": "#F1F5F9",
+                        "text-muted-light": "#64748B",
+                        "text-muted-dark": "#94A3B8",
+                        "border-light": "#E2E8F0",
+                        "border-dark": "#334155",
+                    },
+                    fontFamily: {
+                        display: ["'Plus Jakarta Sans'", "sans-serif"],
+                        body: ["'Plus Jakarta Sans'", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        'xl': '1rem',
+                        '2xl': '1.5rem',
+                        '3xl': '2rem',
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'hover': '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.01)',
+                        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
+                    }
+                },
+            },
+        };
+    </script>
+    <style type="text/tailwindcss">
+        @layer base {
+            html { scroll-behavior: smooth; }
+            body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .stepper-btn {
+            @apply w-10 h-10 rounded-full border border-border-light dark:border-border-dark flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all duration-200;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-surface-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark min-h-screen flex flex-col transition-colors duration-300">
+    {% include 'components/navbar.html' %}
+    <main class="flex-grow flex flex-col items-center justify-start pt-40 pb-24 px-4 relative">
+        <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+            <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px]"></div>
+            <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-cyan-500/5 rounded-full blur-[80px]"></div>
+        </div>
+        <div class="relative z-10 flex items-center gap-3 mb-12">
+            <div class="flex items-center gap-2">
+                <div
+                    class="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center text-sm font-bold shadow-sm">
+                    <span class="material-icons-round text-sm">check</span>
+                </div>
+                <div class="h-1 w-12 bg-green-200 dark:bg-green-900/30 rounded-full"></div>
+                <div
+                    class="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center text-sm font-bold shadow-sm">
+                    <span class="material-icons-round text-sm">check</span>
+                </div>
+                <div class="h-1 w-12 bg-green-200 dark:bg-green-900/30 rounded-full"></div>
+                <div
+                    class="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center text-sm font-bold shadow-sm">
+                    <span class="material-icons-round text-sm">check</span>
+                </div>
+                <div class="h-1 w-12 bg-primary rounded-full"></div>
+                <div
+                    class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold shadow-lg shadow-blue-500/30">
+                    4</div>
+            </div>
+        </div>
+        <div class="relative z-10 text-center max-w-2xl mx-auto mb-10">
+            <h1
+                class="text-4xl md:text-5xl font-extrabold text-text-main-light dark:text-text-main-dark mb-4 tracking-tight">
+                Who is joining you and what is your budget?
+            </h1>
+            <p class="text-text-muted-light dark:text-text-muted-dark text-lg font-medium">
+                Let's customize your journey based on your travel party and spending style.
+            </p>
+        </div>
+        <div
+            class="relative z-10 w-full max-w-4xl bg-white dark:bg-surface-dark rounded-3xl p-8 md:p-12 shadow-soft border border-border-light dark:border-border-dark">
+            <div class="space-y-12">
+                <section>
+                    <div class="flex items-center gap-3 mb-8">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-primary">
+                            <span class="material-icons-round">group</span>
+                        </div>
+                        <h2 class="text-2xl font-bold text-text-main-light dark:text-text-main-dark">Travelers</h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div
+                            class="bg-surface-light dark:bg-[#15202e] p-6 rounded-2xl border border-border-light dark:border-border-dark flex items-center justify-between">
+                            <div>
+                                <h3 class="font-bold text-text-main-light dark:text-text-main-dark text-lg">Adults</h3>
+                                <p class="text-sm text-text-muted-light dark:text-text-muted-dark font-medium">Ages 13
+                                    or above</p>
+                            </div>
+                            <div
+                                class="flex items-center gap-5 bg-white dark:bg-surface-dark p-2 rounded-full border border-border-light dark:border-border-dark shadow-sm">
+                                <button class="stepper-btn" id="adults-minus">
+                                    <span class="material-icons-round text-lg">remove</span>
+                                </button>
+                                <span id="adults-count"
+                                    class="text-xl font-extrabold text-text-main-light dark:text-text-main-dark min-w-[1.5rem] text-center">2</span>
+                                <button class="stepper-btn" id="adults-plus">
+                                    <span class="material-icons-round text-lg">add</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-[#15202e] p-6 rounded-2xl border border-border-light dark:border-border-dark flex items-center justify-between">
+                            <div>
+                                <h3 class="font-bold text-text-main-light dark:text-text-main-dark text-lg">Children
+                                </h3>
+                                <p class="text-sm text-text-muted-light dark:text-text-muted-dark font-medium">Ages 2 –
+                                    12</p>
+                            </div>
+                            <div
+                                class="flex items-center gap-5 bg-white dark:bg-surface-dark p-2 rounded-full border border-border-light dark:border-border-dark shadow-sm">
+                                <button class="stepper-btn" id="children-minus">
+                                    <span class="material-icons-round text-lg">remove</span>
+                                </button>
+                                <span id="children-count"
+                                    class="text-xl font-extrabold text-text-main-light dark:text-text-main-dark min-w-[1.5rem] text-center">0</span>
+                                <button class="stepper-btn" id="children-plus">
+                                    <span class="material-icons-round text-lg">add</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <div class="flex items-center gap-3 mb-8">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center text-purple-600">
+                            <span class="material-icons-round text-2xl">account_balance_wallet</span>
+                        </div>
+                        <h2 class="text-2xl font-bold text-text-main-light dark:text-text-main-dark">Budget Level</h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="budget-options">
+                        <button data-budget="Economy"
+                            class="budget-btn group text-left bg-white dark:bg-[#15202e] border-2 border-border-light dark:border-border-dark rounded-3xl p-6 transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary/20 relative overflow-hidden">
+                            <div class="absolute top-4 right-4 hidden check-icon">
+                                <div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                                    <span class="material-icons-round text-white text-[16px]">check</span>
+                                </div>
+                            </div>
+                            <div class="mb-4 text-emerald-500">
+                                <span class="material-icons-round text-3xl">payments</span>
+                            </div>
+                            <h3 class="font-bold text-xl text-text-main-light dark:text-text-main-dark mb-2">Economy
+                            </h3>
+                            <p class="text-sm text-text-muted-light dark:text-text-muted-dark leading-relaxed">Focus on
+                                value, street food, hostels, and local transport.</p>
+                            <div class="mt-4 flex gap-1">
+                                <span class="material-icons-round text-emerald-500 text-sm">currency_rupee</span>
+                                <span
+                                    class="material-icons-round text-gray-300 dark:text-gray-700 text-sm">currency_rupee</span>
+                                <span
+                                    class="material-icons-round text-gray-300 dark:text-gray-700 text-sm">currency_rupee</span>
+                            </div>
+                        </button>
+                        <button data-budget="Comfort"
+                            class="budget-btn group text-left bg-blue-50/50 dark:bg-blue-900/10 border-2 border-primary rounded-3xl p-6 transition-all duration-300 shadow-md relative overflow-hidden">
+                            <div class="absolute top-4 right-4 check-icon">
+                                <div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                                    <span class="material-icons-round text-white text-[16px]">check</span>
+                                </div>
+                            </div>
+                            <div class="mb-4 text-primary">
+                                <span class="material-icons-round text-3xl">king_bed</span>
+                            </div>
+                            <h3 class="font-bold text-xl text-text-main-light dark:text-text-main-dark mb-2">Comfort
+                            </h3>
+                            <p class="text-sm text-text-muted-light dark:text-text-muted-dark leading-relaxed">Balanced
+                                trip with 3-4 star hotels, varied dining, and convenience.</p>
+                            <div class="mt-4 flex gap-1">
+                                <span class="material-icons-round text-primary text-sm">currency_rupee</span>
+                                <span class="material-icons-round text-primary text-sm">currency_rupee</span>
+                                <span
+                                    class="material-icons-round text-gray-300 dark:text-gray-700 text-sm">currency_rupee</span>
+                            </div>
+                        </button>
+                        <button data-budget="Luxury"
+                            class="budget-btn group text-left bg-white dark:bg-[#15202e] border-2 border-border-light dark:border-border-dark rounded-3xl p-6 transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary/20 relative overflow-hidden">
+                            <div class="absolute top-4 right-4 hidden check-icon">
+                                <div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                                    <span class="material-icons-round text-white text-[16px]">check</span>
+                                </div>
+                            </div>
+                            <div class="mb-4 text-amber-500">
+                                <span class="material-icons-round text-3xl">diamond</span>
+                            </div>
+                            <h3 class="font-bold text-xl text-text-main-light dark:text-text-main-dark mb-2">Luxury</h3>
+                            <p class="text-sm text-text-muted-light dark:text-text-muted-dark leading-relaxed">High-end
+                                experiences, 5-star stays, and private transfers.</p>
+                            <div class="mt-4 flex gap-1">
+                                <span class="material-icons-round text-amber-500 text-sm">currency_rupee</span>
+                                <span class="material-icons-round text-amber-500 text-sm">currency_rupee</span>
+                                <span class="material-icons-round text-amber-500 text-sm">currency_rupee</span>
+                            </div>
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </div>
+        <div class="relative z-10 w-full max-w-4xl mt-10 flex items-center justify-between">
+            <button onclick="history.back()"
+                class="px-8 py-3.5 border border-border-light dark:border-border-dark bg-white dark:bg-surface-dark text-text-main-light dark:text-text-main-dark rounded-full font-bold shadow-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-all flex items-center gap-2">
+                <span class="material-icons-round text-lg">arrow_back</span> Back
+            </button>
+            <button id="generate-itinerary-btn"
+                class="px-10 py-4 bg-primary hover:bg-primary-hover text-white rounded-full font-extrabold shadow-lg shadow-blue-500/30 transition-all transform hover:-translate-y-1 flex items-center gap-3 group">
+                <span>Generate Itinerary</span>
+                <span
+                    class="material-symbols-outlined font-bold group-hover:translate-x-1 transition-transform">auto_awesome</span>
+            </button>
+        </div>
+    </main>
+    <footer class="bg-white dark:bg-background-dark py-8 border-t border-border-light dark:border-border-dark mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-xs text-text-muted-light dark:text-text-muted-dark uppercase tracking-widest font-bold">
+                Step 4 of 4 • Plan Your Journey
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let adults = 2;
+            let children = 0;
+            let selectedBudget = 'Comfort';
+
+            const adultsCountEl = document.getElementById('adults-count');
+            const childrenCountEl = document.getElementById('children-count');
+
+            document.getElementById('adults-minus').addEventListener('click', () => {
+                if (adults > 1) { adults--; adultsCountEl.innerText = adults; }
+            });
+            document.getElementById('adults-plus').addEventListener('click', () => {
+                adults++; adultsCountEl.innerText = adults;
+            });
+
+            document.getElementById('children-minus').addEventListener('click', () => {
+                if (children > 0) { children--; childrenCountEl.innerText = children; }
+            });
+            document.getElementById('children-plus').addEventListener('click', () => {
+                children++; childrenCountEl.innerText = children;
+            });
+
+            const budgetBtns = document.querySelectorAll('.budget-btn');
+            budgetBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    // Reset all
+                    budgetBtns.forEach(b => {
+                        b.className = "budget-btn group text-left bg-white dark:bg-[#15202e] border-2 border-border-light dark:border-border-dark rounded-3xl p-6 transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary/20 relative overflow-hidden";
+                        b.querySelector('.check-icon').classList.add('hidden');
+                    });
+
+                    // Set active
+                    const targetBtn = e.currentTarget;
+                    targetBtn.className = "budget-btn group text-left bg-blue-50/50 dark:bg-blue-900/10 border-2 border-primary rounded-3xl p-6 transition-all duration-300 shadow-md relative overflow-hidden";
+                    targetBtn.querySelector('.check-icon').classList.remove('hidden');
+
+                    selectedBudget = targetBtn.getAttribute('data-budget');
+                });
+            });
+
+            document.getElementById('generate-itinerary-btn').addEventListener('click', () => {
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.set('adults', adults);
+                urlParams.set('children', children);
+                urlParams.set('budget', selectedBudget);
+
+                // Navigate to the AI prompt page with full data
+                window.location.href = "{{ url_for('main.ai_prompt') }}?" + urlParams.toString();
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Plan a Trip - AI Prompt | RoutheonSkups</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3B82F6",
+                        "primary-hover": "#2563EB",
+                        "background-light": "#FFFFFF",
+                        "background-dark": "#0F172A",
+                        "surface-light": "#F8FAFC",
+                        "surface-dark": "#1E293B",
+                        "text-main-light": "#1E293B",
+                        "text-main-dark": "#F1F5F9",
+                        "text-muted-light": "#64748B",
+                        "text-muted-dark": "#94A3B8",
+                        "border-light": "#E2E8F0",
+                        "border-dark": "#334155",
+                    },
+                    fontFamily: {
+                        display: ["'Plus Jakarta Sans'", "sans-serif"],
+                        body: ["'Plus Jakarta Sans'", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        'xl': '1rem',
+                        '2xl': '1.5rem',
+                        '3xl': '2rem',
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'hover': '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.01)',
+                        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
+                        'prompt': '0 20px 50px -12px rgba(59, 130, 246, 0.12)',
+                    }
+                },
+            },
+        };
+    </script>
+    <style type="text/tailwindcss">
+        @layer base {
+            html { scroll-behavior: smooth; }
+            body { @apply font-body bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark transition-colors duration-300; }
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #CBD5E1; border-radius: 20px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .prompt-textarea:focus {
+            @apply ring-4 ring-blue-500/10 border-blue-400 outline-none transition-all duration-300;
+        }
+        .preset-chip {
+            @apply px-4 py-2.5 rounded-full border border-border-light dark:border-border-dark text-sm font-medium text-text-muted-light dark:text-text-muted-dark hover:border-primary hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200 cursor-pointer whitespace-nowrap;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+    {% include 'components/navbar.html' %}
+    <main class="flex-grow relative pt-32 pb-24 overflow-hidden">
+        <div class="absolute inset-0 z-0 pointer-events-none">
+            <div
+                class="absolute top-0 right-0 w-[50%] h-[50%] bg-blue-50/50 dark:bg-blue-900/5 blur-[120px] rounded-full">
+            </div>
+            <div
+                class="absolute bottom-0 left-0 w-[40%] h-[40%] bg-purple-50/50 dark:bg-purple-900/5 blur-[120px] rounded-full">
+            </div>
+        </div>
+        <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <div
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-xs font-bold mb-6">
+                    <span class="material-symbols-outlined text-sm">auto_awesome</span>
+                    AI-POWERED PLANNING
+                </div>
+                <h1
+                    class="text-4xl md:text-5xl font-extrabold text-text-main-light dark:text-white tracking-tight mb-4">
+                    Tell Skupheon about your dream trip
+                </h1>
+                <p class="text-text-muted-light dark:text-text-muted-dark text-lg max-w-2xl mx-auto">
+                    Include your destination, duration, companions, and any specific interests.
+                </p>
+            </div>
+            <div class="max-w-3xl mx-auto">
+                <div class="relative mb-8 text-left" id="prompt-step">
+                    <textarea id="trip-prompt"
+                        class="prompt-textarea w-full h-48 md:h-64 p-8 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-2xl text-lg text-text-main-light dark:text-white placeholder:text-text-muted-light/50 dark:placeholder:text-text-muted-dark/50 shadow-soft resize-none custom-scrollbar"
+                        placeholder="e.g., A 5-day adventure in Himachal for a group of 4, focusing on trekking and local culture..."></textarea>
+                    <div
+                        class="absolute bottom-6 right-6 flex items-center gap-2 text-text-muted-light dark:text-text-muted-dark text-sm">
+                        <span class="material-symbols-outlined text-base">info</span>
+                        Minimum 20 characters
+                    </div>
+                </div>
+                <div class="flex justify-center mb-16">
+                    <button id="generate-btn" type="button" onclick="generatePlan()"
+                        class="px-10 py-5 bg-primary hover:bg-primary-hover text-white rounded-full font-extrabold shadow-lg shadow-blue-500/30 transition-all transform hover:-translate-y-1 flex items-center gap-3 group text-lg">
+                        <span class="material-icons-round animate-spin hidden" id="loading-icon">autorenew</span>
+                        <span class="material-symbols-outlined group-hover:rotate-12 transition-transform"
+                            id="sparkle-icon">auto_awesome</span>
+                        <span id="btn-text">Generate Itinerary</span>
+                    </button>
+                </div>
+                <div class="space-y-6">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="h-px flex-grow bg-gradient-to-r from-transparent via-border-light dark:via-border-dark to-transparent">
+                        </div>
+                        <h2
+                            class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark tracking-[0.2em] uppercase">
+                            Presets &amp; Inspiration</h2>
+                        <div
+                            class="h-px flex-grow bg-gradient-to-r from-transparent via-border-light dark:via-border-dark to-transparent">
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap justify-center gap-3">
+                        {% for preset in inspiration_prompts %}
+                        <button type="button" class="preset-chip preset-trigger" data-prompt="{{ preset }}">
+                            {{ preset }}
+                        </button>
+                        {% endfor %}
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+        <div class="fixed bottom-12 left-12 z-20">
+            <button
+                class="px-6 py-3 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-main-light dark:text-white rounded-xl font-bold shadow-soft hover:shadow-hover transition-all flex items-center gap-2 group">
+                <span
+                    class="material-icons-round text-lg group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                Back
+            </button>
+        </div>
+    </main>
+    <footer
+        class="bg-white dark:bg-background-dark pt-16 pb-8 border-t border-border-light dark:border-border-dark mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-xs text-text-muted-light dark:text-text-muted-dark">
+                © 2026 RoutheonSkups. All rights reserved. Made with <span class="text-red-500">❤️</span> for India.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        function fillPreset(text) {
+            const promptEl = document.getElementById('trip-prompt');
+            promptEl.value = text;
+            promptEl.focus();
+            promptEl.setSelectionRange(promptEl.value.length, promptEl.value.length);
+            promptEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.preset-trigger').forEach((trigger) => {
+                trigger.addEventListener('click', () => {
+                    fillPreset(trigger.dataset.prompt || '');
+                });
+            });
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const destination = urlParams.get('destination');
+            const startDate = urlParams.get('start_date');
+            const endDate = urlParams.get('end_date');
+            const adults = urlParams.get('adults');
+            const children = urlParams.get('children');
+            const budget = urlParams.get('budget');
+            const styles = urlParams.get('styles');
+
+            if (destination && startDate && endDate && adults && budget) {
+                let promptTxt = `A trip to ${destination} from ${startDate} to ${endDate} for ${adults} adults`;
+                if (children && parseInt(children) > 0) {
+                    promptTxt += ` and ${children} children`;
+                }
+                promptTxt += `, with a ${budget.toLowerCase()} budget.`;
+                if (styles) {
+                    promptTxt += ` Focus on these travel styles: ${styles.split(',').join(', ')}.`;
+                } else {
+                    promptTxt += ` Focus on local culture, key attractions, and food recommendations.`;
+                }
+
+                fillPreset(promptTxt);
+            }
+        });
+
+        let isGeneratingPlan = false;
+        async function generatePlan() {
+            if (isGeneratingPlan) return;
+            const prompt = (document.getElementById('trip-prompt').value || '').trim();
+            if (!prompt) {
+                alert("Please enter your trip details first.");
+                return;
+            }
+
+            const btn = document.getElementById('generate-btn');
+            const btnText = document.getElementById('btn-text');
+            const loadingIcon = document.getElementById('loading-icon');
+            const sparkleIcon = document.getElementById('sparkle-icon');
+
+            // UI State
+            isGeneratingPlan = true;
+            btn.disabled = true;
+            btnText.innerText = "Crafting Journey...";
+            loadingIcon.classList.remove('hidden');
+            sparkleIcon.classList.add('hidden');
+
+            try {
+                const response = await fetch('/api/ai-plan', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt })
+                });
+
+                const data = await response.json();
+                if (data.error) throw new Error(data.error);
+
+                // Add metadata from URL params to the data object before saving
+                const urlParams = new URLSearchParams(window.location.search);
+                data.destination = urlParams.get('destination') || data.destination;
+                data.start_date = urlParams.get('start_date');
+                data.end_date = urlParams.get('end_date');
+                data.adults = urlParams.get('adults');
+                data.children = urlParams.get('children');
+                data.budget = urlParams.get('budget');
+                data.interests = urlParams.get('styles');
+
+                sessionStorage.setItem('ai_trip_data', JSON.stringify(data));
+                window.location.href = "{{ url_for('main.plan_trip_step4') }}";
+            } catch (error) {
+                console.error(error);
+                alert("Failed to generate plan. Please try again.");
+            } finally {
+                isGeneratingPlan = false;
+                btn.disabled = false;
+                btnText.innerText = "Generate Itinerary";
+                loadingIcon.classList.add('hidden');
+                sparkleIcon.classList.remove('hidden');
+            }
+        }
+
+
+    </script>
+</body>
+
+</html>

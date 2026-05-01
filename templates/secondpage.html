@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RoutheonSkups</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+body {
+  color: #1a1e26;
+}
+h1,
+.rotating-word,
+.subtext,
+.subtext p {
+  color: #ffffff;
+}
+
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 0 20px;
+}
+
+/* HERO WITH BACKGROUND */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-image: url("{{ url_for('static', filename='img/secondpage.jpeg') }}");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+/* Dark overlay for readability */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 0;
+}
+
+/* Keep content above overlay */
+.hero-inner {
+  text-align: center;
+  padding: 80px 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* Badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 12px 28px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  color: #1a1e26;
+  text-decoration: none;
+}
+
+.badge:hover {
+  background: #f1f5f9;
+}
+
+/* Heading */
+h1 {
+  font-size: clamp(40px, 6vw, 65px);
+  font-weight: 800;
+  line-height: 1.05;
+  margin-top: 40px;
+  letter-spacing: -2px;
+}
+
+h1 {
+  text-shadow:
+    0 4px 10px rgba(0,0,0,0.6),
+    0 8px 25px rgba(0,0,0,0.6);
+}
+
+.rotating-word {
+  text-shadow:
+    0 4px 10px rgba(0,0,0,0.6),
+    0 8px 25px rgba(0,0,0,0.6);
+}
+
+.subtext p {
+  text-shadow:
+    0 3px 8px rgba(0,0,0,0.7);
+}
+
+.rotating-wrapper {
+  position: relative;
+  height: 1.2em;
+  overflow: hidden;
+}
+
+.rotating-word {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  opacity: 0;
+  transform: translateY(120%);
+  transition: all 0.6s cubic-bezier(.22,.61,.36,1);
+}
+
+.rotating-word.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Description */
+.subtext {
+  margin-top: 20px;
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.subtext p:first-child {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.subtext p:last-child {
+  margin-top: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+/* Buttons */
+.buttons {
+  margin-top: 50px;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  min-width: 220px;
+  height: 56px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.btn-outline {
+  background: white;
+  border: 1px solid #e2e8f0;
+  color: #000;
+}
+
+.btn-outline:hover {
+  background: #f8fafc;
+}
+
+.btn-primary {
+  background: #1a1e26;
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: #2d333d;
+}
+
+/* Entrance animations */
+.hero-inner .badge,
+.hero-inner h1,
+.hero-inner .subtext,
+.hero-inner .buttons {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeUp 0.8s ease forwards;
+}
+
+.hero-inner .badge { animation-delay: 0.1s; }
+.hero-inner h1 { animation-delay: 0.3s; }
+.hero-inner .subtext { animation-delay: 0.5s; }
+.hero-inner .buttons { animation-delay: 0.7s; }
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="hero">
+  <div class="container hero-inner">
+
+    <a href="{{ url_for('main.home') }}" class="badge">
+      Explore RoutheonSkups →
+    </a>
+
+    <h1>
+      Explore. Discover. Connect.
+      <div class="rotating-wrapper">
+        <div class="rotating-word active">discovered</div>
+        <div class="rotating-word">explained</div>
+        <div class="rotating-word">mapped</div>
+        <div class="rotating-word">clear</div>
+        <div class="rotating-word">known</div>
+      </div>
+    </h1>
+    <div class="subtext">
+      <p>Discover places through clarity and structure.</p>
+      <p>
+        RoutheonSkups reveals routes, paths, and connections that help you truly understand every place.
+      </p>
+    </div>
+
+    <div class="buttons">
+      <a href="{{ url_for('main.home') }}" class="btn btn-outline">
+        Start Discovering
+      </a>
+
+      <a href="{{ url_for('main.login') }}" class="btn btn-primary">
+        Sign In for free
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const words = document.querySelectorAll(".rotating-word");
+let current = 0;
+
+setInterval(() => {
+  words[current].classList.remove("active");
+  current = (current + 1) % words.length;
+  words[current].classList.add("active");
+}, 2000);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>RoutheonSkups - AI-Powered Travel Hub</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3B82F6",
+                        "primary-hover": "#2563EB",
+                        "background-light": "#FFFFFF",
+                        "background-dark": "#0F172A",
+                        "surface-light": "#F8FAFC",
+                        "surface-dark": "#1E293B",
+                        "text-main-light": "#1E293B",
+                        "text-main-dark": "#F1F5F9",
+                        "text-muted-light": "#64748B",
+                        "text-muted-dark": "#94A3B8",
+                        "border-light": "#E2E8F0",
+                        "border-dark": "#334155",
+                    },
+                    fontFamily: {
+                        display: ["'Plus Jakarta Sans'", "sans-serif"],
+                        body: ["'Plus Jakarta Sans'", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        'xl': '1rem',
+                        '2xl': '1.5rem',
+                        '3xl': '2rem',
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'hover': '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.01)',
+                        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
+                    }
+                },
+            },
+        };
+    </script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #CBD5E1;
+            border-radius: 20px;
+        }
+
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #475569;
+        }
+
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .dark .glassmorphism {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: 1000;
+            }
+        }
+
+        .map-texture {
+            mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+        }
+
+        details>summary {
+            list-style: none;
+        }
+
+        details>summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details[open] summary~* {
+            animation: sweep .3s ease-in-out;
+        }
+
+        @keyframes sweep {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px)
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark transition-colors duration-300">
+    {% include 'components/navbar.html' %}
+    <section class="relative pt-40 pb-20 overflow-hidden">
+        <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+            <div
+                class="absolute -top-[30%] -right-[10%] w-[70%] h-[100%] rounded-full bg-gradient-to-br from-blue-100/40 via-purple-100/30 to-transparent dark:from-blue-900/10 dark:via-purple-900/10 blur-[80px]">
+            </div>
+            <div
+                class="absolute top-[20%] -left-[10%] w-[50%] h-[80%] rounded-full bg-gradient-to-tr from-cyan-100/40 via-blue-50/20 to-transparent dark:from-cyan-900/10 dark:via-blue-900/5 blur-[60px]">
+            </div>
+            <svg class="absolute bottom-0 left-0 w-full h-[300px] text-gray-50/50 dark:text-slate-800/20"
+                preserveAspectRatio="none" viewBox="0 0 1440 320">
+                <path
+                    d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,197.3C1248,171,1344,149,1392,138.7L1440,128V320H1392C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320H0Z"
+                    fill="currentColor" fill-opacity="1"></path>
+            </svg>
+        </div>
+        <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
+            <div
+                class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/50 dark:bg-white/5 backdrop-blur-sm border border-blue-100 dark:border-blue-800 mb-8 shadow-sm">
+                <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+                <span class="text-xs font-semibold text-primary tracking-wide uppercase">Discover India's
+                    Treasures</span>
+            </div>
+            <h1
+                class="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 text-text-main-light dark:text-text-main-dark drop-shadow-sm">
+                Discover Your Next <br />
+                <span
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-500 animate-[pulse_4s_infinite]">Journey</span>
+            </h1>
+            <p
+                class="text-lg md:text-xl text-text-muted-light dark:text-text-muted-dark mb-10 max-w-2xl mx-auto leading-relaxed">
+                Plan trips, explore destinations, and build memories across India and beyond with our comprehensive
+                itinerary planner.
+            </p>
+            <div
+                class="bg-white dark:bg-surface-dark p-2 rounded-full shadow-lg border border-border-light dark:border-border-dark flex items-center max-w-2xl mx-auto mb-10 transition-shadow focus-within:ring-2 focus-within:ring-primary/20 relative z-20">
+                <span
+                    class="material-icons-round text-text-muted-light dark:text-text-muted-dark ml-4 text-2xl">search</span>
+                <input id="landing-search"
+                    class="w-full border-none focus:ring-0 bg-transparent text-text-main-light dark:text-text-main-dark placeholder-gray-400 dark:placeholder-gray-500 text-base px-4"
+                    placeholder="Search destinations, experiences, or trips" type="text" />
+                <div class="flex items-center border-l border-gray-200 dark:border-gray-700 pl-2 pr-2 gap-1">
+                  
+                </div>
+                <button onclick="handleLandingSearch()"
+                    class="bg-primary hover:bg-primary-hover text-white px-8 py-3 rounded-full font-semibold transition-all shadow-lg shadow-blue-500/30">
+                    Search
+                </button>
+            </div>
+            <script>
+                function handleLandingSearch() {
+                    const query = document.getElementById('landing-search').value.trim();
+                    if (query) {
+                        window.location.href = `/explore?q=${encodeURIComponent(query)}`;
+                    } else {
+                        alert('Please enter a destination to search.');
+                    }
+                }
+                document.getElementById('landing-search')?.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') handleLandingSearch();
+                });
+            </script>
+            <div class="flex justify-center gap-4">
+                <a href="{{ url_for('main.explore') }}"
+                    class="flex items-center gap-2 px-6 py-3 bg-white/80 dark:bg-surface-dark/80 backdrop-blur border border-border-light dark:border-border-dark rounded-xl font-medium text-text-main-light dark:text-text-main-dark hover:shadow-md transition-all no-underline">
+                    <span class="text-blue-500 text-xl material-icons-round">explore</span>
+                    Explore Destinations
+                </a>
+                <a href="{{ url_for('main.plan_trip') }}"
+                    class="flex items-center gap-2 px-6 py-3 bg-white/80 dark:bg-surface-dark/80 backdrop-blur border border-border-light dark:border-border-dark rounded-xl font-medium text-text-main-light dark:text-text-main-dark hover:shadow-md transition-all no-underline">
+                    <span class="text-red-500 text-xl material-icons-round">backpack</span>
+                    Plan a Trip
+                </a>
+            </div>
+        </div>
+    </section>
+    <section class="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-3 gap-8">
+            <div
+                class="group relative bg-white dark:bg-surface-dark p-8 rounded-3xl border border-border-light dark:border-border-dark shadow-sm hover:shadow-hover transition-all duration-300 overflow-hidden">
+                <div
+                    class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-100/50 to-transparent dark:from-blue-900/20 rounded-bl-full -mr-8 -mt-8 opacity-50 group-hover:scale-125 transition-transform duration-700">
+                </div>
+                <div class="relative z-10">
+                    <div
+                        class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-900/20 dark:to-blue-800/10 flex items-center justify-center mb-6 text-primary group-hover:scale-110 transition-transform duration-300 shadow-sm border border-blue-100/50 dark:border-blue-700/20">
+                        <span
+                            class="material-icons-round text-3xl bg-clip-text text-transparent bg-gradient-to-tr from-blue-600 to-cyan-500">alt_route</span>
+                    </div>
+                    <h3
+                        class="text-xl font-bold mb-3 text-text-main-light dark:text-text-main-dark group-hover:text-primary transition-colors">
+                        Route-Based Journey Planning</h3>
+                    <p class="text-text-muted-light dark:text-text-muted-dark text-sm leading-relaxed">
+                        Visualise your complete itinerary on an interactive map. Connect destinations logically with
+                        smart routing tailored for exploration and efficiency.
+                    </p>
+                </div>
+            </div>
+            <div
+                class="group relative bg-white dark:bg-surface-dark p-8 rounded-3xl border border-border-light dark:border-border-dark shadow-sm hover:shadow-hover transition-all duration-300 overflow-hidden">
+                <div
+                    class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-100/50 to-transparent dark:from-purple-900/20 rounded-bl-full -mr-8 -mt-8 opacity-50 group-hover:scale-125 transition-transform duration-700">
+                </div>
+                <div class="relative z-10">
+                    <div
+                        class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-900/20 dark:to-purple-800/10 flex items-center justify-center mb-6 text-purple-600 group-hover:scale-110 transition-transform duration-300 shadow-sm border border-purple-100/50 dark:border-purple-700/20">
+                        <span
+                            class="material-icons-round text-3xl bg-clip-text text-transparent bg-gradient-to-tr from-purple-600 to-fuchsia-500">view_timeline</span>
+                    </div>
+                    <h3
+                        class="text-xl font-bold mb-3 text-text-main-light dark:text-text-main-dark group-hover:text-purple-600 transition-colors">
+                        Day-Wise Travel Roadmaps</h3>
+                    <p class="text-text-muted-light dark:text-text-muted-dark text-sm leading-relaxed">
+                        Get structured, day-by-day breakdowns of your trip. We organise your activities and sights into
+                        a balanced schedule for a stress-free experience.
+                    </p>
+                </div>
+            </div>
+            <div
+                class="group relative bg-white dark:bg-surface-dark p-8 rounded-3xl border border-border-light dark:border-border-dark shadow-sm hover:shadow-hover transition-all duration-300 overflow-hidden">
+                <div
+                    class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-100/50 to-transparent dark:from-emerald-900/20 rounded-bl-full -mr-8 -mt-8 opacity-50 group-hover:scale-125 transition-transform duration-700">
+                </div>
+                <div class="relative z-10">
+                    <div
+                        class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-900/20 dark:to-emerald-800/10 flex items-center justify-center mb-6 text-emerald-600 group-hover:scale-110 transition-transform duration-300 shadow-sm border border-emerald-100/50 dark:border-emerald-700/20">
+                        <span
+                            class="material-icons-round text-3xl bg-clip-text text-transparent bg-gradient-to-tr from-emerald-600 to-teal-500">tips_and_updates</span>
+                    </div>
+                    <h3
+                        class="text-xl font-bold mb-3 text-text-main-light dark:text-text-main-dark group-hover:text-emerald-600 transition-colors">
+                        Destination Intelligence</h3>
+                    <p class="text-text-muted-light dark:text-text-muted-dark text-sm leading-relaxed">
+                        Gain expert context before you go. Access data-driven insights, local tips, and cultural nuances
+                        to truly understand the places you visit.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+     <section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mb-8">
+            <div>
+                <h2 class="text-2xl font-bold text-text-main-light dark:text-text-main-dark mb-1">Travel Categories</h2>
+                <p class="text-text-muted-light dark:text-text-muted-dark">Find the perfect vibe for your next trip.</p>
+            </div>
+        </div>
+        <div class="relative overflow-hidden">
+            <div class="flex space-x-4 animate-scroll">
+                <!-- First set of categories -->
+                <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg flex-shrink-0 w-40"
+                    href="#">
+                    <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">🏖️</div>
+                    <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">Beach</span>
+                </a>
+                <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg flex-shrink-0 w-40"
+                    href="#">
+                    <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">⛰️</div>
+                    <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">Hill</span>
+                </a>
+                <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg flex-shrink-0 w-40"
+                    href="#">
+                    <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">🦁</div>
+                    <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">Wildlife</span>
+                </a>
+                <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg flex-shrink-0 w-40"
+                    href="#">
+                    <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">🕌</div>
+                    <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">Temple</span>
+                </a>
+                <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg flex-shrink-0 w-40"
+                    href="#">
+                    <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">🧗</div>
+                    <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">Adventure</span>
+                </a>
+                <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg flex-shrink-0 w-40"
+                    href="#">
+                    <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">🏰</div>
+                    <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">Palace</span>
+                </a>
+                <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg flex-shrink-0 w-40"
+                    href="#">
+                    <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">💧</div>
+                    <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">Waterfall</span>
+                </a>
+                <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg flex-shrink-0 w-40"
+                    href="#">
+                    <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">🏞️</div>
+                    <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">National Park</span>
+                </a>
+                <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg flex-shrink-0 w-40"
+                    href="#">
+                    <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">🍽️</div>
+                    <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">Food</span>
+                </a>
+                <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg flex-shrink-0 w-40"
+                    href="#">
+                    <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">🥾</div>
+                    <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">Trek</span>
+                </a>
+                <!-- Duplicate set for seamless scrolling -->
+                <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg flex-shrink-0 w-40"
+                    href="#">
+                    <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">🏖️</div>
+                    <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">Beach</span>
+                </a>
+                <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg flex-shrink-0 w-40"
+                    href="#">
+                    <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">⛰️</div>
+                    <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">Hill</span>
+                </a>
+                <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg flex-shrink-0 w-40"
+                    href="#">
+                    <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">🦁</div>
+                    <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">Wildlife</span>
+                </a>
+                <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg flex-shrink-0 w-40"
+                    href="#">
+                    <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">🕌</div>
+                    <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">Temple</span>
+                </a>
+                <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg flex-shrink-0 w-40"
+                    href="#">
+                    <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">🧗</div>
+                    <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">Adventure</span>
+                </a>
+                <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg flex-shrink-0 w-40"
+                    href="#">
+                    <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">🏰</div>
+                    <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">Palace</span>
+                </a>
+                <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg flex-shrink-0 w-40"
+                    href="#">
+                    <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">�</div>
+                    <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">Waterfall</span>
+                </a>
+                <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg flex-shrink-0 w-40"
+                    href="#">
+                    <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">🏞️</div>
+                    <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">National Park</span>
+                </a>
+                <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg flex-shrink-0 w-40"
+                    href="#">
+                    <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">🍽️</div>
+                    <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">Food</span>
+                </a>
+                <a class="group bg-white dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark text-center hover:border-primary/50 transition-all hover:shadow-lg flex-shrink-0 w-40"
+                    href="#">
+                    <div class="text-4xl mb-3 transform group-hover:scale-110 transition-transform">🥾</div>
+                    <span class="text-xs font-semibold text-text-main-light dark:text-text-main-dark block">Trek</span>
+                </a>
+            </div>
+        </div>
+    </section>
+    <style>
+        @keyframes scroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+        
+        .animate-scroll {
+            animation: scroll 20s linear infinite;
+        }
+        
+        .animate-scroll:hover {
+            animation-play-state: paused;
+        }
+
+        .popular-rainbow-row {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            align-items: flex-end;
+            flex-wrap: nowrap;
+            overflow: visible;
+            width: 100%;
+            padding: 18px 24px 34px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .popular-rainbow-row::-webkit-scrollbar { display: none; }
+
+        .rainbow-card {
+            width: 258px;
+            min-width: 258px;
+            border-radius: 22px;
+            overflow: hidden;
+            background: #0b1728;
+            box-shadow: 0 24px 44px rgba(2, 8, 23, 0.56);
+            border: none;
+            transition: transform .35s ease, box-shadow .35s ease;
+            animation: cardFloat 5.8s ease-in-out infinite;
+        }
+        .rainbow-card .img-wrap { height: 372px; border-radius: 18px; overflow: hidden; position: relative; }
+        .rainbow-card .img-wrap img { filter: brightness(1.12) contrast(1.08) saturate(1.04); }
+        .rainbow-card .meta-bottom { position: absolute; left: 0; right: 0; bottom: 0; z-index: 20; padding: 18px; }
+        .rainbow-card .meta-bottom h3 { font-size: 30px; line-height: 1.02; font-weight: 800; color: #fff; margin: 0 0 6px; text-shadow: 0 4px 14px rgba(0, 0, 0, .65); }
+        .rainbow-card .meta-bottom .loc { color: rgba(226, 232, 240, 0.98); font-size: 11px; letter-spacing: .14em; font-weight: 800; text-transform: uppercase; text-shadow: 0 3px 10px rgba(0, 0, 0, .5); }
+        .rainbow-card .top-ui, .rainbow-card .p-4 { display: none !important; }
+        .rainbow-card { display: block; text-decoration: none; }
+        .rainbow-card:nth-child(1), .rainbow-card:nth-child(5) { animation-delay: .2s; }
+        .rainbow-card:nth-child(2), .rainbow-card:nth-child(4) { animation-delay: .1s; }
+        .rainbow-card:nth-child(1) { transform: rotate(-12deg) translateY(26px); }
+        .rainbow-card:nth-child(2) { transform: rotate(-6deg) translateY(8px); }
+        .rainbow-card:nth-child(3) { transform: translateY(-14px); }
+        .rainbow-card:nth-child(4) { transform: rotate(6deg) translateY(8px); }
+        .rainbow-card:nth-child(5) { transform: rotate(12deg) translateY(26px); }
+        .rainbow-card:hover { transform: translateY(-12px) rotate(0deg) scale(1.03); box-shadow: 0 30px 52px rgba(2, 8, 23, 0.62); }
+        @keyframes cardFloat {
+            0%, 100% { filter: drop-shadow(0 0 0 rgba(0,0,0,0)); }
+            50% { filter: drop-shadow(0 14px 24px rgba(2, 8, 23, 0.28)); }
+        }
+        @media (max-width: 1024px) {
+            .rainbow-card { width: 200px; min-width: 200px; }
+            .rainbow-card .img-wrap { height: 300px; }
+            .rainbow-card .meta-bottom h3 { font-size: 24px; }
+            .popular-rainbow-row { flex-wrap: wrap; justify-content: center; }
+        }
+    </style>
+    <section class="py-24 overflow-hidden relative">
+        <div class="absolute inset-0 -z-10 bg-gradient-to-br from-cyan-50 via-sky-50 to-indigo-50"></div>
+        <div class="absolute -top-20 -left-16 w-72 h-72 rounded-full bg-cyan-200/35 blur-3xl -z-10"></div>
+        <div class="absolute top-6 right-0 w-80 h-80 rounded-full bg-indigo-200/30 blur-3xl -z-10"></div>
+        <div class="absolute bottom-0 left-1/3 w-96 h-64 rounded-full bg-emerald-200/25 blur-3xl -z-10"></div>
+
+        <div class="w-full px-0">
+            <div class="text-center mb-16 relative">
+                <span
+                    class="relative z-10 inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-white/80 border border-cyan-200 text-cyan-700 font-extrabold tracking-widest text-[10px] uppercase mb-4 shadow-sm">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
+                    Top Picks
+                </span>
+                <h2
+                    class="relative z-10 text-3xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-700 via-sky-700 to-indigo-700 bg-clip-text text-transparent">
+                    Popular Destinations</h2>
+                <p class="relative z-10 mt-3 text-sm md:text-base text-slate-600 font-medium">Curated escapes with stunning visuals and unforgettable experiences</p>
+            </div>
+            <div class="popular-rainbow-row">
+                <a href="{{ url_for('main.destination_info', name='Srinagar') }}"
+                    class="rainbow-card group relative cursor-pointer">
+                    <div class="img-wrap">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80">
+                        </div>
+                        <img alt="Srinagar Dal Lake"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            src="https://images.unsplash.com/photo-1585123334904-845d60e97b29?auto=format&fit=crop&q=80&w=800"
+                            onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1598305363300-17742c22259b?auto=format&fit=crop&q=80&w=800'" />
+                        <div class="top-ui absolute top-4 right-4 z-20">
+                            <button
+                                class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/40 transition-colors">
+                                <span class="material-icons-round text-lg">favorite_border</span>
+                            </button>
+                        </div>
+                        <div class="top-ui absolute top-4 left-4 z-20">
+                            <span
+                                class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-white text-xs font-semibold shadow-sm">
+                                <span class="material-icons-round text-[14px]">landscape</span> Scenic
+                            </span>
+                        </div>
+                        <div class="meta-bottom">
+                            <h3 class="text-xl font-bold text-white mb-1">Srinagar</h3>
+                            <div class="flex items-center gap-1 text-white/90 text-xs font-medium">
+                                <span class="loc">Jammu &amp; Kashmir</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                <a href="{{ url_for('main.destination_info', name='Manali') }}"
+                    class="rainbow-card group relative cursor-pointer">
+                    <div class="img-wrap">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80">
+                        </div>
+                        <img alt="Manali Mountains"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            src="https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&q=80&w=800"
+                            onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1591147139283-1323f0fe3054?auto=format&fit=crop&q=80&w=800'" />
+                        <div class="top-ui absolute top-4 right-4 z-20">
+                            <button
+                                class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/40 transition-colors">
+                                <span class="material-icons-round text-lg">favorite_border</span>
+                            </button>
+                        </div>
+                        <div class="top-ui absolute top-4 left-4 z-20">
+                            <span
+                                class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-white text-xs font-semibold shadow-sm">
+                                <span class="material-icons-round text-[14px]">landscape</span> Scenic
+                            </span>
+                        </div>
+                        <div class="meta-bottom">
+                            <h3 class="text-xl font-bold text-white mb-1">Manali</h3>
+                            <div class="flex items-center gap-1 text-white/90 text-xs font-medium">
+                                <span class="loc">Himachal Pradesh</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                <a href="{{ url_for('main.destination_info', name='Rishikesh') }}"
+                    class="rainbow-card group relative cursor-pointer">
+                    <div class="img-wrap">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80">
+                        </div>
+                        <img alt="Rishikesh River Rafting"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            src="https://images.unsplash.com/photo-1590050752117-23a9d7cdee52?auto=format&fit=crop&q=80&w=800"
+                            onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1599389503463-54cd88db9079?auto=format&fit=crop&q=80&w=800'" />
+                        <div class="top-ui absolute top-4 right-4 z-20">
+                            <button
+                                class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/40 transition-colors">
+                                <span class="material-icons-round text-lg">favorite_border</span>
+                            </button>
+                        </div>
+                        <div class="top-ui absolute top-4 left-4 z-20">
+                            <span
+                                class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-white text-xs font-semibold shadow-sm">
+                                <span class="material-icons-round text-[14px]">landscape</span> Scenic
+                            </span>
+                        </div>
+                        <div class="meta-bottom">
+                            <h3 class="text-xl font-bold text-white mb-1">Rishikesh</h3>
+                            <div class="flex items-center gap-1 text-white/90 text-xs font-medium">
+                                <span class="loc">Uttarakhand</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                <a href="{{ url_for('main.destination_info', name='Jaipur') }}"
+                    class="rainbow-card group relative cursor-pointer">
+                    <div class="img-wrap">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80">
+                        </div>
+                        <img alt="Jaipur Palace"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            src="https://images.unsplash.com/photo-1599661046289-e318878567c1?auto=format&fit=crop&q=80&w=800"
+                            onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1524230507669-5ff97982bb5e?auto=format&fit=crop&q=80&w=800'" />
+                        <div class="top-ui absolute top-4 right-4 z-20">
+                            <button
+                                class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/40 transition-colors">
+                                <span class="material-icons-round text-lg">favorite_border</span>
+                            </button>
+                        </div>
+                        <div class="top-ui absolute top-4 left-4 z-20">
+                            <span
+                                class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-white text-xs font-semibold shadow-sm">
+                                <span class="material-icons-round text-[14px]">landscape</span> Scenic
+                            </span>
+                        </div>
+                        <div class="meta-bottom">
+                            <h3 class="text-xl font-bold text-white mb-1">Jaipur</h3>
+                            <div class="flex items-center gap-1 text-white/90 text-xs font-medium">
+                                <span class="loc">Rajasthan</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                <a href="{{ url_for('main.destination_info', name='North Goa') }}"
+                    class="rainbow-card group relative cursor-pointer">
+                    <div class="img-wrap">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80">
+                        </div>
+                        <img alt="Goa Beach"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            src="https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&q=80&w=800"
+                            onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506461883276-594a12b11cf3?auto=format&fit=crop&q=80&w=800'" />
+                        <div class="top-ui absolute top-4 right-4 z-20">
+                            <button
+                                class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/40 transition-colors">
+                                <span class="material-icons-round text-lg">favorite_border</span>
+                            </button>
+                        </div>
+                        <div class="top-ui absolute top-4 left-4 z-20">
+                            <span
+                                class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-white text-xs font-semibold shadow-sm">
+                                <span class="material-icons-round text-[14px]">landscape</span> Scenic
+                            </span>
+                        </div>
+                        <div class="meta-bottom">
+                            <h3 class="text-xl font-bold text-white mb-1">North Goa</h3>
+                            <div class="flex items-center gap-1 text-white/90 text-xs font-medium">
+                                <span class="loc">Goa</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+       <section class="py-20 relative overflow-hidden bg-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-10">
+                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/95 border border-cyan-200 text-cyan-700 text-[10px] font-extrabold uppercase tracking-widest shadow-sm mb-4">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse"></span> Interactive Route
+                </span>
+                <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-700 to-blue-700 bg-clip-text text-transparent">Visualise Your Journey</h2>
+                <p class="text-slate-600 font-medium mt-3">See your itinerary come to life on our
+                    interactive map.</p>
+            </div>
+            <div
+                class="relative bg-white rounded-[2rem] h-[620px] w-full overflow-hidden border border-sky-100 shadow-[0_24px_60px_-20px_rgba(14,116,144,0.35)] group">
+                <div class="absolute inset-0 z-0">
+                    <img alt="Full India Map"
+                        class="w-full h-full object-cover transition-transform duration-[20s] ease-linear group-hover:scale-105"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYaiqbvuPg3uSXoWnLeDNxd2FzvVD1CY6l1bWQR8B5GIbmWPywCPJ5_M5-Iu9upbUdIOWSB22rEH5vxmEVN7IdeGwB7GuHeFqTikb3Gl3qmrMJfRhW6uG6KjhHf9bFpzGwo9ABjME8FUbOKuAPuapRaIkdNc9sQp6CQ4n0iPYkFRLlNSdplXt0eB3543s4NUfWjxetvBfOhuzxRNr3BP_HNnsS6ndTaP-A8YBJF-ciYqCaf-5QkA6yO45Vj4MpnyIvDfeKAMCe7mYK" />
+                    <div
+                        class="absolute inset-0 bg-gradient-to-b from-blue-900/10 via-white/5 to-blue-900/20 dark:from-black/40 dark:via-black/20 dark:to-slate-900/50 mix-blend-overlay">
+                    </div>
+                    <div class="absolute inset-0 bg-black/10 dark:bg-black/30 backdrop-contrast-125"></div>
+                </div>
+                <svg class="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible"
+                    preserveAspectRatio="xMidYMid slice" viewBox="0 0 1000 600">
+                    <defs>
+                        <linearGradient id="routeGradient" x1="0%" x2="100%" y1="0%" y2="0%">
+                            <stop offset="0%" stop-color="#3B82F6" stop-opacity="1"></stop>
+                            <stop offset="100%" stop-color="#8B5CF6" stop-opacity="1"></stop>
+                        </linearGradient>
+                        <filter height="140%" id="glow" width="140%" x="-20%" y="-20%">
+                            <feGaussianBlur result="blur" stdDeviation="4"></feGaussianBlur>
+                            <feComposite in="SourceGraphic" in2="blur" operator="over"></feComposite>
+                        </filter>
+                    </defs>
+                    <path class="animate-[dash_4s_linear_infinite]"
+                        d="M 250 350 C 400 350, 500 250, 650 250 S 900 400, 1050 300" fill="none" filter="url(#glow)"
+                        stroke="url(#routeGradient)" stroke-dasharray="12 8" stroke-width="4"></path>
+                    <circle class="shadow-lg animate-pulse" cx="250" cy="350" fill="#FFFFFF" r="8" stroke="#3B82F6"
+                        stroke-width="4"></circle>
+                    <circle class="shadow-lg" cx="650" cy="250" fill="#FFFFFF" r="8" stroke="#06B6D4" stroke-width="4">
+                    </circle>
+                    <circle class="shadow-lg" cx="1050" cy="300" fill="#FFFFFF" r="8" stroke="#8B5CF6" stroke-width="4">
+                    </circle>
+                    <circle fill="#F43F5E" r="6">
+                        <animateMotion dur="4s" path="M 250 350 C 400 350, 500 250, 650 250 S 900 400, 1050 300"
+                            repeatCount="indefinite"></animateMotion>
+                    </circle>
+                </svg>
+                <div
+                    class="absolute top-[48%] left-[8%] w-56 glassmorphism p-4 rounded-2xl border border-white/50 dark:border-white/10 shadow-glass transform hover:scale-105 transition-transform cursor-pointer z-20 backdrop-blur-md bg-white/60 dark:bg-slate-900/60">
+                    <div class="flex justify-between items-start mb-2">
+                        <span
+                            class="px-2 py-1 rounded-md bg-blue-100 dark:bg-blue-900/40 text-[10px] font-bold text-blue-600 dark:text-blue-300 uppercase tracking-wide">Day
+                            1-2</span>
+                        <span class="material-icons-round text-blue-500 text-sm">temple_buddhist</span>
+                    </div>
+                    <h4 class="font-bold text-base text-text-main-light dark:text-text-main-dark">Kochi Fort</h4>
+                    <p class="text-xs text-text-muted-light dark:text-text-muted-dark mt-1 line-clamp-1">Colonial
+                        history &amp; fishing nets.</p>
+                    <div class="flex items-center gap-2 mt-3 pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
+                        <div class="flex items-center gap-1 text-xs font-semibold text-text-muted-light">
+                            <span class="material-icons-round text-sm text-gray-400">directions_car</span> 2h Drive
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="absolute top-[28%] left-[40%] w-56 glassmorphism p-4 rounded-2xl border border-white/50 dark:border-white/10 shadow-glass transform hover:scale-105 transition-transform cursor-pointer z-20 backdrop-blur-md bg-white/60 dark:bg-slate-900/60">
+                    <div class="flex justify-between items-start mb-2">
+                        <span
+                            class="px-2 py-1 rounded-md bg-cyan-100 dark:bg-cyan-900/40 text-[10px] font-bold text-cyan-600 dark:text-cyan-300 uppercase tracking-wide">Day
+                            3-4</span>
+                        <span class="material-icons-round text-cyan-500 text-sm">landscape</span>
+                    </div>
+                    <h4 class="font-bold text-base text-text-main-light dark:text-text-main-dark">Munnar Hills</h4>
+                    <p class="text-xs text-text-muted-light dark:text-text-muted-dark mt-1 line-clamp-1">Tea gardens
+                        &amp; misty peaks.</p>
+                    <div class="flex items-center gap-2 mt-3 pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
+                        <div class="flex items-center gap-1 text-xs font-semibold text-text-muted-light">
+                            <span class="material-icons-round text-sm text-gray-400">train</span> Scenic Rail
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="absolute top-[38%] right-[10%] w-56 glassmorphism p-4 rounded-2xl border border-white/50 dark:border-white/10 shadow-glass transform hover:scale-105 transition-transform cursor-pointer z-20 backdrop-blur-md bg-white/60 dark:bg-slate-900/60">
+                    <div class="flex justify-between items-start mb-2">
+                        <span
+                            class="px-2 py-1 rounded-md bg-purple-100 dark:bg-purple-900/40 text-[10px] font-bold text-purple-600 dark:text-purple-300 uppercase tracking-wide">Day
+                            5</span>
+                        <span class="material-icons-round text-purple-500 text-sm">forest</span>
+                    </div>
+                    <h4 class="font-bold text-base text-text-main-light dark:text-text-main-dark">Thekkady</h4>
+                    <p class="text-xs text-text-muted-light dark:text-text-muted-dark mt-1 line-clamp-1">Periyar
+                        wildlife sanctuary.</p>
+                    <div class="flex items-center gap-2 mt-3 pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
+                        <div class="flex items-center gap-1 text-xs font-semibold text-text-muted-light">
+                            <span class="material-icons-round text-sm text-gray-400">hiking</span> Nature Walk
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-8 bg-white/90 dark:bg-surface-dark/90 backdrop-blur-xl px-8 py-4 rounded-2xl border border-gray-100 dark:border-white/10 shadow-2xl z-20">
+                    <div class="flex flex-col items-center px-4 border-r border-gray-200 dark:border-gray-700">
+                        <span
+                            class="text-[10px] uppercase tracking-wider font-bold text-text-muted-light dark:text-text-muted-dark mb-1">Total
+                            Distance</span>
+                        <span
+                            class="text-lg font-extrabold text-text-main-light dark:text-text-main-dark font-display">450
+                            km</span>
+                    </div>
+                    <div class="flex flex-col items-center px-4 border-r border-gray-200 dark:border-gray-700">
+                        <span
+                            class="text-[10px] uppercase tracking-wider font-bold text-text-muted-light dark:text-text-muted-dark mb-1">Travel
+                            Time</span>
+                        <span
+                            class="text-lg font-extrabold text-text-main-light dark:text-text-main-dark font-display">12h
+                            30m</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section
+        class="py-24 relative overflow-hidden bg-white">
+        <div class="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none">
+            <div class="absolute top-1/4 right-0 w-[600px] h-[600px] bg-orange-300/20 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-pink-300/20 rounded-full blur-3xl"></div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="order-2 lg:order-1 relative">
+                    <div class="relative w-full aspect-square max-w-[500px] mx-auto">
+                        <div
+                            class="absolute inset-0 border border-primary/20 rounded-full animate-[spin_10s_linear_infinite]">
+                        </div>
+                        <div
+                            class="absolute inset-[15%] border border-cyan-400/20 rounded-full animate-[spin_15s_linear_infinite_reverse]">
+                        </div>
+                        <div
+                            class="absolute inset-[30%] border border-purple-500/20 rounded-full animate-[spin_20s_linear_infinite]">
+                        </div>
+                        <div
+                            class="absolute inset-[20%] bg-white/10 dark:bg-white/5 backdrop-blur-xl rounded-full shadow-2xl flex items-center justify-center border border-white/20">
+                            <div class="relative w-32 h-32 flex items-center justify-center">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full blur-xl opacity-50 animate-pulse">
+                                </div>
+                                <div
+                                    class="relative z-10 w-24 h-24 bg-gradient-to-br from-white to-blue-50 dark:from-surface-dark dark:to-black rounded-full flex items-center justify-center border border-blue-100 dark:border-blue-900/50 shadow-inner">
+                                    <span
+                                        class="material-icons-round text-5xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500">smart_toy</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="absolute top-[0%] left-[0%] bg-white dark:bg-surface-dark p-3 rounded-xl shadow-lg border border-gray-100 dark:border-white/10 animate-bounce"
+                            style="animation-duration: 3s;">
+                            <div class="flex items-center gap-2 mb-1">
+                                <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                                <span class="text-[10px] text-text-muted-light uppercase font-bold">Skupheon
+                                    thinking...</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="material-icons-round text-amber-500 text-sm">bolt</span>
+                                <span class="text-xs font-bold text-text-main-light dark:text-text-main-dark">Instant
+                                    Planning</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-1 lg:order-2">
+                    <div
+                        class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-cyan-200 mb-6 shadow-sm">
+                        <span class="material-icons-round text-sm text-primary">auto_awesome</span>
+                        <span class="text-xs font-bold text-primary tracking-wide uppercase">Introducing Skupheon</span>
+                    </div>
+                    <h2
+                        class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 leading-tight">
+                        Meet <span
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">Skupheon</span>,<br />Your
+                        AI Travel Assistant
+                    </h2>
+                    <p class="text-lg text-slate-600 mb-8 leading-relaxed">
+                        Experience seamless planning powered by AI. Skupheon analyzes your preferences, budget, and
+                        travel style to curate personalized itineraries in seconds. Your entire journey, guided by
+                        intelligence.
+                    </p>
+                    <div class="flex gap-4 mb-8">
+                        <div
+                            class="flex items-center gap-1.5 bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 px-3 py-1.5 rounded-lg">
+                            <span class="material-icons-round text-green-600 text-sm">shield</span>
+                            <span class="text-xs font-bold text-green-700 dark:text-green-400">Secure &amp;
+                                Private</span>
+                        </div>
+                    </div>
+                    <div class="space-y-4 mb-10">
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mt-1">
+                                <span class="material-icons-round text-primary text-sm">check</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-text-main-light dark:text-text-main-dark text-lg">Personalized
+                                    Recommendations</h4>
+                                <p class="text-sm text-text-muted-light dark:text-text-muted-dark">Tailored suggestions
+                                    for hotels, dining, and activities based on what you love.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mt-1">
+                                <span class="material-icons-round text-primary text-sm">check</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-text-main-light dark:text-text-main-dark text-lg">Real-Time
+                                    Adjustments</h4>
+                                <p class="text-sm text-text-muted-light dark:text-text-muted-dark">Adapts your schedule
+                                    instantly if your plans change or delays occur.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('main.profile_ai') }}"
+                        class="px-8 py-4 bg-primary hover:bg-primary-hover text-white rounded-xl font-bold shadow-lg shadow-blue-500/30 flex items-center gap-3 transition-all transform hover:-translate-y-1 group no-underline">
+                        <span>Chat with Skupheon</span>
+                        <span
+                            class="material-icons-round text-lg group-hover:translate-x-1 transition-transform">chat_bubble</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-24 relative overflow-hidden bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2
+                    class="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-3">
+                    One Destination, One Story</h2>
+                <p class="text-slate-600 font-medium">Authentic experiences through the
+                    eyes of fellow travelers</p>
+            </div>
+            <div
+                class="relative min-h-[520px] w-full rounded-[2.5rem] overflow-hidden group shadow-[0_24px_60px_-18px_rgba(30,41,59,0.28)] flex items-center bg-white border border-slate-100">
+                <div class="absolute inset-0 w-full h-full lg:w-3/5 overflow-hidden">
+                    <img alt="Munnar Tea Plantations at Sunrise"
+                        class="w-full h-full object-cover transition-transform duration-[10s] group-hover:scale-110"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5aXaXDODnETKn5NDWekjW7nTcF3wkPqDkTMYpuc04DbRNOErLdBEoFYKrnMwmSWP0XMbelDodedwmVTuvmk8sxYZu-9h0Yn0Ut_RrIQ9ZCk3m4J-WeCMZqm_zpqPCUP8bvvfajqfLlaxi4OT5mf-Rl-BRBaAIwnAwnGsooUOLXdQ4Te1FQJQXC-wHoTBPYIv_eufy9akRS5waxa3p8lKOWAp_ENvtRTPG51uPjJUL4MbKqbUSeFYxy-veu_79dL1d67a2P8eKqCEN" />
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-slate-50 hidden lg:block">
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent lg:hidden">
+                    </div>
+                </div>
+                <div class="relative z-20 w-full lg:w-1/2 ml-auto p-8 md:p-16 lg:pr-24">
+                    <div
+                        class="inline-flex items-center gap-2 mb-6 text-primary font-bold text-xs uppercase tracking-widest bg-white/80 px-3 py-1 rounded-full border border-blue-100 shadow-sm">
+                        <span class="material-icons-round text-sm">history_edu</span> Featured Story
+                    </div>
+                    <h3 class="text-5xl md:text-7xl font-extrabold text-slate-900 mb-6 font-display tracking-tight leading-none">
+                        Munnar</h3>
+                    <p class="text-lg md:text-xl text-slate-600 leading-relaxed mb-10 font-medium italic">
+                        "The world didn't wake up all at once. It began with a whisper of mist over the emerald waves of
+                        tea leaves, and for a moment, the only sound was the mountain breathing. In the stillness of a
+                        Munnar dawn, I didn't just see the hills; I felt them."
+                    </p>
+                    <a class="inline-flex items-center text-primary font-extrabold text-xl hover:text-primary-hover transition-colors gap-2 group/link"
+                        href="#">
+                        Explore Story <span
+                            class="material-icons-round group-hover/link:translate-x-2 transition-transform">east</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-24 relative overflow-hidden bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div
+                class="bg-white rounded-[2.5rem] p-10 md:p-16 border border-sky-100 shadow-[0_24px_60px_-20px_rgba(14,116,144,0.2)]">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <div
+                        class="inline-block px-4 py-1.5 rounded-full bg-sky-50 text-sky-700 font-bold text-xs tracking-widest uppercase mb-6 border border-sky-200">
+                        Why RoutheonSkups?
+                    </div>
+                    <h2
+                        class="text-4xl md:text-5xl font-bold mb-6 text-slate-900 leading-tight">
+                        Smarter Planning, <br /> Better Journeys
+                    </h2>
+                    <p class="text-slate-600 text-lg leading-relaxed">
+                        We combine cutting-edge AI with local expert knowledge to deliver travel guidance that is
+                        seamless, personalized, and insightful, empowering you to plan with confidence.
+                    </p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div
+                        class="group bg-white p-8 rounded-2xl border border-sky-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+                            <span class="material-icons-round text-2xl">explore</span>
+                        </div>
+                        <h4 class="font-bold text-lg text-slate-900 mb-3">Smart Itinerary
+                            Builder</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed">Create
+                            detailed day-wise plans automatically tailored to your specific preferences, pace, and
+                            interests.</p>
+                    </div>
+                    <div
+                        class="group bg-white p-8 rounded-2xl border border-sky-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 mb-6 group-hover:scale-110 transition-transform">
+                            <span class="material-icons-round text-2xl">cloud_sync</span>
+                        </div>
+                        <h4 class="font-bold text-lg text-slate-900 mb-3">Live Weather Insights</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed">Get destination weather forecasts integrated into planning so your itinerary adapts to season, rain, and temperature conditions.</p>
+                    </div>
+                    <div
+                        class="group bg-white p-8 rounded-2xl border border-sky-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center text-rose-500 mb-6 group-hover:scale-110 transition-transform">
+                            <span class="material-icons-round text-2xl">support_agent</span>
+                        </div>
+                        <h4 class="font-bold text-lg text-slate-900 mb-3">24/7 Global
+                            Support</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed">Access
+                            real-time assistance and expert advice anytime, anywhere via chat to help guide your journey
+                            smoothly.</p>
+                    </div>
+                    <div
+                        class="group bg-white p-8 rounded-2xl border border-sky-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 mb-6 group-hover:scale-110 transition-transform">
+                            <span class="material-icons-round text-2xl">calendar_month</span>
+                        </div>
+                        <h4 class="font-bold text-lg text-slate-900 mb-3">Upcoming Trips
+                        </h4>
+                        <p class="text-sm text-slate-600 leading-relaxed">Organize all
+                            your plans, saved locations, and reminders in one accessible, easy-to-manage dashboard.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-24 relative overflow-hidden bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <div
+                    class="inline-block px-4 py-1.5 rounded-full bg-white text-primary font-bold text-xs tracking-widest uppercase mb-4 border border-blue-200 shadow-sm">
+                    Support
+                </div>
+                <h2 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">
+                    Frequently Asked Questions
+                </h2>
+                <p class="text-slate-600 text-lg">
+                    Find answers to common questions about planning your journey with us.
+                </p>
+            </div>
+            <div class="space-y-4">
+                <details
+                    class="group bg-white border border-slate-200 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg">
+                    <summary
+                        class="flex cursor-pointer items-center justify-between p-6 text-lg font-bold text-text-main-light dark:text-text-main-dark select-none">
+                        How does Skupheon build my itinerary?
+                        <div
+                            class="ml-4 flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 text-primary group-open:-rotate-180 transition-transform duration-300">
+                            <span class="material-icons-round">expand_more</span>
+                        </div>
+                    </summary>
+                    <div class="px-6 pb-6 text-slate-600 leading-relaxed">
+                        Skupheon uses your destination, travel dates, budget, and interests to generate a practical
+                        day-wise plan with places to visit, pacing recommendations, and activity flow tailored to your
+                        trip style.
+                    </div>
+                </details>
+                <details
+                    class="group bg-white border border-slate-200 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg">
+                    <summary
+                        class="flex cursor-pointer items-center justify-between p-6 text-lg font-bold text-text-main-light dark:text-text-main-dark select-none">
+                        Can I edit and save my generated trip plan?
+                        <div
+                            class="ml-4 flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 text-primary group-open:-rotate-180 transition-transform duration-300">
+                            <span class="material-icons-round">expand_more</span>
+                        </div>
+                    </summary>
+                    <div class="px-6 pb-6 text-slate-600 leading-relaxed">
+                        Yes. After generating a plan, you can save it to your account, revisit it from your trips
+                        section, and adjust details like dates, preferences, and destination choices as your plan evolves.
+                    </div>
+                </details>
+                <details
+                    class="group bg-white border border-slate-200 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg">
+                    <summary
+                        class="flex cursor-pointer items-center justify-between p-6 text-lg font-bold text-text-main-light dark:text-text-main-dark select-none">
+                        How do notifications and reminders work?
+                        <div
+                            class="ml-4 flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 text-primary group-open:-rotate-180 transition-transform duration-300">
+                            <span class="material-icons-round">expand_more</span>
+                        </div>
+                    </summary>
+                    <div class="px-6 pb-6 text-slate-600 leading-relaxed">
+                        Notification settings let you turn alerts on or off and choose types such as trip alerts, AI
+                        suggestions, system updates, and seasonal recommendations. You can manage everything from your
+                        settings page.
+                    </div>
+                </details>
+                <details
+                    class="group bg-white border border-slate-200 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg">
+                    <summary
+                        class="flex cursor-pointer items-center justify-between p-6 text-lg font-bold text-text-main-light dark:text-text-main-dark select-none">
+                        Does RoutheonSkups provide weather and seasonal insights?
+                        <div
+                            class="ml-4 flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 text-primary group-open:-rotate-180 transition-transform duration-300">
+                            <span class="material-icons-round">expand_more</span>
+                        </div>
+                    </summary>
+                    <div class="px-6 pb-6 text-slate-600 leading-relaxed">
+                        Yes. The platform includes destination weather support and season-aware suggestions so you can
+                        make better decisions about what to do, when to travel, and how to structure each day comfortably.
+                    </div>
+                </details>
+                <details
+                    class="group bg-white border border-slate-200 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg">
+                    <summary
+                        class="flex cursor-pointer items-center justify-between p-6 text-lg font-bold text-text-main-light dark:text-text-main-dark select-none">
+                        Is my trip data private in RoutheonSkups?
+                        <div
+                            class="ml-4 flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 text-primary group-open:-rotate-180 transition-transform duration-300">
+                            <span class="material-icons-round">expand_more</span>
+                        </div>
+                    </summary>
+                    <div class="px-6 pb-6 text-slate-600 leading-relaxed">
+                        Your saved trips, profile preferences, and itinerary data are account-based and intended only for
+                        your planning experience. We use this information to improve personalization inside your own
+                        dashboard.
+                    </div>
+                </details>
+            </div>
+        </div>
+    </section>
+    <section class="py-24 px-4 relative overflow-hidden bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div
+                class="bg-white/80 backdrop-blur-md rounded-[3rem] p-12 md:p-20 text-center border border-white shadow-[0_28px_64px_-24px_rgba(37,99,235,0.35)]">
+                <h2 class="text-4xl md:text-6xl font-extrabold text-slate-900 mb-6">
+                    Ready to start your journey?
+                </h2>
+                <p class="text-slate-600 text-lg mb-12 max-w-2xl mx-auto">
+                    Plan your next adventure with RoutheonSkups.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4 mb-16">
+                    <a href="{{ url_for('main.plan_trip') }}"
+                        class="px-8 py-4 bg-primary hover:bg-primary-hover text-white rounded-xl font-bold shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5 no-underline">
+                        <span>🚀</span> Get Started
+                    </a>
+                    <a href="{{ url_for('main.explore') }}"
+                        class="px-8 py-4 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-main-light dark:text-text-main-dark rounded-xl font-bold shadow-sm hover:shadow-md flex items-center justify-center gap-2 transition-all no-underline">
+                        <span>📍</span> Explore Destinations
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {% include 'components/footer.html' %}
+
+</body>
+
+</html>

@@ -1,0 +1,61 @@
+<footer class="bg-white text-slate-700 border-t border-slate-100 pt-16 pb-10">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+            <!-- Brand Column -->
+            <div class="lg:col-span-1">
+                <div class="flex items-center gap-3 mb-4">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="RoutheonSkups" class="h-10 w-auto">
+                    <span class="font-bold text-xl text-slate-900">RoutheonSkups</span>
+                </div>
+                <p class="text-sm text-slate-500 leading-relaxed mb-4">
+                    Your personal assistant for discovering and planning the perfect Indian getaway. Crafted with love for travelers.
+                </p>
+                <div class="flex items-center gap-4 text-sm text-slate-500">
+                    <a href="mailto:Routheonskups@gmail.com" class="flex items-center gap-2 hover:text-emerald-600 transition-colors">
+                        <span class="material-symbols-outlined text-lg">email</span>
+                        Routheonskups@gmail.com
+                    </a>
+                </div>
+                <div class="flex items-center gap-4 text-sm text-slate-500 mt-2">
+                    <a href="tel:6360080717" class="flex items-center gap-2 hover:text-emerald-600 transition-colors">
+                        <span class="material-symbols-outlined text-lg">phone</span>
+                        6360080717
+                    </a>
+                </div>
+            </div>
+
+            <!-- Company Column -->
+            <div>
+                <h4 class="font-bold text-base mb-4 text-slate-900">Company</h4>
+                <ul class="space-y-3 text-sm">
+                    <li><a href="{{ url_for('main.about') }}" class="text-slate-500 hover:text-emerald-600 transition-colors">About Us</a></li>
+                    <li><a href="{{ url_for('main.contact') }}" class="text-slate-500 hover:text-emerald-600 transition-colors">Contact</a></li>
+                </ul>
+            </div>
+
+            <!-- Explore Column -->
+            <div>
+                <h4 class="font-bold text-base mb-4 text-slate-900">Explore</h4>
+                <ul class="space-y-3 text-sm">
+                    <li><a href="{{ url_for('main.explore') }}" class="text-slate-500 hover:text-emerald-600 transition-colors">Destinations</a></li>
+                    <li><a href="{{ url_for('main.plan_trip') }}" class="text-slate-500 hover:text-emerald-600 transition-colors">Plan a Trip</a></li>
+                    <li><a href="{{ url_for('main.my_trips') }}" class="text-slate-500 hover:text-emerald-600 transition-colors">My Trips</a></li>
+                </ul>
+            </div>
+
+            <!-- Support Column -->
+            <div>
+                <h4 class="font-bold text-base mb-4 text-slate-900">Support</h4>
+                <ul class="space-y-3 text-sm">
+                    <li><a href="{{ url_for('main.faq') }}" class="text-slate-500 hover:text-emerald-600 transition-colors">FAQs</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="border-t border-slate-100 pt-8">
+            <p class="text-center text-sm text-slate-400">
+                (c) 2026 RoutheonSkups. All rights reserved. Made with love for India.
+            </p>
+        </div>
+    </div>
+</footer>

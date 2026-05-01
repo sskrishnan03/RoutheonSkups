@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Plan a Trip - Step 2: Dates | RoutheonSkups</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3B82F6",
+                        "primary-hover": "#2563EB",
+                        "background-light": "#FFFFFF",
+                        "background-dark": "#0F172A",
+                        "surface-light": "#F8FAFC",
+                        "surface-dark": "#1E293B",
+                        "text-main-light": "#1E293B",
+                        "text-main-dark": "#F1F5F9",
+                        "text-muted-light": "#64748B",
+                        "text-muted-dark": "#94A3B8",
+                        "border-light": "#E2E8F0",
+                        "border-dark": "#334155",
+                    },
+                    fontFamily: {
+                        display: ["'Plus Jakarta Sans'", "sans-serif"],
+                        body: ["'Plus Jakarta Sans'", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        xl: "1rem",
+                        "2xl": "1.5rem",
+                        "3xl": "2rem",
+                    },
+                    boxShadow: {
+                        soft: "0 4px 20px -2px rgba(0, 0, 0, 0.05)",
+                        hover: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.01)",
+                        glass: "0 8px 32px 0 rgba(31, 38, 135, 0.15)",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+
+        .date-selected {
+            background-color: #3B82F6;
+            color: white;
+            border-radius: 9999px;
+        }
+
+        .date-range-bg {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        .toggle-checkbox:checked {
+            right: 0;
+            background-color: #3B82F6;
+        }
+
+        .toggle-checkbox:checked+.toggle-label {
+            background-color: #3B82F6;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark transition-colors duration-300 min-h-screen flex flex-col">
+    {% include 'components/navbar.html' %}
+    <main class="flex-grow flex items-center justify-center pt-40 pb-12 px-4 relative overflow-hidden">
+        <div class="absolute inset-0 z-0 pointer-events-none">
+            <div
+                class="absolute top-1/4 -right-1/4 w-[500px] h-[500px] bg-blue-100/40 dark:bg-blue-900/10 rounded-full blur-[100px]">
+            </div>
+            <div
+                class="absolute bottom-1/4 -left-1/4 w-[500px] h-[500px] bg-cyan-100/40 dark:bg-cyan-900/10 rounded-full blur-[100px]">
+            </div>
+        </div>
+        <div class="relative z-10 w-full max-w-4xl">
+            <div class="flex justify-center mb-12">
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2">
+                        <div
+                            class="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center text-sm font-bold">
+                            <span class="material-icons-round text-lg">check</span>
+                        </div>
+                        <span class="text-sm font-bold text-text-muted-light">Destinations</span>
+                    </div>
+                    <div class="w-12 h-0.5 bg-primary"></div>
+                    <div class="flex items-center gap-2">
+                        <div
+                            class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold shadow-lg shadow-blue-500/30">
+                            2</div>
+                        <span class="text-sm font-bold text-text-main-light dark:text-white">Dates</span>
+                    </div>
+                    <div class="w-12 h-0.5 bg-border-light dark:bg-border-dark"></div>
+                    <div class="flex items-center gap-2 opacity-40">
+                        <div
+                            class="w-8 h-8 rounded-full bg-border-light dark:bg-border-dark flex items-center justify-center text-sm font-bold">
+                            3</div>
+                        <span class="text-sm font-bold text-text-muted-light">Preferences</span>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mb-10">
+                <h1
+                    class="text-4xl md:text-5xl font-extrabold tracking-tight text-text-main-light dark:text-text-main-dark mb-4">
+                    When are you planning to travel?
+                </h1>
+                <p class="text-text-muted-light dark:text-text-muted-dark text-lg">
+                    Select your travel dates to get accurate availability and pricing.
+                </p>
+            </div>
+            <div
+                class="bg-white dark:bg-surface-dark rounded-3xl shadow-xl border border-border-light dark:border-border-dark overflow-hidden transition-all">
+                <div class="p-8">
+                    <div class="grid md:grid-cols-2 gap-6 mb-10">
+                        <div class="relative">
+                            <label
+                                class="block text-xs font-bold uppercase tracking-wider text-text-muted-light mb-2 ml-1">Start
+                                Date</label>
+                            <div class="relative group">
+                                <span
+                                    class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary group-focus-within:text-primary transition-colors">calendar_month</span>
+                                <input id="start-date-input"
+                                    class="w-full pl-12 pr-4 py-4 bg-surface-light dark:bg-white/5 border border-border-light dark:border-border-dark rounded-2xl text-text-main-light dark:text-white font-semibold focus:ring-2 focus:ring-primary focus:border-transparent transition-all cursor-pointer"
+                                    readonly="" type="text" value="" placeholder="Select Date" />
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <label
+                                class="block text-xs font-bold uppercase tracking-wider text-text-muted-light mb-2 ml-1">End
+                                Date</label>
+                            <div class="relative group">
+                                <span
+                                    class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary transition-colors">calendar_today</span>
+                                <input id="end-date-input"
+                                    class="w-full pl-12 pr-4 py-4 bg-surface-light dark:bg-white/5 border border-border-light dark:border-border-dark rounded-2xl text-text-main-light dark:text-white font-semibold focus:ring-2 focus:ring-primary focus:border-transparent transition-all cursor-pointer"
+                                    readonly="" type="text" value="" placeholder="Select Date" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid lg:grid-cols-2 gap-12" id="calendar-container">
+                        <div id="month1-container"></div>
+                        <div id="month2-container" class="hidden lg:block"></div>
+                    </div>
+                    <div id="flexible-card"
+                        class="mt-12 flex items-center justify-between p-6 rounded-2xl bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/20">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 rounded-full bg-white dark:bg-surface-dark flex items-center justify-center text-primary shadow-sm">
+                                <span class="material-symbols-outlined">event_repeat</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-text-main-light dark:text-white">I am flexible with dates</h4>
+                                <p class="text-sm text-text-muted-light dark:text-text-muted-dark">Show me the best
+                                    prices within +/- 3 days of my selection.</p>
+                                <p id="flexible-status"
+                                    class="text-xs font-bold uppercase tracking-wider text-primary mt-1">Flexible: On</p>
+                            </div>
+                        </div>
+                        <div
+                            class="relative inline-block w-14 h-8 align-middle select-none transition duration-200 ease-in">
+                            <input checked=""
+                                class="toggle-checkbox absolute block w-8 h-8 rounded-full bg-white border-4 appearance-none cursor-pointer border-gray-300 transition-all checked:right-0 checked:border-primary"
+                                id="toggle" name="toggle" type="checkbox" />
+                            <label
+                                class="toggle-label block overflow-hidden h-8 rounded-full bg-gray-300 cursor-pointer transition-all"
+                                for="toggle"></label>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="bg-surface-light dark:bg-black/10 p-8 border-t border-border-light dark:border-border-dark flex items-center justify-between">
+                    <button id="back-step-btn" onclick="history.back()"
+                        class="flex items-center gap-2 px-8 py-3.5 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl font-bold text-text-main-light dark:text-white hover:bg-gray-50 dark:hover:bg-white/5 transition-all shadow-sm">
+                        <span class="material-icons-round">arrow_back</span>
+                        Back
+                    </button>
+                    <div class="flex items-center gap-6">
+                        <div class="text-right">
+                            <span class="block text-xs font-bold text-text-muted-light uppercase tracking-widest">Total
+                                Duration</span>
+                            <div class="mt-1 flex items-center justify-end gap-2">
+                                <button id="duration-minus-btn" type="button"
+                                    class="w-8 h-8 rounded-full border border-border-light dark:border-border-dark bg-white dark:bg-surface-dark font-bold text-primary hover:bg-blue-50 dark:hover:bg-white/5 transition-all">
+                                    -
+                                </button>
+                                <span id="total-duration" class="text-lg font-extrabold text-primary min-w-[90px] text-center">-</span>
+                                <button id="duration-plus-btn" type="button"
+                                    class="w-8 h-8 rounded-full border border-border-light dark:border-border-dark bg-white dark:bg-surface-dark font-bold text-primary hover:bg-blue-50 dark:hover:bg-white/5 transition-all">
+                                    +
+                                </button>
+                            </div>
+                        </div>
+                        <button id="next-step-btn"
+                            class="flex items-center gap-3 px-10 py-4 bg-primary hover:bg-primary-hover text-white rounded-xl font-bold shadow-lg shadow-blue-500/30 transition-all transform hover:-translate-y-0.5">
+                            Next Step
+                            <span class="material-icons-round">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <p
+                class="mt-8 text-center text-sm text-text-muted-light dark:text-text-muted-dark flex items-center justify-center gap-2">
+                <span class="material-icons-round text-lg text-amber-500">lightbulb</span>
+                Pro tip: Travelling on Tuesdays or Wednesdays often yields better accommodation rates.
+            </p>
+        </div>
+    </main>
+    <footer class="py-10 border-t border-border-light dark:border-border-dark mt-auto bg-white dark:bg-background-dark">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-xs text-text-muted-light dark:text-text-muted-dark">
+                © 2026 RoutheonSkups. Step 2 of 4 - Plan your perfect journey.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const destination = urlParams.get('destination');
+
+            let currentDate = new Date();
+            currentDate.setDate(1); // Start of current month
+
+            let startDate = null;
+            let endDate = null;
+
+            const startDateInput = document.getElementById('start-date-input');
+            const endDateInput = document.getElementById('end-date-input');
+            const totalDurationDisplay = document.getElementById('total-duration');
+            const nextBtn = document.getElementById('next-step-btn');
+            const flexibleToggle = document.getElementById('toggle');
+            const flexibleStatus = document.getElementById('flexible-status');
+            const flexibleCard = document.getElementById('flexible-card');
+            const durationMinusBtn = document.getElementById('duration-minus-btn');
+            const durationPlusBtn = document.getElementById('duration-plus-btn');
+
+            function normalizeDate(date) {
+                const normalized = new Date(date);
+                normalized.setHours(0, 0, 0, 0);
+                return normalized;
+            }
+
+            function addDays(date, days) {
+                const result = new Date(date);
+                result.setDate(result.getDate() + days);
+                return normalizeDate(result);
+            }
+
+            function toYMD(date) {
+                const y = date.getFullYear();
+                const m = String(date.getMonth() + 1).padStart(2, '0');
+                const d = String(date.getDate()).padStart(2, '0');
+                return `${y}-${m}-${d}`;
+            }
+
+            function getTripDays() {
+                if (!startDate || !endDate) return 0;
+                const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+                return Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            }
+
+            function formatDate(date) {
+                if (!date) return '';
+                const options = { month: 'short', day: 'numeric', year: 'numeric' };
+                return date.toLocaleDateString('en-US', options);
+            }
+
+            function renderCalendar() {
+                const c1 = document.getElementById('month1-container');
+                const c2 = document.getElementById('month2-container');
+
+                let month1 = new Date(currentDate);
+                let month2 = new Date(currentDate);
+                month2.setMonth(month2.getMonth() + 1);
+
+                if (c1) c1.innerHTML = generateMonthHTML(month1, true, false);
+                if (c2) c2.innerHTML = generateMonthHTML(month2, false, true);
+
+                attachEventListeners();
+                updateInputs();
+            }
+
+            function generateMonthHTML(date, hasPrevBtn, hasNextBtn) {
+                const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+                let prevBtnHTML = hasPrevBtn ? `<button class="prev-month-btn p-2 hover:bg-surface-light dark:hover:bg-white/5 rounded-full transition-colors"><span class="material-icons-round pointer-events-none">chevron_left</span></button>` : `<div class="w-9 h-9 hidden lg:block"></div><button class="prev-month-btn p-2 hover:bg-surface-light dark:hover:bg-white/5 rounded-full transition-colors lg:hidden"><span class="material-icons-round pointer-events-none">chevron_left</span></button>`;
+                let nextBtnHTML = hasNextBtn ? `<button class="next-month-btn p-2 hover:bg-surface-light dark:hover:bg-white/5 rounded-full transition-colors"><span class="material-icons-round pointer-events-none">chevron_right</span></button>` : `<div class="w-9 h-9 hidden lg:block"></div><button class="next-month-btn p-2 hover:bg-surface-light dark:hover:bg-white/5 rounded-full transition-colors lg:hidden"><span class="material-icons-round pointer-events-none">chevron_right</span></button>`;
+
+                let header = `
+                    <div class="flex items-center justify-between mb-6">
+                        ${prevBtnHTML}
+                        <h3 class="font-extrabold text-lg text-text-main-light dark:text-white">${monthNames[date.getMonth()]} ${date.getFullYear()}</h3>
+                        ${nextBtnHTML}
+                    </div>
+                    <div class="calendar-grid text-center text-xs font-bold text-text-muted-light mb-4 uppercase tracking-widest">
+                        <div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div><div>Su</div>
+                    </div>
+                `;
+
+                let days = `<div class="calendar-grid text-sm font-semibold gap-y-2">`;
+
+                const year = date.getFullYear();
+                const month = date.getMonth();
+
+                const firstDay = new Date(year, month, 1);
+                const lastDay = new Date(year, month + 1, 0);
+
+                let firstDayOfWeek = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; // Mon=0 .. Sun=6
+
+                const prevMonthLastDay = new Date(year, month, 0).getDate();
+                for (let i = 0; i < firstDayOfWeek; i++) {
+                    days += `<div class="py-3 text-text-muted-light/40 text-center">${prevMonthLastDay - firstDayOfWeek + i + 1}</div>`;
+                }
+
+                let today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                for (let i = 1; i <= lastDay.getDate(); i++) {
+                    let currentDayDate = new Date(year, month, i);
+                    currentDayDate.setHours(0, 0, 0, 0);
+
+                    let classes = "py-3 transition-all cursor-pointer text-center ";
+
+                    if (currentDayDate < today) {
+                        classes += " text-text-muted-light/40 cursor-not-allowed";
+                        days += `<div class="${classes}">${i}</div>`;
+                        continue;
+                    }
+
+                    let isStart = startDate && currentDayDate.getTime() === startDate.getTime();
+                    let isEnd = endDate && currentDayDate.getTime() === endDate.getTime();
+                    let inRange = startDate && endDate && currentDayDate > startDate && currentDayDate < endDate;
+
+                    if (isStart || isEnd) {
+                        classes += "date-selected shadow-lg shadow-blue-500/40 relative z-10";
+                    } else if (inRange) {
+                        classes += "date-range-bg";
+                    } else {
+                        classes += "hover:bg-surface-light dark:hover:bg-white/5 rounded-full";
+                    }
+
+                    days += `<div class="${classes} day-cell" data-date="${currentDayDate.getTime()}" data-day="${i}">${i}</div>`;
+                }
+
+                let lastDayOfWeek = lastDay.getDay() === 0 ? 6 : lastDay.getDay() - 1;
+                let nextMonthDays = 6 - lastDayOfWeek;
+                for (let i = 1; i <= nextMonthDays; i++) {
+                    days += `<div class="py-3 text-text-muted-light/40 text-center">${i}</div>`;
+                }
+
+                days += `</div>`;
+
+                return header + days;
+            }
+
+            function attachEventListeners() {
+                document.querySelectorAll('.prev-month-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        currentDate.setMonth(currentDate.getMonth() - 1);
+                        renderCalendar();
+                    });
+                });
+
+                document.querySelectorAll('.next-month-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        currentDate.setMonth(currentDate.getMonth() + 1);
+                        renderCalendar();
+                    });
+                });
+
+                document.querySelectorAll('.day-cell').forEach(cell => {
+                    cell.addEventListener('click', (e) => {
+                        const cellTarget = e.currentTarget;
+                        const clickedDate = normalizeDate(new Date(parseInt(cellTarget.dataset.date, 10)));
+
+                        if (!startDate || (startDate && endDate && startDate.getTime() !== endDate.getTime())) {
+                            startDate = clickedDate;
+                            endDate = clickedDate; // first click defaults to 1-day trip
+                        } else if (startDate && endDate && startDate.getTime() === endDate.getTime()) {
+                            if (clickedDate < startDate) {
+                                endDate = startDate;
+                                startDate = clickedDate;
+                            } else {
+                                endDate = clickedDate;
+                            }
+                        }
+
+                        renderCalendar();
+                    });
+                });
+            }
+
+            function updateInputs() {
+                if (startDateInput) startDateInput.value = startDate ? formatDate(startDate) : '';
+                if (endDateInput) endDateInput.value = endDate ? formatDate(endDate) : '';
+
+                if (startDate && endDate && totalDurationDisplay) {
+                    const days = getTripDays();
+                    totalDurationDisplay.innerText = days === 1 ? '1 Day' : `${days} Days`;
+                } else if (totalDurationDisplay) {
+                    totalDurationDisplay.innerText = '-';
+                }
+            }
+
+            function updateFlexibleUI() {
+                const isFlexible = flexibleToggle ? flexibleToggle.checked : false;
+                if (flexibleStatus) {
+                    flexibleStatus.innerText = isFlexible ? 'Flexible: On' : 'Flexible: Off';
+                }
+                if (flexibleCard) {
+                    flexibleCard.classList.toggle('ring-2', isFlexible);
+                    flexibleCard.classList.toggle('ring-primary/20', isFlexible);
+                }
+            }
+
+            function adjustDuration(deltaDays) {
+                const today = normalizeDate(new Date());
+                if (!startDate) {
+                    startDate = today;
+                }
+                if (!endDate || endDate < startDate) {
+                    endDate = startDate;
+                }
+
+                const currentDuration = getTripDays();
+                const nextDuration = Math.min(30, Math.max(1, currentDuration + deltaDays));
+                endDate = addDays(startDate, nextDuration - 1);
+                renderCalendar();
+            }
+
+            // Initialize default dates so users can immediately adjust duration using +/- buttons.
+            const today = normalizeDate(new Date());
+            startDate = today;
+            endDate = addDays(today, 4);
+            currentDate = new Date(today.getFullYear(), today.getMonth(), 1);
+
+            renderCalendar();
+            updateFlexibleUI();
+
+            if (durationMinusBtn) {
+                durationMinusBtn.addEventListener('click', () => adjustDuration(-1));
+            }
+
+            if (durationPlusBtn) {
+                durationPlusBtn.addEventListener('click', () => adjustDuration(1));
+            }
+
+            if (flexibleToggle) {
+                flexibleToggle.addEventListener('change', updateFlexibleUI);
+            }
+
+            if (flexibleCard && flexibleToggle) {
+                flexibleCard.addEventListener('click', (e) => {
+                    if (e.target.closest('#toggle') || e.target.closest('label[for="toggle"]')) {
+                        return;
+                    }
+                    flexibleToggle.checked = !flexibleToggle.checked;
+                    updateFlexibleUI();
+                });
+            }
+
+            if (nextBtn) {
+                nextBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (!startDate || !endDate) {
+                        alert('Please select a start and end date.');
+                        return;
+                    }
+
+                    const isFlexible = flexibleToggle ? flexibleToggle.checked : false;
+
+                    const queryParams = new URLSearchParams();
+                    if (destination) queryParams.set('destination', destination);
+                    queryParams.set('start_date', toYMD(startDate));
+                    queryParams.set('end_date', toYMD(endDate));
+                    queryParams.set('flexible', isFlexible);
+
+                    window.location.href = "{{ url_for('main.plan_trip_step2_0') }}?" + queryParams.toString();
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

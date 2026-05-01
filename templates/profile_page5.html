@@ -1,0 +1,967 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>RoutheonSkups Profile - AI Assistant</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3B82F6",
+                        "primary-hover": "#2563EB",
+                        "background-light": "#FFFFFF",
+                        "surface-light": "#F8FAFC",
+                        "text-main-light": "#1E293B",
+                        "text-muted-light": "#64748B",
+                        "border-light": "#E2E8F0",
+                    },
+                    fontFamily: {
+                        display: ["'Plus Jakarta Sans'", "sans-serif"],
+                        body: ["'Plus Jakarta Sans'", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        xl: "1rem",
+                        "2xl": "1.5rem",
+                        "3xl": "2rem",
+                    },
+                    boxShadow: {
+                        soft: "0 4px 20px -2px rgba(0, 0, 0, 0.05)",
+                        premium: "0 10px 40px -10px rgba(0, 0, 0, 0.08)",
+                        chat: "0 20px 50px -12px rgba(0, 0, 0, 0.05)",
+                    }
+                },
+            },
+        };
+    </script>
+    <style type="text/tailwindcss">
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .active-tab { @apply bg-primary text-white shadow-lg shadow-blue-500/30; }
+        .ai-bubble { @apply bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100 text-text-main-light rounded-2xl rounded-tl-none p-4 max-w-[85%] shadow-sm; }
+        .user-bubble { @apply bg-white border border-border-light text-text-main-light rounded-2xl rounded-tr-none p-4 max-w-[85%] shadow-md; }
+        .action-chip { @apply px-4 py-2 bg-white border border-border-light rounded-full text-xs font-semibold text-text-muted-light hover:border-primary hover:text-primary hover:bg-blue-50 transition-all cursor-pointer shadow-sm; }
+        .sidebar-item { @apply flex items-start gap-2.5 p-2.5 rounded-xl hover:bg-slate-50 cursor-pointer transition-all border border-transparent relative min-h-[56px]; }
+        .sidebar-item.active { @apply bg-blue-50/70 border-blue-200 shadow-sm; }
+        .chat-frame { @apply bg-white/90 backdrop-blur-sm border border-border-light rounded-3xl shadow-chat; }
+        .chat-panel-head { @apply bg-gradient-to-r from-surface-light to-white; }
+        .chat-feed-bg {
+            background-image: radial-gradient(circle at 1px 1px, rgba(148,163,184,0.15) 1px, transparent 0);
+            background-size: 16px 16px;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
+        .message-actions { @apply mt-1 flex items-center gap-1; }
+        .user-actions { opacity: 0; pointer-events: none; transition: opacity .18s ease; }
+        .assistant-actions { opacity: 1; pointer-events: auto; }
+        .message-row:hover .user-actions, .message-row:focus-within .user-actions { opacity: 1; pointer-events: auto; }
+        .message-action-btn { @apply w-6 h-6 inline-flex items-center justify-center rounded-full text-text-muted-light hover:text-primary hover:bg-primary/10 transition-all; }
+        .message-action-btn.active { @apply text-primary bg-primary/15; }
+        .message-action-btn.copy-success { @apply text-emerald-600 bg-emerald-50; }
+        .message-action-btn .material-icons-round { font-size: 14px; }
+        .message-menu { @apply hidden absolute right-0 top-8 w-44 bg-white border border-border-light rounded-xl shadow-lg z-[1300] overflow-hidden; }
+        .message-menu.open { display: block; }
+        .message-menu-item { @apply w-full text-left px-3 py-2 text-xs font-semibold hover:bg-surface-light; }
+        .message-menu-item.danger { @apply text-red-600 hover:bg-red-50; }
+        .floating-session-menu { @apply fixed hidden w-40 bg-white border border-border-light rounded-lg shadow-lg z-[1200] overflow-hidden; }
+        .floating-session-menu.open { display: block; }
+        .floating-message-menu { @apply fixed hidden w-44 bg-white border border-border-light rounded-xl shadow-lg z-[1400] overflow-hidden; }
+        .floating-message-menu.open { display: block; }
+    </style>
+</head>
+
+<body class="bg-gradient-to-b from-slate-50 via-white to-blue-50/40 text-text-main-light min-h-screen flex flex-col">
+    {% include 'components/navbar.html' %}
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-10 flex-grow w-full flex flex-col gap-8 relative">
+        <div class="absolute inset-0 -z-10 pointer-events-none">
+            <div class="absolute top-8 right-8 w-80 h-80 bg-blue-100/50 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-8 left-8 w-80 h-80 bg-cyan-100/50 rounded-full blur-3xl"></div>
+        </div>
+        <section class="bg-white rounded-3xl border border-border-light shadow-premium p-8 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+            <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                <div class="flex flex-col md:flex-row items-center gap-6">
+                    <div class="relative">
+                        <div class="w-24 h-24 rounded-full ring-4 ring-white shadow-xl overflow-hidden bg-surface-light flex items-center justify-center text-primary text-4xl font-bold">
+                            {% if current_user.image_url %}
+                            <img alt="{{ current_user.name }}" class="w-full h-full object-cover" src="{{ current_user.image_url }}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&q=80&w=2000'" />
+                            {% else %}
+                            {{ current_user.name[0]|upper }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="text-center md:text-left">
+                        <h1 class="text-2xl font-extrabold text-text-main-light">{{ current_user.name }}</h1>
+                    </div>
+                </div>
+                <div class="flex gap-12 border-t md:border-t-0 md:border-l border-border-light pt-6 md:pt-0 md:pl-12">
+                    <div class="text-center md:text-left">
+                        <div class="text-xl font-extrabold text-text-main-light">{{ trip_count }}</div>
+                        <div class="text-xs font-bold text-text-muted-light uppercase">Trips</div>
+                    </div>
+                    <div class="text-center md:text-left">
+                        <div class="text-xl font-extrabold text-text-main-light">{{ saved_count }}</div>
+                        <div class="text-xs font-bold text-text-muted-light uppercase">Saved Destinations</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <nav class="flex justify-center">
+            <div class="flex flex-wrap items-center bg-surface-light p-2 rounded-3xl border border-border-light shadow-sm gap-1">
+                <a href="{{ url_for('main.profile') }}" class="px-6 py-3 rounded-2xl text-sm font-bold text-text-muted-light hover:text-text-main-light hover:bg-white transition-all">PERSONAL INFO</a>
+                <a href="{{ url_for('main.my_trips') }}" class="px-6 py-3 rounded-2xl text-sm font-bold text-text-muted-light hover:text-text-main-light hover:bg-white transition-all">MY TRIPS</a>
+                <a href="{{ url_for('main.calendar') }}" class="px-6 py-3 rounded-2xl text-sm font-bold text-text-muted-light hover:text-text-main-light hover:bg-white transition-all">CALENDAR</a>
+                <a href="{{ url_for('main.settings') }}" class="px-6 py-3 rounded-2xl text-sm font-bold text-text-muted-light hover:text-text-main-light hover:bg-white transition-all">SETTINGS</a>
+                <a href="{{ url_for('main.profile_ai') }}" class="active-tab px-6 py-3 rounded-2xl text-sm font-bold flex items-center gap-2 transition-all">
+                    <span class="material-icons-round text-lg">smart_toy</span> AI ASSISTANT
+                </a>
+            </div>
+        </nav>
+
+        <section class="max-w-6xl mx-auto w-full flex-grow flex flex-col">
+            <div class="chat-frame flex h-[76vh] min-h-[700px] max-h-[860px] overflow-hidden">
+                <aside class="w-[31%] border-r border-border-light flex flex-col bg-white/95">
+                    <div class="p-4 border-b border-border-light flex items-center justify-between">
+                        <h3 class="font-bold text-sm text-text-main-light">Recent Chats</h3>
+                        <button id="new-chat-btn" class="w-8 h-8 rounded-lg bg-surface-light flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all" title="New chat">
+                            <span class="material-icons-round text-lg">add</span>
+                        </button>
+                    </div>
+                    <div class="px-3 py-2 border-b border-border-light">
+                        <div class="relative">
+                            <span class="material-icons-round absolute left-3 top-1/2 -translate-y-1/2 text-text-muted-light text-sm">search</span>
+                            <input id="chat-search-input" type="text" placeholder="Search chats..."
+                                class="w-full pl-9 pr-3 py-2.5 text-xs bg-white border border-border-light rounded-xl shadow-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
+                        </div>
+                    </div>
+                    <div class="flex-grow overflow-y-auto p-3 space-y-1.5 custom-scrollbar bg-gradient-to-b from-white to-slate-50/60" id="sessions-container">
+                        <div class="p-8 text-center text-text-muted-light"><p class="text-xs">Loading chats...</p></div>
+                    </div>
+                </aside>
+
+                <div class="flex-grow flex flex-col bg-white/95">
+                    <div class="chat-panel-head p-5 border-b border-border-light flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary"><span class="material-icons-round">smart_toy</span></div>
+                            <div>
+                                <h2 class="font-bold text-text-main-light leading-none">Skupheon AI</h2>
+                                <span class="text-[10px] text-green-500 font-bold uppercase tracking-widest flex items-center gap-1 mt-1"><span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> Online and Ready</span>
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <button id="chat-menu-btn" class="p-2 hover:bg-surface-light rounded-xl transition-all text-text-muted-light"><span class="material-icons-round text-xl">more_vert</span></button>
+                            <div id="chat-menu" class="hidden absolute right-0 mt-2 w-56 bg-white border border-border-light rounded-xl shadow-lg overflow-hidden z-20">
+                                <button id="refresh-sessions-btn" class="w-full text-left px-4 py-3 text-sm font-medium hover:bg-surface-light transition-colors">Refresh chats</button>
+                                <button id="share-current-btn" class="w-full text-left px-4 py-3 text-sm font-medium hover:bg-surface-light transition-colors">Share current chat</button>
+                                <button id="delete-current-btn" class="w-full text-left px-4 py-3 text-sm font-medium hover:bg-surface-light transition-colors">Delete current chat</button>
+                                <button id="clear-all-btn" class="w-full text-left px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors">Clear all chats</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="chat-messages" class="chat-feed-bg flex-grow min-h-0 p-8 overflow-y-auto space-y-6 custom-scrollbar"></div>
+
+                    <div class="p-6 border-t border-border-light bg-white/95">
+                        <input id="chat-image-input" type="file" accept="image/*" class="hidden" />
+                        <div id="image-preview-wrap" class="hidden mb-3 p-3 bg-surface-light border border-border-light rounded-xl flex items-center justify-between gap-3">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <img id="image-preview" class="w-12 h-12 rounded-lg object-cover border border-border-light" alt="Preview" />
+                                <div class="min-w-0">
+                                    <p id="image-preview-name" class="text-xs font-bold text-text-main-light truncate"></p>
+                                    <p class="text-[11px] text-text-muted-light">Pinned image will be analyzed with your message.</p>
+                                </div>
+                            </div>
+                            <button id="remove-image-btn" class="px-3 py-1.5 text-xs font-bold bg-white border border-border-light rounded-lg hover:bg-slate-50">Remove</button>
+                        </div>
+
+                        <div class="relative flex items-center">
+                            <input id="chat-input" class="w-full pl-6 pr-20 py-4 bg-white border border-border-light rounded-2xl text-text-main-light placeholder:text-text-muted-light shadow-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all duration-300" placeholder="Type your travel query here..." type="text" />
+                            <div class="absolute right-2 flex items-center gap-1">
+                                <button id="attach-btn" class="p-2 text-text-muted-light hover:text-primary hover:bg-primary/5 rounded-xl transition-all" title="Pin image"><span class="material-icons-round">push_pin</span></button>
+                                <button id="send-btn" class="w-10 h-10 bg-primary text-white rounded-xl shadow-lg shadow-blue-500/30 flex items-center justify-center hover:bg-primary-hover hover:-translate-y-0.5 transition-all"><span class="material-icons-round text-xl">send</span></button>
+                            </div>
+                        </div>
+                        <div class="mt-3 px-1">
+                            <p class="text-[10px] text-text-muted-light font-medium uppercase tracking-wider">Press Enter to send message</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-white border-t border-border-light py-10">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-sm text-text-muted-light font-medium">Â© 2026 RoutheonSkups Destination Intelligence.</p>
+        </div>
+    </footer>
+
+    <script>
+        const AI_SETTINGS = {{ ai_assistant_settings | tojson }};
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const chatSearchInput = document.getElementById('chat-search-input');
+        const sendBtn = document.getElementById('send-btn');
+        const sessionsContainer = document.getElementById('sessions-container');
+        const newChatBtn = document.getElementById('new-chat-btn');
+        const chatMenuBtn = document.getElementById('chat-menu-btn');
+        const chatMenu = document.getElementById('chat-menu');
+        const refreshSessionsBtn = document.getElementById('refresh-sessions-btn');
+        const shareCurrentBtn = document.getElementById('share-current-btn');
+        const deleteCurrentBtn = document.getElementById('delete-current-btn');
+        const clearAllBtn = document.getElementById('clear-all-btn');
+        const attachBtn = document.getElementById('attach-btn');
+        const chatImageInput = document.getElementById('chat-image-input');
+        const imagePreviewWrap = document.getElementById('image-preview-wrap');
+        const imagePreview = document.getElementById('image-preview');
+        const imagePreviewName = document.getElementById('image-preview-name');
+        const removeImageBtn = document.getElementById('remove-image-btn');
+
+        let currentSessionId = null;
+        let sending = false;
+        let allSessionsCache = [];
+        let selectedImageBase64 = null;
+        let selectedImageMime = null;
+        let selectedImageName = null;
+        let editingMessageMeta = null;
+        let openMessageMenu = null;
+        let floatingSessionMenu = null;
+        let floatingSessionMenuSession = null;
+        let floatingMessageMenu = null;
+        let floatingMessageContext = null;
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.innerText = text || '';
+            return div.innerHTML;
+        }
+
+        function buildTimeNow() {
+            const now = new Date();
+            return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        }
+
+        function renderWelcomeMessage(isNew = false) {
+            const firstName = "{{ current_user.name.split(' ')[0] }}";
+            const welcome = isNew ? 'New chat started. Tell me your next trip idea.' : `Hello ${firstName}! How can I assist your travels today?`;
+            chatMessages.innerHTML = `
+                <div class="flex flex-col items-start gap-2">
+                    <div class="ai-bubble"><p class="text-sm font-medium leading-relaxed">${escapeHtml(welcome)}</p></div>
+                    <span class="text-[10px] font-bold text-text-muted-light ml-1">Skupheon AI â€¢ ${buildTimeNow()}</span>
+                </div>
+                <div class="flex flex-wrap gap-2 pt-2" id="suggestions-container">
+                    <div class="action-chip" onclick="handleChipClick('Analyze my upcoming trip')">Analyze my upcoming trip</div>
+                    <div class="action-chip" onclick="handleChipClick('Find hidden gems in Karnataka')">Find hidden gems in Karnataka</div>
+                    <div class="action-chip" onclick="handleChipClick('Help with my budget')">Help with my budget</div>
+                </div>
+            `;
+        }
+
+        function closeAllSessionMenus() {
+            if (floatingSessionMenu) {
+                floatingSessionMenu.classList.remove('open');
+                floatingSessionMenu.innerHTML = '';
+            }
+            floatingSessionMenuSession = null;
+        }
+
+        function applySessionsScrollableLimit() {
+            const items = sessionsContainer.querySelectorAll('.sidebar-item');
+            if (!items.length) {
+                sessionsContainer.style.maxHeight = '';
+                return;
+            }
+            if (items.length <= 10) {
+                sessionsContainer.style.maxHeight = '';
+                return;
+            }
+            const itemHeight = items[0].offsetHeight || 56;
+            const gapPx = 6; // space-y-1.5
+            const visibleCount = 10;
+            const totalHeight = (itemHeight * visibleCount) + (gapPx * Math.max(0, visibleCount - 1));
+            sessionsContainer.style.maxHeight = `${totalHeight}px`;
+        }
+
+        function ensureFloatingSessionMenu() {
+            if (floatingSessionMenu) return floatingSessionMenu;
+            const menu = document.createElement('div');
+            menu.id = 'floating-session-menu';
+            menu.className = 'floating-session-menu';
+            menu.addEventListener('click', (e) => e.stopPropagation());
+            document.body.appendChild(menu);
+            floatingSessionMenu = menu;
+            return menu;
+        }
+
+        function openSessionMenu(anchorBtn, session) {
+            const menu = ensureFloatingSessionMenu();
+            const rect = anchorBtn.getBoundingClientRect();
+            const menuWidth = 160;
+            const menuHeight = 132;
+            menu.innerHTML = `
+                <button class="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-surface-light session-pin">${session.pinned ? 'Unpin chat' : 'Pin chat'}</button>
+                <button class="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-surface-light session-edit">Edit chat</button>
+                <button class="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-surface-light session-share">Share chat</button>
+                <button class="w-full text-left px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 session-delete">Delete chat</button>
+            `;
+            let left = Math.max(8, rect.right - menuWidth);
+            left = Math.min(left, window.innerWidth - menuWidth - 8);
+            let top = rect.bottom + 6;
+            if (top + menuHeight > window.innerHeight - 8) {
+                top = Math.max(8, rect.top - menuHeight - 6);
+            }
+            menu.style.left = `${left}px`;
+            menu.style.top = `${top}px`;
+            menu.classList.add('open');
+            floatingSessionMenuSession = session;
+
+            menu.querySelector('.session-pin').onclick = async (e) => {
+                e.stopPropagation();
+                await togglePinSession(session.id, !session.pinned);
+            };
+            menu.querySelector('.session-edit').onclick = async (e) => {
+                e.stopPropagation();
+                await editSessionTitle(session.id, session.title || 'New Conversation');
+            };
+            menu.querySelector('.session-share').onclick = async (e) => {
+                e.stopPropagation();
+                await shareSession(session.id, session.title || 'Chat');
+            };
+            menu.querySelector('.session-delete').onclick = async (e) => {
+                e.stopPropagation();
+                await deleteSession(session.id);
+            };
+        }
+
+        function renderSessions(sessions) {
+            sessionsContainer.innerHTML = '';
+            if (!Array.isArray(sessions) || sessions.length === 0) {
+                const info = (!AI_SETTINGS.chat_history) ? 'Chat history is disabled in Settings.' : 'No chats found.';
+                sessionsContainer.innerHTML = `<div class="p-8 text-center text-text-muted-light"><p class="text-xs">${info}</p></div>`;
+                sessionsContainer.style.maxHeight = '';
+                return;
+            }
+
+            sessions.forEach((session) => {
+                    const item = document.createElement('div');
+                    item.className = `sidebar-item ${currentSessionId === session.id ? 'active' : ''}`;
+                    item.dataset.sessionId = String(session.id);
+                    const pinBadge = session.pinned ? '<span class="material-icons-round text-[13px] text-amber-500">push_pin</span>' : '';
+
+                    item.innerHTML = `
+                        <div class="w-8 h-8 rounded-lg ${currentSessionId === session.id ? 'bg-blue-100 text-primary' : 'bg-surface-light text-text-muted-light'} flex-shrink-0 flex items-center justify-center">
+                            <span class="material-icons-round text-[16px]">chat_bubble</span>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center gap-1.5">
+                                ${pinBadge}
+                                <h4 class="text-xs font-bold text-text-main-light truncate">${escapeHtml(session.title || 'New Conversation')}</h4>
+                            </div>
+                            <p class="text-[10px] text-text-muted-light truncate mt-1">${escapeHtml(session.last_message || 'No messages yet')}</p>
+                        </div>
+                        <div class="relative">
+                            <button class="session-menu-btn p-1.5 rounded-md text-text-muted-light hover:bg-slate-100" title="More" data-session-id="${session.id}">
+                                <span class="material-icons-round text-[16px]">more_horiz</span>
+                            </button>
+                        </div>
+                    `;
+
+                    item.addEventListener('click', (e) => {
+                        if (e.target.closest('.session-menu-btn') || e.target.closest('.session-menu')) return;
+                        selectSession(session.id);
+                    });
+
+                    const menuBtn = item.querySelector('.session-menu-btn');
+                    menuBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (floatingSessionMenuSession && floatingSessionMenuSession.id === session.id && floatingSessionMenu && floatingSessionMenu.classList.contains('open')) {
+                            closeAllSessionMenus();
+                            return;
+                        }
+                        closeAllSessionMenus();
+                        openSessionMenu(menuBtn, session);
+                    });
+
+                    sessionsContainer.appendChild(item);
+            });
+            applySessionsScrollableLimit();
+        }
+
+        function applySessionSearch() {
+            const q = (chatSearchInput.value || '').trim().toLowerCase();
+            if (!q) {
+                renderSessions(allSessionsCache);
+                return;
+            }
+            const filtered = allSessionsCache.filter((s) => {
+                const title = (s.title || '').toLowerCase();
+                const last = (s.last_message || '').toLowerCase();
+                return title.includes(q) || last.includes(q);
+            });
+            renderSessions(filtered);
+        }
+
+        async function loadSessions() {
+            try {
+                const response = await fetch('/api/chat/sessions');
+                const sessions = await response.json();
+                allSessionsCache = Array.isArray(sessions) ? sessions : [];
+
+                if (allSessionsCache.length === 0) {
+                    const info = (!AI_SETTINGS.chat_history) ? 'Chat history is disabled in Settings.' : 'No recent chats. Start a new one!';
+                    sessionsContainer.innerHTML = `<div class="p-8 text-center text-text-muted-light"><p class="text-xs">${info}</p></div>`;
+                    return;
+                }
+                applySessionSearch();
+            } catch (err) {
+                console.error('Error loading sessions:', err);
+                sessionsContainer.innerHTML = '<div class="p-8 text-center text-red-500"><p class="text-xs">Could not load chats.</p></div>';
+            }
+        }
+
+        async function togglePinSession(sessionId, pinned) {
+            closeAllSessionMenus();
+            try {
+                const response = await fetch(`/api/chat/session/${sessionId}/pin`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pinned })
+                });
+                const data = await response.json();
+                if (!response.ok || !data.success) {
+                    alert(data.error || 'Could not update pin status.');
+                    return;
+                }
+                const row = allSessionsCache.find((x) => x.id === sessionId);
+                if (row) row.pinned = data.pinned;
+                await loadSessions();
+            } catch (err) {
+                console.error(err);
+                alert('Could not update pin status.');
+            }
+        }
+
+        async function editSessionTitle(sessionId, currentTitle) {
+            closeAllSessionMenus();
+            const nextTitle = prompt('Edit chat title:', currentTitle || 'New Conversation');
+            if (nextTitle === null) return;
+            const trimmed = nextTitle.trim();
+            if (!trimmed) {
+                alert('Title cannot be empty.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/chat/session/${sessionId}/title`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title: trimmed })
+                });
+                const data = await response.json();
+                if (!response.ok || !data.success) {
+                    alert(data.error || 'Could not update chat title.');
+                    return;
+                }
+                await loadSessions();
+            } catch (err) {
+                console.error(err);
+                alert('Could not update chat title.');
+            }
+        }
+
+        async function shareSession(sessionId, title) {
+            closeAllSessionMenus();
+            try {
+                const response = await fetch(`/api/chat/session/${sessionId}`);
+                const messages = await response.json();
+                if (!response.ok || !Array.isArray(messages)) {
+                    alert('Could not load chat for sharing.');
+                    return;
+                }
+
+                const text = `RoutheonSkups - ${title}\n\n` + messages.map((m) => `${m.role === 'user' ? 'You' : 'Skupheon AI'}: ${m.content}`).join('\n\n');
+                if (navigator.share) {
+                    try {
+                        await navigator.share({ title: `Chat: ${title}`, text });
+                        return;
+                    } catch (e) {}
+                }
+                await navigator.clipboard.writeText(text);
+                alert('Chat copied to clipboard.');
+            } catch (err) {
+                console.error(err);
+                alert('Could not share this chat.');
+            }
+        }
+
+        async function selectSession(sessionId) {
+            currentSessionId = sessionId;
+            editingMessageMeta = null;
+            attachBtn.classList.remove('hidden');
+            await loadSessions();
+            chatMessages.innerHTML = '<div class="p-8 text-center text-text-muted-light"><p class="text-xs">Loading conversation...</p></div>';
+            try {
+                const response = await fetch(`/api/chat/session/${sessionId}`);
+                const messages = await response.json();
+                chatMessages.innerHTML = '';
+                if (!Array.isArray(messages) || messages.length === 0) {
+                    chatMessages.innerHTML = '<div class="p-8 text-center text-text-muted-light"><p class="text-xs">Start chatting with Skupheon.</p></div>';
+                    return;
+                }
+                messages.forEach((msg) => appendMessage(msg.role, msg.content, msg.created_at));
+            } catch (err) {
+                console.error(err);
+                chatMessages.innerHTML = '<div class="p-8 text-center text-red-500"><p class="text-xs">Could not load this chat.</p></div>';
+            }
+        }
+        function appendMessage(role, content, time = null) {
+            const safeTime = time || buildTimeNow();
+            const messageDiv = document.createElement('div');
+            const normalizedRole = role === 'user' ? 'user' : 'assistant';
+            const bubbleClass = normalizedRole === 'user' ? 'user-bubble' : 'ai-bubble';
+            const author = normalizedRole === 'user' ? 'You' : 'Skupheon AI';
+            const deletable = normalizedRole === 'user' && /\bpac\b/i.test(content || '');
+            messageDiv.className = `message-row group flex flex-col ${normalizedRole === 'user' ? 'items-end' : 'items-start'} gap-2`;
+            messageDiv.dataset.role = normalizedRole;
+            messageDiv.dataset.content = content || '';
+
+            const userActions = `
+                <div class="message-actions user-actions self-end relative mr-1">
+                    <button type="button" class="message-action-btn" data-action="copy" title="Copy"><span class="material-icons-round">content_copy</span></button>
+                    <button type="button" class="message-action-btn" data-action="edit" title="Edit"><span class="material-icons-round">edit</span></button>
+                    ${deletable ? `
+                        <div class="relative">
+                            <button type="button" class="message-action-btn" data-action="menu" title="More"><span class="material-icons-round">more_horiz</span></button>
+                            <div class="message-menu" role="menu">
+                                <button type="button" class="message-menu-item danger" data-action="delete">Delete this message</button>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+
+            const aiActions = `
+                <div class="message-actions assistant-actions self-start relative ml-1">
+                    <button type="button" class="message-action-btn" data-action="copy" title="Copy"><span class="material-icons-round">content_copy</span></button>
+                    <button type="button" class="message-action-btn" data-action="thumb-up" title="Thumb up"><span class="material-icons-round">thumb_up</span></button>
+                    <button type="button" class="message-action-btn" data-action="thumb-down" title="Thumb down"><span class="material-icons-round">thumb_down</span></button>
+                    <div class="relative">
+                        <button type="button" class="message-action-btn" data-action="menu" title="More"><span class="material-icons-round">more_horiz</span></button>
+                        <div class="message-menu" role="menu">
+                            <button type="button" class="message-menu-item" data-action="share">Share this message</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            messageDiv.innerHTML = `
+                <div class="${bubbleClass}"><p class="message-text text-sm font-medium leading-relaxed whitespace-pre-wrap">${escapeHtml(content)}</p></div>
+                <span class="text-[10px] font-bold text-text-muted-light ${normalizedRole === 'user' ? 'mr-1' : 'ml-1'}">${author} • ${safeTime}</span>
+                ${normalizedRole === 'user' ? userActions : aiActions}
+            `;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        function closeMessageMenu() {
+            if (floatingMessageMenu) {
+                floatingMessageMenu.classList.remove('open');
+                floatingMessageMenu.innerHTML = '';
+            }
+            floatingMessageContext = null;
+            if (openMessageMenu) {
+                openMessageMenu.classList.remove('open');
+                openMessageMenu = null;
+            }
+        }
+
+        function ensureFloatingMessageMenu() {
+            if (floatingMessageMenu) return floatingMessageMenu;
+            const menu = document.createElement('div');
+            menu.id = 'floating-message-menu';
+            menu.className = 'floating-message-menu';
+            menu.addEventListener('click', (e) => e.stopPropagation());
+            document.body.appendChild(menu);
+            floatingMessageMenu = menu;
+            return menu;
+        }
+
+        function openFloatingMessageMenu(anchorBtn, row, role, messageText) {
+            const isPacDeletable = role === 'user' && /\bpac\b/i.test(messageText || '');
+            const menu = ensureFloatingMessageMenu();
+            if (role === 'assistant') {
+                menu.innerHTML = `<button type="button" class="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-surface-light" data-floating-action="share">Share this message</button>`;
+            } else if (isPacDeletable) {
+                menu.innerHTML = `<button type="button" class="w-full text-left px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50" data-floating-action="delete">Delete this message</button>`;
+            } else {
+                closeMessageMenu();
+                return;
+            }
+
+            const rect = anchorBtn.getBoundingClientRect();
+            const menuWidth = 176;
+            const menuHeight = 44;
+            let left = rect.right - menuWidth;
+            left = Math.max(8, Math.min(left, window.innerWidth - menuWidth - 8));
+            let top = rect.bottom + 6;
+            if (top + menuHeight > window.innerHeight - 8) {
+                top = Math.max(8, rect.top - menuHeight - 6);
+            }
+            menu.style.left = `${left}px`;
+            menu.style.top = `${top}px`;
+            menu.classList.add('open');
+            floatingMessageContext = { row, role, messageText };
+
+            menu.querySelector('[data-floating-action="share"]')?.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                closeMessageMenu();
+                const shareData = { title: 'Chat message', text: messageText };
+                if (navigator.share) {
+                    try { await navigator.share(shareData); return; } catch (err) {}
+                }
+                await copyText(messageText);
+                alert('Message copied to clipboard.');
+            });
+
+            menu.querySelector('[data-floating-action="delete"]')?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeMessageMenu();
+                if (!isPacDeletable) return;
+                row.remove();
+            });
+        }
+
+        async function copyText(value) {
+            if (!value) return;
+            if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(value);
+                return;
+            }
+            const ta = document.createElement('textarea');
+            ta.value = value;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+        }
+
+        function flashCopySuccess(buttonEl) {
+            if (!buttonEl) return;
+            const icon = buttonEl.querySelector('.material-icons-round');
+            if (!icon) return;
+            const prev = icon.textContent;
+            icon.textContent = 'check';
+            buttonEl.classList.add('copy-success');
+            setTimeout(() => {
+                icon.textContent = prev || 'content_copy';
+                buttonEl.classList.remove('copy-success');
+            }, 900);
+        }
+
+        async function sendMessage() {
+            if (sending) return;
+            const message = chatInput.value.trim();
+            if (!message && !selectedImageBase64) return;
+
+            const suggestionsContainer = document.getElementById('suggestions-container');
+            if (suggestionsContainer) suggestionsContainer.remove();
+
+            const outgoingMessage = message;
+            chatInput.value = '';
+            if (editingMessageMeta) {
+                const textEl = editingMessageMeta.querySelector('.message-text');
+                const rowMeta = editingMessageMeta.querySelector('span');
+                if (textEl) textEl.textContent = outgoingMessage;
+                if (rowMeta) rowMeta.textContent = `You • ${buildTimeNow()}`;
+                editingMessageMeta.dataset.content = outgoingMessage;
+                editingMessageMeta = null;
+                attachBtn.classList.remove('hidden');
+            } else if (selectedImageBase64 && outgoingMessage) {
+                appendMessage('user', `${outgoingMessage}\n[Image attached: ${selectedImageName}]`);
+            } else if (selectedImageBase64) {
+                appendMessage('user', `[Image attached: ${selectedImageName}]`);
+            } else {
+                appendMessage('user', outgoingMessage);
+            }
+
+            const typingId = `typing-${Date.now()}`;
+            const typingDiv = document.createElement('div');
+            typingDiv.id = typingId;
+            typingDiv.className = 'flex flex-col items-start gap-2';
+            typingDiv.innerHTML = '<div class="ai-bubble italic opacity-70"><p class="text-sm font-medium leading-relaxed">Skupheon is thinking...</p></div>';
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            sending = true;
+            sendBtn.disabled = true;
+
+            try {
+                const payload = { message: outgoingMessage, session_id: currentSessionId };
+                if (selectedImageBase64) {
+                    payload.image_base64 = selectedImageBase64;
+                    payload.image_mime = selectedImageMime;
+                    payload.image_name = selectedImageName;
+                }
+
+                const response = await fetch('/api/chat/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+
+                const typingNode = document.getElementById(typingId);
+                if (typingNode) typingNode.remove();
+
+                if (!response.ok || data.error) {
+                    appendMessage('ai', data.error || 'I encountered an error. Please try again.');
+                    return;
+                }
+
+                currentSessionId = data.session_id;
+                appendMessage('ai', data.response, data.created_at);
+                clearSelectedImage();
+                await loadSessions();
+            } catch (error) {
+                console.error('Chat error:', error);
+                const typingNode = document.getElementById(typingId);
+                if (typingNode) typingNode.remove();
+                appendMessage('ai', 'Sorry, I am having trouble connecting right now.');
+            } finally {
+                sending = false;
+                sendBtn.disabled = false;
+            }
+        }
+
+        async function deleteSession(sessionId) {
+            closeAllSessionMenus();
+            if (!sessionId) return;
+            if (!confirm('Delete this chat session?')) return;
+            try {
+                const response = await fetch(`/api/chat/session/${sessionId}`, { method: 'DELETE' });
+                const data = await response.json();
+                if (!response.ok || !data.success) {
+                    alert(data.error || 'Could not delete chat session.');
+                    return;
+                }
+                if (currentSessionId === sessionId) {
+                    currentSessionId = null;
+                    renderWelcomeMessage();
+                }
+                await loadSessions();
+            } catch (err) {
+                console.error(err);
+                alert('Could not delete chat session.');
+            }
+        }
+
+        async function clearAllSessions() {
+            if (!confirm('Clear all chat sessions? This cannot be undone.')) return;
+            try {
+                const response = await fetch('/api/chat/sessions/clear', { method: 'POST' });
+                const data = await response.json();
+                if (!response.ok || !data.success) {
+                    alert(data.error || 'Could not clear chats.');
+                    return;
+                }
+                currentSessionId = null;
+                renderWelcomeMessage();
+                await loadSessions();
+            } catch (err) {
+                console.error(err);
+                alert('Could not clear chats.');
+            }
+        }
+
+        function handleChipClick(text) {
+            chatInput.value = text;
+            sendMessage();
+        }
+        window.handleChipClick = handleChipClick;
+
+        function clearSelectedImage() {
+            selectedImageBase64 = null;
+            selectedImageMime = null;
+            selectedImageName = null;
+            chatImageInput.value = '';
+            imagePreviewWrap.classList.add('hidden');
+        }
+
+        function handleImageSelect(file) {
+            if (!file) return;
+            if (!file.type.startsWith('image/')) {
+                alert('Please choose an image file.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = () => {
+                const result = String(reader.result || '');
+                const commaIndex = result.indexOf(',');
+                if (commaIndex === -1) {
+                    alert('Could not process image.');
+                    return;
+                }
+                selectedImageMime = file.type || 'image/jpeg';
+                selectedImageBase64 = result.substring(commaIndex + 1);
+                selectedImageName = file.name || 'image';
+                imagePreview.src = result;
+                imagePreviewName.innerText = selectedImageName;
+                imagePreviewWrap.classList.remove('hidden');
+                chatInput.focus();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        chatMessages.addEventListener('click', async (e) => {
+            const btn = e.target.closest('[data-action]');
+            if (!btn) return;
+            e.stopPropagation();
+            const action = btn.dataset.action;
+            const row = btn.closest('.message-row');
+            if (!row) return;
+
+            const role = row.dataset.role || 'assistant';
+            const textEl = row.querySelector('.message-text');
+            const messageText = textEl ? textEl.textContent : (row.dataset.content || '');
+
+            if (action === 'copy') {
+                await copyText(messageText);
+                flashCopySuccess(btn);
+                return;
+            }
+
+            if (action === 'edit') {
+                if (role !== 'user') return;
+                editingMessageMeta = row;
+                chatInput.value = messageText;
+                attachBtn.classList.add('hidden');
+                chatInput.focus();
+                closeMessageMenu();
+                return;
+            }
+
+            if (action === 'thumb-up' || action === 'thumb-down') {
+                const upBtn = row.querySelector('[data-action="thumb-up"]');
+                const downBtn = row.querySelector('[data-action="thumb-down"]');
+                if (action === 'thumb-up') {
+                    upBtn?.classList.toggle('active');
+                    downBtn?.classList.remove('active');
+                } else {
+                    downBtn?.classList.toggle('active');
+                    upBtn?.classList.remove('active');
+                }
+                return;
+            }
+
+            if (action === 'menu') {
+                if (floatingMessageMenu && floatingMessageMenu.classList.contains('open') && floatingMessageContext && floatingMessageContext.row === row) {
+                    closeMessageMenu();
+                    return;
+                }
+                closeMessageMenu();
+                openFloatingMessageMenu(btn, row, role, messageText);
+                return;
+            }
+
+            if (action === 'share') {
+                closeMessageMenu();
+                return;
+            }
+
+            if (action === 'delete') {
+                closeMessageMenu();
+                return;
+            }
+        });
+
+        sendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
+            if (e.key === 'Escape' && editingMessageMeta) {
+                editingMessageMeta = null;
+                chatInput.value = '';
+                attachBtn.classList.remove('hidden');
+            }
+        });
+
+        attachBtn.addEventListener('click', () => chatImageInput.click());
+        chatImageInput.addEventListener('change', (e) => handleImageSelect(e.target.files && e.target.files[0]));
+        removeImageBtn.addEventListener('click', clearSelectedImage);
+
+        newChatBtn.addEventListener('click', async () => {
+            currentSessionId = null;
+            editingMessageMeta = null;
+            attachBtn.classList.remove('hidden');
+            clearSelectedImage();
+            renderWelcomeMessage(true);
+            await loadSessions();
+            chatInput.focus();
+        });
+
+        chatMenuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            chatMenu.classList.toggle('hidden');
+        });
+        chatSearchInput.addEventListener('input', applySessionSearch);
+        document.addEventListener('click', () => {
+            chatMenu.classList.add('hidden');
+            closeAllSessionMenus();
+            closeMessageMenu();
+        });
+        chatMenu.addEventListener('click', (e) => e.stopPropagation());
+        sessionsContainer.addEventListener('click', (e) => e.stopPropagation());
+        sessionsContainer.addEventListener('scroll', () => closeAllSessionMenus());
+        chatMessages.addEventListener('scroll', () => closeMessageMenu());
+
+        refreshSessionsBtn.addEventListener('click', async () => {
+            chatMenu.classList.add('hidden');
+            await loadSessions();
+        });
+
+        shareCurrentBtn.addEventListener('click', async () => {
+            chatMenu.classList.add('hidden');
+            if (!currentSessionId) {
+                alert('No active chat selected.');
+                return;
+            }
+            await shareSession(currentSessionId, 'Current Chat');
+        });
+
+        deleteCurrentBtn.addEventListener('click', async () => {
+            chatMenu.classList.add('hidden');
+            if (!currentSessionId) {
+                alert('No active chat selected.');
+                return;
+            }
+            await deleteSession(currentSessionId);
+        });
+
+        clearAllBtn.addEventListener('click', async () => {
+            chatMenu.classList.add('hidden');
+            await clearAllSessions();
+        });
+
+        window.addEventListener('resize', applySessionsScrollableLimit);
+
+        renderWelcomeMessage();
+        loadSessions();
+    </script>
+</body>
+
+</html>
+
+

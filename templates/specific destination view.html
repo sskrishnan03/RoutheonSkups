@@ -1,0 +1,481 @@
+<html class="scroll-smooth" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Munnar Master Overview - RoutheonSkups</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#10B981",
+                        "slate-custom": "#0F172A",
+                        "accent-emerald": "#10B981",
+                    },
+                    fontFamily: {
+                        sans: ["Plus Jakarta Sans", "sans-serif"],
+                    },
+                    borderRadius: {
+                        'custom': '2rem',
+                    },
+                    boxShadow: {
+                        'premium': '0 20px 50px -12px rgba(0, 0, 0, 0.04)',
+                        'soft': '0 8px 30px rgba(0, 0, 0, 0.03)',
+                    }
+                },
+            },
+        };
+    </script>
+    <style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply bg-white text-slate-800 antialiased;
+            }
+        }
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(24px);
+        }
+        .hero-gradient {
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%);
+        }
+        .glass-pill {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .active-tab {
+            @apply text-emerald-600 relative after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-10 after:h-0.5 after:bg-emerald-600;
+        }
+        .info-card {
+            @apply bg-white p-8 rounded-custom border border-slate-50 shadow-soft hover:shadow-premium transition-all duration-500;
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'components/navbar.html' %}
+    <main class="pt-32 pb-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <section class="relative h-[650px] w-full rounded-custom overflow-hidden mb-12 shadow-2xl">
+                <img alt="Munnar Tea Estates" class="absolute inset-0 w-full h-full object-cover"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLKtXxuYjbFfOEc40HZ_bJ9CE78Whqg0arv2Xv-UWpf65IDRpopY29tMsftfowAiO_BaKvcgTR8JVbdqNZZr9euynw2YR9VX_h2Eesz2Z0W2YzyfmTWYDm614oHnLkmh_Kxbp1Vlwzz7eT9KadPzuPJ7ZDmL4WUIBE907oT3zedLSe86ZfyFXVQWLPKq0wK4L7fwcWelsgTAujSvllrK7zXuycXkzOH5cWGXkoSnEw9KaxoW0Ra5tRRcClc6tS8GpVtAnu92XlDprU" />
+                <div class="absolute inset-0 hero-gradient"></div>
+                <div class="absolute top-28 left-12">
+                    <div class="flex items-center gap-3">
+                        <span
+                            class="px-5 py-2 glass-pill text-white text-xs font-bold uppercase tracking-widest rounded-full flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[14px]">location_on</span>
+                            India • 10.0889° N, 77.0595° E
+                        </span>
+                    </div>
+                </div>
+                <div
+                    class="absolute bottom-16 left-12 right-12 flex flex-col md:flex-row md:items-end justify-between gap-8">
+                    <div>
+                        <h1 class="text-8xl font-extrabold text-white tracking-tighter mb-4">Munnar, Kerala</h1>
+                        <p class="text-2xl text-white/90 max-w-2xl font-medium">South India's most iconic hill station,
+                            where rolling emerald hills meet the clouds.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-4">
+                        <button
+                            class="px-7 py-5 glass-pill text-white font-bold rounded-full hover:bg-white/20 transition-all flex items-center gap-2">
+                            <span class="material-symbols-outlined">favorite</span>
+                            Save
+                        </button>
+                        <button class="p-5 glass-pill text-white rounded-full hover:bg-white/20 transition-all">
+                            <span class="material-symbols-outlined">share</span>
+                        </button>
+                        <button
+                            class="px-8 py-5 glass-pill text-white font-bold rounded-full hover:bg-white/20 transition-all flex items-center gap-2">
+                            <span class="material-symbols-outlined">auto_stories</span>
+                            Story
+                        </button>
+                    </div>
+                </div>
+            </section>
+            <nav class="mb-12 flex justify-center">
+                <div class="bg-white rounded-full p-2 shadow-premium flex items-center gap-1 border border-slate-50">
+                    <button
+                        class="px-8 py-4 text-sm font-extrabold uppercase tracking-widest active-tab">Overview</button>
+                    <button
+                        class="px-8 py-4 text-sm font-extrabold uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors">Attractions</button>
+                    <button
+                        class="px-8 py-4 text-sm font-extrabold uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors">Itinerary</button>
+                    <button
+                        class="px-8 py-4 text-sm font-extrabold uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors">Photos
+                        &amp; Gallery</button>
+                    <button
+                        class="px-8 py-4 text-sm font-extrabold uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors">AI
+                        Chatbot</button>
+                </div>
+            </nav>
+            <div class="grid grid-cols-12 gap-10">
+                <div class="col-span-12 lg:col-span-8 space-y-12">
+                    <section class="info-card">
+                        <div class="flex items-center gap-3 mb-6">
+                            <span
+                                class="px-3 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-md uppercase tracking-wider">Hill
+                                Station</span>
+                            <h2 class="text-3xl font-extrabold tracking-tight">About this Destination</h2>
+                        </div>
+                        <div class="prose prose-slate max-w-none text-slate-600 leading-relaxed text-lg space-y-4">
+                            <p>Munnar is a town and hill station located in the Idukki district of the southwestern
+                                Indian state of Kerala. Munnar is situated at around 1,600 metres (5,200 ft) above mean
+                                sea level, in the Western Ghats mountain range. Munnar is also called the "Kashmir of
+                                South India" and is a popular honeymoon destination.</p>
+                            <p>The name Munnar is believed to mean "three rivers", referring to its location at the
+                                confluence of the Mudhirapuzha, Nallathanni and Kundaly rivers. Historically, Munnar was
+                                a summer resort for the British Government in South India due to its cool climate and
+                                panoramic views.</p>
+                        </div>
+                    </section>
+                    <section class="info-card">
+                        <h2 class="text-3xl font-extrabold tracking-tight mb-8">Must-Do Highlights</h2>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            <div class="group cursor-pointer">
+                                <div class="relative h-40 rounded-2xl overflow-hidden mb-3">
+                                    <img alt="Tea Tasting"
+                                        class="w-full h-full object-cover transition-transform group-hover:scale-110"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLKtXxuYjbFfOEc40HZ_bJ9CE78Whqg0arv2Xv-UWpf65IDRpopY29tMsftfowAiO_BaKvcgTR8JVbdqNZZr9euynw2YR9VX_h2Eesz2Z0W2YzyfmTWYDm614oHnLkmh_Kxbp1Vlwzz7eT9KadPzuPJ7ZDmL4WUIBE907oT3zedLSe86ZfyFXVQWLPKq0wK4L7fwcWelsgTAujSvllrK7zXuycXkzOH5cWGXkoSnEw9KaxoW0Ra5tRRcClc6tS8GpVtAnu92XlDprU" />
+                                </div>
+                                <p class="font-bold text-sm leading-tight">Tea Estate Safari &amp; Tasting</p>
+                            </div>
+                            <div class="group cursor-pointer">
+                                <div class="relative h-40 rounded-2xl overflow-hidden mb-3">
+                                    <img alt="Nilgiri Tahr"
+                                        class="w-full h-full object-cover transition-transform group-hover:scale-110"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOwxmETi82xms55CUKW1NcsNjXvmhVvuSRnD6Nk1ldRhJE1-FE6W_l58lN8OygmfZI0qSisuB5L9xKLT1q1afXrU8fceSUKfxh61wYnVY4cOndLqa63SND93DBcQEp7sUlIqVDlmT8FXe2WprVl8gOFQEpYnnUVKDKJWVLo3F7isdyTtMis9WU0OmHL54ziUQsEaN9h1gATVZmYU5tivSHmTILxBdFGT1S3-SxlUgGRhCfnfLRZzfPBvWLvxItUcUPKdC_tgjUeRfp" />
+                                </div>
+                                <p class="font-bold text-sm leading-tight">Eravikulam Wildlife Spotting</p>
+                            </div>
+                            <div class="group cursor-pointer">
+                                <div class="relative h-40 rounded-2xl overflow-hidden mb-3">
+                                    <img alt="Viewpoint"
+                                        class="w-full h-full object-cover transition-transform group-hover:scale-110"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9fVxxNOYteCaQC7fo7B3UZ32c5uaLkQs84EhyuBiqjxPhri3F_dNVibIdVrWa8t6qfeqNspCvbablBHGPIdy4kTabfo_YpuQg7STzYUbeM6B96zNZe9Kco0iMKpk2dp43bvIdRdnTjR3D09MMWeTk_Xn_ThsjJiy6rWOZzQkJe6ydiShyZstB03F4sfgdpaD3TFcv8glDTusRlrb2ItDi9D-8itK1agYWZwwYuCne1ORzEN7OkdwQqrxAxaNt-CJsNAnmwZa4WJ9d" />
+                                </div>
+                                <p class="font-bold text-sm leading-tight">Pothamedu Sunset Trek</p>
+                            </div>
+                            <div class="group cursor-pointer">
+                                <div class="relative h-40 rounded-2xl overflow-hidden mb-3">
+                                    <img alt="Waterfalls"
+                                        class="w-full h-full object-cover transition-transform group-hover:scale-110"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgU42KJN1rOav_i7eVKo99CjDZ5_tEHb1IoHJu0vp5z1PoMmKGCFQZZA78IdgtDBCI9M32NnKqv05-h9xthAvsVWqwTvGSY-qMdLo85XVyZRDP93GiI5lHtl8rw2ZLWpV8dR50OH1YFRDEgsHur5hlUejYL_bMq9TkYhPoCdVWf1CypnOwShqRAyFgPJRf6BFZINQZOKQB872ZwyES2MijOgGOkXvBOldfVPunL-lmXzbDobjkqz9uCl1Y9PYjuAcP0WiDMYiln98h" />
+                                </div>
+                                <p class="font-bold text-sm leading-tight">Attukad Cascades Discovery</p>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="info-card">
+                        <div class="flex items-center justify-between mb-8">
+                            <h2 class="text-3xl font-extrabold tracking-tight">Best Time to Visit</h2>
+                            <div class="bg-emerald-600 px-6 py-2 rounded-full text-white font-bold text-sm">Peak: Oct -
+                                Mar</div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="material-symbols-outlined text-amber-500">sunny</span>
+                                    <h4 class="font-bold uppercase tracking-widest text-xs">Summer (Mar-Jun)</h4>
+                                </div>
+                                <p class="text-sm text-slate-500">Perfect for escaping the plains' heat. Pleasant
+                                    weather (15°C - 25°C) ideal for sightseeing.</p>
+                            </div>
+                            <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="material-symbols-outlined text-blue-500">rainy</span>
+                                    <h4 class="font-bold uppercase tracking-widest text-xs">Monsoon (Jul-Sep)</h4>
+                                </div>
+                                <p class="text-sm text-slate-500">Mist-covered mountains and lush greenery. Romantic
+                                    atmosphere but trekking might be restricted.</p>
+                            </div>
+                            <div class="p-6 border-2 border-emerald-100 bg-emerald-50/30 rounded-2xl">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="material-symbols-outlined text-emerald-600">ac_unit</span>
+                                    <h4 class="font-bold uppercase tracking-widest text-xs text-emerald-700">Winter
+                                        (Oct-Feb)</h4>
+                                </div>
+                                <p class="text-sm text-slate-600">Best visibility and crisp morning air (5°C - 15°C).
+                                    Ideal for all activities and Neelakurinji blooms.</p>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="info-card">
+                        <div class="flex items-center justify-between mb-8">
+                            <h2 class="text-3xl font-extrabold tracking-tight">Location &amp; Map</h2>
+                            <div class="flex gap-4 text-sm font-bold text-slate-400">
+                                <span>Kochi: 130km</span>
+                                <span>•</span>
+                                <span>Coimbatore: 160km</span>
+                            </div>
+                        </div>
+                        <div
+                            class="relative h-[400px] rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 shadow-inner">
+                            <img alt="Terrain View"
+                                class="w-full h-full object-cover opacity-60 grayscale hover:grayscale-0 transition-all duration-700"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuANbluyXiNWlbgEi5zs4Btj7yQi8rTQJQdXa8LlPCPt_GIlbVMq3cDVW7hjPaZ1aJXKZs47CRgLDoOrfVH3H8fUmVsPJOcBsEuYGR0P7v9dcyTSg1wUQUbRQuR-nis7cCHwCgWrzE8Vdv4ZSuM--VyP0L8YsA4QJOu0r-pHlqZNpDpLmBZfG8iR9kspNHgiYw1kOH0W2rTFPflJQ06vnT_Y_vvdJ1XwZQOe1t2eNplF2yF9NfqfC-6unx80rgQEuNi0HVpt34_F2HOF" />
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div
+                                    class="bg-white/90 backdrop-blur-md px-8 py-6 rounded-3xl shadow-2xl flex flex-col items-center">
+                                    <span
+                                        class="material-symbols-outlined text-emerald-600 text-4xl mb-2">explore</span>
+                                    <p class="font-extrabold text-lg">Munnar High Range</p>
+                                    <p class="text-xs text-slate-500 uppercase tracking-widest">Interactive Terrain
+                                        Enabled</p>
+                                    <button
+                                        class="mt-4 px-6 py-2 bg-slate-custom text-white text-xs font-bold rounded-full">Expand
+                                        Map</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="info-card">
+                        <h2 class="text-3xl font-extrabold tracking-tight mb-8">First-Time Guide</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                            <div class="space-y-6">
+                                <div class="flex gap-4">
+                                    <div
+                                        class="w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center shrink-0">
+                                        <span class="material-symbols-outlined">backpack</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold mb-1">What to Pack</h4>
+                                        <p class="text-sm text-slate-500 leading-relaxed">Light woolens for
+                                            mornings/nights. Rain gear is a must during monsoons. Sturdy walking shoes
+                                            for plantation walks.</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-4">
+                                    <div
+                                        class="w-10 h-10 bg-green-50 text-green-600 rounded-full flex items-center justify-center shrink-0">
+                                        <span class="material-symbols-outlined">health_and_safety</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold mb-1">Safety &amp; Wellness</h4>
+                                        <p class="text-sm text-slate-500 leading-relaxed">Carry motion sickness meds for
+                                            the winding roads. Drink bottled water. Leeches can be found on trails after
+                                            rain.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-6">
+                                <div class="flex gap-4">
+                                    <div
+                                        class="w-10 h-10 bg-purple-50 text-purple-600 rounded-full flex items-center justify-center shrink-0">
+                                        <span class="material-symbols-outlined">gavel</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold mb-1">Cultural Etiquette</h4>
+                                        <p class="text-sm text-slate-500 leading-relaxed">Dress modestly when visiting
+                                            religious sites. Always ask for permission before photographing locals.</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-4">
+                                    <div
+                                        class="w-10 h-10 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center shrink-0">
+                                        <span class="material-symbols-outlined">payments</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold mb-1">Currency &amp; Tips</h4>
+                                        <p class="text-sm text-slate-500 leading-relaxed">Network issues occur; keep
+                                            cash handy. 10% tipping is customary in tourist-focused cafes.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <aside class="col-span-12 lg:col-span-4 space-y-8">
+                    <section class="info-card">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="font-extrabold text-xl tracking-tight">Live Weather</h3>
+                            <span class="text-xs font-bold text-slate-400">Update: 10m ago</span>
+                        </div>
+                        <div class="flex items-center gap-6 mb-8">
+                            <div class="text-5xl font-extrabold">18°C</div>
+                            <div class="flex flex-col">
+                                <span class="text-emerald-600 font-bold">Partly Cloudy</span>
+                                <span class="text-sm text-slate-400">Wind: 12 km/h • Hum: 64%</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-7 gap-2">
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase">Mon</span>
+                                <span class="material-symbols-outlined text-slate-400 text-sm">cloud</span>
+                                <span class="text-xs font-bold">17°</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase">Tue</span>
+                                <span class="material-symbols-outlined text-emerald-500 text-sm">sunny</span>
+                                <span class="text-xs font-bold">20°</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase">Wed</span>
+                                <span class="material-symbols-outlined text-emerald-500 text-sm">sunny</span>
+                                <span class="text-xs font-bold">21°</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase">Thu</span>
+                                <span class="material-symbols-outlined text-blue-400 text-sm">rainy</span>
+                                <span class="text-xs font-bold">15°</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase">Fri</span>
+                                <span class="material-symbols-outlined text-slate-400 text-sm">cloud</span>
+                                <span class="text-xs font-bold">18°</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase">Sat</span>
+                                <span class="material-symbols-outlined text-blue-400 text-sm">rainy</span>
+                                <span class="text-xs font-bold">16°</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase">Sun</span>
+                                <span class="material-symbols-outlined text-emerald-500 text-sm">sunny</span>
+                                <span class="text-xs font-bold">19°</span>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="info-card">
+                        <h3 class="font-extrabold text-xl tracking-tight mb-6">Key Statistics</h3>
+                        <div class="space-y-6">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <span class="material-symbols-outlined text-emerald-600">trending_up</span>
+                                    <span class="text-sm font-medium text-slate-500">Popularity Level</span>
+                                </div>
+                                <span class="font-bold">Very High</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <span class="material-symbols-outlined text-emerald-600">calendar_today</span>
+                                    <span class="text-sm font-medium text-slate-500">Ideal Duration</span>
+                                </div>
+                                <span class="font-bold">3 - 4 Days</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <span class="material-symbols-outlined text-emerald-600">star</span>
+                                    <span class="text-sm font-medium text-slate-500">Avg. Rating</span>
+                                </div>
+                                <span class="font-bold text-emerald-600">4.8 / 5.0</span>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="info-card">
+                        <div class="flex items-center gap-3 mb-6">
+                            <span class="material-symbols-outlined text-emerald-600">schedule</span>
+                            <h3 class="font-extrabold text-xl tracking-tight">Logistics</h3>
+                        </div>
+                        <div>
+                            <p class="font-bold text-xs uppercase tracking-widest text-slate-400 mb-4">Touristic
+                                Operating Hours</p>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="font-medium text-slate-600">Monday</span>
+                                    <span class="font-bold text-slate-800">9:00 AM - 6:00 PM</span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="font-medium text-slate-600">Tuesday</span>
+                                    <span class="font-bold text-slate-800">9:00 AM - 6:00 PM</span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="font-medium text-slate-600">Wednesday</span>
+                                    <span class="font-bold text-slate-800">9:00 AM - 6:00 PM</span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="font-medium text-slate-600">Thursday</span>
+                                    <span class="font-bold text-slate-800">9:00 AM - 6:00 PM</span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="font-medium text-slate-600">Friday</span>
+                                    <span class="font-bold text-slate-800">9:00 AM - 6:00 PM</span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="font-medium text-slate-600">Saturday</span>
+                                    <span class="font-bold text-slate-800">9:00 AM - 6:00 PM</span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="font-medium text-slate-600">Sunday</span>
+                                    <span class="font-bold text-slate-800">9:00 AM - 6:00 PM</span>
+                                </div>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-slate-50">
+                                <p class="text-[10px] text-slate-400 font-medium leading-relaxed italic">
+                                    * Hours may vary during local festivals and public holidays.
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+                </aside>
+            </div>
+        </div>
+    </main>
+    <footer class="border-t border-slate-100 pt-20 pb-10 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
+                            <span class="material-symbols-outlined text-white text-lg">travel_explore</span>
+                        </div>
+                        <span class="text-xl font-extrabold tracking-tight">RoutheonSkups</span>
+                    </div>
+                    <p class="text-slate-500 leading-relaxed text-sm">Designing the future of travel discovery. Explore,
+                        plan, and experience the world like never before with 4K destination intelligence.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-6 text-slate-800">Explore</h4>
+                    <ul class="space-y-4 text-slate-500 text-sm font-medium">
+                        <li><a class="hover:text-emerald-600 transition-colors" href="#">Destinations</a></li>
+                        <li><a class="hover:text-emerald-600 transition-colors" href="#">Plan a Trip</a></li>
+                        <li><a class="hover:text-emerald-600 transition-colors" href="#">Explore</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-6 text-slate-800">Resources</h4>
+                    <ul class="space-y-4 text-slate-500 text-sm font-medium">
+                        <li><a class="hover:text-emerald-600 transition-colors" href="#">Travel Guides</a></li>
+                        <li><a class="hover:text-emerald-600 transition-colors" href="#">Safety Tips</a></li>
+                        <li><a class="hover:text-emerald-600 transition-colors" href="#">AI Assistant</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-6 text-slate-800">Intelligence</h4>
+                    <p class="text-xs text-slate-500 mb-4 font-medium uppercase tracking-widest">Get Weekly Insights</p>
+                    <div class="flex gap-2">
+                        <input
+                            class="bg-slate-50 border-slate-100 rounded-xl w-full text-sm focus:ring-emerald-500 focus:border-emerald-500"
+                            placeholder="Email" type="email" />
+                        <button
+                            class="p-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-100">
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-slate-100 gap-4">
+                <p class="text-sm text-slate-400 font-medium">© 2024 RoutheonSkups Destination Intelligence. Ultra-HD
+                    Dashboard.</p>
+                <div class="flex gap-6 text-slate-400">
+                    <a class="hover:text-emerald-600 transition-colors" href="#"><span
+                            class="material-symbols-outlined">alternate_email</span></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>

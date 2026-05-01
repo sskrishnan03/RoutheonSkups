@@ -1,0 +1,12 @@
+flask
+flask-sqlalchemy
+flask-login
+flask-bcrypt
+groq
+requests
+python-dotenv
+email_validator
+authlib
+gTTS
+edge-tts
+flask-mail

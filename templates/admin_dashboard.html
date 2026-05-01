@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - RoutheonSkups</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3B82F6",
+                        "primary-hover": "#2563EB",
+                        "background-light": "#FFFFFF",
+                        "background-dark": "#0F172A",
+                        "surface-light": "#F8FAFC",
+                        "surface-dark": "#1E293B",
+                        "text-main-light": "#1E293B",
+                        "text-main-dark": "#F1F5F9",
+                        "text-muted-light": "#64748B",
+                        "text-muted-dark": "#94A3B8",
+                        "border-light": "#E2E8F0",
+                        "border-dark": "#334155",
+                    },
+                    fontFamily: {
+                        display: ["'Plus Jakarta Sans'", "sans-serif"],
+                        body: ["'Plus Jakarta Sans'", "sans-serif"],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'hover': '0 20px 40px -10px rgba(0, 0, 0, 0.08)',
+                        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+    </style>
+</head>
+<body class="bg-[#F8FAFC] min-h-screen">
+    {% include 'components/navbar.html' %}
+    
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+            <div>
+                <h1 class="text-3xl font-extrabold text-[#1E293B] tracking-tight">Admin Intelligence</h1>
+                <p class="text-slate-500 font-medium mt-1">Platform overview and real-time operations data.</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="{{ url_for('main.admin_users') }}" class="px-5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-50 transition-all flex items-center gap-2 no-underline">
+                    <span class="material-symbols-outlined text-lg">group</span>
+                    Manage Users
+                </a>
+                <button class="px-5 py-2.5 bg-primary text-white rounded-xl text-sm font-bold shadow-lg shadow-blue-500/20 hover:bg-primary-hover transition-all flex items-center gap-2">
+                    <span class="material-symbols-outlined text-lg">refresh</span>
+                    Refresh Data
+                </button>
+            </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div class="glass-card p-6 rounded-3xl shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600">
+                        <span class="material-symbols-outlined">group</span>
+                    </div>
+                    <span class="text-xs font-bold text-green-500 bg-green-50 px-2 py-1 rounded-lg">+12%</span>
+                </div>
+                <div class="text-2xl font-extrabold text-[#1E293B]">{{ total_users }}</div>
+                <div class="text-sm font-bold text-slate-400 mt-1 uppercase tracking-wider">Total Users</div>
+            </div>
+
+            <div class="glass-card p-6 rounded-3xl shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600">
+                        <span class="material-symbols-outlined">map</span>
+                    </div>
+                    <span class="text-xs font-bold text-green-500 bg-green-50 px-2 py-1 rounded-lg">+24%</span>
+                </div>
+                <div class="text-2xl font-extrabold text-[#1E293B]">{{ total_trips }}</div>
+                <div class="text-sm font-bold text-slate-400 mt-1 uppercase tracking-wider">Trips Generated</div>
+            </div>
+
+            <div class="glass-card p-6 rounded-3xl shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+                        <span class="material-symbols-outlined">location_on</span>
+                    </div>
+                    <span class="text-xs font-bold text-slate-400">Fixed</span>
+                </div>
+                <div class="text-2xl font-extrabold text-[#1E293B]">{{ total_destinations }}</div>
+                <div class="text-sm font-bold text-slate-400 mt-1 uppercase tracking-wider">Destinations</div>
+            </div>
+
+            <div class="glass-card p-6 rounded-3xl shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 rounded-2xl bg-rose-50 flex items-center justify-center text-rose-600">
+                        <span class="material-symbols-outlined">favorite</span>
+                    </div>
+                    <span class="text-xs font-bold text-green-500 bg-green-50 px-2 py-1 rounded-lg">+8%</span>
+                </div>
+                <div class="text-2xl font-extrabold text-[#1E293B]">{{ total_saves }}</div>
+                <div class="text-sm font-bold text-slate-400 mt-1 uppercase tracking-wider">Saved Places</div>
+            </div>
+        </div>
+
+        <!-- Main Content Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Recent Activity Table -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+                        <h3 class="font-bold text-[#1E293B]">Recent Registrations</h3>
+                        <a href="{{ url_for('main.admin_users') }}" class="text-xs font-bold text-primary hover:underline">View All</a>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="bg-slate-50/50">
+                                    <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-400">User</th>
+                                    <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-400">Join Date</th>
+                                    <th class="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-slate-400 text-right">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                {% for user in recent_users %}
+                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">
+                                                {{ user.name[0]|upper }}
+                                            </div>
+                                            <div class="text-sm">
+                                                <div class="font-bold text-[#1E293B]">{{ user.name }}</div>
+                                                <div class="text-[11px] text-slate-400">{{ user.email }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-xs font-bold text-slate-500">
+                                        {{ user.created_at.strftime('%Y-%m-%d') }}
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <span class="px-3 py-1 bg-green-50 text-green-600 text-[10px] font-bold rounded-full">Active</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Platform Health -->
+            <div class="space-y-6">
+                <div class="bg-[#1E293B] text-white p-8 rounded-[2rem] shadow-xl relative overflow-hidden">
+                    <div class="relative z-10">
+                        <h3 class="text-lg font-bold mb-2">System Status</h3>
+                        <p class="text-slate-400 text-xs mb-6 font-medium leading-relaxed">All core services are currently operational.</p>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Database</span>
+                                <span class="text-green-400 font-bold">Stable</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">AI Service</span>
+                                <span class="text-green-400 font-bold">Online</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Search API</span>
+                                <span class="text-green-400 font-bold">Active</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Decorative element -->
+                    <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-primary/20 rounded-full blur-3xl"></div>
+                </div>
+
+                <div class="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm transition-all hover:shadow-md cursor-pointer group">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <span class="material-symbols-outlined">security</span>
+                    </div>
+                    <h3 class="font-bold text-[#1E293B] mb-2">Security Audit</h3>
+                    <p class="text-slate-400 text-xs font-medium leading-relaxed">View recent login attempts and security events across the platform.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

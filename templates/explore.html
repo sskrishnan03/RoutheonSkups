@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>RoutheonSkups Explore Destinations (Dynamic State View - Tamil Nadu Example) - 4K</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3B82F6",
+                        secondary: "#0EA5E9",
+                        "text-main-light": "#1E293B",
+                        "text-main-dark": "#F1F5F9",
+                        "surface-dark": "#1E293B",
+                        "background-dark": "#0F172A",
+                        text: {
+                            main: "#0F172A",
+                            muted: "#64748B",
+                        },
+                        border: {
+                            light: "#E2E8F0",
+                        }
+                    },
+                    fontFamily: {
+                        sans: ["'Plus Jakarta Sans'", "sans-serif"],
+                    },
+                    boxShadow: {
+                        'card': '0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02)',
+                        'card-hover': '0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.01)',
+                    }
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            font-family: "Plus Jakarta Sans", sans-serif
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24
+        }
+
+        .nav-link {
+            position: relative
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none
+        }
+
+        select {
+            background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuDCGF6RBgPzWaIpK3xIj9G6bbW8zYqLt-s8RGJS60WjiUIb3NKbNGmFwMzPUk0UjlBk-IRCa6jlUkr0UijVZmkG4v1Bt1f34QJxFZ2_V9hFqv4dPloF_VzX_dKV17E9tguqVgQp08kQbeXj77Gx2Ll8iVwmqRLkt1f2kva6e56wf88FzEgep3F3qMyjWhvraexEr4XEG7LCPivlRic9ICpAbmCcWGeP7Dme20vdF68I9WdcCVdLirjWHcGek0Ric5J9meI6b7HdRPM9);
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact
+        }
+    </style>
+</head>
+
+<body class="bg-white text-text-main antialiased min-h-screen flex flex-col">
+    {% include 'components/navbar.html' %}
+    <main class="flex-grow pt-24">
+        <section class="relative mt-40 pb-8 lg:mt-40 lg:pb-12 px-6 max-w-[1400px] mx-auto text-center">
+            <h1
+                class="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-[#0F172A] mb-6 leading-tight">
+                Explore Destinations <br class="hidden md:block" /> <span
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-[#3B82F6] to-[#0EA5E9]">Across
+                    India</span>
+            </h1>
+            <p class="text-lg text-slate-500 max-w-2xl mx-auto mb-12 font-medium leading-relaxed">
+                Uncover spiritual sanctuaries, breathtaking landscapes, and vibrant cultures. Curated journeys designed
+                just
+                for you.
+            </p>
+            <div class="max-w-4xl mx-auto relative z-20">
+                <div class="flex flex-col md:flex-row items-center gap-4">
+                    <!-- State Dropdown -->
+                    <div class="relative w-full md:w-[32%] flex-shrink-0 group">
+                        <div class="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+                            <span class="material-symbols-outlined text-slate-400 group-focus-within:text-[#3B82F6] transition-colors text-2xl">map</span>
+                        </div>
+                        <select id="state-select"
+                            class="block w-full pl-[4.5rem] pr-10 py-5 bg-white border border-slate-200 shadow-[0_8px_30px_rgba(0,0,0,0.04)] text-slate-700 font-bold text-lg focus:ring-4 focus:ring-blue-100 focus:border-blue-500 cursor-pointer rounded-[2rem] hover:bg-slate-50 transition-all appearance-none">
+                            <option selected="" value="Select State">Select State</option>
+                            <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                            <option value="Andhra Pradesh">Andhra Pradesh</option>
+                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                            <option value="Assam">Assam</option>
+                            <option value="Bihar">Bihar</option>
+                            <option value="Chandigarh">Chandigarh</option>
+                            <option value="Chhattisgarh">Chhattisgarh</option>
+                            <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+                            <option value="Delhi">Delhi</option>
+                            <option value="Goa">Goa</option>
+                            <option value="Gujarat">Gujarat</option>
+                            <option value="Haryana">Haryana</option>
+                            <option value="Himachal Pradesh">Himachal Pradesh</option>
+                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                            <option value="Jharkhand">Jharkhand</option>
+                            <option value="Karnataka">Karnataka</option>
+                            <option value="Kerala">Kerala</option>
+                            <option value="Ladakh">Ladakh</option>
+                            <option value="Lakshadweep">Lakshadweep</option>
+                            <option value="Madhya Pradesh">Madhya Pradesh</option>
+                            <option value="Maharashtra">Maharashtra</option>
+                            <option value="Manipur">Manipur</option>
+                            <option value="Meghalaya">Meghalaya</option>
+                            <option value="Mizoram">Mizoram</option>
+                            <option value="Nagaland">Nagaland</option>
+                            <option value="Odisha">Odisha</option>
+                            <option value="Puducherry">Puducherry</option>
+                            <option value="Punjab">Punjab</option>
+                            <option value="Rajasthan">Rajasthan</option>
+                            <option value="Sikkim">Sikkim</option>
+                            <option value="Tamil Nadu">Tamil Nadu</option>
+                            <option value="Telangana">Telangana</option>
+                            <option value="Tripura">Tripura</option>
+                            <option value="Uttar Pradesh">Uttar Pradesh</option>
+                            <option value="Uttarakhand">Uttarakhand</option>
+                            <option value="West Bengal">West Bengal</option>
+                        </select>
+                    </div>
+                    <!-- Destination Search Input -->
+                    <div class="flex-grow min-w-0 w-full bg-white border border-slate-200 shadow-[0_8px_30px_rgba(0,0,0,0.04)] rounded-[2rem] flex items-center px-4 min-h-[4.25rem] py-1 focus-within:ring-4 focus-within:ring-blue-100 focus-within:border-blue-500 transition-all group overflow-hidden">
+                        <span class="material-symbols-outlined text-slate-400 group-focus-within:text-[#3B82F6] transition-colors text-2xl mr-2 flex-shrink-0">place</span>
+                        <div class="flex flex-wrap items-center gap-1.5 flex-grow min-w-0 py-1">
+                            <div id="active-tags-container" class="flex flex-wrap items-center gap-1.5">
+                                <!-- Category tags will appear here if needed -->
+                            </div>
+                            <input id="destination-search"
+                                class="flex-grow min-w-[120px] bg-transparent border-none text-lg text-slate-700 font-medium placeholder:text-slate-400 focus:ring-0 px-2 py-2"
+                                placeholder="Search specific destinations or cities..." type="text" />
+                        </div>
+                    </div>
+                    <!-- Search Button -->
+                    <button id="main-search-btn"
+                        class="w-full md:w-auto bg-[#3B82F6] hover:bg-blue-600 text-white px-10 py-5 rounded-[2rem] font-bold text-lg transition-colors shadow-lg shadow-blue-500/20 flex-shrink-0 flex items-center justify-center gap-2">
+                        <span>Search</span>
+                        <span class="material-symbols-outlined text-[20px]">search</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <section class="max-w-[1400px] mx-auto px-6 lg:px-12 mb-16">
+            <div class="flex flex-wrap justify-center gap-4 w-full mb-4">
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-cyan-600 group-hover:text-blue-600 transition-colors">location_city</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">City</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-blue-500 group-hover:text-blue-600 transition-colors">holiday_village</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Town</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-amber-600 group-hover:text-blue-600 transition-colors">cottage</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Village</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span class="material-symbols-outlined text-[20px] text-blue-600 group-hover:text-blue-600 transition-colors">beach_access</span>
+                    <span class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Beach</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-indigo-500 group-hover:text-blue-600 transition-colors">travel</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Island</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-emerald-600 group-hover:text-blue-600 transition-colors">landscape</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Hill</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-stone-500 group-hover:text-blue-600 transition-colors">filter_hdr</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Mountain</span>
+                </button>
+            </div>
+            <div class="flex flex-wrap justify-center gap-4 w-full mb-4">
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-green-600 group-hover:text-blue-600 transition-colors">terrain</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Valley</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-blue-600 group-hover:text-blue-600 transition-colors">water_drop</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Lake</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-cyan-500 group-hover:text-blue-600 transition-colors">kayaking</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">River</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-orange-400 group-hover:text-blue-600 transition-colors">stairs</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Ghat</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-green-800 group-hover:text-blue-600 transition-colors">forest</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Forest</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-amber-700 group-hover:text-blue-600 transition-colors">pets</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Wildlife</span>
+                </button>
+            </div>
+            <div class="flex flex-wrap justify-center gap-4 w-full mb-4">
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-emerald-500 group-hover:text-blue-600 transition-colors">park</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Park</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-pink-500 group-hover:text-blue-600 transition-colors">local_florist</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Garden</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-amber-800 group-hover:text-blue-600 transition-colors">fort</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Fort</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-purple-600 group-hover:text-blue-600 transition-colors">castle</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Palace</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-slate-500 group-hover:text-blue-600 transition-colors">account_balance</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Monument</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-orange-700 group-hover:text-blue-600 transition-colors">domain</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Heritage</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-orange-600 group-hover:text-blue-600 transition-colors">temple_hindu</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Temple</span>
+                </button>
+            </div>
+            <div class="flex flex-wrap justify-center gap-4 w-full mb-4">
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-blue-700 group-hover:text-blue-600 transition-colors">church</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Church</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-emerald-700 group-hover:text-blue-600 transition-colors">mosque</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Mosque</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-yellow-600 group-hover:text-blue-600 transition-colors">star</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Gurudwara</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-red-700 group-hover:text-blue-600 transition-colors">temple_buddhist</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Monastery</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-amber-900 group-hover:text-blue-600 transition-colors">museum</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Museum</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-stone-600 group-hover:text-blue-600 transition-colors">history_edu</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Archaeology</span>
+                </button>
+            </div>
+            <div class="flex flex-wrap justify-center gap-4 w-full mb-4">
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-teal-500 group-hover:text-blue-600 transition-colors">flight</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Sanctuary</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-green-700 group-hover:text-blue-600 transition-colors">nature</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">National
+                        Park</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-orange-600 group-hover:text-blue-600 transition-colors">paragliding</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Adventure</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-lime-600 group-hover:text-blue-600 transition-colors">hiking</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Trek</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-violet-500 group-hover:text-blue-600 transition-colors">photo_camera</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Viewpoint</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-cyan-700 group-hover:text-blue-600 transition-colors">waves</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Waterfall</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-rose-500 group-hover:text-blue-600 transition-colors">storefront</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Market</span>
+                </button>
+            </div>
+            <div class="flex flex-wrap justify-center gap-4 w-full mb-4">
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-orange-500 group-hover:text-blue-600 transition-colors">restaurant_menu</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Food</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-fuchsia-600 group-hover:text-blue-600 transition-colors">theater_comedy</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Culture</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-pink-600 group-hover:text-blue-600 transition-colors">celebration</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Festival</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-slate-600 group-hover:text-blue-600 transition-colors">directions_bus</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Transport</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-sky-700 group-hover:text-blue-600 transition-colors">anchor</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Harbour</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-teal-600 group-hover:text-blue-600 transition-colors">pool</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Resort</span>
+                </button>
+            </div>
+            <div class="flex flex-wrap justify-center gap-4 w-full">
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-indigo-600 group-hover:text-blue-600 transition-colors">home</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Homestay</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-yellow-500 group-hover:text-blue-600 transition-colors">lightbulb</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Experience</span>
+                </button>
+                <button
+                    class="group flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-full shadow-sm hover:shadow-md hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300">
+                    <span
+                        class="material-symbols-outlined text-[20px] text-red-500 group-hover:text-blue-600 transition-colors">directions_run</span>
+                    <span
+                        class="text-[15px] font-semibold text-slate-700 group-hover:text-blue-600 transition-colors whitespace-nowrap">Activity</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Initial State / Welcome View -->
+        <section id="initial-state" class="py-24 lg:py-32">
+            <div class="max-w-4xl mx-auto px-6 text-center">
+                <div class="w-32 h-32 bg-blue-50 rounded-[2.5rem] flex items-center justify-center mx-auto mb-10 shadow-xl shadow-blue-500/10 border border-blue-100/50">
+                    <span class="material-symbols-outlined text-6xl text-blue-500">travel_explore</span>
+                </div>
+                <h2 class="text-4xl md:text-5xl font-extrabold text-[#0F172A] mb-6 tracking-tight">Ready to Explore India?</h2>
+                <p class="text-xl text-slate-500 font-medium leading-relaxed max-w-2xl mx-auto mb-12">
+                    Select a state and your favorite travel categories above to discover hidden gems and popular destinations curated by AI.
+                </p>
+                <div class="flex flex-wrap justify-center gap-6 opacity-40 grayscale pointer-events-none">
+                    <div class="flex items-center gap-2 bg-slate-50 px-6 py-3 rounded-full border border-slate-200">
+                        <span class="material-symbols-outlined text-sm">auto_awesome</span>
+                        <span class="text-sm font-bold uppercase tracking-wider">AI Curated</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-slate-50 px-6 py-3 rounded-full border border-slate-200">
+                        <span class="material-symbols-outlined text-sm">map</span>
+                        <span class="text-sm font-bold uppercase tracking-wider">Across India</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Container (Hidden Initially) -->
+        <div id="results-container" style="display: none;">
+            <section class="bg-white pb-12 pt-8 lg:pb-16 lg:pt-12">
+            <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+                <div class="text-center max-w-2xl mx-auto mb-16">
+                    <span class="text-[#3B82F6] font-bold tracking-[0.2em] text-xs uppercase mb-3 block">Top
+                        Picks</span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-[#0F172A]">Popular Beach Destinations in Tamil Nadu
+                    </h2>
+                </div>
+                <div id="popular-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div
+                        class="group bg-white rounded-[18px] border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden h-full">
+                        <div class="relative h-60 w-full overflow-hidden">
+                            <img alt="Chennai Marina Beach"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0bMeeOk2dEBtTK_8kVkHoCaP2nu7z9PCx7DGjNSM8yKHDUn6s-Rx3jdd3pP00fVNR2YNEvOgZuV9gqbKq_LpNYKd2-BoOs40bAvWfX4U4ZEjfFGeB4y9b_XmYZJ2TUH1r-Jyfrnqa0HLSqGT40Xt--48Gc2TJ4LlFgi5LdEG5JHE3WLv2RGIPulAT53LRmHe41tEKVDEVXjPgeVXU5hv4SiN1RFeioARwU0snXmhGA_0j6YH2LrcN6quuw1UkmH653jN93wIPMR-1"
+                                onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80'" />
+                            <div
+                                class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
+                                <span class="material-symbols-outlined text-[16px] text-slate-800">beach_access</span>
+                                <span
+                                    class="text-[11px] font-bold text-slate-800 uppercase tracking-wide">Coastal</span>
+                            </div>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-bold text-[#0F172A] mb-2">Chennai</h3>
+                            <p class="text-slate-500 text-sm leading-relaxed mb-6 line-clamp-2">
+                                A vibrant cultural hub blending modern city life with historic temples and the iconic
+                                Marina Beach.
+                            </p>
+                            <div class="mt-auto">
+                                <a href="{{ url_for('main.destination_info', name='Chennai') }}"
+                                    class="text-[#3B82F6] font-bold text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all no-underline">
+                                    View Destination <span
+                                        class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="group bg-white rounded-[18px] border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden h-full">
+                        <div class="relative h-60 w-full overflow-hidden">
+                            <img alt="Mahabalipuram Shore Temple"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGfbtFFED6JKnocylS4IVkPlYf-TclgJvePVfzw-_w43R3yE5KbbXcqUDv51J2JM_f0sgZCFTGNPeficrs38AFrkWPMcWrKpiZYAGgUvB045cdRJBCArIuVtJbeEehSCSOteoV2Wc4mQMYiQyfdTJaINyES-nimLHvcduOl_TYNnHymiosbymE9i36zzLaWKl6i_LiAUMUy72p2OjF6vIyGIIlLLMEPKGuyEkyGtJrxYlz1bhMEZfSeKMbAT1xg0wztwnSb5c73SK1"
+                                onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80'" />
+                            <div
+                                class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
+                                <span class="material-symbols-outlined text-[16px] text-slate-800">history_edu</span>
+                                <span class="text-[11px] font-bold text-slate-800 uppercase tracking-wide">Heritage
+                                    Beach</span>
+                            </div>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-bold text-[#0F172A] mb-2">Mahabalipuram</h3>
+                            <p class="text-slate-500 text-sm leading-relaxed mb-6 line-clamp-2">
+                                A UNESCO World Heritage site known for its ancient rock-cut temples and the famous Shore
+                                Temple.
+                            </p>
+                            <div class="mt-auto">
+                                <a href="{{ url_for('main.destination_info', name='Mahabalipuram') }}"
+                                    class="text-[#3B82F6] font-bold text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all no-underline">
+                                    View Destination <span
+                                        class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="group bg-white rounded-[18px] border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden h-full">
+                        <div class="relative h-60 w-full overflow-hidden">
+                            <img alt="Rameshwaram Temple"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGfbtFFED6JKnocylS4IVkPlYf-TclgJvePVfzw-_w43R3yE5KbbXcqUDv51J2JM_f0sgZCFTGNPeficrs38AFrkWPMcWrKpiZYAGgUvB045cdRJBCArIuVtJbeEehSCSOteoV2Wc4mQMYiQyfdTJaINyES-nimLHvcduOl_TYNnHymiosbymE9i36zzLaWKl6i_LiAUMUy72p2OjF6vIyGIIlLLMEPKGuyEkyGtJrxYlz1bhMEZfSeKMbAT1xg0wztwnSb5c73SK1"
+                                onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80'" />
+                            <div
+                                class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
+                                <span class="material-symbols-outlined text-[16px] text-slate-800">temple_hindu</span>
+                                <span class="text-[11px] font-bold text-slate-800 uppercase tracking-wide">Island</span>
+                            </div>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-bold text-[#0F172A] mb-2">Rameshwaram</h3>
+                            <p class="text-slate-500 text-sm leading-relaxed mb-6 line-clamp-2">
+                                A significant pilgrimage center on Pamban Island, known for the Ramanathaswamy Temple
+                                and sacred waters.
+                            </p>
+                            <div class="mt-auto">
+                                <a href="{{ url_for('main.destination_info', name='Rameshwaram') }}"
+                                    class="text-[#3B82F6] font-bold text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all no-underline">
+                                    View Destination <span
+                                        class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="pb-16 lg:pb-24">
+            <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+                <div class="flex items-center justify-between mb-10">
+                    <h2 class="text-3xl font-bold text-[#0F172A] tracking-tight">All Beach Destinations in Tamil Nadu
+                        <span class="text-slate-400 text-xl font-medium ml-2">(60 Treasures Found)</span>
+                    </h2>
+                </div>
+                <div id="all-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                    <div
+                        class="group bg-white rounded-[18px] border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden h-full">
+                        <div class="relative h-60 w-full overflow-hidden">
+                            <img alt="Kanyakumari Sunrise"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0DnGzutyBaSRjbwKp9FbwnwboeH-wRBMZvohIJvDRD0mTokQOlPYFbs5xDwfywL3i43VUWMr9H2H7mcWvrHEPewuddYIE4861kkteZqmr_qrdF8As2tKwhMQak1GCOjTAr0zi0oEdzxCQbsiTYHsB2yAQv8gy9z8kJPITfQ9aOHxS8YKFkqtseaAmuVsCwhy96UJo7LH1vgsFZqrXbmYWL07NrvPL4lwAXOq3M-dzbQKYut4Oo59M4WpWwLbhSTKKe3VvYOiT6as4"
+                                onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80'" />
+                            <div
+                                class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
+                                <span class="material-symbols-outlined text-[16px] text-slate-800">wb_twilight</span>
+                                <span
+                                    class="text-[11px] font-bold text-slate-800 uppercase tracking-wide">Coastal</span>
+                            </div>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-bold text-[#0F172A] mb-2">Kanyakumari</h3>
+                            <p class="text-slate-500 text-sm leading-relaxed mb-6 line-clamp-2">
+                                The southernmost tip of India, famous for its sunrise over the ocean and the Vivekananda
+                                Rock Memorial.
+                            </p>
+                            <div class="mt-auto">
+                                <a href="{{ url_for('main.destination_info', name='Kanyakumari') }}"
+                                    class="text-[#3B82F6] font-bold text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all no-underline">
+                                    View Destination <span
+                                        class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="group bg-white rounded-[18px] border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden h-full">
+                        <div class="relative h-60 w-full overflow-hidden">
+                            <img alt="Dhanushkodi"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAV4GDwK_pFBgQCkEdXffVtIUWz5xkr5Z3bozexz3j04dNwIZuqf9v85kV90on2mrVbDhbMC4HBIcZDYECjuPmybgPqmwwkcvPZz4TQILHPlNatZPngr1FMN_mbUi4c2rhzrV79TZ2xx6lxtk2UhUk3Q8cMBV1xtiDNBcIGAsbYaiUGpH6BYAA2Z3EZjwYFKgiHlYbf_GJf6t_Geti3DbKtnc-tyDX17XC6-1FfxvPjak_IJZ358f9DqfhOiMAJVXNLZf1XA2zuGi-7"
+                                onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80'" />
+                            <div
+                                class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
+                                <span class="material-symbols-outlined text-[16px] text-slate-800">water_drop</span>
+                                <span class="text-[11px] font-bold text-slate-800 uppercase tracking-wide">Ghost
+                                    Town</span>
+                            </div>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-bold text-[#0F172A] mb-2">Dhanushkodi</h3>
+                            <p class="text-slate-500 text-sm leading-relaxed mb-6 line-clamp-2">
+                                An abandoned town at the south-eastern tip of Pamban Island, known for its ruins and
+                                pristine beaches.
+                            </p>
+                            <div class="mt-auto">
+                                <a href="{{ url_for('main.destination_info', name='Dhanushkodi') }}"
+                                    class="text-[#3B82F6] font-bold text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all no-underline">
+                                    View Destination <span
+                                        class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="group bg-white rounded-[18px] border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden h-full">
+                        <div class="relative h-60 w-full overflow-hidden">
+                            <img alt="Covelong Beach"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0bMeeOk2dEBtTK_8kVkHoCaP2nu7z9PCx7DGjNSM8yKHDUn6s-Rx3jdd3pP00fVNR2YNEvOgZuV9gqbKq_LpNYKd2-BoOs40bAvWfX4U4ZEjfFGeB4y9b_XmYZJ2TUH1r-Jyfrnqa0HLSqGT40Xt--48Gc2TJ4LlFgi5LdEG5JHE3WLv2RGIPulAT53LRmHe41tEKVDEVXjPgeVXU5hv4SiN1RFeioARwU0snXmhGA_0j6YH2LrcN6quuw1UkmH653jN93wIPMR-1"
+                                onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80'" />
+                            <div
+                                class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
+                                <span class="material-symbols-outlined text-[16px] text-slate-800">surfing</span>
+                                <span
+                                    class="text-[11px] font-bold text-slate-800 uppercase tracking-wide">Surfing</span>
+                            </div>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-bold text-[#0F172A] mb-2">Covelong</h3>
+                            <p class="text-slate-500 text-sm leading-relaxed mb-6 line-clamp-2">
+                                A fishing village that has transformed into a luxury beach resort destination and a
+                                premier surfing spot.
+                            </p>
+                            <div class="mt-auto">
+                                <a href="{{ url_for('main.destination_info', name='Covelong') }}"
+                                    class="text-[#3B82F6] font-bold text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all no-underline">
+                                    View Destination <span
+                                        class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="group bg-white rounded-[18px] border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden h-full">
+                        <div class="relative h-60 w-full overflow-hidden">
+                            <img alt="Poompuhar"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGfbtFFED6JKnocylS4IVkPlYf-TclgJvePVfzw-_w43R3yE5KbbXcqUDv51J2JM_f0sgZCFTGNPeficrs38AFrkWPMcWrKpiZYAGgUvB045cdRJBCArIuVtJbeEehSCSOteoV2Wc4mQMYiQyfdTJaINyES-nimLHvcduOl_TYNnHymiosbymE9i36zzLaWKl6i_LiAUMUy72p2OjF6vIyGIIlLLMEPKGuyEkyGtJrxYlz1bhMEZfSeKMbAT1xg0wztwnSb5c73SK1"
+                                onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80'" />
+                            <div
+                                class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
+                                <span class="material-symbols-outlined text-[16px] text-slate-800">anchor</span>
+                                <span class="text-[11px] font-bold text-slate-800 uppercase tracking-wide">Ancient
+                                    Port</span>
+                            </div>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-bold text-[#0F172A] mb-2">Poompuhar</h3>
+                            <p class="text-slate-500 text-sm leading-relaxed mb-6 line-clamp-2">
+                                Once a flourishing ancient port city known as Kaveripoompattinam, rich in history and
+                                coastal beauty.
+                            </p>
+                            <div class="mt-auto">
+                                <a href="{{ url_for('main.destination_info', name='Poompuhar') }}"
+                                    class="text-[#3B82F6] font-bold text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all no-underline">
+                                    View Destination <span
+                                        class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="group bg-white rounded-[18px] border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden h-full">
+                        <div class="relative h-60 w-full overflow-hidden">
+                            <img alt="Nagapattinam"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0DnGzutyBaSRjbwKp9FbwnwboeH-wRBMZvohIJvDRD0mTokQOlPYFbs5xDwfywL3i43VUWMr9H2H7mcWvrHEPewuddYIE4861kkteZqmr_qrdF8As2tKwhMQak1GCOjTAr0zi0oEdzxCQbsiTYHsB2yAQv8gy9z8kJPITfQ9aOHxS8YKFkqtseaAmuVsCwhy96UJo7LH1vgsFZqrXbmYWL07NrvPL4lwAXOq3M-dzbQKYut4Oo59M4WpWwLbhSTKKe3VvYOiT6as4"
+                                onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80'" />
+                            <div
+                                class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
+                                <span
+                                    class="material-symbols-outlined text-[16px] text-slate-800">directions_boat</span>
+                                <span
+                                    class="text-[11px] font-bold text-slate-800 uppercase tracking-wide">Harbour</span>
+                            </div>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-bold text-[#0F172A] mb-2">Nagapattinam</h3>
+                            <p class="text-slate-500 text-sm leading-relaxed mb-6 line-clamp-2">
+                                A historic port town with a deep maritime history, serving as a base for pilgrimage to
+                                Velankanni and Nagore.
+                            </p>
+                            <div class="mt-auto">
+                                <a href="{{ url_for('main.destination_info', name='Nagapattinam') }}"
+                                    class="text-[#3B82F6] font-bold text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all no-underline">
+                                    View Destination <span
+                                        class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="group bg-white rounded-[18px] border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden h-full">
+                        <div class="relative h-60 w-full overflow-hidden">
+                            <img alt="Velankanni"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGfbtFFED6JKnocylS4IVkPlYf-TclgJvePVfzw-_w43R3yE5KbbXcqUDv51J2JM_f0sgZCFTGNPeficrs38AFrkWPMcWrKpiZYAGgUvB045cdRJBCArIuVtJbeEehSCSOteoV2Wc4mQMYiQyfdTJaINyES-nimLHvcduOl_TYNnHymiosbymE9i36zzLaWKl6i_LiAUMUy72p2OjF6vIyGIIlLLMEPKGuyEkyGtJrxYlz1bhMEZfSeKMbAT1xg0wztwnSb5c73SK1"
+                                onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80'" />
+                            <div
+                                class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
+                                <span class="material-symbols-outlined text-[16px] text-slate-800">church</span>
+                                <span
+                                    class="text-[11px] font-bold text-slate-800 uppercase tracking-wide">Pilgrimage</span>
+                            </div>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-bold text-[#0F172A] mb-2">Velankanni</h3>
+                            <p class="text-slate-500 text-sm leading-relaxed mb-6 line-clamp-2">
+                                Famous for the Basilica of Our Lady of Good Health, attracting millions of pilgrims to
+                                its shores annually.
+                            </p>
+                            <div class="mt-auto">
+                                <a href="{{ url_for('main.destination_info', name='Velankanni') }}"
+                                    class="text-[#3B82F6] font-bold text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all no-underline">
+                                    View Destination <span
+                                        class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-center mt-12">
+                    <button id="load-more-btn"
+                        class="bg-white border-2 border-slate-100 hover:border-blue-500 text-slate-700 hover:text-blue-600 px-10 py-4 rounded-full font-bold text-[15px] transition-all shadow-sm hover:shadow-md flex items-center gap-2">
+                        <span class="material-symbols-outlined">refresh</span>
+                        Load More Destinations
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- State & Elements ---
+            const stateSelect = document.getElementById('state-select');
+            const searchInput = document.getElementById('destination-search');
+            const searchBtn = document.getElementById('main-search-btn');
+            const categoryBtns = document.querySelectorAll('section.max-w-\\[1400px\\] .flex.flex-wrap.justify-center button');
+            const loadMoreBtn = document.getElementById('load-more-btn');
+            const activeTagsContainer = document.getElementById('active-tags-container');
+            const resultsContainer = document.getElementById('results-container');
+            const initialState = document.getElementById('initial-state');
+
+            let currentExploreState = stateSelect ? stateSelect.value : 'Select State';
+            let selectedCategories = new Set();
+            let currentSearch = '';
+            let currentPage = 1;
+            let isLoading = false;
+            let hasMore = true;
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const queryParam = urlParams.get('q');
+            const stateParam = urlParams.get('state');
+            const categoryParam = urlParams.get('category');
+
+            if (stateParam && stateSelect) {
+                const options = Array.from(stateSelect.options).map(o => o.value);
+                if (options.includes(stateParam)) {
+                    stateSelect.value = stateParam;
+                    currentExploreState = stateParam;
+                }
+            } else if (queryParam && stateSelect) {
+                const options = Array.from(stateSelect.options).map(o => o.value);
+                if (options.includes(queryParam)) {
+                    stateSelect.value = queryParam;
+                    currentExploreState = queryParam;
+                } else {
+                    searchInput.value = queryParam;
+                    currentSearch = queryParam;
+                }
+            }
+
+            if (categoryParam) {
+                categoryParam.split(',').forEach(cat => {
+                    selectedCategories.add(cat.trim());
+                });
+                updateCategoryButtonStyles();
+                renderActiveTags();
+            }
+
+            if (currentSearch || selectedCategories.size > 0 || currentExploreState !== 'Select State' || stateParam) {
+                if (resultsContainer) resultsContainer.style.display = 'block';
+                if (initialState) initialState.style.display = 'none';
+                fetchDestinations();
+            }
+
+            console.info('Explore Page JS Initialized', { loadMoreBtn: !!loadMoreBtn, currentExploreState });
+
+            // --- Detect initial active category from highlighted button ---
+            categoryBtns.forEach(btn => {
+                const label = btn.querySelector('span:last-child');
+                if (label && btn.classList.contains('bg-blue-50')) {
+                    selectedCategories.add(label.textContent.trim());
+                }
+            });
+            renderActiveTags();
+
+            // --- Category Button Click ---
+            categoryBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const label = this.querySelector('span:last-child');
+                    if (!label) return;
+                    const cat = label.textContent.trim();
+
+                    if (selectedCategories.has(cat)) {
+                        selectedCategories.delete(cat);
+                    } else {
+                        selectedCategories.add(cat);
+                    }
+
+                    updateCategoryButtonStyles();
+                    renderActiveTags();
+
+                    currentPage = 1;
+                    hasMore = true;
+                });
+            });
+
+            window.toggleFilter = function (cat) {
+                if (selectedCategories.has(cat)) {
+                    selectedCategories.delete(cat);
+                } else {
+                    selectedCategories.add(cat);
+                }
+                updateCategoryButtonStyles();
+                renderActiveTags();
+                currentPage = 1;
+                hasMore = true;
+            };
+
+            function renderActiveTags() {
+                if (!activeTagsContainer) return;
+                activeTagsContainer.innerHTML = Array.from(selectedCategories).map(cat => `
+                    <div class="flex items-center gap-1.5 bg-blue-50 border border-blue-100 text-blue-700 px-3 py-1.5 rounded-full animate-in fade-in zoom-in duration-200">
+                        <span class="text-[13px] font-bold">${cat}</span>
+                        <button class="hover:bg-blue-200 rounded-full p-0.5 transition-colors flex items-center justify-center" onclick="removeCategory('${cat}')">
+                            <span class="material-symbols-outlined text-[14px]">close</span>
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            window.removeCategory = function (cat) {
+                selectedCategories.delete(cat);
+                updateCategoryButtonStyles();
+                renderActiveTags();
+                currentPage = 1;
+                hasMore = true;
+            };
+
+            function updateCategoryButtonStyles() {
+                categoryBtns.forEach(btn => {
+                    const label = btn.querySelector('span:last-child');
+                    if (!label) return;
+                    const cat = label.textContent.trim();
+                    const icon = btn.querySelector('span:first-child');
+
+                    if (selectedCategories.has(cat)) {
+                        btn.classList.remove('bg-white', 'border-slate-200', 'shadow-sm');
+                        btn.classList.add('bg-blue-50', 'border-blue-400', 'shadow-md');
+                        if (icon) {
+                            icon.classList.remove('group-hover:text-blue-600');
+                            // Preserve explicit icon colors but ensure consistency
+                            icon.classList.add('text-blue-600');
+                        }
+                        label.classList.remove('text-slate-700', 'group-hover:text-blue-600', 'font-semibold');
+                        label.classList.add('text-blue-700', 'font-bold');
+                    } else {
+                        btn.classList.remove('bg-blue-50', 'border-blue-400', 'shadow-md');
+                        btn.classList.add('bg-white', 'border-slate-200', 'shadow-sm');
+                        if (icon) {
+                            icon.classList.add('group-hover:text-blue-600');
+                            icon.classList.remove('text-blue-600');
+                        }
+                        label.classList.remove('text-blue-700', 'font-bold');
+                        label.classList.add('text-slate-700', 'font-semibold', 'group-hover:text-blue-600');
+                    }
+                });
+            }
+
+            // --- State Dropdown Change ---
+            if (stateSelect) {
+                stateSelect.addEventListener('change', function () {
+                    currentExploreState = this.value;
+                    currentPage = 1;
+                    hasMore = true;
+                    // Don't auto-fetch anymore, let the user click search
+                });
+            }
+
+            // --- State clear button ---
+            const stateClearBtn = document.querySelector('.absolute.inset-y-0.right-8');
+            if (stateClearBtn) {
+                stateClearBtn.addEventListener('click', function () {
+                    if (stateSelect) {
+                        stateSelect.value = stateSelect.options[0].value;
+                        currentExploreState = stateSelect.value;
+                        currentPage = 1;
+                        hasMore = true;
+                        // Just reset UI
+                        if (resultsContainer) resultsContainer.style.display = 'none';
+                        if (initialState) initialState.style.display = 'block';
+                    }
+                });
+            }
+
+            // --- Search Button & Enter ---
+            if (searchBtn) {
+                searchBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    currentSearch = searchInput ? searchInput.value.trim() : '';
+
+                    if (currentExploreState === 'Select State' && selectedCategories.size === 0 && !currentSearch) {
+                        alert('Please choose at least one filter: destination text, state, or category.');
+                        return;
+                    }
+
+                    currentPage = 1;
+                    hasMore = true;
+                    
+                    if (resultsContainer) resultsContainer.style.display = 'block';
+                    if (initialState) initialState.style.display = 'none';
+                    
+                    fetchDestinations();
+                });
+            }
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        currentSearch = this.value.trim();
+
+                        if (currentExploreState === 'Select State' && selectedCategories.size === 0 && !currentSearch) {
+                            alert('Please choose at least one filter: destination text, state, or category.');
+                            return;
+                        }
+
+                        currentPage = 1;
+                        hasMore = true;
+                        
+                        if (resultsContainer) resultsContainer.style.display = 'block';
+                        if (initialState) initialState.style.display = 'none';
+                        
+                        fetchDestinations();
+                    }
+                });
+            }
+
+            // --- Load More ---
+            if (loadMoreBtn) {
+                loadMoreBtn.addEventListener('click', function () {
+                    console.info('Load More Clicked', { currentPage, hasMore, isLoading });
+                    if (isLoading || !hasMore) return;
+                    currentPage++;
+                    fetchDestinations(true);
+                });
+            }
+
+            // --- Initial Fetch ---
+            // REMOVED: fetchDestinations();
+
+            // --- Main Fetch Function ---
+            function fetchDestinations(isLoadMore = false) {
+                if (isLoading) return;
+                isLoading = true;
+
+                if (isLoadMore) {
+                    if (loadMoreBtn) {
+                        loadMoreBtn.disabled = true;
+                        loadMoreBtn.innerHTML = `<span class="animate-spin material-symbols-outlined">refresh</span> Loading...`;
+                    }
+                } else {
+                    showLoadingState();
+                }
+
+                const params = new URLSearchParams();
+                if (currentExploreState && currentExploreState !== 'Select State') {
+                    params.set('state', currentExploreState);
+                }
+                if (selectedCategories.size > 0) {
+                    params.set('category', Array.from(selectedCategories).join(','));
+                }
+                if (currentSearch) params.set('q', currentSearch);
+                params.set('page', currentPage);
+
+                console.info('Fetching destinations...', Object.fromEntries(params));
+
+                fetch(`/api/explore-destinations?${params.toString()}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        console.info('Data received:', data);
+                        if (data.error) {
+                            showError(data.error);
+                        } else {
+                            if (data.destinations && data.destinations.length < 9) {
+                                hasMore = false;
+                            }
+                            console.info('Updated hasMore:', hasMore);
+                            renderDestinations(data, isLoadMore);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Fetch error:', err);
+                        showError('Failed to load destinations. Please try again.');
+                    })
+                    .finally(() => {
+                        isLoading = false;
+                        if (loadMoreBtn) {
+                            loadMoreBtn.disabled = false;
+                            if (!hasMore) {
+                                loadMoreBtn.innerHTML = `<span class="material-symbols-outlined">done</span> All Caught Up`;
+                                loadMoreBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                            } else {
+                                loadMoreBtn.innerHTML = `<span class="material-symbols-outlined">refresh</span> Load More Destinations`;
+                                loadMoreBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                            }
+                        }
+                    });
+            }
+
+            // --- Render Destinations ---
+            function renderDestinations(data, isLoadMore = false) {
+                const destinations = data.destinations || [];
+                const totalCount = data.total_count || destinations.length;
+                const catLabel = data.category && data.category !== 'All' ? data.category + ' ' : '';
+                const stateName = data.state || currentExploreState;
+
+                if (!isLoadMore) {
+                    // Split into popular (first 3) and all (rest)
+                    const popular = destinations.slice(0, 3);
+                    const allDests = destinations.slice(3);
+
+                    // Update "Popular" section heading
+                    const popularHeading = document.querySelector('section.bg-white h2');
+                    if (popularHeading) {
+                        popularHeading.textContent = `Popular ${catLabel}Destinations in ${stateName}`;
+                    }
+
+                    // Update popular cards grid
+                    const popularGrid = document.getElementById('popular-grid');
+                    if (popularGrid) {
+                        popularGrid.innerHTML = popular.map(dest => createCardHTML(dest, true)).join('');
+                    }
+
+                    // Update "All" section heading  
+                    const allSection = document.querySelector('section.pb-16 h2, section.pb-16.lg\\:pb-24 h2');
+                    if (allSection) {
+                        allSection.innerHTML = `All ${catLabel}Destinations in ${stateName} <span class="text-slate-400 text-xl font-medium ml-2">(${totalCount} Treasures Found)</span>`;
+                    }
+
+                    // Update all cards grid
+                    const allGrid = document.getElementById('all-grid');
+                    if (allGrid) {
+                        allGrid.innerHTML = allDests.map(dest => createCardHTML(dest, false)).join('');
+                    }
+                } else {
+                    // For load more, just append all new ones to the "All" grid
+                    const allGrid = document.getElementById('all-grid');
+                    if (allGrid) {
+                        console.info('Appending to grid...', { count: destinations.length });
+                        allGrid.insertAdjacentHTML('beforeend', destinations.map(dest => createCardHTML(dest, false)).join(''));
+                    }
+                }
+            }
+
+            function createCardHTML(dest, isPopular) {
+                const indent = isPopular ? '                                ' : '                            ';
+                const imgAlt = dest.name || 'Destination';
+                const imgSrc = dest.image || 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&q=80&w=800';
+                const tag = dest.tag || 'Destination';
+                const icon = dest.icon || 'place';
+                const name = dest.name || 'Unknown';
+                const desc = dest.description || '';
+                const destUrl = `/destination/${encodeURIComponent(name)}`;
+
+                return `
+<div class="group bg-white rounded-[18px] border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden h-full">
+    <div class="relative h-60 w-full overflow-hidden">
+        <img alt="${imgAlt}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="${imgSrc}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&q=80&w=800'"/>
+        <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm cursor-pointer hover:bg-blue-50 transition-colors" onclick="toggleFilter('${tag}')">
+            <span class="material-symbols-outlined text-[16px] text-slate-800">${icon}</span>
+            <span class="text-[11px] font-bold text-slate-800 uppercase tracking-wide">${tag}</span>
+        </div>
+    </div>
+    <div class="p-6 flex flex-col flex-grow">
+        <h3 class="text-xl font-bold text-[#0F172A] mb-2">${name}</h3>
+        <p class="text-slate-500 text-sm leading-relaxed mb-4 line-clamp-2">${desc}</p>
+        <div class="flex flex-wrap items-center gap-4 mb-6">
+            <div class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[16px] text-amber-500">calendar_month</span>
+                <span class="text-[12px] font-semibold text-slate-600">Season: <span class="text-slate-800">${dest.best_season || 'All Year'}</span></span>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[16px] text-emerald-500">groups</span>
+                <span class="text-[12px] font-semibold text-slate-600">Ideal For: <span class="text-slate-800">${dest.age_suitability || 'All Ages'}</span></span>
+            </div>
+        </div>
+        <div class="mt-auto">
+            <a href="${destUrl}" class="text-[#3B82F6] font-bold text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all no-underline">
+${indent}View Destination <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+            </a>
+        </div>
+    </div>
+</div>`;
+            }
+
+            // --- Loading State ---
+            function showLoadingState() {
+                const skeletonCard = `
+<div class="bg-white rounded-[18px] border border-slate-100 shadow-sm flex flex-col overflow-hidden h-full animate-pulse">
+    <div class="h-60 w-full bg-slate-200"></div>
+    <div class="p-6 flex flex-col flex-grow">
+        <div class="h-6 bg-slate-200 rounded w-3/4 mb-3"></div>
+        <div class="h-4 bg-slate-100 rounded w-full mb-2"></div>
+        <div class="h-4 bg-slate-100 rounded w-2/3 mb-6"></div>
+        <div class="mt-auto h-4 bg-blue-100 rounded w-1/3"></div>
+    </div>
+</div>`;
+
+                const popularGrid = document.getElementById('popular-grid');
+                if (popularGrid) {
+                    popularGrid.innerHTML = skeletonCard.repeat(3);
+                }
+                const allGrid = document.getElementById('all-grid');
+                if (allGrid) {
+                    allGrid.innerHTML = skeletonCard.repeat(6);
+                }
+
+                // Update headings to show loading
+                const popularHeading = document.querySelector('section.bg-white h2');
+                if (popularHeading) {
+                    popularHeading.innerHTML = `<span class="inline-flex items-center gap-3">Loading Destinations<span class="animate-spin material-symbols-outlined text-blue-500">progress_activity</span></span>`;
+                }
+                const allHeading = document.querySelector('section.pb-16 h2, section.pb-16.lg\\:pb-24 h2');
+                if (allHeading) {
+                    allHeading.innerHTML = `<span class="inline-flex items-center gap-3">Generating from AI<span class="animate-spin material-symbols-outlined text-blue-500">progress_activity</span></span>`;
+                }
+            }
+
+            // --- Error State ---
+            function showError(msg) {
+                const popularGrid = document.getElementById('popular-grid');
+                if (popularGrid) {
+                    popularGrid.innerHTML = `
+<div class="col-span-full text-center py-16">
+    <span class="material-symbols-outlined text-[64px] text-red-300 mb-4 block">error</span>
+    <h3 class="text-xl font-bold text-slate-700 mb-2">Oops! Something went wrong</h3>
+    <p class="text-slate-500">${msg}</p>
+    <button onclick="location.reload()" class="mt-4 px-6 py-2 bg-blue-500 text-white rounded-full font-bold hover:bg-blue-600 transition-colors">Try Again</button>
+</div>`;
+                }
+                const allGrid = document.getElementById('all-grid');
+                if (allGrid) allGrid.innerHTML = '';
+            }
+        });
+    </script>
+    
+    {% include 'components/footer.html' %}
+</body>
+
+</html>
