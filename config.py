@@ -10,6 +10,13 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'database', 'db.sqlite3')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_pre_ping": True,
+        "pool_recycle": 280,
+        "pool_size": int(os.environ.get("DB_POOL_SIZE", 5)),
+        "max_overflow": int(os.environ.get("DB_MAX_OVERFLOW", 10)),
+        "pool_timeout": int(os.environ.get("DB_POOL_TIMEOUT", 30)),
+    }
     GROQ_API_KEY = os.environ.get('GROQ_API_KEY')
     WEATHER_API_KEY = os.environ.get('WEATHER_API_KEY')
     SERPER_API_KEY = os.environ.get('SERPER_API_KEY')

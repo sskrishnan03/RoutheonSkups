@@ -1,0 +1,27 @@
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+img, video, canvas, svg {
+    max-width: 100%;
+    height: auto;
+}
+
+button, a, input, select, textarea {
+    touch-action: manipulation;
+}
+
+@media (max-width: 1024px) {
+    .mobile-scroll-x {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+@media (max-width: 768px) {
+    nav .max-w-7xl {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+}

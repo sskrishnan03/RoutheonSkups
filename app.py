@@ -82,7 +82,12 @@ def create_app():
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(int(user_id))
+        return db.session.get(User, int(user_id))
+
+    @app.teardown_appcontext
+    def shutdown_session(exception=None):
+        # Always return checked-out connections to the pool at request end.
+        db.session.remove()
 
     # Import and register blueprints
     from routes import main_bp
