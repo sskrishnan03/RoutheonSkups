@@ -1,0 +1,7 @@
+{% set back_url = fallback_url|default('javascript:void(0)') %}
+<button type="button" onclick="window.location.href = document.referrer || '{{ back_url | safe }}'"
+    class="fixed top-28 left-4 md:left-6 z-40 inline-flex items-center justify-center text-white/70 hover:text-white transition-colors duration-200"
+    style="text-shadow: 0 2px 8px rgba(0,0,0,0.5);"
+    aria-label="Go back">
+    <span class="material-symbols-outlined text-[22px] md:text-[24px]">arrow_back</span>
+</button>

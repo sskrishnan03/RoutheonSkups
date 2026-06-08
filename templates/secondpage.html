@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RoutheonSkups</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+body {
+  color: #1a1e26;
+}
+
+h1,
+.rotating-word,
+.subtext,
+.subtext p {
+  color: #ffffff;
+}
+
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 0 20px;
+}
+
+/* HERO WITH BACKGROUND */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-image: url("{{ url_for('static', filename='img/secondpage.png') }}");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+/* Dark overlay for readability */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 0;
+}
+
+/* Keep content above overlay */
+.hero-inner {
+  text-align: center;
+  padding: 80px 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* Badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 12px 28px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  color: #1a1e26;
+  text-decoration: none;
+}
+
+.badge:hover {
+  background: #f1f5f9;
+}
+
+/* Heading */
+h1 {
+  font-size: clamp(40px, 6vw, 65px);
+  font-weight: 800;
+  line-height: 1.05;
+  margin-top: 40px;
+  letter-spacing: -2px;
+}
+
+h1 {
+  text-shadow:
+    0 4px 10px rgba(0,0,0,0.6),
+    0 8px 25px rgba(0,0,0,0.6);
+}
+
+.rotating-word {
+  text-shadow:
+    0 4px 10px rgba(0,0,0,0.6),
+    0 8px 25px rgba(0,0,0,0.6);
+}
+
+.subtext p {
+  text-shadow:
+    0 3px 8px rgba(0,0,0,0.7);
+}
+
+.rotating-wrapper {
+  position: relative;
+  height: 1.2em;
+  overflow: hidden;
+}
+
+.rotating-word {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  opacity: 0;
+  transform: translateY(120%);
+  transition: all 0.6s cubic-bezier(.22,.61,.36,1);
+}
+
+.rotating-word.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Description */
+.subtext {
+  margin-top: 20px;
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.subtext p:first-child {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.subtext p:last-child {
+  margin-top: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+/* Demo Video Button */
+.demo-section {
+  margin-top: 60px;
+  display: flex;
+  justify-content: center;
+}
+
+.demo-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 12px 28px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: all 0.35s ease;
+  letter-spacing: 0.3px;
+}
+
+.demo-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+.demo-btn:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.demo-btn .play-icon {
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.35s ease;
+}
+
+.demo-btn:hover .play-icon {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.08);
+}
+
+.demo-btn .play-icon svg {
+  width: 12px;
+  height: 12px;
+  fill: #fff;
+  margin-left: 1px;
+}
+
+.demo-btn .btn-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.2;
+}
+
+.demo-btn .btn-text .main {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.demo-btn .btn-text .sub {
+  font-size: 10px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Buttons */
+.buttons {
+  margin-top: 40px;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  min-width: 220px;
+  height: 56px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.btn-outline {
+  background: white;
+  border: 1px solid #e2e8f0;
+  color: #000;
+}
+
+.btn-outline:hover {
+  background: #f8fafc;
+}
+
+.btn-primary {
+  background: #1a1e26;
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: #2d333d;
+}
+
+/* Entrance animations */
+.hero-inner .badge,
+.hero-inner h1,
+.hero-inner .subtext,
+.hero-inner .buttons,
+.hero-inner .demo-section {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeUp 0.8s ease forwards;
+}
+
+.hero-inner .badge { animation-delay: 0.1s; }
+.hero-inner h1 { animation-delay: 0.3s; }
+.hero-inner .subtext { animation-delay: 0.5s; }
+.hero-inner .buttons { animation-delay: 0.7s; }
+.hero-inner .demo-section { animation-delay: 0.85s; }
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── VIDEO MODAL ─── */
+.video-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+  padding: 20px;
+}
+
+.video-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.video-modal {
+  position: relative;
+  width: 100%;
+  max-width: 960px;
+  background: #0f0f0f;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.7);
+  transform: scale(0.92) translateY(30px);
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.video-overlay.open .video-modal {
+  transform: scale(1) translateY(0);
+}
+
+.video-modal .video-container {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+  background: #000;
+}
+
+.video-modal .video-container iframe,
+.video-modal .video-container video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Close button */
+.video-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+}
+
+.video-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg) scale(1.1);
+}
+
+.video-close svg {
+  width: 18px;
+  height: 18px;
+  fill: #fff;
+}
+
+/* Modal label */
+.video-modal-label {
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  z-index: 10;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .demo-btn {
+    padding: 14px 24px;
+    font-size: 15px;
+  }
+  .video-modal {
+    border-radius: 14px;
+  }
+  .video-close {
+    top: 12px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
+    font-size: 16px;
+  }
+  .video-modal-label {
+    top: 12px;
+    left: 14px;
+    font-size: 11px;
+    padding: 4px 12px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="hero">
+  <div class="container hero-inner">
+
+    <a href="{{ url_for('main.home') }}" class="badge">
+      Explore RoutheonSkups →
+    </a>
+
+    <h1>
+      Explore. Discover. Connect.
+      <div class="rotating-wrapper">
+        <div class="rotating-word active">discovered</div>
+        <div class="rotating-word">explained</div>
+        <div class="rotating-word">mapped</div>
+        <div class="rotating-word">clear</div>
+        <div class="rotating-word">known</div>
+      </div>
+    </h1>
+    <div class="subtext">
+      <p>Discover places through clarity and structure.</p>
+      <p>
+        RoutheonSkups reveals routes, paths, and connections that help you truly understand every place.
+      </p>
+    </div>
+
+    <div class="buttons">
+      <a href="{{ url_for('main.home') }}" class="btn btn-outline">
+        Start Discovering
+      </a>
+
+      <a href="{{ url_for('main.login') }}" class="btn btn-primary">
+        Sign In for free
+      </a>
+    </div>
+
+    <!-- Demo Video Button -->
+    <div class="demo-section">
+      <button class="demo-btn" id="demoVideoBtn">
+        <div class="play-icon">
+          <svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg>
+        </div>
+        <span class="btn-text">
+          <span class="main">Watch Demo</span>
+          <span class="sub">See the journey</span>
+        </span>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Video Modal -->
+<div class="video-overlay" id="videoOverlay">
+  <div class="video-modal">
+    <span class="video-modal-label">Watch Demo</span>
+    <button class="video-close" id="videoCloseBtn" aria-label="Close video">
+      <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+    </button>
+    <div class="video-container">
+      <iframe
+        id="videoIframe"
+        src=""
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        loading="lazy"
+        title="RoutheonSkups Project Demo"
+      ></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+const words = document.querySelectorAll(".rotating-word");
+let current = 0;
+
+setInterval(() => {
+  words[current].classList.remove("active");
+  current = (current + 1) % words.length;
+  words[current].classList.add("active");
+}, 2000);
+
+/* ─── Video Modal Logic ─── */
+const overlay = document.getElementById("videoOverlay");
+const openBtn = document.getElementById("demoVideoBtn");
+const closeBtn = document.getElementById("videoCloseBtn");
+const iframe = document.getElementById("videoIframe");
+
+const VIDEO_URL = "https://embed.app.guidde.com/playbooks/vD43DzfiMVifK3UjqBr2x2";
+
+openBtn.addEventListener("click", () => {
+  iframe.src = VIDEO_URL + "?mode=videoOnly&autoplay=1";
+  overlay.classList.add("open");
+  document.body.style.overflow = "hidden";
+});
+
+function closeVideo() {
+  overlay.classList.remove("open");
+  iframe.src = "";
+  document.body.style.overflow = "";
+}
+
+closeBtn.addEventListener("click", closeVideo);
+
+overlay.addEventListener("click", (e) => {
+  if (e.target === overlay) closeVideo();
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && overlay.classList.contains("open")) {
+    closeVideo();
+  }
+});
+</script>
+
+</body>
+</html>

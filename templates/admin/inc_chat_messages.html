@@ -1,0 +1,75 @@
+<div class="table-wrapper">
+    <div class="flex items-start justify-between mb-6 flex-wrap gap-4">
+        <div>
+            <div class="flex items-center gap-2 text-xs font-semibold text-indigo-500 mb-1">
+                <span class="badge-dot bg-indigo-500"></span> Chat Messages
+            </div>
+            <h1 class="text-2xl font-extrabold text-[#0F172A] tracking-tight">Chat Messages</h1>
+            <p class="text-[#475569] font-medium mt-1">Individual AI chat messages.</p>
+        </div>
+        <div class="flex items-center gap-3 flex-wrap">
+            <a href="/admin/export/chat-messages" class="px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-[#475569] hover:bg-slate-50 transition-all flex items-center gap-2 shadow-card"><span class="material-symbols-outlined text-lg">file_download</span> Export CSV</a>
+            <button onclick="batchDelete('/admin/delete-chat-message/0', getSelected('.cm-check'), 'chat messages')" class="px-4 py-2.5 bg-white border border-red-200 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 transition-all flex items-center gap-2 shadow-card"><span class="material-symbols-outlined text-lg">delete</span> Delete Selected</button>
+            <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#94A3B8] text-lg pointer-events-none">search</span>
+                <input type="search" class="table-search w-56 pl-9 pr-4 py-2.5 border border-slate-200 rounded-xl text-sm placeholder:text-[#94A3B8] bg-white shadow-card focus:border-indigo-300 focus:ring-1 focus:ring-indigo-300 transition-all outline-none" placeholder="Search messages..." />
+            </div>
+            <select class="filter-select text-sm border border-slate-200 rounded-xl px-3 py-2.5 bg-white shadow-card text-[#475569] font-medium focus:border-indigo-300 focus:ring-1 focus:ring-indigo-300 transition-all outline-none" data-filter="role">
+                <option value="">All Roles</option>
+                <option value="user">User</option>
+                <option value="ai">AI</option>
+            </select>
+        </div>
+    </div>
+    <div class="bg-white rounded-2xl border border-slate-200/60 shadow-card overflow-hidden">
+        <div class="table-scroll overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="bg-slate-50/80 border-b border-slate-200">
+                        <th class="px-4 py-3.5 text-left w-10"><input type="checkbox" onchange="toggleAll(this,'.cm-check')" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" /></th>
+                        <th class="px-4 py-3.5 text-left text-[11px] font-bold text-[#475569] uppercase tracking-wider">Session</th>
+                        <th class="px-4 py-3.5 text-left text-[11px] font-bold text-[#475569] uppercase tracking-wider">Role</th>
+                        <th class="px-4 py-3.5 text-left text-[11px] font-bold text-[#475569] uppercase tracking-wider">Content</th>
+                        <th class="px-4 py-3.5 text-left text-[11px] font-bold text-[#475569] uppercase tracking-wider">Created</th>
+                        <th class="px-4 py-3.5 text-right text-[11px] font-bold text-[#475569] uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for m in all_chat_messages %}
+                    <tr class="table-row" data-role="{{ m.role }}">
+                        <td class="px-4 py-3"><input type="checkbox" class="cm-check batch-check rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" value="{{ m.id }}" /></td>
+                        <td class="px-4 py-3 font-bold text-[#0F172A]">#{{ m.session_id }}</td>
+                        <td class="px-4 py-3"><span class="pill {% if m.role == 'ai' %}btn-primary text-white{% else %}bg-slate-100 text-slate-600 border border-slate-200{% endif %}">{{ m.role }}</span></td>
+                        <td class="px-4 py-3 text-[#475569] max-w-[300px] truncate text-xs">{{ m.content[:140] if m.content else '-' }}</td>
+                        <td class="px-4 py-3 text-[#94A3B8] text-xs">{{ m.created_at.strftime('%b %d, %Y') if m.created_at else '-' }}</td>
+                        <td class="px-4 py-3 text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <button onclick="openModal('Chat Message #{{ m.id }}', chatMsgDetails({{ m.id }}))" class="px-3 py-1.5 text-xs font-bold text-indigo-500 hover:bg-indigo-50 rounded-lg transition-all">View</button>
+                                <button onclick="deleteChatMessage({{ m.id }})" class="px-3 py-1.5 text-xs font-bold text-red-400 hover:bg-red-50 rounded-lg transition-all">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="px-4 py-3 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between text-xs font-medium text-[#94A3B8]">
+            <span>{{ all_chat_messages|length }} message(s) total</span>
+            <span class="text-[#CBD5E1]" id="cm-filter-count"></span>
+        </div>
+    </div>
+</div>
+
+<script>
+function chatMsgDetails(id) {
+    const msgs = {{ all_chat_messages_json|tojson }};
+    const m = msgs.find(x => x.id === id);
+    if (!m) return '<p class="text-[#475569]">Message not found</p>';
+    const fields = [
+        ['ID', m.id], ['Session ID', m.session_id], ['Role', m.role || '-'],
+        ['Content', m.content ? '<div class="max-h-40 overflow-y-auto text-xs whitespace-pre-wrap bg-slate-50 rounded-lg p-3 border border-slate-200">' + m.content + '</div>' : 'None'],
+        ['Created', m.created_at || '-'], ['Updated', m.updated_at || '-']
+    ];
+    return fields.map(([l,v]) => `<div class="flex items-start gap-4 py-2.5 border-b border-slate-100 last:border-0"><span class="w-28 text-xs font-bold text-[#94A3B8] uppercase tracking-wider flex-shrink-0">${l}</span><span class="text-[#0F172A] text-sm font-medium">${v || '-'}</span></div>`).join('');
+}
+</script>

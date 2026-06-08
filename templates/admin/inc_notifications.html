@@ -1,0 +1,100 @@
+<div class="table-wrapper">
+    <div class="flex items-start justify-between mb-6 flex-wrap gap-4">
+        <div>
+            <div class="flex items-center gap-2 text-xs font-semibold text-indigo-500 mb-1">
+                <span class="badge-dot bg-indigo-500"></span> Notifications
+            </div>
+            <h1 class="text-2xl font-extrabold text-[#0F172A] tracking-tight">Notifications</h1>
+            <p class="text-[#475569] font-medium mt-1">All user notifications.</p>
+        </div>
+        <div class="flex items-center gap-3 flex-wrap">
+            <a href="/admin/export/notifications" class="px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-[#475569] hover:bg-slate-50 transition-all flex items-center gap-2 shadow-card"><span class="material-symbols-outlined text-lg">file_download</span> Export CSV</a>
+            <button onclick="batchDelete('/admin/delete-notification/0', getSelected('.notif-check'), 'notifications')" class="px-4 py-2.5 bg-white border border-red-200 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 transition-all flex items-center gap-2 shadow-card"><span class="material-symbols-outlined text-lg">delete</span> Delete Selected</button>
+            <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#94A3B8] text-lg pointer-events-none">search</span>
+                <input type="search" class="table-search w-56 pl-9 pr-4 py-2.5 border border-slate-200 rounded-xl text-sm placeholder:text-[#94A3B8] bg-white shadow-card focus:border-indigo-300 focus:ring-1 focus:ring-indigo-300 transition-all outline-none" placeholder="Search notifications..." />
+            </div>
+            <select class="filter-select text-sm border border-slate-200 rounded-xl px-3 py-2.5 bg-white shadow-card text-[#475569] font-medium focus:border-indigo-300 focus:ring-1 focus:ring-indigo-300 transition-all outline-none" data-filter="type">
+                <option value="">All Types</option>
+                <option value="info">Info</option>
+                <option value="success">Success</option>
+                <option value="warning">Warning</option>
+                <option value="trip">Trip</option>
+            </select>
+            <select class="filter-select text-sm border border-slate-200 rounded-xl px-3 py-2.5 bg-white shadow-card text-[#475569] font-medium focus:border-indigo-300 focus:ring-1 focus:ring-indigo-300 transition-all outline-none" data-filter="status">
+                <option value="">All Status</option>
+                <option value="read">Read</option>
+                <option value="unread">Unread</option>
+            </select>
+            <button onclick="generateNotifications()" class="px-4 py-2.5 btn-primary text-white rounded-xl text-sm font-bold transition-all shadow-card flex items-center gap-2"><span class="material-symbols-outlined text-lg">auto_awesome</span> Generate</button>
+        </div>
+    </div>
+    <div class="bg-white rounded-2xl border border-slate-200/60 shadow-card overflow-hidden">
+        <div class="table-scroll overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="bg-slate-50/80 border-b border-slate-200">
+                        <th class="px-4 py-3.5 text-left w-10"><input type="checkbox" onchange="toggleAll(this,'.notif-check')" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" /></th>
+                        <th class="px-4 py-3.5 text-left text-[11px] font-bold text-[#475569] uppercase tracking-wider">User</th>
+                        <th class="px-4 py-3.5 text-left text-[11px] font-bold text-[#475569] uppercase tracking-wider">Message</th>
+                        <th class="px-4 py-3.5 text-left text-[11px] font-bold text-[#475569] uppercase tracking-wider">Type</th>
+                        <th class="px-4 py-3.5 text-left text-[11px] font-bold text-[#475569] uppercase tracking-wider">Status</th>
+                        <th class="px-4 py-3.5 text-left text-[11px] font-bold text-[#475569] uppercase tracking-wider">Created</th>
+                        <th class="px-4 py-3.5 text-right text-[11px] font-bold text-[#475569] uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for n in all_notifications %}
+                    <tr class="table-row" data-type="{{ n.type }}" data-status="{{ 'read' if n.is_read else 'unread' }}">
+                        <td class="px-4 py-3"><input type="checkbox" class="notif-check batch-check rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" value="{{ n.id }}" /></td>
+                        <td class="px-4 py-3">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center text-[10px] font-bold flex-shrink-0">{{ (n.user.name[0]|upper) if n.user else '?' }}</div>
+                                <span class="font-bold text-[#0F172A]">{{ n.user.name if n.user else 'Unknown' }}</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-[#475569] max-w-[250px] truncate">{{ n.message }}</td>
+                        <td class="px-4 py-3"><span class="pill {% if n.type == 'info' %}bg-blue-50 text-blue-600 border border-blue-200{% elif n.type == 'success' %}bg-emerald-50 text-emerald-600 border border-emerald-200{% elif n.type == 'warning' %}bg-amber-50 text-amber-600 border border-amber-200{% elif n.type == 'trip' %}bg-purple-50 text-purple-600 border border-purple-200{% else %}bg-slate-100 text-slate-500 border border-slate-200{% endif %}">{{ n.type }}</span></td>
+                        <td class="px-4 py-3">{% if n.is_read %}<span class="pill bg-slate-100 text-slate-500 border border-slate-200">Read</span>{% else %}<span class="pill bg-blue-50 text-blue-600 border border-blue-200">Unread</span>{% endif %}</td>
+                        <td class="px-4 py-3 text-[#94A3B8] text-xs">{{ n.created_at.strftime('%b %d, %Y') if n.created_at else '-' }}</td>
+                        <td class="px-4 py-3 text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <button onclick="openModal('Notification #{{ n.id }}', notifDetails({{ n.id }}))" class="px-3 py-1.5 text-xs font-bold text-indigo-500 hover:bg-indigo-50 rounded-lg transition-all">View</button>
+                                <button onclick="deleteNotification({{ n.id }})" class="px-3 py-1.5 text-xs font-bold text-red-400 hover:bg-red-50 rounded-lg transition-all">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="px-4 py-3 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between text-xs font-medium text-[#94A3B8]">
+            <span>{{ all_notifications|length }} notification(s) total</span>
+            <span class="text-[#CBD5E1]" id="notif-filter-count"></span>
+        </div>
+    </div>
+</div>
+
+<script>
+function notifDetails(id) {
+    const items = {{ all_notifications_json|tojson }};
+    const n = items.find(x => x.id === id);
+    if (!n) return '<p class="text-[#475569]">Notification not found</p>';
+    const fields = [
+        ['ID', n.id], ['User', n.user ? n.user.name : 'Unknown'], ['Message', n.message || '-'],
+        ['Type', n.type || '-'], ['Status', n.is_read ? 'Read' : 'Unread'],
+        ['Created', n.created_at || '-'], ['Updated', n.updated_at || '-']
+    ];
+    return fields.map(([l,v]) => `<div class="flex items-start gap-4 py-2.5 border-b border-slate-100 last:border-0"><span class="w-28 text-xs font-bold text-[#94A3B8] uppercase tracking-wider flex-shrink-0">${l}</span><span class="text-[#0F172A] text-sm font-medium">${v || '-'}</span></div>`).join('');
+}
+
+async function generateNotifications() {
+    if (!confirm('Generate AI notifications for users?')) return;
+    try {
+        const r = await fetch('/admin/generate-notifications', { method:'POST' });
+        const d = await r.json();
+        if (d.success) location.reload();
+        else alert(d.message || 'Error');
+    } catch(e) { alert('Request failed'); }
+}
+</script>

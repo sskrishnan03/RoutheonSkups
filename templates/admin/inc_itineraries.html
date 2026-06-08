@@ -1,0 +1,91 @@
+<div class="table-wrapper">
+    <div class="flex items-start justify-between mb-6 flex-wrap gap-4">
+        <div>
+            <div class="flex items-center gap-2 text-xs font-semibold text-indigo-500 mb-1">
+                <span class="badge-dot bg-indigo-500"></span> Itinerary Management
+            </div>
+            <h1 class="text-2xl font-extrabold text-[#0F172A] tracking-tight">Itineraries</h1>
+            <p class="text-[#475569] font-medium mt-1">AI-generated itineraries from saved trips.</p>
+        </div>
+        <div class="flex items-center gap-3 flex-wrap">
+            <a href="/admin/export/itineraries" class="px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-[#475569] hover:bg-slate-50 transition-all flex items-center gap-2 shadow-card"><span class="material-symbols-outlined text-lg">file_download</span> Export CSV</a>
+            <button onclick="batchDelete('/admin/delete-trip/0', getSelected('.itin-check'), 'itineraries')" class="px-4 py-2.5 bg-white border border-red-200 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 transition-all flex items-center gap-2 shadow-card"><span class="material-symbols-outlined text-lg">delete</span> Delete Selected</button>
+            <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#94A3B8] text-lg pointer-events-none">search</span>
+                <input type="search" class="table-search w-56 pl-9 pr-4 py-2.5 border border-slate-200 rounded-xl text-sm placeholder:text-[#94A3B8] bg-white shadow-card focus:border-indigo-300 focus:ring-1 focus:ring-indigo-300 transition-all outline-none" placeholder="Search itineraries..." />
+            </div>
+            <select class="filter-select text-sm border border-slate-200 rounded-xl px-3 py-2.5 bg-white shadow-card text-[#475569] font-medium focus:border-indigo-300 focus:ring-1 focus:ring-indigo-300 transition-all outline-none" data-filter="duration">
+                <option value="">All Durations</option>
+                <option value="1">1 Day</option>
+                <option value="2">2 Days</option>
+                <option value="3">3 Days</option>
+                <option value="4">4 Days</option>
+                <option value="5">5 Days</option>
+                <option value="7">7 Days</option>
+                <option value="10">10+ Days</option>
+            </select>
+        </div>
+    </div>
+    <div class="bg-white rounded-2xl border border-slate-200/60 shadow-card overflow-hidden">
+        <div class="table-scroll overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="bg-slate-50/80 border-b border-slate-200">
+                        <th class="px-4 py-3.5 text-left w-10"><input type="checkbox" onchange="toggleAll(this,'.itin-check')" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" /></th>
+                        <th class="px-4 py-3.5 text-left text-[11px] font-bold text-[#475569] uppercase tracking-wider">User</th>
+                        <th class="px-4 py-3.5 text-left text-[11px] font-bold text-[#475569] uppercase tracking-wider">Destination</th>
+                        <th class="px-4 py-3.5 text-left text-[11px] font-bold text-[#475569] uppercase tracking-wider">Start Date</th>
+                        <th class="px-4 py-3.5 text-left text-[11px] font-bold text-[#475569] uppercase tracking-wider">Duration</th>
+                        <th class="px-4 py-3.5 text-left text-[11px] font-bold text-[#475569] uppercase tracking-wider">Plan Preview</th>
+                        <th class="px-4 py-3.5 text-left text-[11px] font-bold text-[#475569] uppercase tracking-wider">Created</th>
+                        <th class="px-4 py-3.5 text-right text-[11px] font-bold text-[#475569] uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for i in all_itineraries %}
+                    {% set duration = (i.end_date - i.start_date).days if i.start_date and i.end_date else 0 %}
+                    <tr class="table-row" data-duration="{{ duration }}">
+                        <td class="px-4 py-3"><input type="checkbox" class="itin-check batch-check rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" value="{{ i.id }}" /></td>
+                        <td class="px-4 py-3">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center text-[10px] font-bold flex-shrink-0">{{ (i.author.name[0]|upper) if i.author else '?' }}</div>
+                                <span class="font-bold text-[#0F172A]">{{ i.author.name if i.author else 'Unknown' }}</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-[#475569]">{{ i.destination }}</td>
+                        <td class="px-4 py-3 text-[#475569] text-xs">{{ i.start_date.strftime('%b %d, %Y') if i.start_date else '-' }}</td>
+                        <td class="px-4 py-3"><span class="pill bg-indigo-50 text-indigo-600 border border-indigo-200">{{ duration }} day{{ 's' if duration != 1 else '' }}</span></td>
+                        <td class="px-4 py-3 text-[#94A3B8] max-w-[200px] truncate text-xs">{{ i.itinerary_text[:120] if i.itinerary_text else '-' }}</td>
+                        <td class="px-4 py-3 text-[#94A3B8] text-xs">{{ i.created_at.strftime('%b %d, %Y') if i.created_at else '-' }}</td>
+                        <td class="px-4 py-3 text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <button onclick="openModal('Itinerary: {{ i.destination|e }}', itinDetails({{ i.id }}))" class="px-3 py-1.5 text-xs font-bold text-indigo-500 hover:bg-indigo-50 rounded-lg transition-all">View</button>
+                                <button onclick="deleteTrip({{ i.id }})" class="px-3 py-1.5 text-xs font-bold text-red-400 hover:bg-red-50 rounded-lg transition-all">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="px-4 py-3 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between text-xs font-medium text-[#94A3B8]">
+            <span>{{ all_itineraries|length }} itinerary(ies) total</span>
+            <span class="text-[#CBD5E1]" id="itin-filter-count"></span>
+        </div>
+    </div>
+</div>
+
+<script>
+function itinDetails(id) {
+    const itins = {{ all_itineraries_json|tojson }};
+    const i = itins.find(x => x.id === id);
+    if (!i) return '<p class="text-[#475569]">Itinerary not found</p>';
+    const fields = [
+        ['ID', i.id], ['Destination', i.destination || '-'], ['Start Date', i.start_date || '-'],
+        ['Duration', i.duration_days ? i.duration_days + ' day(s)' : '-'],
+        ['Plan', i.plan_json ? '<div class="max-h-40 overflow-y-auto text-xs whitespace-pre-wrap bg-slate-50 rounded-lg p-3 border border-slate-200">' + i.plan_json + '</div>' : 'None'],
+        ['Created', i.created_at || '-'], ['Updated', i.updated_at || '-']
+    ];
+    return fields.map(([l,v]) => `<div class="flex items-start gap-4 py-2.5 border-b border-slate-100 last:border-0"><span class="w-28 text-xs font-bold text-[#94A3B8] uppercase tracking-wider flex-shrink-0">${l}</span><span class="text-[#0F172A] text-sm font-medium">${v || '-'}</span></div>`).join('');
+}
+</script>

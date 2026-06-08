@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Plan a Trip - Choose Planning Method | RoutheonSkups</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3B82F6",
+                        "primary-hover": "#2563EB",
+                        "background-light": "#FFFFFF",
+                        "background-dark": "#0F172A",
+                        "surface-light": "#F8FAFC",
+                        "surface-dark": "#1E293B",
+                        "text-main-light": "#1E293B",
+                        "text-main-dark": "#F1F5F9",
+                        "text-muted-light": "#64748B",
+                        "text-muted-dark": "#94A3B8",
+                        "border-light": "#E2E8F0",
+                        "border-dark": "#334155",
+                    },
+                    fontFamily: {
+                        display: ["'Plus Jakarta Sans'", "sans-serif"],
+                        body: ["'Plus Jakarta Sans'", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        'xl': '1rem',
+                        '2xl': '1.5rem',
+                        '3xl': '2rem',
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'hover': '0 20px 40px -10px rgba(0, 0, 0, 0.08)',
+                        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
+                    }
+                },
+            },
+        };
+    </script>
+    <style type="text/tailwindcss">
+        @layer base {
+            html { scroll-behavior: smooth; }
+            body { @apply font-body bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark transition-colors duration-300; }
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+    {% include 'components/navbar.html' %}
+    <main
+        class="min-h-[calc(100vh-180px)] flex flex-col items-center justify-center mt-40 pb-16 px-4 relative overflow-hidden">
+        {% set back_fallback = url_for('main.landing') %}
+        {% include 'components/back_button.html' %}
+        <button id="view-demo-btn"
+            class="fixed top-28 right-4 md:right-8 z-40 flex items-center gap-3.5 px-4 py-3 bg-gradient-to-r from-blue-50 via-white to-white border border-blue-100/80 rounded-xl shadow-lg shadow-blue-500/8 hover:shadow-xl hover:border-blue-300 hover:-translate-y-1 transition-all duration-300 group cursor-pointer">
+            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center shadow-md shadow-blue-500/20 group-hover:shadow-lg group-hover:shadow-blue-500/30 group-hover:scale-110 transition-all duration-300">
+                <span class="material-symbols-outlined text-[18px] text-white [font-variation-settings:'FILL'1]">play_arrow</span>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-[14px] font-extrabold text-slate-800 dark:text-white group-hover:text-blue-600 leading-none tracking-tight">View Demo</span>
+                <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-300 group-hover:text-blue-400 leading-none mt-1 tracking-wider uppercase">Watch Overview</span>
+            </div>
+            <span class="material-symbols-outlined text-[18px] text-blue-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all">arrow_forward</span>
+        </button>
+        <div class="absolute inset-0 z-0 pointer-events-none">
+            <div
+                class="absolute top-1/4 -right-20 w-[600px] h-[600px] bg-blue-50/40 dark:bg-blue-900/10 blur-[120px] rounded-full">
+            </div>
+            <div
+                class="absolute bottom-1/4 -left-20 w-[500px] h-[500px] bg-cyan-50/40 dark:bg-cyan-900/10 blur-[120px] rounded-full">
+            </div>
+        </div>
+        <div class="relative z-10 w-full max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <span
+                    class="inline-block px-4 py-1.5 mb-6 text-xs font-bold tracking-widest uppercase bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 rounded-full">
+                    Step 1: Choose Planning Method
+                </span>
+                <h1
+                    class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-main-light dark:text-white tracking-tight leading-tight">
+                    How would you like to<br class="hidden md:block" /> plan your journey?
+                </h1>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8 lg:gap-12 max-w-5xl mx-auto">
+                <div
+                    class="group relative bg-white dark:bg-surface-dark p-10 lg:p-12 rounded-3xl border border-border-light dark:border-border-dark shadow-soft hover:shadow-hover transition-all duration-500 hover:-translate-y-2 cursor-pointer">
+                    <div
+                        class="mb-8 w-20 h-20 rounded-2xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-500">
+                        <span class="material-symbols-outlined text-5xl">edit_note</span>
+                    </div>
+                    <h2 class="text-2xl lg:text-3xl font-bold mb-4 text-text-main-light dark:text-white">Guided
+                        Experience</h2>
+                    <p class="text-text-muted-light dark:text-text-muted-dark text-lg leading-relaxed mb-10">
+                        A step-by-step process to help you refine your destination, dates, and style.
+                    </p>
+                    <a href="{{ url_for('main.create_trip') }}"
+                        class="w-full py-4 bg-surface-light dark:bg-white/5 group-hover:bg-primary text-text-main-light dark:text-white group-hover:text-white rounded-2xl font-bold text-lg transition-all duration-300 flex items-center justify-center gap-3 no-underline">
+                        Start Guided Plan
+                        <span
+                            class="material-icons-round text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                    </a>
+                </div>
+                <div
+                    class="group relative bg-white dark:bg-surface-dark p-10 lg:p-12 rounded-3xl border border-border-light dark:border-border-dark shadow-soft hover:shadow-hover transition-all duration-500 hover:-translate-y-2 cursor-pointer">
+                    <div class="absolute top-8 right-8">
+                        <span class="flex h-3 w-3 relative">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
+                        </span>
+                    </div>
+                    <div
+                        class="mb-8 w-20 h-20 rounded-2xl bg-cyan-50 dark:bg-cyan-900/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400 group-hover:scale-110 transition-transform duration-500">
+                        <span class="material-symbols-outlined text-5xl">auto_fix_high</span>
+                    </div>
+                    <h2 class="text-2xl lg:text-3xl font-bold mb-4 text-text-main-light dark:text-white">AI Prompt</h2>
+                    <p class="text-text-muted-light dark:text-text-muted-dark text-lg leading-relaxed mb-10">
+                        Describe your dream trip in your own words and let Skupheon craft it instantly.
+                    </p>
+                    <a href="{{ url_for('main.ai_prompt') }}"
+                        class="w-full py-4 bg-primary hover:bg-primary-hover text-white rounded-2xl font-bold text-lg shadow-lg shadow-blue-500/30 transition-all duration-300 flex items-center justify-center gap-3 no-underline">
+                        Try AI Prompt
+                        <span
+                            class="material-icons-round text-xl group-hover:rotate-12 transition-transform">auto_awesome</span>
+                    </a>
+                </div>
+            </div>
+            <div class="mt-16 text-center">
+                <p
+                    class="text-text-muted-light dark:text-text-muted-dark flex items-center justify-center gap-2 text-sm font-medium">
+                    <span class="material-icons-round text-primary text-lg">info</span>
+                    You can switch planning methods at any time during the process.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Demo Video Modal -->
+    <div id="demo-modal" class="fixed inset-0 z-[100] hidden" role="dialog" aria-modal="true">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="demo-modal-overlay"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4 md:p-8">
+            <div id="demo-modal-content" class="relative w-full max-w-[900px] bg-white rounded-2xl shadow-2xl shadow-black/20 overflow-hidden opacity-0 scale-95 transition-all duration-300">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-[16px] text-white">play_arrow</span>
+                        </div>
+                        <div>
+                            <span class="text-[13px] font-extrabold text-slate-800 block leading-none">Plan a Trip Demo</span>
+                            <span class="text-[10px] font-semibold text-slate-400 block leading-none mt-1">Quick overview of features</span>
+                        </div>
+                    </div>
+                    <button id="demo-modal-close" class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-all duration-200 hover:scale-105 flex-shrink-0 cursor-pointer">
+                        <span class="material-symbols-outlined text-[18px] text-slate-500">close</span>
+                    </button>
+                </div>
+                <div class="relative w-full" style="padding-bottom: 56.25%;">
+                    <iframe id="demo-video-frame" class="absolute inset-0 w-full h-full" src="" frameborder="0" allowfullscreen loading="lazy"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const demoBtn = document.getElementById('view-demo-btn');
+            const demoModal = document.getElementById('demo-modal');
+            const demoOverlay = document.getElementById('demo-modal-overlay');
+            const demoClose = document.getElementById('demo-modal-close');
+            const demoFrame = document.getElementById('demo-video-frame');
+            const demoContent = document.getElementById('demo-modal-content');
+
+            const VIDEO_SRC = 'https://embed.app.guidde.com/playbooks/gUetnNGKQ3drUaY5uagMEg?mode=videoOnly';
+
+            function openDemoModal() {
+                demoFrame.src = VIDEO_SRC;
+                demoModal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                requestAnimationFrame(() => {
+                    demoContent.classList.remove('opacity-0', 'scale-95');
+                    demoContent.classList.add('opacity-100', 'scale-100');
+                });
+            }
+
+            function closeDemoModal() {
+                demoFrame.src = 'about:blank';
+                demoContent.classList.remove('opacity-100', 'scale-100');
+                demoContent.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => {
+                    demoModal.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }, 250);
+            }
+
+            if (demoBtn && demoModal) {
+                demoBtn.addEventListener('click', openDemoModal);
+                demoClose.addEventListener('click', closeDemoModal);
+                demoOverlay.addEventListener('click', closeDemoModal);
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape' && !demoModal.classList.contains('hidden')) {
+                        closeDemoModal();
+                    }
+                });
+            }
+        });
+    </script>
+
+    {% include 'components/footer.html' %}
+
+</body>
+
+</html>

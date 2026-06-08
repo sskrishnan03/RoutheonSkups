@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - RoutheonSkups</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3B82F6",
+                    },
+                    fontFamily: {
+                        sans: ["Plus Jakarta Sans", "sans-serif"],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-20..200&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-900">
+    {% include 'components/navbar.html' %}
+    
+    <main class="pt-40 pb-20">
+        {% set back_fallback = url_for('main.landing') %}
+        {% include 'components/back_button.html' %}
+        <!-- Hero Section -->
+        <section class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 mb-16">
+            <div class="text-center max-w-3xl mx-auto">
+                <span class="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-xs font-bold tracking-widest uppercase mb-6">About RoutheonSkups</span>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6">AI-Powered <span class="text-blue-500">Trip Planning</span> for India</h1>
+                <p class="text-lg text-gray-500 leading-relaxed">RoutheonSkups is an intelligent travel planning platform that combines AI technology with comprehensive destination knowledge to help you discover and plan perfect trips across India.</p>
+            </div>
+        </section>
+
+        <!-- What is RoutheonSkups -->
+        <section class="bg-gray-50 py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid lg:grid-cols-2 gap-16 items-center">
+                    <div>
+                        <span class="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-xs font-bold tracking-widest uppercase mb-4">What is RoutheonSkups?</span>
+                        <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-6">Your Smart Travel Companion</h2>
+                        <p class="text-gray-500 leading-relaxed mb-4">RoutheonSkups is an innovative web-based travel planning application designed specifically for the Indian market. Using advanced AI technology, we help travelers discover destinations, create personalized itineraries, and plan memorable trips.</p>
+                        <p class="text-gray-500 leading-relaxed mb-4">Our platform uses Groq AI API to provide intelligent responses and recommendations, making travel planning effortless and personalized.</p>
+                        <p class="text-gray-500 leading-relaxed">Whether you're planning a weekend getaway or a month-long adventure, RoutheonSkups helps you create the perfect travel plan tailored to your budget, time, and interests.</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                            <div class="text-4xl font-extrabold text-blue-500 mb-2">500+</div>
+                            <p class="text-gray-600 font-medium">Destinations</p>
+                        </div>
+                        <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                            <div class="text-4xl font-extrabold text-blue-500 mb-2">AI</div>
+                            <p class="text-gray-600 font-medium">Assistant</p>
+                        </div>
+                        <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                            <div class="text-4xl font-extrabold text-blue-500 mb-2">24/7</div>
+                            <p class="text-gray-600 font-medium">Support</p>
+                        </div>
+                        <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                            <div class="text-4xl font-extrabold text-blue-500 mb-2">Free</div>
+                            <p class="text-gray-600 font-medium">To Use</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Video Demos -->
+        <section class="py-24 bg-gray-50">
+            <div class="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-10">
+                <div class="text-center mb-16">
+                    <span class="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-xs font-bold tracking-widest uppercase mb-4">Demo Videos</span>
+                    <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight">See RoutheonSkups in <span class="text-blue-500">Action</span></h2>
+                    <p class="text-gray-500 mt-4 max-w-2xl mx-auto">Watch our demo videos to learn how RoutheonSkups helps you plan the perfect trip.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Card 1: Whole Project Demo -->
+                    <div onclick="openVideoDemo('whole')" class="group relative bg-white rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 overflow-hidden cursor-pointer">
+                        <div class="relative w-full" style="padding-bottom: 88%;">
+                            <img src="{{ url_for('static', filename='img/whole project page.png') }}" alt="Whole Project Demo" class="absolute inset-0 w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="w-16 h-16 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-xl shadow-black/20 group-hover:bg-black/50 group-hover:scale-110 transition-all duration-300">
+                                    <span class="material-symbols-outlined text-4xl text-white [font-variation-settings:'FILL'1]">play_arrow</span>
+                                </div>
+                            </div>
+                            <div class="absolute bottom-0 left-0 right-0 p-8">
+                                <h3 class="text-xl font-bold text-white mb-1.5">Whole Project Demo</h3>
+                                <p class="text-sm text-white/80">Complete overview of the entire platform and its features.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card 2: Explore Destinations Demo -->
+                    <div onclick="openVideoDemo('explore')" class="group relative bg-white rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 overflow-hidden cursor-pointer">
+                        <div class="relative w-full" style="padding-bottom: 88%;">
+                            <img src="{{ url_for('static', filename='img/explore page.png') }}" alt="Explore Destinations Demo" class="absolute inset-0 w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="w-16 h-16 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-xl shadow-black/20 group-hover:bg-black/50 group-hover:scale-110 transition-all duration-300">
+                                    <span class="material-symbols-outlined text-4xl text-white [font-variation-settings:'FILL'1]">play_arrow</span>
+                                </div>
+                            </div>
+                            <div class="absolute bottom-0 left-0 right-0 p-8">
+                                <h3 class="text-xl font-bold text-white mb-1.5">Explore Destinations</h3>
+                                <p class="text-sm text-white/80">Discover destinations across India with AI-powered insights.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card 3: Plan a Trip Demo -->
+                    <div onclick="openVideoDemo('trip')" class="group relative bg-white rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 overflow-hidden cursor-pointer">
+                        <div class="relative w-full" style="padding-bottom: 88%;">
+                            <img src="{{ url_for('static', filename='img/plan a trip page.png') }}" alt="Plan a Trip Demo" class="absolute inset-0 w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="w-16 h-16 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-xl shadow-black/20 group-hover:bg-black/50 group-hover:scale-110 transition-all duration-300">
+                                    <span class="material-symbols-outlined text-4xl text-white [font-variation-settings:'FILL'1]">play_arrow</span>
+                                </div>
+                            </div>
+                            <div class="absolute bottom-0 left-0 right-0 p-8">
+                                <h3 class="text-xl font-bold text-white mb-1.5">Plan a Trip</h3>
+                                <p class="text-sm text-white/80">Create personalized itineraries with AI assistance.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Features -->
+        <section class="py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <span class="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-xs font-bold tracking-widest uppercase mb-4">Features</span>
+                    <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight">Platform Features</h2>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-white rounded-2xl p-8 text-center hover:shadow-lg transition-shadow border border-gray-100">
+                        <div class="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-6">
+                            <span class="material-icons-round text-blue-500 text-4xl">smart_toy</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">AI Assistant</h3>
+                        <p class="text-gray-500">Skupheon, our AI travel assistant, helps you plan trips and answer questions using advanced AI technology.</p>
+                    </div>
+                    <div class="bg-white rounded-2xl p-8 text-center hover:shadow-lg transition-shadow border border-gray-100">
+                        <div class="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-6">
+                            <span class="material-icons-round text-blue-500 text-4xl">explore</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Destination Guides</h3>
+                        <p class="text-gray-500">Comprehensive information about destinations across India including attractions and tips.</p>
+                    </div>
+                    <div class="bg-white rounded-2xl p-8 text-center hover:shadow-lg transition-shadow border border-gray-100">
+                        <div class="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-6">
+                            <span class="material-icons-round text-blue-500 text-4xl">map</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Smart Itineraries</h3>
+                        <p class="text-gray-500">Create personalized travel itineraries based on your preferences and budget.</p>
+                    </div>
+                    <div class="bg-white rounded-2xl p-8 text-center hover:shadow-lg transition-shadow border border-gray-100">
+                        <div class="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-6">
+                            <span class="material-icons-round text-blue-500 text-4xl">calendar_month</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Trip Calendar</h3>
+                        <p class="text-gray-500">View and manage all your trips in a beautiful calendar interface.</p>
+                    </div>
+                    <div class="bg-white rounded-2xl p-8 text-center hover:shadow-lg transition-shadow border border-gray-100">
+                        <div class="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-6">
+                            <span class="material-icons-round text-blue-500 text-4xl">bookmark</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Save Destinations</h3>
+                        <p class="text-gray-500">Save your favorite destinations and access them anytime.</p>
+                    </div>
+                    <div class="bg-white rounded-2xl p-8 text-center hover:shadow-lg transition-shadow border border-gray-100">
+                        <div class="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-6">
+                            <span class="material-icons-round text-blue-500 text-4xl">cloud</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Weather Updates</h3>
+                        <p class="text-gray-500">Get real-time weather information for your planned destinations.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mission & Vision -->
+        <section class="bg-gray-50 py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <span class="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-xs font-bold tracking-widest uppercase mb-4">Our Goal</span>
+                    <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight">Why We Built RoutheonSkups</h2>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-3xl p-8 shadow-lg border border-gray-200">
+                        <div class="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center mb-6">
+                            <span class="material-icons-round text-blue-500 text-3xl">rocket_launch</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4">Our Mission</h3>
+                        <p class="text-gray-500 leading-relaxed">To make travel planning in India simple and accessible using AI technology. We help travelers discover hidden gems, plan efficiently, and have memorable experiences across India.</p>
+                    </div>
+                    <div class="bg-white rounded-3xl p-8 shadow-lg border border-gray-200">
+                        <div class="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center mb-6">
+                            <span class="material-icons-round text-blue-500 text-3xl">visibility</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4">Our Vision</h3>
+                        <p class="text-gray-500 leading-relaxed">To become India's most helpful AI travel companion—making trip planning effortless with smart technology.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact CTA -->
+        <section class="bg-blue-500 py-20">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-6">Get In Touch</h2>
+                <p class="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">Have questions about RoutheonSkups? We'd love to hear from you!</p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="{{ url_for('main.plan_trip') }}" class="px-8 py-4 bg-white text-blue-600 font-bold rounded-xl hover:bg-blue-50 transition-all shadow-lg">Start Planning</a>
+                    <a href="{{ url_for('main.contact') }}" class="px-8 py-4 bg-transparent border-2 border-white text-white font-bold rounded-xl hover:bg-white/10 transition-all">Contact Us</a>
+                </div>
+                <div class="mt-8 text-blue-200">
+                    <p>Email: routheonskups@gmail.com | Phone: +91 6360080717</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    <!-- Demo Video Modal -->
+    <div id="video-demo-modal" class="fixed inset-0 z-[100] hidden" role="dialog" aria-modal="true">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="video-demo-overlay"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4 md:p-8">
+            <div id="video-demo-content" class="relative w-full max-w-[900px] bg-white rounded-2xl shadow-2xl shadow-black/20 overflow-hidden opacity-0 scale-95 transition-all duration-300">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-[16px] text-white">play_arrow</span>
+                        </div>
+                        <div>
+                            <span id="demo-modal-title" class="text-[13px] font-extrabold text-slate-800 block leading-none">Demo Video</span>
+                            <span class="text-[10px] font-semibold text-slate-400 block leading-none mt-1">RoutheonSkups feature overview</span>
+                        </div>
+                    </div>
+                    <button id="video-demo-close" class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-all duration-200 hover:scale-105 flex-shrink-0 cursor-pointer">
+                        <span class="material-symbols-outlined text-[18px] text-slate-500">close</span>
+                    </button>
+                </div>
+                <div class="relative w-full" style="padding-bottom: 56.25%;">
+                    <iframe id="video-demo-frame" class="absolute inset-0 w-full h-full" src="" frameborder="0" allowfullscreen loading="lazy"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var modal = document.getElementById('video-demo-modal');
+            var overlay = document.getElementById('video-demo-overlay');
+            var closeBtn = document.getElementById('video-demo-close');
+            var frame = document.getElementById('video-demo-frame');
+            var content = document.getElementById('video-demo-content');
+            var titleEl = document.getElementById('demo-modal-title');
+
+            var videos = {
+                whole: { src: 'https://embed.app.guidde.com/playbooks/vD43DzfiMVifK3UjqBr2x2?mode=videoOnly', title: 'Whole Project Demo' },
+                explore: { src: 'https://embed.app.guidde.com/playbooks/pe3tjvCvrjFzi6DsDSbR7w?mode=videoOnly', title: 'Explore Destinations Demo' },
+                trip: { src: 'https://embed.app.guidde.com/playbooks/gUetnNGKQ3drUaY5uagMEg?mode=videoOnly', title: 'Plan a Trip Demo' }
+            };
+
+            function openVideoDemo(key) {
+                var video = videos[key];
+                if (!video) return;
+                titleEl.textContent = video.title;
+                frame.src = video.src;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                requestAnimationFrame(function () {
+                    content.classList.remove('opacity-0', 'scale-95');
+                    content.classList.add('opacity-100', 'scale-100');
+                });
+            }
+
+            function closeVideoModal() {
+                frame.src = 'about:blank';
+                content.classList.remove('opacity-100', 'scale-100');
+                content.classList.add('opacity-0', 'scale-95');
+                setTimeout(function () {
+                    modal.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }, 250);
+            }
+
+            window.openVideoDemo = openVideoDemo;
+
+            if (modal) {
+                closeBtn.addEventListener('click', closeVideoModal);
+                overlay.addEventListener('click', closeVideoModal);
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                        closeVideoModal();
+                    }
+                });
+            }
+        });
+    </script>
+
+    {% include 'components/footer.html' %}
+</body>
+</html>

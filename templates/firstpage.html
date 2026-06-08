@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RoutheonSkups</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", Arial, sans-serif;
+}
+
+body {
+  height: 100vh;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: opacity 0.5s ease;
+}
+
+body.fade-out {
+  opacity: 0;
+}
+
+/* Wrapper */
+.brand-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+}
+
+/* Logo */
+.logo-img {
+  width: 95px;
+  height: auto;
+  opacity: 0;
+  transform: translateY(40px) scale(0.9);
+  animation: logoReveal 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* App Name */
+.brand-name {
+  font-size: 44px;
+  font-weight: 700;
+  color: #1f242d;
+  letter-spacing: 0.5px;
+  opacity: 0;
+  transform: translateX(-30px);
+  animation: textReveal 1.2s ease forwards;
+  animation-delay: 0.3s;
+}
+
+/* Logo animation (runs once) */
+@keyframes logoReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(40px) scale(0.9);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-5px) scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Text animation (runs once) */
+@keyframes textReveal {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="brand-wrapper">
+  
+  <img src="{{ url_for('static', filename='img/logo.png') }}" alt="RoutheonSkups Logo" class="logo-img">
+
+  <div class="brand-name">
+    RoutheonSkups
+  </div>
+
+</div>
+
+<script>
+  // After animations complete (~2.5s), fade out and redirect to home
+  setTimeout(function() {
+    document.body.classList.add('fade-out');
+    setTimeout(function() {
+      window.location.href = "{{ url_for('main.secondpage') }}";
+    }, 500); // wait for fade-out transition
+  }, 2000); // wait for brand animations to finish
+</script>
+
+</body>
+</html>

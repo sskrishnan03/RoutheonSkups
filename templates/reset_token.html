@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Reset Password - RoutheonSkups</title>
+
+<!-- Corporate Font -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+* {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.card-animate {
+  animation: fadeSlide 0.4s ease forwards;
+}
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(25px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.floating-input {
+  position: relative;
+}
+
+.floating-input input {
+  background: transparent;
+}
+
+.floating-input label {
+  position: absolute;
+  left: 12px;
+  top: 9px;
+  font-size: 14px;
+  color: #6b7280;
+  transition: all 0.2s ease;
+  pointer-events: none;
+  font-weight: 500;
+}
+
+.floating-input input:focus + label,
+.floating-input input:not(:placeholder-shown) + label {
+  top: -8px;
+  left: 10px;
+  font-size: 11px;
+  background: white;
+  padding: 0 4px;
+  color: black;
+}
+</style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 p-4">
+
+<div class="w-full max-w-sm">
+
+<!-- MAIN VIEW -->
+<div id="mainView" class="relative bg-white/95 rounded-2xl border shadow-xl p-8 card-animate overflow-hidden">
+
+<div class="flex justify-center mb-6">
+  <div class="w-16 h-16 border border-gray-300 rounded-xl flex items-center justify-center bg-white shadow-sm overflow-hidden">
+    <img src="{{ url_for('static', filename='img/logo.png') }}" class="w-11 h-11 object-contain">
+  </div>
+</div>
+
+<h2 class="text-2xl font-semibold text-center">
+Reset Password
+</h2>
+
+<p class="text-sm text-gray-500 text-center mt-2 font-medium">
+Enter your new password below.
+</p>
+
+<form method="POST" class="mt-8 space-y-6">
+
+<div class="floating-input">
+<input type="password" name="password" placeholder=" " required
+class="w-full h-11 border rounded-xl px-3 text-sm focus:outline-none focus:ring-2 focus:ring-black"/>
+<label>New Password</label>
+</div>
+
+<div class="floating-input">
+<input type="password" name="confirm_password" placeholder=" " required
+class="w-full h-11 border rounded-xl px-3 text-sm focus:outline-none focus:ring-2 focus:ring-black"/>
+<label>Confirm Password</label>
+</div>
+
+<button type="submit" class="w-full h-11 bg-black text-white rounded-xl text-sm font-medium hover:scale-[1.03] transition-all duration-300">
+Update Password
+</button>
+
+</form>
+
+<div class="mt-6 text-center">
+<a href="{{ url_for('main.login') }}" class="text-sm text-gray-500 hover:text-black font-medium">
+Back to Login
+</a>
+</div>
+
+</div>
+
+</div>
+
+<script>
+lucide.createIcons();
+</script>
+
+</body>
+</html>
