@@ -1,0 +1,67 @@
+ * Serving Flask app 'app'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.188.178.64:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 564-667-662
+127.0.0.1 - - [15/Jul/2026 11:01:52] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jul/2026 11:04:44] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jul/2026 11:04:45] "GET /static/img/logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jul/2026 11:04:45] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [15/Jul/2026 11:04:47] "GET /secondpage HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jul/2026 11:04:48] "GET /static/img/secondpage.png HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jul/2026 11:05:02] "GET /home HTTP/1.1" 302 -
+127.0.0.1 - - [15/Jul/2026 11:05:02] "GET /landing HTTP/1.1" 302 -
+127.0.0.1 - - [15/Jul/2026 11:05:02] "GET /login?next=/landing HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jul/2026 11:05:03] "GET /static/img/logo.png HTTP/1.1" 304 -
+127.0.0.1 - - [15/Jul/2026 11:05:03] "GET /static/img/loginbackground.png HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jul/2026 11:05:03] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [15/Jul/2026 11:05:05] "GET /auth/google HTTP/1.1" 302 -
+127.0.0.1 - - [15/Jul/2026 11:13:18] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jul/2026 11:13:18] "GET /static/img/logo.png HTTP/1.1" 304 -
+127.0.0.1 - - [15/Jul/2026 11:13:18] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [15/Jul/2026 11:13:21] "GET /secondpage HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jul/2026 11:13:21] "GET /static/img/secondpage.png HTTP/1.1" 304 -
+127.0.0.1 - - [15/Jul/2026 11:13:23] "GET /home HTTP/1.1" 302 -
+127.0.0.1 - - [15/Jul/2026 11:13:23] "GET /landing HTTP/1.1" 302 -
+127.0.0.1 - - [15/Jul/2026 11:13:23] "GET /login?next=/landing HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jul/2026 11:13:24] "GET /static/img/logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jul/2026 11:13:24] "GET /static/img/loginbackground.png HTTP/1.1" 304 -
+127.0.0.1 - - [15/Jul/2026 11:13:24] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [15/Jul/2026 11:13:26] "GET /auth/google HTTP/1.1" 302 -
+127.0.0.1 - - [15/Jul/2026 11:13:34] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [15/Jul/2026 11:17:41] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jul/2026 11:17:41] "GET /static/img/logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jul/2026 11:17:41] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [15/Jul/2026 11:17:44] "GET /secondpage HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jul/2026 11:17:44] "GET /static/img/secondpage.png HTTP/1.1" 304 -
+127.0.0.1 - - [15/Jul/2026 11:17:46] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jul/2026 11:17:47] "GET /static/img/loginbackground.png HTTP/1.1" 304 -
+127.0.0.1 - - [15/Jul/2026 11:17:47] "GET /static/img/logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jul/2026 11:17:49] "GET /auth/google HTTP/1.1" 302 -
+127.0.0.1 - - [15/Jul/2026 11:20:54] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jul/2026 11:20:54] "GET /static/img/logo.png HTTP/1.1" 304 -
+127.0.0.1 - - [15/Jul/2026 11:20:54] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [15/Jul/2026 11:20:56] "GET /secondpage HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jul/2026 11:20:56] "GET /static/img/secondpage.png HTTP/1.1" 304 -
+127.0.0.1 - - [15/Jul/2026 11:21:00] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jul/2026 11:21:00] "GET /static/img/loginbackground.png HTTP/1.1" 304 -
+127.0.0.1 - - [15/Jul/2026 11:21:00] "GET /static/img/logo.png HTTP/1.1" 304 -
+127.0.0.1 - - [15/Jul/2026 11:21:02] "GET /auth/google HTTP/1.1" 302 -
+127.0.0.1 - - [15/Jul/2026 11:21:52] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jul/2026 11:21:52] "GET /static/img/logo.png HTTP/1.1" 304 -
+127.0.0.1 - - [15/Jul/2026 11:21:52] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [15/Jul/2026 11:21:55] "GET /secondpage HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jul/2026 11:21:55] "GET /static/img/secondpage.png HTTP/1.1" 304 -
+127.0.0.1 - - [15/Jul/2026 11:21:57] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jul/2026 11:21:57] "GET /static/img/loginbackground.png HTTP/1.1" 304 -
+127.0.0.1 - - [15/Jul/2026 11:21:57] "GET /static/img/logo.png HTTP/1.1" 304 -
+127.0.0.1 - - [15/Jul/2026 11:21:59] "GET /auth/google HTTP/1.1" 302 -
+ * Detected change in 'C:\\Users\\sskri\\Downloads\\Project\\RoutheonSkups\\config.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 564-667-662

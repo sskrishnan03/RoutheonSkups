@@ -16,7 +16,7 @@ class Config:
     GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
     GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
     ADMIN_EMAIL = (os.environ.get('ADMIN_EMAIL') or 'routheonskups@gmail.com').strip().lower()
-    PREFERRED_URL_SCHEME = 'https'
+    PREFERRED_URL_SCHEME = os.environ.get('PREFERRED_URL_SCHEME', 'http')
 
     # Session cookie hardening for OAuth flows behind HTTPS proxies (Render, etc.)
     SESSION_COOKIE_HTTPONLY = True

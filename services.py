@@ -1496,6 +1496,38 @@ class WeatherService:
     _cache = {}
     _cache_ttl_seconds = 15 * 60
 
+    # WMO weather interpretation codes → (description, main category, icon code)
+    _WMO_CODES = {
+        0: ("Clear Sky", "Clear", "01d"),
+        1: ("Mainly Clear", "Clouds", "02d"),
+        2: ("Partly Cloudy", "Clouds", "03d"),
+        3: ("Overcast", "Clouds", "04d"),
+        45: ("Foggy", "Fog", "50d"),
+        48: ("Rime Fog", "Fog", "50d"),
+        51: ("Light Drizzle", "Drizzle", "09d"),
+        53: ("Moderate Drizzle", "Drizzle", "09d"),
+        55: ("Dense Drizzle", "Drizzle", "09d"),
+        56: ("Freezing Drizzle", "Drizzle", "09d"),
+        57: ("Heavy Freezing Drizzle", "Drizzle", "09d"),
+        61: ("Slight Rain", "Rain", "10d"),
+        63: ("Moderate Rain", "Rain", "10d"),
+        65: ("Heavy Rain", "Rain", "10d"),
+        66: ("Freezing Rain", "Rain", "10d"),
+        67: ("Heavy Freezing Rain", "Rain", "10d"),
+        71: ("Slight Snow", "Snow", "13d"),
+        73: ("Moderate Snow", "Snow", "13d"),
+        75: ("Heavy Snow", "Snow", "13d"),
+        77: ("Snow Grains", "Snow", "13d"),
+        80: ("Light Showers", "Rain", "09d"),
+        81: ("Moderate Showers", "Rain", "09d"),
+        82: ("Violent Showers", "Rain", "09d"),
+        85: ("Light Snow Showers", "Snow", "13d"),
+        86: ("Heavy Snow Showers", "Snow", "13d"),
+        95: ("Thunderstorm", "Thunderstorm", "11d"),
+        96: ("Thunderstorm with Hail", "Thunderstorm", "11d"),
+        99: ("Severe Thunderstorm", "Thunderstorm", "11d"),
+    }
+
     @staticmethod
     def _cache_key(city, lat=None, lon=None):
         city_key = (city or "").strip().lower()
@@ -1511,7 +1543,6 @@ class WeatherService:
                 resp = requests.get(url, params=params, timeout=timeout)
                 if resp.status_code == 200:
                     return resp.json()
-                # Retry only transient statuses
                 if resp.status_code in (429, 500, 502, 503, 504):
                     time.sleep(0.35 * (attempt + 1))
                     continue
@@ -1524,11 +1555,29 @@ class WeatherService:
         return None
 
     @staticmethod
+    def _wmo_to_condition(code):
+        desc, main, icon_code = WeatherService._WMO_CODES.get(code, ("Unknown", "Clear", "01d"))
+        return {
+            "text": desc,
+            "icon": f"https://openweathermap.org/img/wn/{icon_code}@2x.png",
+            "main": main,
+        }
+
+    @staticmethod
+    def _geocode_city(city):
+        """Resolve a city name to (lat, lon, display_name, country) using Open-Meteo geocoding."""
+        clean = city.split(",")[0].strip()
+        data = WeatherService._request_json(
+            "https://geocoding-api.open-meteo.com/v1/search",
+            {"name": clean, "count": 1, "language": "en"},
+        )
+        if data and isinstance(data.get("results"), list) and data["results"]:
+            r = data["results"][0]
+            return r.get("latitude"), r.get("longitude"), r.get("name", clean), r.get("country_code", "IN")
+        return None, None, None, None
+
+    @staticmethod
     def get_forecast(city, lat=None, lon=None):
-        if not Config.WEATHER_API_KEY:
-            print("[Weather] No API key configured")
-            return None
-            
         try:
             import datetime
             if not city:
@@ -1540,160 +1589,112 @@ class WeatherService:
             if cached and (now_ts - cached.get("ts", 0) < WeatherService._cache_ttl_seconds):
                 return cached.get("data")
 
-            # Sanitize city name (remove state/region if present like "Ooty, Tamil Nadu")
-            clean_city = city.split(',')[0].strip()
+            clean_city = city.split(",")[0].strip()
 
-            current_url = "https://api.openweathermap.org/data/2.5/weather"
-            forecast_url = "https://api.openweathermap.org/data/2.5/forecast"
-            shared = {"appid": Config.WEATHER_API_KEY, "units": "metric"}
-
-            def _fetch_weather_payloads(params):
-                current_data = WeatherService._request_json(current_url, {**shared, **params})
-                if not current_data:
-                    return None, None
-
-                # Use resolved coordinates from current weather for more consistent forecast lookup.
-                coord = current_data.get("coord", {}) if isinstance(current_data, dict) else {}
-                coord_lat = coord.get("lat")
-                coord_lon = coord.get("lon")
-                forecast_params = {**shared, "cnt": 40}
-                if coord_lat is not None and coord_lon is not None:
-                    forecast_params.update({"lat": coord_lat, "lon": coord_lon})
-                else:
-                    forecast_params.update(params)
-
-                forecast_data = WeatherService._request_json(forecast_url, forecast_params)
-                return current_data, forecast_data
-
-            current_data = None
-            forecast_data = None
-
-            # Use coordinates first when present.
+            # Resolve coordinates
+            resolved_lat, resolved_lon, resolved_name, resolved_country = None, None, None, None
             if lat is not None and lon is not None:
-                print(f"[Weather] Fetching weather for {clean_city} using coords ({lat}, {lon})")
-                current_data, forecast_data = _fetch_weather_payloads({"lat": lat, "lon": lon})
-
-            # Fallback query attempts for destination names with variants.
-            if current_data is None:
-                query_candidates = [
-                    f"{clean_city},IN",
-                    clean_city,
-                    city.strip()
-                ]
-                seen = set()
-                for q in query_candidates:
-                    key = q.lower().strip()
-                    if not key or key in seen:
-                        continue
-                    seen.add(key)
-                    current_data, forecast_data = _fetch_weather_payloads({"q": q})
-                    if current_data is not None:
+                resolved_lat, resolved_lon = float(lat), float(lon)
+                resolved_name = clean_city
+                resolved_country = "IN"
+                print(f"[Weather] Using provided coords ({lat}, {lon}) for {clean_city}")
+            else:
+                # Geocode city name
+                candidates = [f"{clean_city},IN", clean_city, city.strip()]
+                for q in candidates:
+                    resolved_lat, resolved_lon, resolved_name, resolved_country = WeatherService._geocode_city(q)
+                    if resolved_lat is not None:
                         break
+                if resolved_lat is None:
+                    print(f"[Weather] Could not geocode city: {city}")
+                    return None
+                print(f"[Weather] Geocoded {clean_city} → ({resolved_lat}, {resolved_lon})")
 
-            if current_data is None:
+            # Fetch current + daily forecast from Open-Meteo
+            weather_data = WeatherService._request_json(
+                "https://api.open-meteo.com/v1/forecast",
+                {
+                    "latitude": resolved_lat,
+                    "longitude": resolved_lon,
+                    "current": "temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m",
+                    "daily": "temperature_2m_max,temperature_2m_min,weather_code,precipitation_sum,wind_speed_10m_max,relative_humidity_2m_mean",
+                    "timezone": "auto",
+                    "forecast_days": 7,
+                },
+            )
+            if not weather_data:
+                print(f"[Weather] Open-Meteo request failed for {clean_city}")
                 return None
 
             today = datetime.date.today()
-            
             forecast_days = []
-            
-            # Add today from live weather.
+
+            # Current weather → today
+            current = weather_data.get("current", {})
+            current_code = current.get("weather_code", 0)
+            cond = WeatherService._wmo_to_condition(current_code)
+
             forecast_days.append({
                 "date": today.strftime("%Y-%m-%d"),
                 "date_label": "Today",
                 "day": {
-                    "avgtemp_c": round(current_data["main"]["temp"], 1),
-                    "mintemp_c": round(current_data["main"].get("temp_min", current_data["main"]["temp"]), 1),
-                    "maxtemp_c": round(current_data["main"].get("temp_max", current_data["main"]["temp"]), 1),
-                    "humidity": current_data["main"].get("humidity", 0),
-                    "wind_kph": round(current_data.get("wind", {}).get("speed", 0) * 3.6, 1),
-                    "condition": {
-                        "text": current_data["weather"][0]["description"].title(),
-                        "icon": f"https://openweathermap.org/img/wn/{current_data['weather'][0]['icon']}@2x.png",
-                        "main": current_data["weather"][0]["main"]
-                    }
-                }
+                    "avgtemp_c": round(current.get("temperature_2m", 0), 1),
+                    "mintemp_c": round(current.get("temperature_2m", 0), 1),
+                    "maxtemp_c": round(current.get("temperature_2m", 0), 1),
+                    "humidity": current.get("relative_humidity_2m", 0),
+                    "wind_kph": round(current.get("wind_speed_10m", 0), 1),
+                    "condition": cond,
+                },
             })
-            
-            # Parse forecast entries by day and build a stable daily summary.
-            if forecast_data and isinstance(forecast_data.get("list"), list):
-                from collections import defaultdict
-                daily_entries = defaultdict(list)
-                for item in forecast_data.get("list", []):
-                    dt = datetime.datetime.fromtimestamp(item["dt"])
-                    daily_entries[dt.date().strftime("%Y-%m-%d")].append(item)
 
-                seen_dates = {today.strftime("%Y-%m-%d")}
-                ordered_dates = sorted(daily_entries.keys())
+            # Daily forecast (skip today at index 0)
+            daily = weather_data.get("daily", {})
+            daily_dates = daily.get("time", [])
+            for i, date_str in enumerate(daily_dates):
+                if date_str == today.strftime("%Y-%m-%d"):
+                    continue
+                day_code = daily.get("weather_code", [0])[i] if i < len(daily.get("weather_code", [])) else 0
+                day_cond = WeatherService._wmo_to_condition(day_code)
+                day_dt = datetime.datetime.strptime(date_str, "%Y-%m-%d")
 
-                for date_str in ordered_dates:
-                    if date_str in seen_dates:
-                        continue
-                    seen_dates.add(date_str)
+                forecast_days.append({
+                    "date": date_str,
+                    "date_label": day_dt.strftime("%a").upper(),
+                    "day": {
+                        "avgtemp_c": round(
+                            (daily["temperature_2m_max"][i] + daily["temperature_2m_min"][i]) / 2, 1
+                        ) if i < len(daily.get("temperature_2m_max", [])) else 0,
+                        "mintemp_c": round(daily["temperature_2m_min"][i], 1) if i < len(daily.get("temperature_2m_min", [])) else 0,
+                        "maxtemp_c": round(daily["temperature_2m_max"][i], 1) if i < len(daily.get("temperature_2m_max", [])) else 0,
+                        "humidity": round(daily["relative_humidity_2m_mean"][i]) if i < len(daily.get("relative_humidity_2m_mean", [])) else 0,
+                        "wind_kph": round(daily["wind_speed_10m_max"][i], 1) if i < len(daily.get("wind_speed_10m_max", [])) else 0,
+                        "condition": day_cond,
+                    },
+                })
 
-                    entries = daily_entries.get(date_str, [])
-                    if not entries:
-                        continue
+                if len(forecast_days) >= 7:
+                    break
 
-                    temps = [e["main"]["temp"] for e in entries if e.get("main")]
-                    min_temps = [e["main"].get("temp_min", e["main"]["temp"]) for e in entries if e.get("main")]
-                    max_temps = [e["main"].get("temp_max", e["main"]["temp"]) for e in entries if e.get("main")]
-                    humidities = [e["main"].get("humidity", 0) for e in entries if e.get("main")]
-                    winds = [e.get("wind", {}).get("speed", 0) for e in entries]
-
-                    # Prefer midday record for icon/condition. Fallback to first available.
-                    midday = None
-                    for e in entries:
-                        hour = datetime.datetime.fromtimestamp(e["dt"]).hour
-                        if 11 <= hour <= 14:
-                            midday = e
-                            break
-                    chosen = midday or entries[0]
-                    cond = chosen.get("weather", [{}])[0] if chosen.get("weather") else {}
-                    day_dt = datetime.datetime.strptime(date_str, "%Y-%m-%d")
-
-                    forecast_days.append({
-                        "date": date_str,
-                        "date_label": day_dt.strftime("%a").upper(),
-                        "day": {
-                            "avgtemp_c": round(sum(temps) / len(temps), 1) if temps else 0,
-                            "mintemp_c": round(min(min_temps), 1) if min_temps else 0,
-                            "maxtemp_c": round(max(max_temps), 1) if max_temps else 0,
-                            "humidity": round(sum(humidities) / len(humidities)) if humidities else 0,
-                            "wind_kph": round((sum(winds) / len(winds)) * 3.6, 1) if winds else 0,
-                            "condition": {
-                                "text": str(cond.get("description", "Clear")).title(),
-                                "icon": f"https://openweathermap.org/img/wn/{cond.get('icon', '01d')}@2x.png",
-                                "main": cond.get("main", "Clear")
-                            }
-                        }
-                    })
-
-                    # OpenWeather free forecast provides up to ~5 days; cap UI payload for consistency.
-                    if len(forecast_days) >= 7:
-                        break
-            
             print(f"[Weather] Success: {len(forecast_days)} day(s) of forecast for {clean_city}")
 
             payload = {
                 "location": {
-                    "name": current_data.get("name", clean_city),
-                    "country": current_data.get("sys", {}).get("country", "IN"),
-                    "lat": current_data.get("coord", {}).get("lat"),
-                    "lon": current_data.get("coord", {}).get("lon"),
+                    "name": resolved_name or clean_city,
+                    "country": resolved_country or "IN",
+                    "lat": resolved_lat,
+                    "lon": resolved_lon,
                 },
                 "meta": {
-                    "source": "OpenWeather",
+                    "source": "Open-Meteo",
                     "generated_at": datetime.datetime.utcnow().isoformat() + "Z",
-                    "timezone_offset_sec": current_data.get("timezone", 0),
                 },
                 "forecast": {
-                    "forecastday": forecast_days
-                }
+                    "forecastday": forecast_days,
+                },
             }
             WeatherService._cache[cache_key] = {"ts": now_ts, "data": payload}
             return payload
-            
+
         except requests.exceptions.Timeout:
             print(f"[Weather] Timeout fetching weather for {city}")
             return None
