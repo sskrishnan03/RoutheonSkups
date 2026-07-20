@@ -5,120 +5,159 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Plan a Trip - Style Selection | RoutheonSkups</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
-        rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        primary: "#3B82F6",
-                        "primary-hover": "#2563EB",
-                        "background-light": "#FFFFFF",
-                        "background-dark": "#0F172A",
-                        "surface-light": "#F8FAFC",
-                        "surface-dark": "#1E293B",
-                        "text-main-light": "#1E293B",
-                        "text-main-dark": "#F1F5F9",
-                        "text-muted-light": "#64748B",
-                        "text-muted-dark": "#94A3B8",
-                        "border-light": "#E2E8F0",
-                        "border-dark": "#334155",
-                    },
-                    fontFamily: {
-                        display: ["'Plus Jakarta Sans'", "sans-serif"],
-                        body: ["'Plus Jakarta Sans'", "sans-serif"],
-                    },
-                    borderRadius: {
-                        DEFAULT: "0.5rem",
-                        xl: "1rem",
-                        "2xl": "1.5rem",
-                        "3xl": "2rem",
-                    },
-                    boxShadow: {
-                        soft: "0 4px 20px -2px rgba(0, 0, 0, 0.05)",
-                        hover: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.01)",
-                        glass: "0 8px 32px 0 rgba(31, 38, 135, 0.15)",
-                    }
-                },
-            },
-        };
-    </script>
-    <style type="text/tailwindcss">
-        @layer base {
-            html { scroll-behavior: smooth; }
-            body { @apply font-body bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark transition-colors duration-300; }
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/css/charcoal.css" />
+    <link rel="stylesheet" href="/static/css/tailwind-output.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000000;
+            color: #FFFFFF;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24; }
+        .glass-card {
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s cubic-bezier(0.22,1,0.36,1), border-color 0.35s cubic-bezier(0.22,1,0.36,1);
         }
-
+        .glass-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 60px -10px #111111;
+        }
+        .category-card {
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+        }
+        .category-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 60px -10px #111111;
+            border-color: #111111;
+        }
         .category-card.selected {
-            @apply border-primary ring-2 ring-primary/20 bg-blue-50/40 dark:bg-blue-900/10;
+            border-color: #111111;
+            background: #0A0A0A;
+            box-shadow: 0 0 0 2px #0A0A0A;
         }
-
         .category-card.selected .check-mark {
-            @apply opacity-100 scale-100;
+            opacity: 1;
+            transform: scale(1);
+        }
+        .btn-glass {
+            background: #0A0A0A;
+            color: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 9999px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-glass:hover {
+            background: #0A0A0A;
+        }
+        .btn-primary {
+            background: #111111;
+            color: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary:hover {
+            background: #0A0A0A;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 40px #0A0A0A;
+        }
+        .step-num {
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 700;
+            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+        }
+        .step-active .step-num {
+            background: #111111;
+            border: 1px solid rgba(255,255,255,0.06);
+            color: #FFFFFF;
+        }
+        .step-active-lg .step-num {
+            width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 700;
+            background: #111111;
+            border: 1px solid rgba(255,255,255,0.06);
+            color: #FFFFFF;
+        }
+        .step-done .step-num {
+            background: #0A0A0A;
+            border: 1px solid #111111;
+            color: rgba(255,255,255,0.7);
+        }
+        .step-inactive .step-num {
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.7);
         }
     </style>
 </head>
 
 <body>
-    {% include 'components/navbar.html' %}
-    <main class="min-h-screen relative pt-40 pb-24 overflow-hidden">
-        <div class="absolute inset-0 z-0 pointer-events-none">
-            <div
-                class="absolute top-0 right-0 w-[50%] h-[50%] bg-blue-50/50 dark:bg-blue-900/5 blur-[120px] rounded-full">
-            </div>
-            <div
-                class="absolute bottom-0 left-0 w-[40%] h-[40%] bg-cyan-50/50 dark:bg-cyan-900/5 blur-[120px] rounded-full">
-            </div>
-        </div>
+    <div class="ks-cinema-bg"></div>
+    <div class="ks-grain"></div>
+    <div class="ks-vignette"></div>
+    <canvas id="ks-particles-canvas"></canvas>
 
-        <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    {% include 'components/navbar.html' %}
+
+    <main style="position:relative;z-index:1;min-height:100vh;padding:160px 16px 96px;overflow:hidden">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col items-center mb-12">
-                <div class="flex items-center gap-4 mb-8">
-                    <div class="flex items-center gap-2">
-                        <div
-                            class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold">
-                            1</div>
-                        <span class="text-xs font-bold text-text-muted-light hidden sm:inline">Destination</span>
+                <!-- Step Wizard -->
+                <div class="glass-card" style="display:flex;align-items:center;gap:16px;padding:10px 24px;margin-bottom:32px">
+                    <div class="step-done" style="display:flex;align-items:center;gap:8px">
+                        <div class="step-num" style="width:28px;height:28px;font-size:12px">1</div>
+                        <span style="font-size:12px;font-weight:700;color:#FFFFFF" class="hidden sm:inline">Destination</span>
                     </div>
-                    <div class="w-8 h-px bg-border-light"></div>
-                    <div class="flex items-center gap-2">
-                        <div
-                            class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold">
-                            2</div>
-                        <span class="text-xs font-bold text-text-muted-light hidden sm:inline">Dates</span>
+                    <div style="width:24px;height:1px;background:#0A0A0A"></div>
+                    <div class="step-done" style="display:flex;align-items:center;gap:8px">
+                        <div class="step-num" style="width:28px;height:28px;font-size:12px">2</div>
+                        <span style="font-size:12px;font-weight:700;color:#FFFFFF" class="hidden sm:inline">Dates</span>
                     </div>
-                    <div class="w-8 h-px bg-border-light"></div>
-                    <div class="flex items-center gap-2">
-                        <div
-                            class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold shadow-lg shadow-primary/30 ring-4 ring-primary/20">
-                            3</div>
-                        <span class="text-sm font-bold text-text-main-light dark:text-white">Style</span>
+                    <div style="width:24px;height:1px;background:#0A0A0A"></div>
+                    <div class="step-active" style="display:flex;align-items:center;gap:8px">
+                        <div class="step-active-lg"><div class="step-num">3</div></div>
+                        <span style="font-size:13px;font-weight:700;color:#FFFFFF">Style</span>
                     </div>
-                    <div class="w-8 h-px bg-border-light"></div>
-                    <div class="flex items-center gap-2">
-                        <div
-                            class="w-8 h-8 rounded-full bg-surface-light dark:bg-surface-dark text-text-muted-light border border-border-light dark:border-border-dark flex items-center justify-center text-xs font-bold">
-                            4</div>
-                        <span class="text-xs font-bold text-text-muted-light hidden sm:inline">Review</span>
+                    <div style="width:24px;height:1px;background:#0A0A0A"></div>
+                    <div class="step-inactive" style="display:flex;align-items:center;gap:8px">
+                        <div class="step-num" style="width:28px;height:28px;font-size:12px">4</div>
+                        <span style="font-size:12px;font-weight:700;color:#FFFFFF" class="hidden sm:inline">Review</span>
                     </div>
                 </div>
 
-                <h1
-                    class="text-4xl md:text-5xl font-extrabold text-text-main-light dark:text-white text-center tracking-tight mb-4">
+                <h1 style="font-size:clamp(2rem,4vw,3rem);font-weight:900;text-align:center;letter-spacing:-0.03em;margin-bottom:16px;color:#FFFFFF">
                     What is your travel style?
                 </h1>
-                <p class="text-text-muted-light dark:text-text-muted-dark text-center text-lg max-w-2xl">
+                <p style="text-align:center;font-size:1.1rem;color:#FFFFFF;max-width:640px">
                     Pick categories to personalize your itinerary, or skip for recommendations based on your destination.
                 </p>
             </div>
@@ -126,42 +165,36 @@
             <div id="category-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 mb-6"></div>
 
             <div class="flex items-center justify-center mb-16 gap-3 flex-wrap">
-                <button id="more-options-btn"
-                    class="px-10 py-3 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full font-bold text-text-main-light dark:text-white hover:shadow-md transition-all">
-                    More Options
-                </button>
-                <button id="go-first-btn"
-                    class="px-8 py-3 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-full font-bold text-text-main-light dark:text-white hover:shadow-md transition-all">
-                    Go To First
-                </button>
-                <span id="page-indicator" class="text-sm font-semibold text-text-muted-light dark:text-text-muted-dark"></span>
+                <button id="more-options-btn" class="btn-glass" style="padding:12px 40px">More Options</button>
+                <button id="go-first-btn" class="btn-glass" style="padding:12px 32px">Go To First</button>
+                <span id="page-indicator" style="font-size:13px;font-weight:600;color:#FFFFFF"></span>
             </div>
 
-            <div
-                class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-border-light dark:border-border-dark">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:16px;padding-top:32px;border-top: 1px solid rgba(255,255,255,0.06)">
                 <button onclick="history.back()"
-                    class="w-full sm:w-auto px-8 py-4 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-main-light dark:text-white rounded-xl font-bold shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2">
-                    <span class="material-icons-round text-lg">arrow_back</span>
+                    class="btn-glass w-full sm:w-auto flex items-center justify-center gap-2"
+                    style="padding:16px 32px;font-weight:700">
+                    <span class="material-icons-round" style="font-size:20px">arrow_back</span>
                     Back
                 </button>
                 <div id="selection-count"
-                    class="text-sm font-bold text-text-muted-light bg-surface-light dark:bg-white/5 px-4 py-2 rounded-full">
+                    style="font-size:13px;font-weight:700;color:#FFFFFF;padding:8px 16px;background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);border-radius:9999px">
                     0 Categories Selected
                 </div>
                 <button id="next-step-btn"
-                    class="w-full sm:w-auto px-12 py-4 bg-primary hover:bg-primary-hover text-white rounded-xl font-bold shadow-lg shadow-blue-500/30 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2 group">
+                    class="btn-primary w-full sm:w-auto flex items-center justify-center gap-2"
+                    style="padding:16px 48px;font-weight:700;box-shadow:0 10px 40px #0A0A0A">
                     Next Step
-                    <span
-                        class="material-icons-round text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                    <span class="material-icons-round" style="font-size:20px">arrow_forward</span>
                 </button>
             </div>
         </div>
     </main>
 
-    <footer class="bg-white dark:bg-background-dark pt-16 pb-8 border-t border-border-light dark:border-border-dark">
+    <footer style="padding:64px 0 32px;border-top: 1px solid rgba(255,255,255,0.06)">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p class="text-xs text-text-muted-light dark:text-text-muted-dark">
-                @2026 RoutheonSkups. All rights reserved. Made with ❤️ for India.
+            <p style="font-size:12px;color:#FFFFFF">
+                @2026 RoutheonSkups. All rights reserved. Made with &#10084;&#65039; for India.
             </p>
         </div>
     </footer>
@@ -246,24 +279,25 @@
                     const isSelected = selectedCategories.has(item.name);
                     return `
                         <button type="button" data-category="${item.name}"
-                            class="category-card ${isSelected ? 'selected' : ''} group relative bg-white dark:bg-surface-dark p-6 rounded-3xl border border-border-light dark:border-border-dark text-center cursor-pointer hover:shadow-hover transition-all duration-300 min-h-[150px]">
-                            <div class="absolute top-3 right-3 check-mark opacity-0 scale-50 transition-all duration-300">
-                                <div class="w-5 h-5 bg-primary rounded-full flex items-center justify-center shadow-md">
-                                    <span class="material-icons-round text-white text-[11px]">check</span>
+                            class="category-card ${isSelected ? 'selected' : ''} group relative p-6 text-center cursor-pointer min-h-[150px]"
+                            style="display:flex;flex-direction:column;align-items:center;justify-content:center">
+                            <div class="check-mark" style="position:absolute;top:12px;right:12px;opacity:0;transform:scale(0.5);transition:all 0.3s ease">
+                                <div style="width:20px;height:20px;border-radius:50%;background:#111111;display:flex;align-items:center;justify-content:center">
+                                    <span class="material-icons-round" style="font-size:11px;color:#FFFFFF">check</span>
                                 </div>
                             </div>
-                            <div class="w-11 h-11 mx-auto mb-4 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center">
-                                <span class="text-[22px] leading-none">${item.icon}</span>
+                            <div style="width:44px;height:44px;margin-bottom:16px;border-radius:50%;background:#0A0A0A;display:flex;align-items:center;justify-content:center">
+                                <span style="font-size:22px;line-height:1">${item.icon}</span>
                             </div>
-                            <h3 class="text-lg font-bold text-text-main-light dark:text-white leading-tight">${item.name}</h3>
+                            <h3 style="font-size:1rem;font-weight:700;color:#FFFFFF;line-height:1.2">${item.name}</h3>
                         </button>
                     `;
                 }).join('');
 
                 pageIndicator.innerText = `Showing ${Math.min(visibleCount, categories.length)} of ${categories.length}`;
                 moreOptionsBtn.disabled = visibleCount >= categories.length;
-                moreOptionsBtn.classList.toggle('opacity-50', moreOptionsBtn.disabled);
-                moreOptionsBtn.classList.toggle('cursor-not-allowed', moreOptionsBtn.disabled);
+                moreOptionsBtn.style.opacity = moreOptionsBtn.disabled ? '0.5' : '1';
+                moreOptionsBtn.style.cursor = moreOptionsBtn.disabled ? 'not-allowed' : 'pointer';
             }
 
             categoryGrid.addEventListener('click', (e) => {
@@ -309,8 +343,8 @@
             renderCategories();
         });
     </script>
+
+    <script src="/static/js/background.js"></script>
 </body>
 
 </html>
-
-

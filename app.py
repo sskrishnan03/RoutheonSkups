@@ -71,29 +71,6 @@ def _apply_sqlite_schema_updates(app):
         conn.close()
 
 
-def _enforce_single_admin(app):
-    admin_email = (app.config.get('ADMIN_EMAIL') or '').strip().lower()
-    if not admin_email:
-        return
-
-    # Demote any admin account except the configured one.
-    from models import User, db
-    demoted = (
-        User.query
-        .filter(User.is_admin.is_(True), db.func.lower(User.email) != admin_email)
-        .all()
-    )
-    for user in demoted:
-        user.is_admin = False
-
-    # Promote configured admin account, if it exists.
-    admin_user = User.query.filter(db.func.lower(User.email) == admin_email).first()
-    if admin_user and not admin_user.is_admin:
-        admin_user.is_admin = True
-
-    if demoted or admin_user:
-        db.session.commit()
-
 def create_app():
     _sanitize_proxy_env()
     app = Flask(__name__)
@@ -128,7 +105,6 @@ def create_app():
     with app.app_context():
         db.create_all()
         _apply_sqlite_schema_updates(app)
-        _enforce_single_admin(app)
 
     return app
 

@@ -5,207 +5,297 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>RoutheonSkups Profile - AI Assistant</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/css/tailwind-output.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        primary: "#3B82F6",
-                        "primary-hover": "#2563EB",
-                        "background-light": "#FFFFFF",
-                        "surface-light": "#F8FAFC",
-                        "text-main-light": "#1E293B",
-                        "text-muted-light": "#64748B",
-                        "border-light": "#E2E8F0",
-                    },
-                    fontFamily: {
-                        display: ["'Plus Jakarta Sans'", "sans-serif"],
-                        body: ["'Plus Jakarta Sans'", "sans-serif"],
-                    },
-                    borderRadius: {
-                        DEFAULT: "0.5rem",
-                        xl: "1rem",
-                        "2xl": "1.5rem",
-                        "3xl": "2rem",
-                    },
-                    boxShadow: {
-                        soft: "0 4px 20px -2px rgba(0, 0, 0, 0.05)",
-                        premium: "0 10px 40px -10px rgba(0, 0, 0, 0.08)",
-                        chat: "0 20px 50px -12px rgba(0, 0, 0, 0.05)",
-                    }
-                },
-            },
-        };
-    </script>
-    <style type="text/tailwindcss">
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .active-tab { @apply bg-primary text-white shadow-lg shadow-blue-500/30; }
-        .ai-bubble { @apply bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100 text-text-main-light rounded-2xl rounded-tl-none p-4 max-w-[85%] shadow-sm; }
-        .user-bubble { @apply bg-white border border-border-light text-text-main-light rounded-2xl rounded-tr-none p-4 max-w-[85%] shadow-md; }
-        .action-chip { @apply px-4 py-2 bg-white border border-border-light rounded-full text-xs font-semibold text-text-muted-light hover:border-primary hover:text-primary hover:bg-blue-50 transition-all cursor-pointer shadow-sm; }
-        .sidebar-item { @apply flex items-start gap-2.5 p-2.5 rounded-xl hover:bg-slate-50 cursor-pointer transition-all border border-transparent relative min-h-[56px]; }
-        .sidebar-item.active { @apply bg-blue-50/70 border-blue-200 shadow-sm; }
-        .chat-frame { @apply bg-white/90 backdrop-blur-sm border border-border-light rounded-3xl shadow-chat; }
-        .chat-panel-head { @apply bg-gradient-to-r from-surface-light to-white; }
+    <link href="/static/css/charcoal.css" rel="stylesheet" />
+    <style>
+        body { font-family: 'Inter', -apple-system, sans-serif; }
+        .active-tab {
+            background: #111111;
+            color: #FFFFFF;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px #0A0A0A;
+        }
+        .ai-bubble {
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            color: #FFFFFF;
+            border-radius: 20px 20px 20px 4px;
+            padding: 16px;
+            max-width: 85%;
+            box-shadow: 0 4px 16px #0A0A0A;
+        }
+        .user-bubble {
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            color: #FFFFFF;
+            border-radius: 20px 20px 4px 20px;
+            padding: 16px;
+            max-width: 85%;
+            box-shadow: 0 4px 16px #0A0A0A;
+        }
+        .action-chip {
+            padding: 8px 16px;
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #888888;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .action-chip:hover {
+            border-color: rgba(255,255,255,0.7);
+            color: #FFFFFF;
+            background: #0A0A0A;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .sidebar-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+            border: 1px solid transparent;
+            position: relative;
+            min-height: 56px;
+        }
+        .sidebar-item:hover { background: #0A0A0A; }
+        .sidebar-item.active {
+            background: #0A0A0A;
+            border-color: rgba(255,255,255,0.7);
+            box-shadow: 0 2px 8px #0A0A0A;
+        }
+        .chat-frame {
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 24px;
+            box-shadow: 0 20px 50px #111111;
+        }
+        .chat-panel-head {
+            background: #0A0A0A;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
         .chat-feed-bg {
-            background-image: radial-gradient(circle at 1px 1px, rgba(148,163,184,0.15) 1px, transparent 0);
+            background-image: radial-gradient(circle at 1px 1px, #0A0A0A 1px, transparent 0);
             background-size: 16px 16px;
         }
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
-        .message-actions { @apply mt-1 flex items-center gap-1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #0A0A0A; border-radius: 10px; }
+        .message-actions { margin-top: 4px; display: flex; align-items: center; gap: 4px; }
         .user-actions { opacity: 0; pointer-events: none; transition: opacity .18s ease; }
         .assistant-actions { opacity: 1; pointer-events: auto; }
         .message-row:hover .user-actions, .message-row:focus-within .user-actions { opacity: 1; pointer-events: auto; }
-        .message-action-btn { @apply w-6 h-6 inline-flex items-center justify-center rounded-full text-text-muted-light hover:text-primary hover:bg-primary/10 transition-all; }
-        .message-action-btn.active { @apply text-primary bg-primary/15; }
-        .message-action-btn.copy-success { @apply text-emerald-600 bg-emerald-50; }
+        .message-action-btn {
+            width: 24px; height: 24px;
+            display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 9999px;
+            color: #888888;
+            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+        }
+        .message-action-btn:hover { color: #FFFFFF; background: #0A0A0A; }
+        .message-action-btn.active { color: #FFFFFF; background: #111111; }
+        .message-action-btn.copy-success { color: #FFFFFF; background: #0A0A0A; }
         .message-action-btn .material-icons-round { font-size: 14px; }
-        .message-menu { @apply hidden absolute right-0 top-8 w-44 bg-white border border-border-light rounded-xl shadow-lg z-[1300] overflow-hidden; }
+        .message-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 32px;
+            width: 176px;
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            z-index: 1300;
+            overflow: hidden;
+        }
         .message-menu.open { display: block; }
-        .message-menu-item { @apply w-full text-left px-3 py-2 text-xs font-semibold hover:bg-surface-light; }
-        .message-menu-item.danger { @apply text-red-600 hover:bg-red-50; }
-        .floating-session-menu { @apply fixed hidden w-40 bg-white border border-border-light rounded-lg shadow-lg z-[1200] overflow-hidden; }
+        .message-menu-item {
+            width: 100%;
+            text-align: left;
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+        .message-menu-item:hover { background: #0A0A0A; }
+        .message-menu-item.danger { color: #DC2626; }
+        .message-menu-item.danger:hover { background: rgba(220,38,38,0.1); }
+        .floating-session-menu {
+            position: fixed;
+            display: none;
+            width: 160px;
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            z-index: 1200;
+            overflow: hidden;
+        }
         .floating-session-menu.open { display: block; }
-        .floating-message-menu { @apply fixed hidden w-44 bg-white border border-border-light rounded-xl shadow-lg z-[1400] overflow-hidden; }
+        .floating-message-menu {
+            position: fixed;
+            display: none;
+            width: 176px;
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            z-index: 1400;
+            overflow: hidden;
+        }
         .floating-message-menu.open { display: block; }
+        @keyframes typingPulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+        .typing-dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #0A0A0A;
+            animation: typingPulse 1.4s infinite ease-in-out;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
     </style>
 </head>
 
-<body class="bg-gradient-to-b from-slate-50 via-white to-blue-50/40 text-text-main-light min-h-screen flex flex-col">
-    {% include 'components/navbar.html' %}
+<body class="min-h-screen relative flex flex-col" style="background:#0A0A0A;color:#FFFFFF;">
+    <div class="ks-cinema-bg"></div>
+    <div class="ks-grain"></div>
+    <div class="ks-vignette"></div>
+    <canvas id="ks-particles-canvas"></canvas>
+    <div class="relative z-10">
+        {% include 'components/navbar.html' %}
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-10 flex-grow w-full flex flex-col gap-8 relative">
-        {% set back_fallback = url_for('main.profile') %}
-        {% include 'components/back_button.html' %}
-        <div class="absolute inset-0 -z-10 pointer-events-none">
-            <div class="absolute top-8 right-8 w-80 h-80 bg-blue-100/50 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-8 left-8 w-80 h-80 bg-cyan-100/50 rounded-full blur-3xl"></div>
-        </div>
-        <section class="bg-white rounded-3xl border border-border-light shadow-premium p-8 relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-            <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-                <div class="flex flex-col md:flex-row items-center gap-6">
-                    <div class="relative">
-                        <div class="w-24 h-24 rounded-full ring-4 ring-white shadow-xl overflow-hidden bg-surface-light flex items-center justify-center text-primary text-4xl font-bold">
-                            {% if current_user.image_url %}
-                            <img alt="{{ current_user.name }}" class="w-full h-full object-cover" src="{{ current_user.image_url }}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&q=80&w=2000'" />
-                            {% else %}
-                            {{ current_user.name[0]|upper }}
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="text-center md:text-left">
-                        <h1 class="text-2xl font-extrabold text-text-main-light">{{ current_user.name }}</h1>
-                    </div>
-                </div>
-                <div class="flex gap-12 border-t md:border-t-0 md:border-l border-border-light pt-6 md:pt-0 md:pl-12">
-                    <div class="text-center md:text-left">
-                        <div class="text-xl font-extrabold text-text-main-light">{{ trip_count }}</div>
-                        <div class="text-xs font-bold text-text-muted-light uppercase">Trips</div>
-                    </div>
-                    <div class="text-center md:text-left">
-                        <div class="text-xl font-extrabold text-text-main-light">{{ saved_count }}</div>
-                        <div class="text-xs font-bold text-text-muted-light uppercase">Saved Destinations</div>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-10 flex-grow w-full flex flex-col gap-8 relative">
+            {% set back_fallback = url_for('main.profile') %}
+            {% include 'components/back_button.html' %}
 
-        <nav class="flex justify-center">
-            <div class="flex flex-wrap items-center bg-surface-light p-2 rounded-3xl border border-border-light shadow-sm gap-1">
-                <a href="{{ url_for('main.profile') }}" class="px-6 py-3 rounded-2xl text-sm font-bold text-text-muted-light hover:text-text-main-light hover:bg-white transition-all">PERSONAL INFO</a>
-                <a href="{{ url_for('main.my_trips') }}" class="px-6 py-3 rounded-2xl text-sm font-bold text-text-muted-light hover:text-text-main-light hover:bg-white transition-all">MY TRIPS</a>
-                <a href="{{ url_for('main.calendar') }}" class="px-6 py-3 rounded-2xl text-sm font-bold text-text-muted-light hover:text-text-main-light hover:bg-white transition-all">CALENDAR</a>
-                <a href="{{ url_for('main.settings') }}" class="px-6 py-3 rounded-2xl text-sm font-bold text-text-muted-light hover:text-text-main-light hover:bg-white transition-all">SETTINGS</a>
-                <a href="{{ url_for('main.profile_ai') }}" class="active-tab px-6 py-3 rounded-2xl text-sm font-bold flex items-center gap-2 transition-all">
-                    <span class="material-icons-round text-lg">smart_toy</span> AI ASSISTANT
-                </a>
-            </div>
-        </nav>
-
-        <section class="max-w-6xl mx-auto w-full flex-grow flex flex-col">
-            <div class="chat-frame flex h-[76vh] min-h-[700px] max-h-[860px] overflow-hidden">
-                <aside class="w-[31%] border-r border-border-light flex flex-col bg-white/95">
-                    <div class="p-4 border-b border-border-light flex items-center justify-between">
-                        <h3 class="font-bold text-sm text-text-main-light">Recent Chats</h3>
-                        <button id="new-chat-btn" class="w-8 h-8 rounded-lg bg-surface-light flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all" title="New chat">
-                            <span class="material-icons-round text-lg">add</span>
-                        </button>
-                    </div>
-                    <div class="px-3 py-2 border-b border-border-light">
+            <section class="glass-panel p-8 relative overflow-hidden">
+                <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div class="flex flex-col md:flex-row items-center gap-6">
                         <div class="relative">
-                            <span class="material-icons-round absolute left-3 top-1/2 -translate-y-1/2 text-text-muted-light text-sm">search</span>
-                            <input id="chat-search-input" type="text" placeholder="Search chats..."
-                                class="w-full pl-9 pr-3 py-2.5 text-xs bg-white border border-border-light rounded-xl shadow-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" />
-                        </div>
-                    </div>
-                    <div class="flex-grow overflow-y-auto p-3 space-y-1.5 custom-scrollbar bg-gradient-to-b from-white to-slate-50/60" id="sessions-container">
-                        <div class="p-8 text-center text-text-muted-light"><p class="text-xs">Loading chats...</p></div>
-                    </div>
-                </aside>
-
-                <div class="flex-grow flex flex-col bg-white/95">
-                    <div class="chat-panel-head p-5 border-b border-border-light flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary"><span class="material-icons-round">smart_toy</span></div>
-                            <div>
-                                <h2 class="font-bold text-text-main-light leading-none">Skupheon AI</h2>
-                                <span class="text-[10px] text-green-500 font-bold uppercase tracking-widest flex items-center gap-1 mt-1"><span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> Online and Ready</span>
+                            <div class="w-24 h-24 rounded-full ring-4 ring-white/20 shadow-xl overflow-hidden flex items-center justify-center text-4xl font-bold" style="background:#0A0A0A;">
+                                {% if current_user.image_url %}
+                                <img alt="{{ current_user.name }}" class="w-full h-full object-cover" src="{{ current_user.image_url }}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&q=80&w=2000'" />
+                                {% else %}
+                                {{ current_user.name[0]|upper }}
+                                {% endif %}
                             </div>
                         </div>
-                        <div class="relative">
-                            <button id="chat-menu-btn" class="p-2 hover:bg-surface-light rounded-xl transition-all text-text-muted-light"><span class="material-icons-round text-xl">more_vert</span></button>
-                            <div id="chat-menu" class="hidden absolute right-0 mt-2 w-56 bg-white border border-border-light rounded-xl shadow-lg overflow-hidden z-20">
-                                <button id="refresh-sessions-btn" class="w-full text-left px-4 py-3 text-sm font-medium hover:bg-surface-light transition-colors">Refresh chats</button>
-                                <button id="share-current-btn" class="w-full text-left px-4 py-3 text-sm font-medium hover:bg-surface-light transition-colors">Share current chat</button>
-                                <button id="delete-current-btn" class="w-full text-left px-4 py-3 text-sm font-medium hover:bg-surface-light transition-colors">Delete current chat</button>
-                                <button id="clear-all-btn" class="w-full text-left px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors">Clear all chats</button>
-                            </div>
+                        <div class="text-center md:text-left">
+                            <h1 class="text-2xl font-extrabold">{{ current_user.name }}</h1>
                         </div>
                     </div>
+                    <div class="flex gap-12 pt-6 md:pt-0 md:pl-12" style="border-top: 1px solid rgba(255,255,255,0.06);">
+                        <div class="text-center md:text-left">
+                            <div class="text-xl font-extrabold">{{ trip_count }}</div>
+                            <div class="text-xs font-bold uppercase" style="color:#FFFFFF;">Trips</div>
+                        </div>
+                        <div class="text-center md:text-left">
+                            <div class="text-xl font-extrabold">{{ saved_count }}</div>
+                            <div class="text-xs font-bold uppercase" style="color:#FFFFFF;">Saved Destinations</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-                    <div id="chat-messages" class="chat-feed-bg flex-grow min-h-0 p-8 overflow-y-auto space-y-6 custom-scrollbar"></div>
+            <nav class="flex justify-center">
+                <div class="flex flex-wrap items-center p-2 rounded-3xl gap-1" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);">
+                    <a href="{{ url_for('main.profile') }}" class="px-6 py-3 rounded-2xl text-sm font-bold transition-all" style="color:#FFFFFF;" onmouseover="this.style.color='#fff';this.style.background='#0A0A0A'" onmouseout="this.style.color='#888888';this.style.background='transparent'">PERSONAL INFO</a>
+                    <a href="{{ url_for('main.my_trips') }}" class="px-6 py-3 rounded-2xl text-sm font-bold transition-all" style="color:#FFFFFF;" onmouseover="this.style.color='#fff';this.style.background='#0A0A0A'" onmouseout="this.style.color='#888888';this.style.background='transparent'">MY TRIPS</a>
+                    <a href="{{ url_for('main.calendar') }}" class="px-6 py-3 rounded-2xl text-sm font-bold transition-all" style="color:#FFFFFF;" onmouseover="this.style.color='#fff';this.style.background='#0A0A0A'" onmouseout="this.style.color='#888888';this.style.background='transparent'">CALENDAR</a>
+                    <a href="{{ url_for('main.settings') }}" class="px-6 py-3 rounded-2xl text-sm font-bold transition-all" style="color:#FFFFFF;" onmouseover="this.style.color='#fff';this.style.background='#0A0A0A'" onmouseout="this.style.color='#888888';this.style.background='transparent'">SETTINGS</a>
+                    <a href="{{ url_for('main.profile_ai') }}" class="active-tab px-6 py-3 text-sm font-bold flex items-center gap-2 transition-all">
+                        <span class="material-icons-round text-lg">smart_toy</span> AI ASSISTANT
+                    </a>
+                </div>
+            </nav>
 
-                    <div class="p-6 border-t border-border-light bg-white/95">
-                        <input id="chat-image-input" type="file" accept="image/*" class="hidden" />
-                        <div id="image-preview-wrap" class="hidden mb-3 p-3 bg-surface-light border border-border-light rounded-xl flex items-center justify-between gap-3">
-                            <div class="flex items-center gap-3 min-w-0">
-                                <img id="image-preview" class="w-12 h-12 rounded-lg object-cover border border-border-light" alt="Preview" />
-                                <div class="min-w-0">
-                                    <p id="image-preview-name" class="text-xs font-bold text-text-main-light truncate"></p>
-                                    <p class="text-[11px] text-text-muted-light">Pinned image will be analyzed with your message.</p>
+            <section class="max-w-6xl mx-auto w-full flex-grow flex flex-col">
+                <div class="chat-frame flex h-[76vh] min-h-[700px] max-h-[860px] overflow-hidden">
+                    <aside class="w-[31%] flex flex-col" style="background:#0A0A0A;border-right: 1px solid rgba(255,255,255,0.06);">
+                        <div class="p-4 flex items-center justify-between" style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <h3 class="font-bold text-sm">Recent Chats</h3>
+                            <button id="new-chat-btn" class="w-8 h-8 rounded-lg flex items-center justify-center transition-all" style="background:#0A0A0A;color:#FFFFFF;" title="New chat">
+                                <span class="material-icons-round text-lg">add</span>
+                            </button>
+                        </div>
+                        <div class="px-3 py-2" style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <div class="relative">
+                                <span class="material-icons-round absolute left-3 top-1/2 -translate-y-1/2 text-sm" style="color:#FFFFFF;">search</span>
+                                <input id="chat-search-input" type="text" placeholder="Search chats..." class="w-full pl-9 pr-3 py-2.5 text-xs outline-none" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);border-radius:12px;color:#FFFFFF;" />
+                            </div>
+                        </div>
+                        <div class="flex-grow overflow-y-auto p-3 space-y-1.5 custom-scrollbar" id="sessions-container" style="background:linear-gradient(to bottom,#0A0A0A,transparent);">
+                            <div class="p-8 text-center"><p class="text-xs" style="color:#FFFFFF;">Loading chats...</p></div>
+                        </div>
+                    </aside>
+
+                    <div class="flex-grow flex flex-col" style="background:#0A0A0A;">
+                        <div class="chat-panel-head p-5 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:#0A0A0A;color:#FFFFFF;"><span class="material-icons-round">smart_toy</span></div>
+                                <div>
+                                    <h2 class="font-bold leading-none">Skupheon AI</h2>
+                                    <span class="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 mt-1" style="color:#FFFFFF;"><span class="w-1.5 h-1.5 rounded-full" style="background:#888888;"></span> Online and Ready</span>
                                 </div>
                             </div>
-                            <button id="remove-image-btn" class="px-3 py-1.5 text-xs font-bold bg-white border border-border-light rounded-lg hover:bg-slate-50">Remove</button>
-                        </div>
-
-                        <div class="relative flex items-center">
-                            <input id="chat-input" class="w-full pl-6 pr-20 py-4 bg-white border border-border-light rounded-2xl text-text-main-light placeholder:text-text-muted-light shadow-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all duration-300" placeholder="Type your travel query here..." type="text" />
-                            <div class="absolute right-2 flex items-center gap-1">
-                                <button id="attach-btn" class="p-2 text-text-muted-light hover:text-primary hover:bg-primary/5 rounded-xl transition-all" title="Pin image"><span class="material-icons-round">push_pin</span></button>
-                                <button id="send-btn" class="w-10 h-10 bg-primary text-white rounded-xl shadow-lg shadow-blue-500/30 flex items-center justify-center hover:bg-primary-hover hover:-translate-y-0.5 transition-all"><span class="material-icons-round text-xl">send</span></button>
+                            <div class="relative">
+                                <button id="chat-menu-btn" class="p-2 rounded-xl transition-all" style="color:#FFFFFF;"><span class="material-icons-round text-xl">more_vert</span></button>
+                                <div id="chat-menu" class="hidden absolute right-0 mt-2 w-56 z-20" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);border-radius:16px;overflow:hidden;">
+                                    <button id="refresh-sessions-btn" class="w-full text-left px-4 py-3 text-sm font-medium transition-colors" style="color:#FFFFFF;">Refresh chats</button>
+                                    <button id="share-current-btn" class="w-full text-left px-4 py-3 text-sm font-medium transition-colors" style="color:#FFFFFF;">Share current chat</button>
+                                    <button id="delete-current-btn" class="w-full text-left px-4 py-3 text-sm font-medium transition-colors" style="color:#FFFFFF;">Delete current chat</button>
+                                    <button id="clear-all-btn" class="w-full text-left px-4 py-3 text-sm font-medium" style="color:#DC2626;">Clear all chats</button>
+                                </div>
                             </div>
                         </div>
-                        <div class="mt-3 px-1">
-                            <p class="text-[10px] text-text-muted-light font-medium uppercase tracking-wider">Press Enter to send message</p>
+
+                        <div id="chat-messages" class="chat-feed-bg flex-grow min-h-0 p-8 overflow-y-auto space-y-6 custom-scrollbar"></div>
+
+                        <div class="p-6" style="border-top: 1px solid rgba(255,255,255,0.06);background:#0A0A0A;">
+                            <input id="chat-image-input" type="file" accept="image/*" class="hidden" />
+                            <div id="image-preview-wrap" class="hidden mb-3 p-3 rounded-xl flex items-center justify-between gap-3" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <img id="image-preview" class="w-12 h-12 rounded-lg object-cover" style="border: 1px solid rgba(255,255,255,0.06);" alt="Preview" />
+                                    <div class="min-w-0">
+                                        <p id="image-preview-name" class="text-xs font-bold truncate"></p>
+                                        <p class="text-[11px]" style="color:#FFFFFF;">Pinned image will be analyzed with your message.</p>
+                                    </div>
+                                </div>
+                                <button id="remove-image-btn" class="px-3 py-1.5 text-xs font-bold glass-btn">Remove</button>
+                            </div>
+
+                            <div class="relative flex items-center">
+                                <input id="chat-input" class="w-full pl-6 pr-20 py-4 text-sm outline-none transition-all duration-300" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);border-radius:16px;color:#FFFFFF;box-shadow:0 2px 8px rgba(0,0,0,0.15);" placeholder="Type your travel query here..." type="text" />
+                                <div class="absolute right-2 flex items-center gap-1">
+                                    <button id="attach-btn" class="p-2 rounded-xl transition-all" style="color:#FFFFFF;" title="Pin image"><span class="material-icons-round">push_pin</span></button>
+                                    <button id="send-btn" class="w-10 h-10 rounded-xl flex items-center justify-center text-white transition-all" style="background:#111111;box-shadow:0 4px 16px #0A0A0A;"><span class="material-icons-round text-xl">send</span></button>
+                                </div>
+                            </div>
+                            <div class="mt-3 px-1">
+                                <p class="text-[10px] font-medium uppercase tracking-wider" style="color:#FFFFFF;">Press Enter to send message</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
-    </main>
+            </section>
+        </main>
 
-    <footer class="bg-white border-t border-border-light py-10">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <p class="text-sm text-text-muted-light font-medium">@2026 RoutheonSkups. All rights reserved. Made with ❤️ for India.</p>
-        </div>
-    </footer>
+        <footer class="border-t py-10" style="background:#0A0A0A;border-color:#FFFFFF;">
+            <div class="max-w-7xl mx-auto px-4 text-center">
+                <p class="text-sm font-medium" style="color:#FFFFFF;">@2026 RoutheonSkups. All rights reserved. Made with ❤️ for India.</p>
+            </div>
+        </footer>
+    </div>
 
     <script>
         const AI_SETTINGS = {{ ai_assistant_settings | tojson }};
@@ -258,7 +348,7 @@
             chatMessages.innerHTML = `
                 <div class="flex flex-col items-start gap-2">
                     <div class="ai-bubble"><p class="text-sm font-medium leading-relaxed">${escapeHtml(welcome)}</p></div>
-                    <span class="text-[10px] font-bold text-text-muted-light ml-1">Skupheon AI â€¢ ${buildTimeNow()}</span>
+                    <span class="text-[10px] font-bold ml-1" style="color:#FFFFFF;">Skupheon AI • ${buildTimeNow()}</span>
                 </div>
                 <div class="flex flex-wrap gap-2 pt-2" id="suggestions-container">
                     <div class="action-chip" onclick="handleChipClick('Analyze my upcoming trip')">Analyze my upcoming trip</div>
@@ -278,16 +368,10 @@
 
         function applySessionsScrollableLimit() {
             const items = sessionsContainer.querySelectorAll('.sidebar-item');
-            if (!items.length) {
-                sessionsContainer.style.maxHeight = '';
-                return;
-            }
-            if (items.length <= 10) {
-                sessionsContainer.style.maxHeight = '';
-                return;
-            }
+            if (!items.length) { sessionsContainer.style.maxHeight = ''; return; }
+            if (items.length <= 10) { sessionsContainer.style.maxHeight = ''; return; }
             const itemHeight = items[0].offsetHeight || 56;
-            const gapPx = 6; // space-y-1.5
+            const gapPx = 6;
             const visibleCount = 10;
             const totalHeight = (itemHeight * visibleCount) + (gapPx * Math.max(0, visibleCount - 1));
             sessionsContainer.style.maxHeight = `${totalHeight}px`;
@@ -310,45 +394,31 @@
             const menuWidth = 160;
             const menuHeight = 132;
             menu.innerHTML = `
-                <button class="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-surface-light session-pin">${session.pinned ? 'Unpin chat' : 'Pin chat'}</button>
-                <button class="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-surface-light session-edit">Edit chat</button>
-                <button class="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-surface-light session-share">Share chat</button>
-                <button class="w-full text-left px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 session-delete">Delete chat</button>
+                <button class="w-full text-left px-3 py-2 text-xs font-semibold transition-colors session-pin" style="color:#FFFFFF;">${session.pinned ? 'Unpin chat' : 'Pin chat'}</button>
+                <button class="w-full text-left px-3 py-2 text-xs font-semibold transition-colors session-edit" style="color:#FFFFFF;">Edit chat</button>
+                <button class="w-full text-left px-3 py-2 text-xs font-semibold transition-colors session-share" style="color:#FFFFFF;">Share chat</button>
+                <button class="w-full text-left px-3 py-2 text-xs font-semibold session-delete" style="color:#DC2626;">Delete chat</button>
             `;
             let left = Math.max(8, rect.right - menuWidth);
             left = Math.min(left, window.innerWidth - menuWidth - 8);
             let top = rect.bottom + 6;
-            if (top + menuHeight > window.innerHeight - 8) {
-                top = Math.max(8, rect.top - menuHeight - 6);
-            }
+            if (top + menuHeight > window.innerHeight - 8) { top = Math.max(8, rect.top - menuHeight - 6); }
             menu.style.left = `${left}px`;
             menu.style.top = `${top}px`;
             menu.classList.add('open');
             floatingSessionMenuSession = session;
 
-            menu.querySelector('.session-pin').onclick = async (e) => {
-                e.stopPropagation();
-                await togglePinSession(session.id, !session.pinned);
-            };
-            menu.querySelector('.session-edit').onclick = async (e) => {
-                e.stopPropagation();
-                await editSessionTitle(session.id, session.title || 'New Conversation');
-            };
-            menu.querySelector('.session-share').onclick = async (e) => {
-                e.stopPropagation();
-                await shareSession(session.id, session.title || 'Chat');
-            };
-            menu.querySelector('.session-delete').onclick = async (e) => {
-                e.stopPropagation();
-                await deleteSession(session.id);
-            };
+            menu.querySelector('.session-pin').onclick = async (e) => { e.stopPropagation(); await togglePinSession(session.id, !session.pinned); };
+            menu.querySelector('.session-edit').onclick = async (e) => { e.stopPropagation(); await editSessionTitle(session.id, session.title || 'New Conversation'); };
+            menu.querySelector('.session-share').onclick = async (e) => { e.stopPropagation(); await shareSession(session.id, session.title || 'Chat'); };
+            menu.querySelector('.session-delete').onclick = async (e) => { e.stopPropagation(); await deleteSession(session.id); };
         }
 
         function renderSessions(sessions) {
             sessionsContainer.innerHTML = '';
             if (!Array.isArray(sessions) || sessions.length === 0) {
                 const info = (!AI_SETTINGS.chat_history) ? 'Chat history is disabled in Settings.' : 'No chats found.';
-                sessionsContainer.innerHTML = `<div class="p-8 text-center text-text-muted-light"><p class="text-xs">${info}</p></div>`;
+                sessionsContainer.innerHTML = `<div class="p-8 text-center"><p class="text-xs" style="color:#FFFFFF;">${info}</p></div>`;
                 sessionsContainer.style.maxHeight = '';
                 return;
             }
@@ -357,21 +427,21 @@
                     const item = document.createElement('div');
                     item.className = `sidebar-item ${currentSessionId === session.id ? 'active' : ''}`;
                     item.dataset.sessionId = String(session.id);
-                    const pinBadge = session.pinned ? '<span class="material-icons-round text-[13px] text-amber-500">push_pin</span>' : '';
+                    const pinBadge = session.pinned ? '<span class="material-icons-round text-[13px]" style="color:#FFFFFF;">push_pin</span>' : '';
 
                     item.innerHTML = `
-                        <div class="w-8 h-8 rounded-lg ${currentSessionId === session.id ? 'bg-blue-100 text-primary' : 'bg-surface-light text-text-muted-light'} flex-shrink-0 flex items-center justify-center">
+                        <div class="w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center" style="background:${currentSessionId === session.id ? '#0A0A0A' : '#0A0A0A'};color:${currentSessionId === session.id ? '#FFFFFF' : '#888888'};">
                             <span class="material-icons-round text-[16px]">chat_bubble</span>
                         </div>
                         <div class="min-w-0 flex-1">
                             <div class="flex items-center gap-1.5">
                                 ${pinBadge}
-                                <h4 class="text-xs font-bold text-text-main-light truncate">${escapeHtml(session.title || 'New Conversation')}</h4>
+                                <h4 class="text-xs font-bold truncate">${escapeHtml(session.title || 'New Conversation')}</h4>
                             </div>
-                            <p class="text-[10px] text-text-muted-light truncate mt-1">${escapeHtml(session.last_message || 'No messages yet')}</p>
+                            <p class="text-[10px] truncate mt-1" style="color:#FFFFFF;">${escapeHtml(session.last_message || 'No messages yet')}</p>
                         </div>
                         <div class="relative">
-                            <button class="session-menu-btn p-1.5 rounded-md text-text-muted-light hover:bg-slate-100" title="More" data-session-id="${session.id}">
+                            <button class="session-menu-btn p-1.5 rounded-md transition-colors" style="color:#FFFFFF;" title="More" data-session-id="${session.id}">
                                 <span class="material-icons-round text-[16px]">more_horiz</span>
                             </button>
                         </div>
@@ -400,10 +470,7 @@
 
         function applySessionSearch() {
             const q = (chatSearchInput.value || '').trim().toLowerCase();
-            if (!q) {
-                renderSessions(allSessionsCache);
-                return;
-            }
+            if (!q) { renderSessions(allSessionsCache); return; }
             const filtered = allSessionsCache.filter((s) => {
                 const title = (s.title || '').toLowerCase();
                 const last = (s.last_message || '').toLowerCase();
@@ -417,16 +484,15 @@
                 const response = await fetch('/api/chat/sessions');
                 const sessions = await response.json();
                 allSessionsCache = Array.isArray(sessions) ? sessions : [];
-
                 if (allSessionsCache.length === 0) {
                     const info = (!AI_SETTINGS.chat_history) ? 'Chat history is disabled in Settings.' : 'No recent chats. Start a new one!';
-                    sessionsContainer.innerHTML = `<div class="p-8 text-center text-text-muted-light"><p class="text-xs">${info}</p></div>`;
+                    sessionsContainer.innerHTML = `<div class="p-8 text-center"><p class="text-xs" style="color:#FFFFFF;">${info}</p></div>`;
                     return;
                 }
                 applySessionSearch();
             } catch (err) {
                 console.error('Error loading sessions:', err);
-                sessionsContainer.innerHTML = '<div class="p-8 text-center text-red-500"><p class="text-xs">Could not load chats.</p></div>';
+                sessionsContainer.innerHTML = '<div class="p-8 text-center"><p class="text-xs" style="color:#DC2626;">Could not load chats.</p></div>';
             }
         }
 
@@ -439,17 +505,11 @@
                     body: JSON.stringify({ pinned })
                 });
                 const data = await response.json();
-                if (!response.ok || !data.success) {
-                    alert(data.error || 'Could not update pin status.');
-                    return;
-                }
+                if (!response.ok || !data.success) { alert(data.error || 'Could not update pin status.'); return; }
                 const row = allSessionsCache.find((x) => x.id === sessionId);
                 if (row) row.pinned = data.pinned;
                 await loadSessions();
-            } catch (err) {
-                console.error(err);
-                alert('Could not update pin status.');
-            }
+            } catch (err) { console.error(err); alert('Could not update pin status.'); }
         }
 
         let editSessionId = null;
@@ -474,14 +534,8 @@
         async function confirmEditTitle() {
             const input = document.getElementById('edit-title-input');
             const trimmed = input.value.trim();
-            if (!trimmed) {
-                document.getElementById('edit-title-error').textContent = 'Title cannot be empty.';
-                document.getElementById('edit-title-error').classList.remove('hidden');
-                input.focus();
-                return;
-            }
+            if (!trimmed) { document.getElementById('edit-title-error').textContent = 'Title cannot be empty.'; document.getElementById('edit-title-error').classList.remove('hidden'); input.focus(); return; }
             document.getElementById('edit-title-error').classList.add('hidden');
-
             try {
                 const response = await fetch(`/api/chat/session/${editSessionId}/title`, {
                     method: 'PATCH',
@@ -489,16 +543,10 @@
                     body: JSON.stringify({ title: trimmed })
                 });
                 const data = await response.json();
-                if (!response.ok || !data.success) {
-                    alert(data.error || 'Could not update chat title.');
-                    return;
-                }
+                if (!response.ok || !data.success) { alert(data.error || 'Could not update chat title.'); return; }
                 await loadSessions();
                 closeEditTitleModal();
-            } catch (err) {
-                console.error(err);
-                alert('Could not update chat title.');
-            }
+            } catch (err) { console.error(err); alert('Could not update chat title.'); }
         }
 
         async function editSessionTitle(sessionId, currentTitle) {
@@ -511,24 +559,12 @@
             try {
                 const response = await fetch(`/api/chat/session/${sessionId}`);
                 const messages = await response.json();
-                if (!response.ok || !Array.isArray(messages)) {
-                    alert('Could not load chat for sharing.');
-                    return;
-                }
-
+                if (!response.ok || !Array.isArray(messages)) { alert('Could not load chat for sharing.'); return; }
                 const text = `RoutheonSkups - ${title}\n\n` + messages.map((m) => `${m.role === 'user' ? 'You' : 'Skupheon AI'}: ${m.content}`).join('\n\n');
-                if (navigator.share) {
-                    try {
-                        await navigator.share({ title: `Chat: ${title}`, text });
-                        return;
-                    } catch (e) {}
-                }
+                if (navigator.share) { try { await navigator.share({ title: `Chat: ${title}`, text }); return; } catch (e) {} }
                 await navigator.clipboard.writeText(text);
                 alert('Chat copied to clipboard.');
-            } catch (err) {
-                console.error(err);
-                alert('Could not share this chat.');
-            }
+            } catch (err) { console.error(err); alert('Could not share this chat.'); }
         }
 
         async function selectSession(sessionId) {
@@ -536,21 +572,22 @@
             editingMessageMeta = null;
             attachBtn.classList.remove('hidden');
             await loadSessions();
-            chatMessages.innerHTML = '<div class="p-8 text-center text-text-muted-light"><p class="text-xs">Loading conversation...</p></div>';
+            chatMessages.innerHTML = '<div class="p-8 text-center"><p class="text-xs" style="color:#FFFFFF;">Loading conversation...</p></div>';
             try {
                 const response = await fetch(`/api/chat/session/${sessionId}`);
                 const messages = await response.json();
                 chatMessages.innerHTML = '';
                 if (!Array.isArray(messages) || messages.length === 0) {
-                    chatMessages.innerHTML = '<div class="p-8 text-center text-text-muted-light"><p class="text-xs">Start chatting with Skupheon.</p></div>';
+                    chatMessages.innerHTML = '<div class="p-8 text-center"><p class="text-xs" style="color:#FFFFFF;">Start chatting with Skupheon.</p></div>';
                     return;
                 }
                 messages.forEach((msg) => appendMessage(msg.role, msg.content, msg.created_at));
             } catch (err) {
                 console.error(err);
-                chatMessages.innerHTML = '<div class="p-8 text-center text-red-500"><p class="text-xs">Could not load this chat.</p></div>';
+                chatMessages.innerHTML = '<div class="p-8 text-center"><p class="text-xs" style="color:#DC2626;">Could not load this chat.</p></div>';
             }
         }
+
         function appendMessage(role, content, time = null) {
             const safeTime = time || buildTimeNow();
             const messageDiv = document.createElement('div');
@@ -593,12 +630,13 @@
 
             messageDiv.innerHTML = `
                 <div class="${bubbleClass}"><p class="message-text text-sm font-medium leading-relaxed whitespace-pre-wrap">${escapeHtml(content)}</p></div>
-                <span class="text-[10px] font-bold text-text-muted-light ${normalizedRole === 'user' ? 'mr-1' : 'ml-1'}">${author} • ${safeTime}</span>
+                <span class="text-[10px] font-bold ${normalizedRole === 'user' ? 'mr-1' : 'ml-1'}" style="color:#FFFFFF;">${author} • ${safeTime}</span>
                 ${normalizedRole === 'user' ? userActions : aiActions}
             `;
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
+
         function closeMessageMenu() {
             if (floatingMessageMenu) {
                 floatingMessageMenu.classList.remove('open');
@@ -626,13 +664,10 @@
             const isPacDeletable = role === 'user' && /\bpac\b/i.test(messageText || '');
             const menu = ensureFloatingMessageMenu();
             if (role === 'assistant') {
-                menu.innerHTML = `<button type="button" class="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-surface-light" data-floating-action="share">Share this message</button>`;
+                menu.innerHTML = `<button type="button" class="w-full text-left px-3 py-2 text-xs font-semibold" style="color:#FFFFFF;" data-floating-action="share">Share this message</button>`;
             } else if (isPacDeletable) {
-                menu.innerHTML = `<button type="button" class="w-full text-left px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50" data-floating-action="delete">Delete this message</button>`;
-            } else {
-                closeMessageMenu();
-                return;
-            }
+                menu.innerHTML = `<button type="button" class="w-full text-left px-3 py-2 text-xs font-semibold" style="color:#DC2626;" data-floating-action="delete">Delete this message</button>`;
+            } else { closeMessageMenu(); return; }
 
             const rect = anchorBtn.getBoundingClientRect();
             const menuWidth = 176;
@@ -640,28 +675,21 @@
             let left = rect.right - menuWidth;
             left = Math.max(8, Math.min(left, window.innerWidth - menuWidth - 8));
             let top = rect.bottom + 6;
-            if (top + menuHeight > window.innerHeight - 8) {
-                top = Math.max(8, rect.top - menuHeight - 6);
-            }
+            if (top + menuHeight > window.innerHeight - 8) { top = Math.max(8, rect.top - menuHeight - 6); }
             menu.style.left = `${left}px`;
             menu.style.top = `${top}px`;
             menu.classList.add('open');
             floatingMessageContext = { row, role, messageText };
 
             menu.querySelector('[data-floating-action="share"]')?.addEventListener('click', async (e) => {
-                e.stopPropagation();
-                closeMessageMenu();
+                e.stopPropagation(); closeMessageMenu();
                 const shareData = { title: 'Chat message', text: messageText };
-                if (navigator.share) {
-                    try { await navigator.share(shareData); return; } catch (err) {}
-                }
+                if (navigator.share) { try { await navigator.share(shareData); return; } catch (err) {} }
                 await copyText(messageText);
                 alert('Message copied to clipboard.');
             });
-
             menu.querySelector('[data-floating-action="delete"]')?.addEventListener('click', (e) => {
-                e.stopPropagation();
-                closeMessageMenu();
+                e.stopPropagation(); closeMessageMenu();
                 if (!isPacDeletable) return;
                 row.remove();
             });
@@ -669,18 +697,10 @@
 
         async function copyText(value) {
             if (!value) return;
-            if (navigator.clipboard?.writeText) {
-                await navigator.clipboard.writeText(value);
-                return;
-            }
+            if (navigator.clipboard?.writeText) { await navigator.clipboard.writeText(value); return; }
             const ta = document.createElement('textarea');
-            ta.value = value;
-            ta.style.position = 'fixed';
-            ta.style.left = '-9999px';
-            document.body.appendChild(ta);
-            ta.select();
-            document.execCommand('copy');
-            document.body.removeChild(ta);
+            ta.value = value; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+            document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
         }
 
         function flashCopySuccess(buttonEl) {
@@ -690,10 +710,7 @@
             const prev = icon.textContent;
             icon.textContent = 'check';
             buttonEl.classList.add('copy-success');
-            setTimeout(() => {
-                icon.textContent = prev || 'content_copy';
-                buttonEl.classList.remove('copy-success');
-            }, 900);
+            setTimeout(() => { icon.textContent = prev || 'content_copy'; buttonEl.classList.remove('copy-success'); }, 900);
         }
 
         async function sendMessage() {
@@ -726,7 +743,7 @@
             const typingDiv = document.createElement('div');
             typingDiv.id = typingId;
             typingDiv.className = 'flex flex-col items-start gap-2';
-            typingDiv.innerHTML = '<div class="ai-bubble italic opacity-70"><p class="text-sm font-medium leading-relaxed">Skupheon is thinking...</p></div>';
+            typingDiv.innerHTML = '<div class="ai-bubble" style="animation:typingPulse 1.4s ease-in-out infinite;"><div class="flex items-center gap-2"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span><span class="text-xs font-medium ml-1" style="color:#FFFFFF;">Skupheon is thinking...</span></div></div>';
             chatMessages.appendChild(typingDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
@@ -778,19 +795,10 @@
             try {
                 const response = await fetch(`/api/chat/session/${sessionId}`, { method: 'DELETE' });
                 const data = await response.json();
-                if (!response.ok || !data.success) {
-                    alert(data.error || 'Could not delete chat session.');
-                    return;
-                }
-                if (currentSessionId === sessionId) {
-                    currentSessionId = null;
-                    renderWelcomeMessage();
-                }
+                if (!response.ok || !data.success) { alert(data.error || 'Could not delete chat session.'); return; }
+                if (currentSessionId === sessionId) { currentSessionId = null; renderWelcomeMessage(); }
                 await loadSessions();
-            } catch (err) {
-                console.error(err);
-                alert('Could not delete chat session.');
-            }
+            } catch (err) { console.error(err); alert('Could not delete chat session.'); }
         }
 
         async function clearAllSessions() {
@@ -798,48 +806,30 @@
             try {
                 const response = await fetch('/api/chat/sessions/clear', { method: 'POST' });
                 const data = await response.json();
-                if (!response.ok || !data.success) {
-                    alert(data.error || 'Could not clear chats.');
-                    return;
-                }
+                if (!response.ok || !data.success) { alert(data.error || 'Could not clear chats.'); return; }
                 currentSessionId = null;
                 renderWelcomeMessage();
                 await loadSessions();
-            } catch (err) {
-                console.error(err);
-                alert('Could not clear chats.');
-            }
+            } catch (err) { console.error(err); alert('Could not clear chats.'); }
         }
 
-        function handleChipClick(text) {
-            chatInput.value = text;
-            sendMessage();
-        }
+        function handleChipClick(text) { chatInput.value = text; sendMessage(); }
         window.handleChipClick = handleChipClick;
 
         function clearSelectedImage() {
-            selectedImageBase64 = null;
-            selectedImageMime = null;
-            selectedImageName = null;
+            selectedImageBase64 = null; selectedImageMime = null; selectedImageName = null;
             chatImageInput.value = '';
             imagePreviewWrap.classList.add('hidden');
         }
 
         function handleImageSelect(file) {
             if (!file) return;
-            if (!file.type.startsWith('image/')) {
-                alert('Please choose an image file.');
-                return;
-            }
-
+            if (!file.type.startsWith('image/')) { alert('Please choose an image file.'); return; }
             const reader = new FileReader();
             reader.onload = () => {
                 const result = String(reader.result || '');
                 const commaIndex = result.indexOf(',');
-                if (commaIndex === -1) {
-                    alert('Could not process image.');
-                    return;
-                }
+                if (commaIndex === -1) { alert('Could not process image.'); return; }
                 selectedImageMime = file.type || 'image/jpeg';
                 selectedImageBase64 = result.substring(commaIndex + 1);
                 selectedImageName = file.name || 'image';
@@ -858,72 +848,31 @@
             const action = btn.dataset.action;
             const row = btn.closest('.message-row');
             if (!row) return;
-
             const role = row.dataset.role || 'assistant';
             const textEl = row.querySelector('.message-text');
             const messageText = textEl ? textEl.textContent : (row.dataset.content || '');
 
-            if (action === 'copy') {
-                await copyText(messageText);
-                flashCopySuccess(btn);
-                return;
-            }
-
-            if (action === 'edit') {
-                if (role !== 'user') return;
-                editingMessageMeta = row;
-                chatInput.value = messageText;
-                attachBtn.classList.add('hidden');
-                chatInput.focus();
-                closeMessageMenu();
-                return;
-            }
-
+            if (action === 'copy') { await copyText(messageText); flashCopySuccess(btn); return; }
+            if (action === 'edit') { if (role !== 'user') return; editingMessageMeta = row; chatInput.value = messageText; attachBtn.classList.add('hidden'); chatInput.focus(); closeMessageMenu(); return; }
             if (action === 'thumb-up' || action === 'thumb-down') {
                 const upBtn = row.querySelector('[data-action="thumb-up"]');
                 const downBtn = row.querySelector('[data-action="thumb-down"]');
-                if (action === 'thumb-up') {
-                    upBtn?.classList.toggle('active');
-                    downBtn?.classList.remove('active');
-                } else {
-                    downBtn?.classList.toggle('active');
-                    upBtn?.classList.remove('active');
-                }
+                if (action === 'thumb-up') { upBtn?.classList.toggle('active'); downBtn?.classList.remove('active'); }
+                else { downBtn?.classList.toggle('active'); upBtn?.classList.remove('active'); }
                 return;
             }
-
             if (action === 'menu') {
-                if (floatingMessageMenu && floatingMessageMenu.classList.contains('open') && floatingMessageContext && floatingMessageContext.row === row) {
-                    closeMessageMenu();
-                    return;
-                }
-                closeMessageMenu();
-                openFloatingMessageMenu(btn, row, role, messageText);
-                return;
+                if (floatingMessageMenu && floatingMessageMenu.classList.contains('open') && floatingMessageContext && floatingMessageContext.row === row) { closeMessageMenu(); return; }
+                closeMessageMenu(); openFloatingMessageMenu(btn, row, role, messageText); return;
             }
-
-            if (action === 'share') {
-                closeMessageMenu();
-                return;
-            }
-
-            if (action === 'delete') {
-                closeMessageMenu();
-                return;
-            }
+            if (action === 'share') { closeMessageMenu(); return; }
+            if (action === 'delete') { closeMessageMenu(); return; }
         });
 
         sendBtn.addEventListener('click', sendMessage);
         chatInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                sendMessage();
-            }
-            if (e.key === 'Escape' && editingMessageMeta) {
-                editingMessageMeta = null;
-                chatInput.value = '';
-                attachBtn.classList.remove('hidden');
-            }
+            if (e.key === 'Enter') { e.preventDefault(); sendMessage(); }
+            if (e.key === 'Escape' && editingMessageMeta) { editingMessageMeta = null; chatInput.value = ''; attachBtn.classList.remove('hidden'); }
         });
 
         attachBtn.addEventListener('click', () => chatImageInput.click());
@@ -931,8 +880,7 @@
         removeImageBtn.addEventListener('click', clearSelectedImage);
 
         newChatBtn.addEventListener('click', async () => {
-            currentSessionId = null;
-            editingMessageMeta = null;
+            currentSessionId = null; editingMessageMeta = null;
             attachBtn.classList.remove('hidden');
             clearSelectedImage();
             renderWelcomeMessage(true);
@@ -940,48 +888,18 @@
             chatInput.focus();
         });
 
-        chatMenuBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            chatMenu.classList.toggle('hidden');
-        });
+        chatMenuBtn.addEventListener('click', (e) => { e.stopPropagation(); chatMenu.classList.toggle('hidden'); });
         chatSearchInput.addEventListener('input', applySessionSearch);
-        document.addEventListener('click', () => {
-            chatMenu.classList.add('hidden');
-            closeAllSessionMenus();
-            closeMessageMenu();
-        });
+        document.addEventListener('click', () => { chatMenu.classList.add('hidden'); closeAllSessionMenus(); closeMessageMenu(); });
         chatMenu.addEventListener('click', (e) => e.stopPropagation());
         sessionsContainer.addEventListener('click', (e) => e.stopPropagation());
         sessionsContainer.addEventListener('scroll', () => closeAllSessionMenus());
         chatMessages.addEventListener('scroll', () => closeMessageMenu());
 
-        refreshSessionsBtn.addEventListener('click', async () => {
-            chatMenu.classList.add('hidden');
-            await loadSessions();
-        });
-
-        shareCurrentBtn.addEventListener('click', async () => {
-            chatMenu.classList.add('hidden');
-            if (!currentSessionId) {
-                alert('No active chat selected.');
-                return;
-            }
-            await shareSession(currentSessionId, 'Current Chat');
-        });
-
-        deleteCurrentBtn.addEventListener('click', async () => {
-            chatMenu.classList.add('hidden');
-            if (!currentSessionId) {
-                alert('No active chat selected.');
-                return;
-            }
-            await deleteSession(currentSessionId);
-        });
-
-        clearAllBtn.addEventListener('click', async () => {
-            chatMenu.classList.add('hidden');
-            await clearAllSessions();
-        });
+        refreshSessionsBtn.addEventListener('click', async () => { chatMenu.classList.add('hidden'); await loadSessions(); });
+        shareCurrentBtn.addEventListener('click', async () => { chatMenu.classList.add('hidden'); if (!currentSessionId) { alert('No active chat selected.'); return; } await shareSession(currentSessionId, 'Current Chat'); });
+        deleteCurrentBtn.addEventListener('click', async () => { chatMenu.classList.add('hidden'); if (!currentSessionId) { alert('No active chat selected.'); return; } await deleteSession(currentSessionId); });
+        clearAllBtn.addEventListener('click', async () => { chatMenu.classList.add('hidden'); await clearAllSessions(); });
 
         window.addEventListener('resize', applySessionsScrollableLimit);
 
@@ -990,18 +908,18 @@
     </script>
 
     <!-- Custom Modal for Editing Chat Title -->
-    <div id="edit-title-modal" class="hidden fixed inset-0 z-[1500] bg-slate-900/45 backdrop-blur-sm items-center justify-center p-4">
-        <div class="w-full max-w-md bg-white border border-border-light rounded-3xl shadow-2xl p-6">
+    <div id="edit-title-modal" class="hidden fixed inset-0 z-[1500] items-center justify-center p-4" style="background:#0A0A0A;">
+        <div class="w-full max-w-md p-6" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);border-radius:24px;box-shadow:0 20px 60px #111111;">
             <div class="flex items-center gap-3 mb-6">
-                <span class="material-icons-round text-primary text-2xl">edit</span>
-                <h3 class="text-lg font-extrabold text-text-main-light">Edit Chat Title</h3>
+                <span class="material-icons-round text-2xl" style="color:#FFFFFF;">edit</span>
+                <h3 class="text-lg font-extrabold">Edit Chat Title</h3>
             </div>
-            <p class="text-sm text-text-muted-light mb-4">Rename this conversation to something memorable.</p>
-            <input id="edit-title-input" type="text" placeholder="Enter chat title..." class="w-full px-5 py-4 bg-surface-light border border-border-light rounded-2xl text-text-main-light focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-300 text-sm font-medium" maxlength="150" />
-            <p id="edit-title-error" class="text-red-500 text-xs font-semibold mt-2 hidden"></p>
+            <p class="text-sm mb-4" style="color:#FFFFFF;">Rename this conversation to something memorable.</p>
+            <input id="edit-title-input" type="text" placeholder="Enter chat title..." class="input-field" maxlength="150" />
+            <p id="edit-title-error" class="text-xs font-semibold mt-2 hidden" style="color:#DC2626;"></p>
             <div class="mt-6 grid grid-cols-2 gap-3">
-                <button id="cancel-edit-title-btn" type="button" class="px-4 py-2.5 rounded-xl border border-border-light font-bold text-sm text-text-muted-light hover:bg-surface-light transition-all">Cancel</button>
-                <button id="confirm-edit-title-btn" type="button" class="px-4 py-2.5 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary-hover transition-all shadow-md shadow-blue-500/20">Save</button>
+                <button id="cancel-edit-title-btn" type="button" class="glass-btn px-4 py-2.5 font-bold text-sm" style="color:#FFFFFF;">Cancel</button>
+                <button id="confirm-edit-title-btn" type="button" class="px-4 py-2.5 rounded-xl font-bold text-sm text-white" style="background:#111111;">Save</button>
             </div>
         </div>
     </div>
@@ -1010,10 +928,7 @@
         document.getElementById('cancel-edit-title-btn').addEventListener('click', closeEditTitleModal);
         document.getElementById('confirm-edit-title-btn').addEventListener('click', confirmEditTitle);
         document.getElementById('edit-title-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                confirmEditTitle();
-            }
+            if (e.key === 'Enter') { e.preventDefault(); confirmEditTitle(); }
         });
         document.getElementById('edit-title-modal').addEventListener('click', function(e) {
             if (e.target === this) closeEditTitleModal();
@@ -1023,9 +938,7 @@
             if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeEditTitleModal();
         });
     </script>
+    <script src="/static/js/background.js"></script>
 </body>
 
 </html>
-
-
-

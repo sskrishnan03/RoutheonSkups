@@ -35,6 +35,13 @@ document.addEventListener("DOMContentLoaded", function () {
         body: JSON.stringify({ message: text }),
       });
 
+      if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          window.location.href = '/login';
+          return;
+        }
+        throw new Error(`Server error (${response.status})`);
+      }
       const data = await response.json();
       appendMessage("bot", data.response);
 

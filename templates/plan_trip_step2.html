@@ -5,162 +5,185 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Plan a Trip - Step 2: Dates | RoutheonSkups</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
-        rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        primary: "#3B82F6",
-                        "primary-hover": "#2563EB",
-                        "background-light": "#FFFFFF",
-                        "background-dark": "#0F172A",
-                        "surface-light": "#F8FAFC",
-                        "surface-dark": "#1E293B",
-                        "text-main-light": "#1E293B",
-                        "text-main-dark": "#F1F5F9",
-                        "text-muted-light": "#64748B",
-                        "text-muted-dark": "#94A3B8",
-                        "border-light": "#E2E8F0",
-                        "border-dark": "#334155",
-                    },
-                    fontFamily: {
-                        display: ["'Plus Jakarta Sans'", "sans-serif"],
-                        body: ["'Plus Jakarta Sans'", "sans-serif"],
-                    },
-                    borderRadius: {
-                        DEFAULT: "0.5rem",
-                        xl: "1rem",
-                        "2xl": "1.5rem",
-                        "3xl": "2rem",
-                    },
-                    boxShadow: {
-                        soft: "0 4px 20px -2px rgba(0, 0, 0, 0.05)",
-                        hover: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.01)",
-                        glass: "0 8px 32px 0 rgba(31, 38, 135, 0.15)",
-                    },
-                },
-            },
-        };
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/css/charcoal.css" />
+    <link rel="stylesheet" href="/static/css/tailwind-output.css">
     <style>
-        html {
-            scroll-behavior: smooth;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000000;
+            color: #FFFFFF;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-card {
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
         }
-
+        .glass-inner {
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+        }
+        .btn-glass {
+            background: #0A0A0A;
+            color: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-glass:hover {
+            background: #0A0A0A;
+        }
+        .btn-primary {
+            background: #111111;
+            color: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary:hover {
+            background: #0A0A0A;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 40px #0A0A0A;
+        }
+        .step-num {
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 700;
+            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+        }
+        .step-active .step-num {
+            background: #111111;
+            border: 1px solid rgba(255,255,255,0.06);
+            color: #FFFFFF;
+        }
+        .step-done .step-num {
+            background: #0A0A0A;
+            border: 1px solid #111111;
+            color: rgba(255,255,255,0.7);
+        }
+        .step-inactive .step-num {
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.7);
+        }
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
         }
-
         .date-selected {
-            background-color: #3B82F6;
-            color: white;
+            background-color: #111111;
+            color: #FFFFFF;
             border-radius: 9999px;
         }
-
-        .date-range-bg {
-            background-color: rgba(59, 130, 246, 0.1);
+        .glass-input {
+            background: #000000;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            color: #FFFFFF;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+            outline: none;
         }
-
+        .glass-input:focus {
+            border-color: #111111;
+            box-shadow: 0 0 0 4px #000000;
+        }
+        .glass-input::placeholder { color: rgba(255,255,255,0.4); }
+        .date-range-bg {
+            background-color: #111111;
+        }
         .toggle-checkbox:checked {
             right: 0;
-            background-color: #3B82F6;
+            background-color: #111111;
         }
-
-        .toggle-checkbox:checked+.toggle-label {
-            background-color: #3B82F6;
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #111111;
         }
     </style>
 </head>
 
-<body
-    class="bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark transition-colors duration-300 min-h-screen flex flex-col">
+<body>
+    <div class="ks-cinema-bg"></div>
+    <div class="ks-grain"></div>
+    <div class="ks-vignette"></div>
+    <canvas id="ks-particles-canvas"></canvas>
+
     {% include 'components/navbar.html' %}
-    <main class="flex-grow flex items-center justify-center pt-40 pb-12 px-4 relative overflow-hidden">
-        <div class="absolute inset-0 z-0 pointer-events-none">
-            <div
-                class="absolute top-1/4 -right-1/4 w-[500px] h-[500px] bg-blue-100/40 dark:bg-blue-900/10 rounded-full blur-[100px]">
-            </div>
-            <div
-                class="absolute bottom-1/4 -left-1/4 w-[500px] h-[500px] bg-cyan-100/40 dark:bg-cyan-900/10 rounded-full blur-[100px]">
-            </div>
-        </div>
-        <div class="relative z-10 w-full max-w-4xl">
-            <div class="flex justify-center mb-12">
-                <div class="flex items-center gap-4">
-                    <div class="flex items-center gap-2">
-                        <div
-                            class="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center text-sm font-bold">
-                            <span class="material-icons-round text-lg">check</span>
+
+    <main style="position:relative;z-index:1;display:flex;align-items:center;justify-content:center;padding:160px 16px 48px;min-height:100vh;flex-direction:column">
+        <div class="w-full max-w-4xl">
+            <!-- Step Wizard -->
+            <div style="display:flex;justify-content:center;margin-bottom:48px">
+                <div class="glass-card" style="display:flex;align-items:center;gap:16px;padding:10px 24px">
+                    <div class="step-done" style="display:flex;align-items:center;gap:8px">
+                        <div class="step-num">
+                            <span class="material-icons-round" style="font-size:18px">check</span>
                         </div>
-                        <span class="text-sm font-bold text-text-muted-light">Destinations</span>
+                        <span style="font-size:13px;font-weight:700;color:#FFFFFF">Destinations</span>
                     </div>
-                    <div class="w-12 h-0.5 bg-primary"></div>
-                    <div class="flex items-center gap-2">
-                        <div
-                            class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold shadow-lg shadow-blue-500/30">
-                            2</div>
-                        <span class="text-sm font-bold text-text-main-light dark:text-white">Dates</span>
+                    <div style="width:32px;height:2px;background:#111111"></div>
+                    <div class="step-active" style="display:flex;align-items:center;gap:8px">
+                        <div class="step-num">2</div>
+                        <span style="font-size:13px;font-weight:700;color:#FFFFFF">Dates</span>
                     </div>
-                    <div class="w-12 h-0.5 bg-border-light dark:bg-border-dark"></div>
-                    <div class="flex items-center gap-2 opacity-40">
-                        <div
-                            class="w-8 h-8 rounded-full bg-border-light dark:bg-border-dark flex items-center justify-center text-sm font-bold">
-                            3</div>
-                        <span class="text-sm font-bold text-text-muted-light">Preferences</span>
+                    <div style="width:32px;height:2px;background:#111111"></div>
+                    <div class="step-inactive" style="display:flex;align-items:center;gap:8px;opacity:0.4">
+                        <div class="step-num">3</div>
+                        <span style="font-size:13px;font-weight:700;color:#FFFFFF">Preferences</span>
                     </div>
                 </div>
             </div>
+
             <div class="text-center mb-10">
-                <h1
-                    class="text-4xl md:text-5xl font-extrabold tracking-tight text-text-main-light dark:text-text-main-dark mb-4">
+                <h1 style="font-size:clamp(2rem,4vw,3rem);font-weight:900;letter-spacing:-0.03em;margin-bottom:16px;color:#FFFFFF">
                     When are you planning to travel?
                 </h1>
-                <p class="text-text-muted-light dark:text-text-muted-dark text-lg">
+                <p style="font-size:1.1rem;color:rgba(255,255,255,0.5)">
                     Select your travel dates to get accurate availability and pricing.
                 </p>
             </div>
-            <div
-                class="bg-white dark:bg-surface-dark rounded-3xl shadow-xl border border-border-light dark:border-border-dark overflow-hidden transition-all">
-                <div class="p-8">
+
+            <div class="glass-card" style="overflow:hidden">
+                <div style="padding:32px">
                     <div class="grid md:grid-cols-2 gap-6 mb-10">
-                        <div class="relative">
-                            <label
-                                class="block text-xs font-bold uppercase tracking-wider text-text-muted-light mb-2 ml-1">Start
-                                Date</label>
+                        <div>
+                            <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#FFFFFF;margin-bottom:8px;margin-left:4px">Start Date</label>
                             <div class="relative group">
-                                <span
-                                    class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary group-focus-within:text-primary transition-colors">calendar_month</span>
+                                <span class="material-symbols-outlined" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#FFFFFF;transition:color 0.3s">calendar_month</span>
                                 <input id="start-date-input"
-                                    class="w-full pl-12 pr-4 py-4 bg-surface-light dark:bg-white/5 border border-border-light dark:border-border-dark rounded-2xl text-text-main-light dark:text-white font-semibold focus:ring-2 focus:ring-primary focus:border-transparent transition-all cursor-pointer"
+                                    class="glass-input w-full"
+                                    style="padding:16px 16px 16px 48px;font-weight:600"
                                     readonly="" type="text" value="" placeholder="Select Date" />
                             </div>
                         </div>
-                        <div class="relative">
-                            <label
-                                class="block text-xs font-bold uppercase tracking-wider text-text-muted-light mb-2 ml-1">End
-                                Date</label>
+                        <div>
+                            <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#FFFFFF;margin-bottom:8px;margin-left:4px">End Date</label>
                             <div class="relative group">
-                                <span
-                                    class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary transition-colors">calendar_today</span>
+                                <span class="material-symbols-outlined" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#FFFFFF;transition:color 0.3s">calendar_today</span>
                                 <input id="end-date-input"
-                                    class="w-full pl-12 pr-4 py-4 bg-surface-light dark:bg-white/5 border border-border-light dark:border-border-dark rounded-2xl text-text-main-light dark:text-white font-semibold focus:ring-2 focus:ring-primary focus:border-transparent transition-all cursor-pointer"
+                                    class="glass-input w-full"
+                                    style="padding:16px 16px 16px 48px;font-weight:600"
                                     readonly="" type="text" value="" placeholder="Select Date" />
                             </div>
                         </div>
@@ -170,73 +193,75 @@
                         <div id="month2-container" class="hidden lg:block"></div>
                     </div>
                     <div id="flexible-card"
-                        class="mt-12 flex items-center justify-between p-6 rounded-2xl bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/20">
+                        class="mt-12 flex items-center justify-between"
+                        style="padding:24px;border-radius:16px;background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06)">
                         <div class="flex items-center gap-4">
-                            <div
-                                class="w-12 h-12 rounded-full bg-white dark:bg-surface-dark flex items-center justify-center text-primary shadow-sm">
-                                <span class="material-symbols-outlined">event_repeat</span>
+                            <div style="width:48px;height:48px;border-radius:50%;background:#0A0A0A;display:flex;align-items:center;justify-content:center">
+                                <span class="material-symbols-outlined" style="color:#FFFFFF">event_repeat</span>
                             </div>
                             <div>
-                                <h4 class="font-bold text-text-main-light dark:text-white">I am flexible with dates</h4>
-                                <p class="text-sm text-text-muted-light dark:text-text-muted-dark">Show me the best
-                                    prices within +/- 3 days of my selection.</p>
+                                <h4 style="font-weight:700;color:#FFFFFF">I am flexible with dates</h4>
+                                <p style="font-size:13px;color:rgba(255,255,255,0.5)">Show me the best prices within +/- 3 days of my selection.</p>
                                 <p id="flexible-status"
-                                    class="text-xs font-bold uppercase tracking-wider text-primary mt-1">Flexible: On</p>
+                                    style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.7);margin-top:4px">Flexible: On</p>
                             </div>
                         </div>
-                        <div
-                            class="relative inline-block w-14 h-8 align-middle select-none transition duration-200 ease-in">
+                        <div style="position:relative;display:inline-block;width:56px;height:32px;align-middle;user-select:none;transition:duration 200">
                             <input checked=""
-                                class="toggle-checkbox absolute block w-8 h-8 rounded-full bg-white border-4 appearance-none cursor-pointer border-gray-300 transition-all checked:right-0 checked:border-primary"
+                                class="toggle-checkbox absolute block w-8 h-8 rounded-full appearance-none cursor-pointer transition-all"
+                                style="top:0;right:16px;border: 4px solid rgba(255,255,255,0.06);background:#0A0A0A"
                                 id="toggle" name="toggle" type="checkbox" />
-                            <label
-                                class="toggle-label block overflow-hidden h-8 rounded-full bg-gray-300 cursor-pointer transition-all"
+                            <label class="toggle-label block overflow-hidden h-8 rounded-full cursor-pointer transition-all"
+                                style="background:#0A0A0A"
                                 for="toggle"></label>
                         </div>
                     </div>
                 </div>
-                <div
-                    class="bg-surface-light dark:bg-black/10 p-8 border-t border-border-light dark:border-border-dark flex items-center justify-between">
+                <div style="padding:24px 32px;border-top: 1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between">
                     <button id="back-step-btn" onclick="history.back()"
-                        class="flex items-center gap-2 px-8 py-3.5 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl font-bold text-text-main-light dark:text-white hover:bg-gray-50 dark:hover:bg-white/5 transition-all shadow-sm">
+                        class="btn-glass flex items-center gap-2"
+                        style="padding:12px 24px;font-weight:700">
                         <span class="material-icons-round">arrow_back</span>
                         Back
                     </button>
                     <div class="flex items-center gap-6">
-                        <div class="text-right">
-                            <span class="block text-xs font-bold text-text-muted-light uppercase tracking-widest">Total
-                                Duration</span>
-                            <div class="mt-1 flex items-center justify-end gap-2">
+                        <div style="text-align:right">
+                            <span style="display:block;font-size:11px;font-weight:700;color:#FFFFFF;text-transform:uppercase;letter-spacing:0.12em">Total Duration</span>
+                            <div style="margin-top:4px;display:flex;align-items:center;justify-content:flex-end;gap:8px">
                                 <button id="duration-minus-btn" type="button"
-                                    class="w-8 h-8 rounded-full border border-border-light dark:border-border-dark bg-white dark:bg-surface-dark font-bold text-primary hover:bg-blue-50 dark:hover:bg-white/5 transition-all">
+                                    class="btn-glass"
+                                    style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;padding:0">
                                     -
                                 </button>
-                                <span id="total-duration" class="text-lg font-extrabold text-primary min-w-[90px] text-center">-</span>
+                                <span id="total-duration" style="font-size:1.1rem;font-weight:800;color:#FFFFFF;min-width:90px;text-align:center">-</span>
                                 <button id="duration-plus-btn" type="button"
-                                    class="w-8 h-8 rounded-full border border-border-light dark:border-border-dark bg-white dark:bg-surface-dark font-bold text-primary hover:bg-blue-50 dark:hover:bg-white/5 transition-all">
+                                    class="btn-glass"
+                                    style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;padding:0">
                                     +
                                 </button>
                             </div>
                         </div>
                         <button id="next-step-btn"
-                            class="flex items-center gap-3 px-10 py-4 bg-primary hover:bg-primary-hover text-white rounded-xl font-bold shadow-lg shadow-blue-500/30 transition-all transform hover:-translate-y-0.5">
+                            class="btn-primary flex items-center gap-3"
+                            style="padding:16px 40px;font-weight:700;box-shadow:0 10px 40px #0A0A0A">
                             Next Step
                             <span class="material-icons-round">arrow_forward</span>
                         </button>
                     </div>
                 </div>
             </div>
-            <p
-                class="mt-8 text-center text-sm text-text-muted-light dark:text-text-muted-dark flex items-center justify-center gap-2">
-                <span class="material-icons-round text-lg text-amber-500">lightbulb</span>
+
+            <p style="margin-top:32px;text-align:center;font-size:14px;color:rgba(255,255,255,0.5);display:flex;align-items:center;justify-content:center;gap:8px">
+                <span class="material-icons-round" style="font-size:18px">lightbulb</span>
                 Pro tip: Travelling on Tuesdays or Wednesdays often yields better accommodation rates.
             </p>
         </div>
     </main>
-    <footer class="py-10 border-t border-border-light dark:border-border-dark mt-auto bg-white dark:bg-background-dark">
+
+    <footer style="padding:40px 0;border-top: 1px solid rgba(255,255,255,0.06);margin-top:auto">
         <div class="max-w-7xl mx-auto px-4 text-center">
-            <p class="text-xs text-text-muted-light dark:text-text-muted-dark">
-                @2026 RoutheonSkups. All rights reserved. Made with ❤️ for India.
+            <p style="font-size:12px;color:rgba(255,255,255,0.45)">
+                @2026 RoutheonSkups. All rights reserved. Made with &#10084;&#65039; for India.
             </p>
         </div>
     </footer>
@@ -247,7 +272,7 @@
             const destination = urlParams.get('destination');
 
             let currentDate = new Date();
-            currentDate.setDate(1); // Start of current month
+            currentDate.setDate(1);
 
             let startDate = null;
             let endDate = null;
@@ -311,21 +336,21 @@
             function generateMonthHTML(date, hasPrevBtn, hasNextBtn) {
                 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-                let prevBtnHTML = hasPrevBtn ? `<button class="prev-month-btn p-2 hover:bg-surface-light dark:hover:bg-white/5 rounded-full transition-colors"><span class="material-icons-round pointer-events-none">chevron_left</span></button>` : `<div class="w-9 h-9 hidden lg:block"></div><button class="prev-month-btn p-2 hover:bg-surface-light dark:hover:bg-white/5 rounded-full transition-colors lg:hidden"><span class="material-icons-round pointer-events-none">chevron_left</span></button>`;
-                let nextBtnHTML = hasNextBtn ? `<button class="next-month-btn p-2 hover:bg-surface-light dark:hover:bg-white/5 rounded-full transition-colors"><span class="material-icons-round pointer-events-none">chevron_right</span></button>` : `<div class="w-9 h-9 hidden lg:block"></div><button class="next-month-btn p-2 hover:bg-surface-light dark:hover:bg-white/5 rounded-full transition-colors lg:hidden"><span class="material-icons-round pointer-events-none">chevron_right</span></button>`;
+                let prevBtnHTML = hasPrevBtn ? `<button class="prev-month-btn" style="padding:8px;border-radius:50%;background:transparent;border:none;color:#fff;cursor:pointer;transition:background 0.2s"><span class="material-icons-round" style="pointer-events:none">chevron_left</span></button>` : `<div style="width:36px;height:36px;flex-shrink:0" class="hidden lg:block"></div><button class="prev-month-btn" style="padding:8px;border-radius:50%;background:transparent;border:none;color:#fff;cursor:pointer;transition:background 0.2s"><span class="material-icons-round" style="pointer-events:none">chevron_left</span></button>`;
+                let nextBtnHTML = hasNextBtn ? `<button class="next-month-btn" style="padding:8px;border-radius:50%;background:transparent;border:none;color:#fff;cursor:pointer;transition:background 0.2s"><span class="material-icons-round" style="pointer-events:none">chevron_right</span></button>` : `<div style="width:36px;height:36px;flex-shrink:0" class="hidden lg:block"></div><button class="next-month-btn" style="padding:8px;border-radius:50%;background:transparent;border:none;color:#fff;cursor:pointer;transition:background 0.2s"><span class="material-icons-round" style="pointer-events:none">chevron_right</span></button>`;
 
                 let header = `
-                    <div class="flex items-center justify-between mb-6">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
                         ${prevBtnHTML}
-                        <h3 class="font-extrabold text-lg text-text-main-light dark:text-white">${monthNames[date.getMonth()]} ${date.getFullYear()}</h3>
+                        <h3 style="font-weight:800;font-size:1.1rem;color:#FFFFFF">${monthNames[date.getMonth()]} ${date.getFullYear()}</h3>
                         ${nextBtnHTML}
                     </div>
-                    <div class="calendar-grid text-center text-xs font-bold text-text-muted-light mb-4 uppercase tracking-widest">
+                    <div class="calendar-grid text-center" style="font-size:11px;font-weight:700;color:#FFFFFF;margin-bottom:16px;text-transform:uppercase;letter-spacing:0.1em">
                         <div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div><div>Su</div>
                     </div>
                 `;
 
-                let days = `<div class="calendar-grid text-sm font-semibold gap-y-2">`;
+                let days = `<div class="calendar-grid" style="font-size:14px;font-weight:600;gap:4px 0">`;
 
                 const year = date.getFullYear();
                 const month = date.getMonth();
@@ -333,11 +358,11 @@
                 const firstDay = new Date(year, month, 1);
                 const lastDay = new Date(year, month + 1, 0);
 
-                let firstDayOfWeek = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; // Mon=0 .. Sun=6
+                let firstDayOfWeek = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1;
 
                 const prevMonthLastDay = new Date(year, month, 0).getDate();
                 for (let i = 0; i < firstDayOfWeek; i++) {
-                    days += `<div class="py-3 text-text-muted-light/40 text-center">${prevMonthLastDay - firstDayOfWeek + i + 1}</div>`;
+                    days += `<div style="padding:12px;color:#FFFFFF;text-align:center">${prevMonthLastDay - firstDayOfWeek + i + 1}</div>`;
                 }
 
                 let today = new Date();
@@ -347,11 +372,12 @@
                     let currentDayDate = new Date(year, month, i);
                     currentDayDate.setHours(0, 0, 0, 0);
 
-                    let classes = "py-3 transition-all cursor-pointer text-center ";
+                    let classes = "day-cell";
+                    let styles = "padding:12px;transition:all 0.2s;cursor:pointer;text-align:center;border-radius:50%;";
 
                     if (currentDayDate < today) {
-                        classes += " text-text-muted-light/40 cursor-not-allowed";
-                        days += `<div class="${classes}">${i}</div>`;
+                        styles += "color:#FFFFFF;cursor:not-allowed;";
+                        days += `<div class="${classes}" style="${styles}">${i}</div>`;
                         continue;
                     }
 
@@ -360,20 +386,20 @@
                     let inRange = startDate && endDate && currentDayDate > startDate && currentDayDate < endDate;
 
                     if (isStart || isEnd) {
-                        classes += "date-selected shadow-lg shadow-blue-500/40 relative z-10";
+                        styles += "background:#111111;color:#FFFFFF;box-shadow:0 0 20px #0A0A0A;position:relative;z-index:10;";
                     } else if (inRange) {
-                        classes += "date-range-bg";
+                        styles += "background:#0A0A0A;";
                     } else {
-                        classes += "hover:bg-surface-light dark:hover:bg-white/5 rounded-full";
+                        styles += "border-radius:50%;";
                     }
 
-                    days += `<div class="${classes} day-cell" data-date="${currentDayDate.getTime()}" data-day="${i}">${i}</div>`;
+                    days += `<div class="${classes}" style="${styles}" data-date="${currentDayDate.getTime()}" data-day="${i}">${i}</div>`;
                 }
 
                 let lastDayOfWeek = lastDay.getDay() === 0 ? 6 : lastDay.getDay() - 1;
                 let nextMonthDays = 6 - lastDayOfWeek;
                 for (let i = 1; i <= nextMonthDays; i++) {
-                    days += `<div class="py-3 text-text-muted-light/40 text-center">${i}</div>`;
+                    days += `<div style="padding:12px;color:#FFFFFF;text-align:center">${i}</div>`;
                 }
 
                 days += `</div>`;
@@ -405,7 +431,7 @@
 
                         if (!startDate || (startDate && endDate && startDate.getTime() !== endDate.getTime())) {
                             startDate = clickedDate;
-                            endDate = clickedDate; // first click defaults to 1-day trip
+                            endDate = clickedDate;
                         } else if (startDate && endDate && startDate.getTime() === endDate.getTime()) {
                             if (clickedDate < startDate) {
                                 endDate = startDate;
@@ -438,8 +464,7 @@
                     flexibleStatus.innerText = isFlexible ? 'Flexible: On' : 'Flexible: Off';
                 }
                 if (flexibleCard) {
-                    flexibleCard.classList.toggle('ring-2', isFlexible);
-                    flexibleCard.classList.toggle('ring-primary/20', isFlexible);
+                    flexibleCard.style.boxShadow = isFlexible ? '0 0 0 2px #0A0A0A' : 'none';
                 }
             }
 
@@ -458,7 +483,6 @@
                 renderCalendar();
             }
 
-            // Initialize default dates so users can immediately adjust duration using +/- buttons.
             const today = normalizeDate(new Date());
             startDate = today;
             endDate = addDays(today, 4);
@@ -510,7 +534,8 @@
             }
         });
     </script>
+
+    <script src="/static/js/background.js"></script>
 </body>
 
 </html>
-

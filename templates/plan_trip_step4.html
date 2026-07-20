@@ -1,73 +1,77 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Trip Itinerary - RoutheonSkups</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
-        rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
-    <!-- Leaflet Map -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/css/charcoal.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <!-- Leaflet Routing Machine for road routes -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js" defer></script>
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        primary: "#3B82F6",
-                        "primary-hover": "#2563EB",
-                        "text-main": "#1E293B",
-                        "text-muted": "#64748B",
-                        "background-light": "#FFFFFF",
-                        "background-dark": "#0F172A",
-                        "surface-light": "#F8FAFC",
-                        "surface-dark": "#1E293B",
-                        "text-main-light": "#1E293B",
-                        "text-main-dark": "#F1F5F9",
-                        "text-muted-light": "#64748B",
-                        "text-muted-dark": "#94A3B8",
-                        "border-light": "#E2E8F0",
-                        "border-dark": "#334155",
-                    },
-                    fontFamily: {
-                        display: ["'Plus Jakarta Sans'", "sans-serif"],
-                        body: ["'Plus Jakarta Sans'", "sans-serif"],
-                    },
-                    borderRadius: {
-                        '3xl': '2rem',
-                    },
-                    boxShadow: {
-                        'premium': '0 10px 40px -10px rgba(0, 0, 0, 0.04)',
-                        'card-hover': '0 20px 50px -12px rgba(0, 0, 0, 0.08)',
-                    }
-                },
-            },
-        };
-    </script>
-    <style type="text/tailwindcss">
-        @layer utilities {
-            .glassmorphism {
-                background: rgba(255, 255, 255, 0.9);
-                backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px);
-            }
-        }
+    <link rel="stylesheet" href="/static/css/tailwind-output.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body {
-            background-color: #FFFFFF;
-            color: #1E293B;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000000;
+            color: #FFFFFF;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-card {
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s cubic-bezier(0.22,1,0.36,1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 60px -10px #111111;
+        }
+        .btn-glass {
+            background: #0A0A0A;
+            color: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 9999px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-glass:hover {
+            background: #0A0A0A;
+        }
+        .btn-primary {
+            background: #111111;
+            color: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.06);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            background: #0A0A0A;
         }
         .floating-back-btn {
             position: absolute;
@@ -77,17 +81,16 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            color: rgba(255,255,255,0.98);
+            color: rgba(255,255,255,0.7);
             text-shadow: 0 3px 16px rgba(0, 0, 0, 0.75);
-            transition: transform .2s ease, color .2s ease;
+            transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), color 0.35s cubic-bezier(0.22,1,0.36,1);
+            cursor: pointer;
+            background: none;
+            border: none;
         }
         .floating-back-btn:hover {
             transform: translateY(-2px);
             color: #ffffff;
-        }
-        .floating-back-btn:focus-visible {
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(59,130,246,0.7);
         }
         @media (min-width: 768px) {
             .floating-back-btn {
@@ -96,34 +99,77 @@
             }
         }
         .hero-gradient {
-            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%);
+            background: linear-gradient(to top, #000000 0%, rgba(0,0,0,0) 60%);
         }
         .plan-chat-shell {
-            background: radial-gradient(circle at 10% 8%, #eff6ff 0%, #ffffff 44%, #f8fafc 100%);
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 24px;
         }
         .plan-chat-header {
-            background: linear-gradient(120deg, rgba(59,130,246,0.10) 0%, rgba(255,255,255,0.98) 58%, rgba(16,185,129,0.08) 100%);
+            background: #0A0A0A;
         }
         .plan-chat-bubble {
-            @apply p-4 text-xs leading-relaxed max-w-[85%] w-fit rounded-2xl;
+            padding: 16px;
+            font-size: 12px;
+            line-height: 1.6;
+            max-width: 85%;
+            width: fit-content;
+            border-radius: 16px;
         }
         .plan-chat-bubble.ai {
-            @apply bg-white border border-slate-100 text-text-main rounded-tl-md shadow-[0_10px_26px_rgba(15,23,42,0.07)];
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            color: #FFFFFF;
+            border-top-left-radius: 4px;
+            box-shadow: 0 10px 26px rgba(0,0,0,0.1);
         }
         .plan-chat-bubble.user {
-            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
-            @apply text-white ml-auto rounded-tr-md shadow-[0_10px_26px_rgba(37,99,235,0.30)];
+            background: #0A0A0A;
+            border: 1px solid #111111;
+            color: #FFFFFF;
+            margin-left: auto;
+            border-top-right-radius: 4px;
         }
         .plan-chat-input {
-            @apply w-full border-none rounded-2xl py-3 pl-4 pr-12 text-xs focus:ring-1 focus:ring-primary;
-            background: linear-gradient(145deg, #f8fafc 0%, #eef2f7 100%);
+            width: 100%;
+            border: none;
+            border-radius: 16px;
+            padding: 12px 48px 12px 16px;
+            font-size: 12px;
+            font-family: 'Inter', sans-serif;
+            color: #FFFFFF;
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            outline: none;
         }
+        .plan-chat-input:focus {
+            border-color: rgba(255,255,255,0.7);
+        }
+        .plan-chat-input::placeholder { color: rgba(255,255,255,0.7); }
         .plan-chat-send-btn {
-            @apply absolute right-2 top-1/2 -translate-y-1/2 w-[26px] h-[26px] rounded-lg bg-primary text-white flex items-center justify-center transition-colors;
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 26px;
+            height: 26px;
+            border-radius: 10px;
+            background: #111111;
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            transition: background 0.35s cubic-bezier(0.22,1,0.36,1);
+        }
+        .plan-chat-send-btn:hover {
+            background: #0A0A0A;
         }
         @media print {
             body.print-plan-itinerary-only {
-                background: #fff !important;
+                background: #000000 !important;
             }
             body.print-plan-itinerary-only > *:not(#plan-itinerary-print-root) {
                 display: none !important;
@@ -133,8 +179,8 @@
             }
             body.print-plan-itinerary-only #plan-itinerary-print-root {
                 display: block !important;
-                background: #fff !important;
-                color: #1E293B !important;
+                background: #000000 !important;
+                color: #FFFFFF !important;
                 width: 100% !important;
                 margin: 0 !important;
                 padding: 0 !important;
@@ -144,13 +190,13 @@
                 max-width: 1080px;
                 margin: 0 auto;
                 padding: 0;
-                background: #fff !important;
+                background: #000000 !important;
             }
             body.print-plan-itinerary-only #plan-itinerary-print-root .print-cover-page,
             body.print-plan-itinerary-only #plan-itinerary-print-root .print-day-page,
             body.print-plan-itinerary-only #plan-itinerary-print-root .print-total-page {
                 width: 100%;
-                background: #fff !important;
+                background: #000000 !important;
                 padding: 8px 0;
             }
             body.print-plan-itinerary-only #plan-itinerary-print-root .print-cover-page,
@@ -175,217 +221,227 @@
     </style>
 </head>
 
-<body class="font-body antialiased">
+<body class="antialiased">
+    <div class="ks-cinema-bg"></div>
+    <div class="ks-grain"></div>
+    <div class="ks-vignette"></div>
+    <canvas id="ks-particles-canvas"></canvas>
+
     {% include 'components/navbar.html' %}
-    <div class="relative w-full h-[80vh] min-h-[700px] mt-0 overflow-hidden">
+
+    <div class="relative w-full overflow-hidden" style="height:80vh;min-height:700px;margin-top:0">
         <button type="button" class="floating-back-btn" aria-label="Go back" onclick="goBackOrPlan()">
-            <span class="material-symbols-outlined text-[42px] md:text-[46px]">arrow_back</span>
+            <span class="material-symbols-outlined" style="font-size:42px">arrow_back</span>
         </button>
         <img id="hero-image-dynamic" alt="Trip Hero" class="w-full h-full object-cover scale-105"
             src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2000&auto=format&fit=crop" />
         <div class="absolute inset-0 hero-gradient"></div>
         <div class="absolute inset-0 flex flex-col justify-end max-w-[1920px] mx-auto px-12 pb-24 text-white">
             <div id="hero-pill-dynamic"
-                class="inline-flex items-center px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-white text-[11px] font-bold uppercase tracking-[0.2em] mb-6 w-fit border border-white/30">
+                style="display:inline-flex;align-items:center;padding:6px 16px;border-radius:9999px;background:#0A0A0A;color:#FFFFFF;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.2em;margin-bottom:24px;width:fit-content;border: 1px solid rgba(255,255,255,0.06)">
                 KERALA
             </div>
-            <h1 id="hero-title-dynamic" class="text-7xl font-extrabold tracking-tight leading-tight mb-6 drop-shadow-2xl">Planning Your Journey...</h1>
-            <p id="hero-desc-dynamic" class="text-xl max-w-2xl text-white/90 font-medium leading-relaxed drop-shadow-md">
+            <h1 id="hero-title-dynamic" style="font-size:clamp(3rem,6vw,4.5rem);font-weight:900;letter-spacing:-0.03em;line-height:1.05;margin-bottom:24px;text-shadow:0 4px 30px #111111">Planning Your Journey...</h1>
+            <p id="hero-desc-dynamic" style="font-size:1.25rem;max-width:640px;color:#FFFFFF;font-weight:500;line-height:1.7;text-shadow:0 2px 10px #0A0A0A">
                 We are crafting a cinematic experience tailored just for you.
             </p>
         </div>
     </div>
-    <main class="max-w-[1920px] mx-auto px-12 py-12 bg-white">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-16">
+
+    <main style="max-width:1920px;margin:0 auto;padding:48px;background:#0A0A0A;position:relative;z-index:1">
+        <div class="grid grid-cols-1 lg:grid-cols-3" style="gap:32px 64px">
             <div class="lg:col-span-2 space-y-12">
                 <div class="flex">
                     <button id="btn-regenerate-full"
-                        class="bg-white border border-border-light shadow-premium rounded-full py-3.5 px-8 flex items-center gap-3 font-bold text-sm text-text-main hover:shadow-card-hover transition-all group">
-                        <span
-                            class="material-icons-round text-primary group-hover:rotate-180 transition-transform duration-500">refresh</span>
+                        class="btn-glass py-3 px-8 flex items-center gap-3 text-sm" style="border-radius:9999px">
+                        <span class="material-icons-round group-hover:rotate-180 transition-transform duration-500" style="font-size:20px;transition:transform 0.5s">refresh</span>
                         Regenerate Full Itinerary
                     </button>
                 </div>
                 <div class="space-y-24" id="plan-itinerary-days">
-                    <div class="flex flex-col items-center justify-center py-32 text-center opacity-70">
-                        <span class="material-icons-round text-primary text-5xl mb-6 animate-spin">sync</span>
-                        <h3 class="text-xl font-bold text-text-main mb-2">Loading Itinerary...</h3>
+                    <div class="flex flex-col items-center justify-center py-32 text-center" style="opacity:0.7">
+                        <span class="material-icons-round animate-spin" style="font-size:48px;color:#FFFFFF;margin-bottom:24px">sync</span>
+                        <h3 style="font-size:1.25rem;font-weight:700;color:#FFFFFF;margin-bottom:8px">Loading Itinerary...</h3>
                     </div>
                 </div>
             </div>
+
             <aside class="lg:col-span-1 space-y-8">
-                <div class="sticky top-28 space-y-8">
-                    <div class="bg-white rounded-3xl border border-border-light shadow-premium overflow-hidden group">
-                        <div class="p-6 border-b border-border-light flex items-center justify-between">
-                            <h3 class="text-xs font-bold text-text-muted uppercase tracking-[0.2em]">Route Overview</h3>
+                <div class="sticky space-y-8" style="top:112px">
+                    <!-- Route Map -->
+                    <div class="glass-card overflow-hidden group">
+                        <div style="padding:24px;border-bottom: 1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between">
+                            <h3 style="font-size:11px;font-weight:700;color:#FFFFFF;text-transform:uppercase;letter-spacing:0.2em">Route Overview</h3>
                             <div class="flex items-center gap-4">
-                                <button id="optimize-route-btn" class="text-[10px] font-bold text-primary px-3 py-1 bg-primary/10 rounded-full hover:bg-primary hover:text-white transition-all flex items-center gap-1">
-                                    <span class="material-icons-round text-[12px]">auto_fix_high</span>
+                                <button id="optimize-route-btn" style="font-size:10px;font-weight:700;color:#FFFFFF;padding:4px 12px;background:#0A0A0A;border-radius:9999px;display:flex;align-items:center;gap:4px;cursor:pointer;border: 1px solid rgba(255,255,255,0.06);transition:all 0.25s">
+                                    <span class="material-icons-round" style="font-size:12px">auto_fix_high</span>
                                     OPTIMIZE
                                 </button>
-                                <span class="text-[10px] font-bold text-primary flex items-center gap-1"><span
-                                        class="w-2 h-2 bg-primary rounded-full animate-ping"></span> LIVE ROUTE</span>
+                                <span style="font-size:10px;font-weight:700;color:#FFFFFF;display:flex;align-items:center;gap:4px">
+                                    <span style="width:6px;height:6px;background:#0A0A0A;border-radius:50%;animation:pulse 2s infinite"></span>
+                                    LIVE ROUTE
+                                </span>
                             </div>
                         </div>
-                        <div class="aspect-square min-h-[400px] w-full relative bg-slate-50 overflow-hidden">
+                        <div style="aspect-ratio:1/1;min-height:400px;width:100%;position:relative;background:#0A0A0A;overflow:hidden">
                             <div id="route-map" class="absolute inset-0 z-10 w-full h-full"></div>
                         </div>
-                        <div class="p-4 bg-white/80 backdrop-blur-md flex justify-between items-center group">
-                            <div class="flex flex-col">
-                                <span class="text-[10px] font-bold text-text-muted uppercase tracking-widest">Route Path</span>
-                                <span class="text-[10px] font-bold text-primary flex items-center gap-1 mt-1">
-                                    <span class="material-icons-round text-[12px]">route</span>
+                        <div style="padding:16px;background:#0A0A0A;display:flex;justify-content:space-between;align-items:center">
+                            <div>
+                                <span style="font-size:10px;font-weight:700;color:#FFFFFF;text-transform:uppercase;letter-spacing:0.1em">Route Path</span>
+                                <span style="font-size:10px;font-weight:700;color:#FFFFFF;display:flex;align-items:center;gap:4px;margin-top:4px">
+                                    <span class="material-icons-round" style="font-size:12px">route</span>
                                     <span id="total-distance">-</span> km total
                                 </span>
                             </div>
-                            <span id="destinations-count-label" class="text-[10px] font-bold text-text-muted uppercase tracking-widest">- Destinations</span>
+                            <span id="destinations-count-label" style="font-size:10px;font-weight:700;color:#FFFFFF;text-transform:uppercase;letter-spacing:0.1em">- Destinations</span>
                         </div>
                     </div>
-                    <div class="bg-white rounded-3xl p-8 border border-border-light shadow-premium" id="weather-card">
-                        <h3 class="text-xs font-bold text-text-muted uppercase tracking-[0.2em] mb-8" id="weather-title">Destination Weather</h3>
-                        <div class="flex items-center justify-between mb-8">
+
+                    <!-- Weather -->
+                    <div class="glass-card" style="padding:32px" id="weather-card">
+                        <h3 style="font-size:11px;font-weight:700;color:#FFFFFF;text-transform:uppercase;letter-spacing:0.2em;margin-bottom:32px" id="weather-title">Destination Weather</h3>
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px">
                             <div class="flex items-center gap-4">
-                                <div
-                                    class="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-500">
-                                    <span class="material-icons-round text-3xl">wb_sunny</span>
+                                <div style="width:56px;height:56px;border-radius:16px;background:#0A0A0A;display:flex;align-items:center;justify-content:center">
+                                    <span class="material-icons-round" style="font-size:28px;color:#FFFFFF">wb_sunny</span>
                                 </div>
                                 <div>
-                                    <p class="text-2xl font-extrabold" id="weather-current-temp">30°C</p>
-                                    <p class="text-xs text-text-muted font-bold" id="weather-current-condition">Mainly Sunny</p>
+                                    <p style="font-size:1.5rem;font-weight:800" id="weather-current-temp">30°C</p>
+                                    <p style="font-size:12px;color:#FFFFFF;font-weight:600" id="weather-current-condition">Mainly Sunny</p>
                                 </div>
                             </div>
-                            <div class="text-right">
-                                <p class="text-xs font-bold text-text-muted uppercase">humidity</p>
-                                <p class="text-sm font-bold" id="weather-current-humidity">72%</p>
+                            <div style="text-align:right">
+                                <p style="font-size:11px;font-weight:700;color:#FFFFFF;text-transform:uppercase">humidity</p>
+                                <p style="font-size:14px;font-weight:700" id="weather-current-humidity">72%</p>
                             </div>
                         </div>
                         <div class="grid grid-cols-7 gap-1" id="weather-mini-forecast">
-                            <div class="text-center py-2 rounded-xl bg-border-light/50">
-                                <p class="text-[9px] font-bold text-text-muted mb-1">M</p>
-                                <span class="material-icons-round text-[14px] text-amber-500">wb_sunny</span>
+                            <div class="text-center" style="padding:8px;border-radius:12px;background:#0A0A0A">
+                                <p style="font-size:9px;font-weight:700;color:#FFFFFF;margin-bottom:4px">M</p>
+                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">wb_sunny</span>
                             </div>
-                            <div class="text-center py-2">
-                                <p class="text-[9px] font-bold text-text-muted mb-1">T</p>
-                                <span class="material-icons-round text-[14px] text-amber-500">wb_sunny</span>
+                            <div class="text-center" style="padding:8px">
+                                <p style="font-size:9px;font-weight:700;color:#FFFFFF;margin-bottom:4px">T</p>
+                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">wb_sunny</span>
                             </div>
-                            <div class="text-center py-2">
-                                <p class="text-[9px] font-bold text-text-muted mb-1">W</p>
-                                <span class="material-icons-round text-[14px] text-text-muted">cloud</span>
+                            <div class="text-center" style="padding:8px">
+                                <p style="font-size:9px;font-weight:700;color:#FFFFFF;margin-bottom:4px">W</p>
+                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">cloud</span>
                             </div>
-                            <div class="text-center py-2">
-                                <p class="text-[9px] font-bold text-text-muted mb-1">T</p>
-                                <span class="material-icons-round text-[14px] text-amber-500">wb_sunny</span>
+                            <div class="text-center" style="padding:8px">
+                                <p style="font-size:9px;font-weight:700;color:#FFFFFF;margin-bottom:4px">T</p>
+                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">wb_sunny</span>
                             </div>
-                            <div class="text-center py-2">
-                                <p class="text-[9px] font-bold text-text-muted mb-1">F</p>
-                                <span class="material-icons-round text-[14px] text-amber-500">wb_sunny</span>
+                            <div class="text-center" style="padding:8px">
+                                <p style="font-size:9px;font-weight:700;color:#FFFFFF;margin-bottom:4px">F</p>
+                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">wb_sunny</span>
                             </div>
-                            <div class="text-center py-2">
-                                <p class="text-[9px] font-bold text-text-muted mb-1">S</p>
-                                <span class="material-icons-round text-[14px] text-primary">water_drop</span>
+                            <div class="text-center" style="padding:8px">
+                                <p style="font-size:9px;font-weight:700;color:#FFFFFF;margin-bottom:4px">S</p>
+                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">water_drop</span>
                             </div>
-                            <div class="text-center py-2">
-                                <p class="text-[9px] font-bold text-text-muted mb-1">S</p>
-                                <span class="material-icons-round text-[14px] text-amber-500">wb_sunny</span>
+                            <div class="text-center" style="padding:8px">
+                                <p style="font-size:9px;font-weight:700;color:#FFFFFF;margin-bottom:4px">S</p>
+                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">wb_sunny</span>
                             </div>
                         </div>
                     </div>
-                    <div class="plan-chat-shell rounded-3xl border border-border-light shadow-premium overflow-hidden">
-                        <div class="plan-chat-header p-6 border-b border-border-light flex items-center justify-between">
+
+                    <!-- AI Chat -->
+                    <div class="plan-chat-shell overflow-hidden">
+                        <div class="plan-chat-header" style="padding:24px;border-bottom: 1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-primary">
-                                    <span class="material-symbols-outlined text-[20px]">smart_toy</span>
+                                <div style="width:40px;height:40px;border-radius:12px;background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center">
+                                    <span class="material-symbols-outlined" style="font-size:20px;color:#FFFFFF">smart_toy</span>
                                 </div>
                                 <div>
-                                    <p class="text-sm font-bold">Skupheon AI</p>
-                                    <p class="text-[10px] text-green-500 font-bold uppercase tracking-wider">Online</p>
+                                    <p style="font-size:14px;font-weight:700">Skupheon AI</p>
+                                    <p style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#FFFFFF">Online</p>
                                 </div>
                             </div>
-                            <button
-                                class="w-8 h-8 rounded-full hover:bg-white/70 flex items-center justify-center transition-colors">
-                                <span class="material-icons-round text-sm">more_horiz</span>
+                            <button style="width:32px;height:32px;border-radius:50%;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;transition:background 0.2s">
+                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">more_horiz</span>
                             </button>
                         </div>
-                        <div id="plan-chat-messages" class="h-64 p-6 space-y-4 overflow-y-auto bg-white/60">
+                        <div id="plan-chat-messages" style="height:256px;padding:24px;display:flex;flex-direction:column;gap:16px;overflow-y:auto;background:#0A0A0A">
                             <div class="plan-chat-bubble ai">
-                                <p id="trip-chat-default-assistant" class="text-xs text-text-main leading-relaxed">Hi! I have optimized your trip. Ask me to refine activities, timing, routes, or weather-based changes.</p>
+                                <p id="trip-chat-default-assistant" style="font-size:12px;line-height:1.6;color:#FFFFFF">Hi! I have optimized your trip. Ask me to refine activities, timing, routes, or weather-based changes.</p>
                             </div>
                             <div class="plan-chat-bubble user">
-                                <p id="trip-chat-default-user" class="text-xs leading-relaxed">Suggest the best evening plan for this destination.</p>
+                                <p id="trip-chat-default-user" style="font-size:12px;line-height:1.6">Suggest the best evening plan for this destination.</p>
                             </div>
                         </div>
-                        <div class="p-4 bg-white/80 backdrop-blur-sm border-t border-border-light">
+                        <div style="padding:16px;background:#0A0A0A;border-top: 1px solid rgba(255,255,255,0.06)">
                             <div class="relative">
-                                <input
-                                    class="plan-chat-input"
-                                    placeholder="Ask AI anything..." type="text" />
+                                <input class="plan-chat-input" placeholder="Ask AI anything..." type="text" />
                                 <button class="plan-chat-send-btn">
-                                    <span class="material-icons-round text-[12px] leading-none">arrow_upward</span>
+                                    <span class="material-icons-round" style="font-size:12px">arrow_upward</span>
                                 </button>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Save Actions -->
                     <div class="grid grid-cols-1 gap-4">
                         <button id="save-itinerary-btn"
-                            class="w-full py-5 bg-primary text-white font-bold rounded-2xl shadow-xl shadow-primary/20 flex items-center justify-center gap-3 transition-all hover:scale-[1.02] active:scale-[0.98]">
-                            <span class="material-icons-round text-lg" id="save-icon">bookmark</span>
+                            class="btn-primary w-full py-5 rounded-2xl flex items-center justify-center gap-3 font-bold" style="box-shadow:0 10px 40px #0A0A0A">
+                            <span class="material-icons-round" style="font-size:20px" id="save-icon">bookmark</span>
                             <span id="save-text">Save Itinerary</span>
                         </button>
                         <div class="grid grid-cols-2 gap-4">
                             <button id="btn-save-plan-pdf"
-                                class="py-4 border border-border-light bg-white rounded-2xl font-bold text-xs flex items-center justify-center gap-2 hover:bg-border-light transition-colors">
-                                <span class="material-icons-round text-base text-text-muted">picture_as_pdf</span>
+                                class="btn-glass py-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2" style="border-radius:16px">
+                                <span class="material-icons-round" style="font-size:18px;color:#FFFFFF">picture_as_pdf</span>
                                 Save PDF
                             </button>
                             <button onclick="navigator.clipboard.writeText(window.location.href); alert('Link copied to clipboard!')"
-                                class="py-4 border border-border-light bg-white rounded-2xl font-bold text-xs flex items-center justify-center gap-2 hover:bg-border-light transition-colors">
-                                <span class="material-icons-round text-base text-text-muted">ios_share</span>
+                                class="btn-glass py-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2" style="border-radius:16px">
+                                <span class="material-icons-round" style="font-size:18px;color:#FFFFFF">ios_share</span>
                                 Share
                             </button>
                         </div>
                     </div>
-                    <div class="bg-white rounded-3xl p-8 border border-border-light shadow-premium space-y-8">
-                        <div class="flex justify-between items-center">
-                            <h3 class="text-xs font-bold text-text-muted uppercase tracking-[0.2em]">Trip Budget</h3>
-                            <span
-                                class="px-3 py-1 bg-primary/5 text-primary text-[10px] font-bold rounded-lg uppercase tracking-wider">Estimated</span>
+
+                    <!-- Budget -->
+                    <div class="glass-card" style="padding:32px">
+                        <div class="flex justify-between items-center" style="margin-bottom:32px">
+                            <h3 style="font-size:11px;font-weight:700;color:#FFFFFF;text-transform:uppercase;letter-spacing:0.2em">Trip Budget</h3>
+                            <span style="padding:4px 12px;background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);font-size:10px;font-weight:700;border-radius:8px;text-transform:uppercase;letter-spacing:0.1em;color:#FFFFFF">Estimated</span>
                         </div>
-                        <div class="space-y-6">
+                        <div style="display:flex;flex-direction:column;gap:24px">
                             <div class="flex items-center justify-between">
-                                <span class="text-sm font-medium text-text-muted">Adults</span>
+                                <span style="font-size:14px;font-weight:500;color:#FFFFFF">Adults</span>
                                 <div class="flex items-center gap-4">
                                     <button id="trip-budget-adults-minus"
-                                        class="w-8 h-8 rounded-full border border-border-light flex items-center justify-center text-text-muted hover:bg-border-light transition-colors">-</button>
-                                    <span class="font-bold" id="trip-budget-adults-count">2</span>
+                                        class="btn-glass" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;font-size:14px">-</button>
+                                    <span style="font-weight:700" id="trip-budget-adults-count">2</span>
                                     <button id="trip-budget-adults-plus"
-                                        class="w-8 h-8 rounded-full border border-border-light flex items-center justify-center text-text-muted hover:bg-border-light transition-colors">+</button>
+                                        class="btn-glass" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;font-size:14px">+</button>
                                 </div>
                             </div>
                             <div class="flex items-center justify-between">
-                                <span class="text-sm font-medium text-text-muted">Children</span>
+                                <span style="font-size:14px;font-weight:500;color:#FFFFFF">Children</span>
                                 <div class="flex items-center gap-4">
                                     <button id="trip-budget-children-minus"
-                                        class="w-8 h-8 rounded-full border border-border-light flex items-center justify-center text-text-muted hover:bg-border-light transition-colors">-</button>
-                                    <span class="font-bold" id="trip-budget-children-count">0</span>
+                                        class="btn-glass" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;font-size:14px">-</button>
+                                    <span style="font-weight:700" id="trip-budget-children-count">0</span>
                                     <button id="trip-budget-children-plus"
-                                        class="w-8 h-8 rounded-full border border-border-light flex items-center justify-center text-text-muted hover:bg-border-light transition-colors">+</button>
+                                        class="btn-glass" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;font-size:14px">+</button>
                                 </div>
                             </div>
-                            <div class="pt-6 border-t border-border-light space-y-3">
-                                <div
-                                    class="flex justify-between text-xs font-bold text-text-muted uppercase tracking-wider">
+                            <div style="padding-top:24px;border-top: 1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;gap:12px">
+                                <div class="flex justify-between" style="font-size:11px;font-weight:700;color:#FFFFFF;text-transform:uppercase;letter-spacing:0.1em">
                                     <span>Activities</span>
                                     <span id="preview-activities">₹0</span>
                                 </div>
-                                <div
-                                    class="flex justify-between text-xs font-bold text-text-muted uppercase tracking-wider">
+                                <div class="flex justify-between" style="font-size:11px;font-weight:700;color:#FFFFFF;text-transform:uppercase;letter-spacing:0.1em">
                                     <span>Stay & Food</span>
                                     <span id="preview-stay-food">₹0</span>
                                 </div>
-                                <div class="pt-3 border-t border-border-light flex justify-between items-end">
-                                    <span class="text-xs text-text-muted font-bold uppercase tracking-wider">Total
-                                        Est.</span>
-                                    <span class="text-3xl font-extrabold text-text-main" id="preview-total">₹0</span>
+                                <div style="padding-top:12px;border-top: 1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between;align-items:flex-end">
+                                    <span style="font-size:11px;color:#FFFFFF;font-weight:700;text-transform:uppercase;letter-spacing:0.1em">Total Est.</span>
+                                    <span style="font-size:1.8rem;font-weight:900;color:#FFFFFF" id="preview-total">₹0</span>
                                 </div>
                             </div>
                         </div>
@@ -394,8 +450,8 @@
             </aside>
         </div>
     </main>
-    {% include 'components/footer.html' %}
 
+    {% include 'components/footer.html' %}
 
     <script>
         function goBackOrPlan() {
@@ -502,8 +558,7 @@
                     const data = JSON.parse(dataStr);
                     sessionStorage.setItem('ai_trip_data', JSON.stringify(data));
 
-                    // Update Hero Title & Description
-                    const heroTitle = document.querySelector('h1.text-7xl');
+                    const heroTitle = document.querySelector('h1.text-7xl') || document.getElementById('hero-title-dynamic');
                     if (heroTitle && data.duration && data.destination) {
                         heroTitle.innerHTML = `${data.duration} Immersive Journey <br />through ${data.destination}`;
                     }
@@ -511,14 +566,14 @@
                         currentDestinationName = data.destination;
                     }
 
-                    const heroSubtitle = document.querySelector('p.text-xl.max-w-2xl');
+                    const heroSubtitle = document.querySelector('p.text-xl.max-w-2xl') || document.getElementById('hero-desc-dynamic');
                     if (heroSubtitle && data.tagline) {
                         heroSubtitle.innerText = data.tagline;
                     }
-                    
+
                     const heroImg = document.getElementById('hero-image-dynamic');
                     const defaultImage = "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2000&auto=format&fit=crop";
-                    
+
                     const pill = document.getElementById('hero-pill-dynamic');
                     if (pill && data.destination) {
                         pill.innerText = data.destination;
@@ -538,7 +593,6 @@
                     }
 
                     if (heroImg && data.destination) {
-                        // Pre-set a fallback/standard image first
                         const imageToLoad = data.hero_image || data.image_url || defaultImage;
                         heroImg.src = imageToLoad;
 
@@ -547,10 +601,18 @@
                                 this.src = defaultImage;
                             }
                         };
-                        
-                        // Force a fetch for a high-quality relevant hero image
+
                         fetch('/api/destination-hero?name=' + encodeURIComponent(data.destination))
-                            .then(res => res.json())
+                            .then(res => {
+                                if (!res.ok) {
+                                    if (res.status === 401 || res.status === 403) {
+                                        window.location.href = '/login';
+                                        return;
+                                    }
+                                    throw new Error(`Server error (${res.status})`);
+                                }
+                                return res.json();
+                            })
                             .then(heroData => {
                                 if (heroData && heroData.url) {
                                     if (!heroData.url.includes('1469854523086')) {
@@ -558,11 +620,10 @@
                                     }
                                 }
                             }).catch(e => console.error('Hero fetch failed:', e));
-                            
+
                         loadDestinationWeather(data.destination);
                     }
 
-                    // Update Title tag
                     if (data.destination) {
                         document.title = `${data.duration} ${data.destination} Itinerary - RoutheonSkups`;
                     }
@@ -570,7 +631,6 @@
                     budgetPartyChildren = Math.max(0, safeNumber(data.children, 0));
                     budgetLevel = data.budget || 'Comfort';
 
-                    // Populate Days
                     const daysContainer = document.querySelector('.space-y-24');
                     if (daysContainer && data.itinerary && Array.isArray(data.itinerary)) {
 
@@ -583,29 +643,28 @@
                             if (day.activities && Array.isArray(day.activities)) {
                                 day.activities.forEach((act, actIndex) => {
                                     totalDestinations++;
-                                    // Use the real image URL from backend, with fallback
                                     const imgUrl = act.image_url || "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=1000&auto=format&fit=crop";
                                     const activityKey = `${dayNumber}-${actIndex}`;
 
                                     activitiesHtml += `
-                                    <div class="bg-white rounded-3xl p-3 border border-border-light shadow-premium hover:shadow-card-hover transition-all group itinerary-activity-card" data-activity-key="${activityKey}" id="activity-card-${activityKey}">
-                                        <div class="aspect-[16/10] rounded-[1.5rem] overflow-hidden mb-6 relative">
+                                    <div class="glass-card p-3 group itinerary-activity-card" data-activity-key="${activityKey}" id="activity-card-${activityKey}">
+                                        <div style="aspect-ratio:16/10;border-radius:1.5rem;overflow:hidden;margin-bottom:24px;position:relative">
                                             <img alt="${act.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="${imgUrl}" />
-                                            <div class="absolute top-3 right-3 w-8 h-8 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-primary shadow-sm group-hover:bg-primary group-hover:text-white transition-colors">
-                                                <span class="material-icons-round text-sm">${act.icon || 'explore'}</span>
+                                            <div style="position:absolute;top:12px;right:12px;width:32px;height:32px;background:#0A0A0A;border-radius:50%;display:flex;align-items:center;justify-content:center;border: 1px solid rgba(255,255,255,0.06);transition:all 0.3s" class="group-hover:bg-white/10">
+                                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">${act.icon || 'explore'}</span>
                                             </div>
                                         </div>
-                                        <div class="px-5 pb-6">
-                                            <div class="flex items-center gap-2 mb-3">
-                                                <span class="material-symbols-outlined text-primary text-sm">schedule</span>
-                                                <span class="text-xs font-bold text-text-muted">Time: ${act.time}</span>
+                                        <div style="padding:0 20px 24px">
+                                            <div class="flex items-center gap-2" style="margin-bottom:12px">
+                                                <span class="material-symbols-outlined" style="font-size:14px;color:#FFFFFF">schedule</span>
+                                                <span style="font-size:12px;font-weight:700;color:#FFFFFF">Time: ${act.time}</span>
                                             </div>
-                                            <h3 class="text-xl font-bold mb-2 group-hover:text-primary transition-colors">${act.name}</h3>
-                                            <p class="text-sm text-text-muted leading-relaxed mb-4">${act.description}</p>
+                                            <h3 style="font-size:1.25rem;font-weight:800;margin-bottom:8px;color:#FFFFFF" class="group-hover:text-white transition-colors">${act.name}</h3>
+                                            <p style="font-size:14px;color:#FFFFFF;line-height:1.6;margin-bottom:16px">${act.description}</p>
                                             ${(act.estimated_cost_inr || act.estimated_cost_usd) ? `
-                                            <div class="flex items-center gap-2 pt-4 border-t border-border-light">
-                                                <span class="material-symbols-outlined text-text-muted text-xs">payments</span>
-                                                <span class="text-[10px] font-bold text-text-muted uppercase">EST. COST: 
+                                            <div class="flex items-center gap-2" style="padding-top:16px;border-top: 1px solid rgba(255,255,255,0.06)">
+                                                <span class="material-symbols-outlined" style="font-size:12px;color:#FFFFFF">payments</span>
+                                                <span style="font-size:10px;font-weight:700;color:#FFFFFF;text-transform:uppercase">EST. COST:
                                                     ${act.estimated_cost_inr ? '₹' + act.estimated_cost_inr : '$' + act.estimated_cost_usd}
                                                 </span>
                                             </div>
@@ -616,13 +675,11 @@
                                 });
                             }
 
-
-
                             html += `
                             <section class="space-y-10">
                                 <div class="flex items-center gap-6">
-                                    <h2 class="text-3xl font-extrabold text-text-main shrink-0">Day ${dayNumber}: ${day.theme}</h2>
-                                    <div class="h-px w-full bg-border-light"></div>
+                                    <h2 style="font-size:1.75rem;font-weight:900;color:#FFFFFF;white-space:nowrap">Day ${dayNumber}: ${day.theme}</h2>
+                                    <div style="height:1px;flex:1;background:#0A0A0A"></div>
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                                     ${activitiesHtml}
@@ -633,7 +690,6 @@
 
                         daysContainer.innerHTML = html;
 
-                        // NEW: Update Budget Breakdown in Preview
                         let actTotal = 0;
                         let hasInr = false;
                         data.itinerary.forEach(day => {
@@ -648,7 +704,6 @@
                         latestHasInr = hasInr;
                         refreshBudgetPreview(data.itinerary.length);
 
-                        // Initialize the Map
                         initRouteMap(data);
                     }
                 } catch (e) {
@@ -667,7 +722,7 @@
                 }
             });
 
-                        function getWeatherDayLabel(dayItem) {
+            function getWeatherDayLabel(dayItem) {
                 if (dayItem?.date_label && String(dayItem.date_label).trim()) {
                     return String(dayItem.date_label).trim().slice(0, 3).toUpperCase();
                 }
@@ -701,11 +756,11 @@
 
                     if (miniEl) {
                         miniEl.innerHTML = data.forecast.forecastday.slice(0, 7).map((d, i) => `
-                            <div class="text-center py-2 px-1 ${i === 0 ? 'rounded-xl bg-border-light/50' : ''}">
-                                <p class="text-[9px] font-bold text-text-muted mb-1">${getWeatherDayLabel(d)}</p>
-                                <img src="${d.day.condition.icon}" alt="${d.day.condition.text || 'weather'}" class="w-[14px] h-[14px] mx-auto mb-1" />
-                                <p class="text-[10px] font-extrabold text-text-main leading-none">${d.day.avgtemp_c}°</p>
-                                <p class="text-[8px] text-text-muted leading-tight mt-1">${d.day.condition.text || ''}</p>
+                            <div class="text-center" style="padding:8px 4px;${i === 0 ? 'border-radius:12px;background:#0A0A0A' : ''}">
+                                <p style="font-size:9px;font-weight:700;color:#FFFFFF;margin-bottom:4px">${getWeatherDayLabel(d)}</p>
+                                <img src="${d.day.condition.icon}" alt="${d.day.condition.text || 'weather'}" style="width:14px;height:14px;margin:0 auto 4px;display:block" />
+                                <p style="font-size:10px;font-weight:800;color:#FFFFFF;line-height:1">${d.day.avgtemp_c}°</p>
+                                <p style="font-size:8px;color:#FFFFFF;line-height:1.3;margin-top:4px">${d.day.condition.text || ''}</p>
                             </div>
                         `).join('');
                     }
@@ -714,7 +769,7 @@
                 }
             }
             function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
-                const R = 6371; // Earth's radius in km
+                const R = 6371;
                 const dLat = (lat2 - lat1) * Math.PI / 180;
                 const dLon = (lon2 - lon1) * Math.PI / 180;
                 const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -727,7 +782,6 @@
             function optimizeRouteDijkstra(data) {
                 if (!data.itinerary || data.itinerary.length === 0) return data;
 
-                // Flatten all activities into a single list
                 let allActivities = [];
                 data.itinerary.forEach(day => {
                     if (day.activities) {
@@ -742,12 +796,9 @@
 
                 if (allActivities.length <= 1) return data;
 
-
-                // Dijkstra-style (Greedy Nearest Neighbor) optimization
                 let optimized = [];
                 let unvisited = [...allActivities];
-                
-                // Start with the first original activity
+
                 let current = unvisited.shift();
                 optimized.push(current);
 
@@ -770,7 +821,6 @@
                     optimized.push(current);
                 }
 
-                // Distribute optimized activities back into days
                 let actsPerDay = Math.ceil(optimized.length / data.itinerary.length);
                 data.itinerary.forEach((day, i) => {
                     day.activities = optimized.slice(i * actsPerDay, (i + 1) * actsPerDay);
@@ -797,15 +847,15 @@
                 const imageUrl = item.image_url || (Array.isArray(item.images) && item.images[0]) || 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=900&q=80';
 
                 return `
-                    <div style="width:260px;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 12px 28px rgba(15,23,42,0.18);font-family:Plus Jakarta Sans,system-ui,sans-serif;">
-                        <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(placeName)}" style="width:100%;height:120px;object-fit:cover;" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=900&q=80';" />
-                        <div style="padding:10px 12px;">
-                            <h4 style="margin:0 0 2px 0;font-size:15px;font-weight:800;color:#0f172a;">${escapeHtml(placeName)}</h4>
-                            <p style="margin:0 0 8px 0;font-size:11px;font-weight:700;color:#2563eb;">Category: ${escapeHtml(category)}</p>
-                            <p style="margin:0 0 9px 0;font-size:11px;line-height:1.45;color:#475569;">${escapeHtml(description)}</p>
-                            <div style="display:flex;justify-content:space-between;gap:8px;">
-                                <div style="font-size:10px;color:#334155;"><span style="font-weight:700;">Best time:</span> ${escapeHtml(bestTime)}</div>
-                                <div style="font-size:10px;color:#334155;text-align:right;"><span style="font-weight:700;">⏱</span> ${escapeHtml(duration)}</div>
+                    <div style="width:260px;border-radius:14px;overflow:hidden;background:#0A0A0A;box-shadow:0 12px 28px #0A0A0A;font-family:Inter,system-ui,sans-serif">
+                        <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(placeName)}" style="width:100%;height:120px;object-fit:cover" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=900&q=80'" />
+                        <div style="padding:10px 12px">
+                            <h4 style="margin:0 0 2px 0;font-size:15px;font-weight:800;color:#FFFFFF">${escapeHtml(placeName)}</h4>
+                            <p style="margin:0 0 8px 0;font-size:11px;font-weight:700;color:#888888">Category: ${escapeHtml(category)}</p>
+                            <p style="margin:0 0 9px 0;font-size:11px;line-height:1.45;color:#BBBBBB">${escapeHtml(description)}</p>
+                            <div style="display:flex;justify-content:space-between;gap:8px">
+                                <div style="font-size:10px;color:#BBBBBB"><span style="font-weight:700">Best time:</span> ${escapeHtml(bestTime)}</div>
+                                <div style="font-size:10px;color:#BBBBBB;text-align:right"><span style="font-weight:700">⏱</span> ${escapeHtml(duration)}</div>
                             </div>
                         </div>
                     </div>
@@ -834,9 +884,9 @@
                 const card = document.querySelector(selector);
                 if (!card) return;
                 card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                card.classList.add('ring-2', 'ring-primary', 'ring-offset-2');
+                card.style.boxShadow = '0 0 0 2px #0A0A0A';
                 setTimeout(() => {
-                    card.classList.remove('ring-2', 'ring-primary', 'ring-offset-2');
+                    card.style.boxShadow = '';
                 }, 1800);
             }
 
@@ -862,7 +912,6 @@
                     };
                 }
 
-                // Fallback so every activity is always visible on map
                 const radius = 0.003 + (index * 0.0008);
                 const angle = index * 1.45;
                 const fallback = [
@@ -875,11 +924,10 @@
                 };
             }
 
-            // Helper: add route between waypoints using Leaflet Routing Machine
             function addRoute(map, waypoints, color) {
                 if (!waypoints || waypoints.length < 2) return;
                 if (typeof L.Routing === 'undefined') {
-                    L.polyline(waypoints, { color: color || '#3B82F6', weight: 4, opacity: 0.6, dashArray: '10, 10' }).addTo(map);
+                    L.polyline(waypoints, { color: color || '#FFFFFF', weight: 4, opacity: 0.3, dashArray: '10, 10' }).addTo(map);
                     return;
                 }
                 try {
@@ -892,7 +940,7 @@
                         show: false,
                         createMarker: () => null,
                         lineOptions: {
-                            styles: [{ color: color || '#3B82F6', weight: 5, opacity: 0.7 }]
+                            styles: [{ color: color || '#FFFFFF', weight: 5, opacity: 0.4 }]
                         },
                         router: L.Routing.osrmv1({
                             serviceUrl: 'https://router.project-osrm.org/route/v1'
@@ -904,7 +952,7 @@
                     });
                 } catch(e) {
                     console.warn('Routing failed, falling back to polyline:', e);
-                    L.polyline(waypoints, { color: color || '#3B82F6', weight: 4, opacity: 0.6, dashArray: '10, 10' }).addTo(map);
+                    L.polyline(waypoints, { color: color || '#FFFFFF', weight: 4, opacity: 0.3, dashArray: '10, 10' }).addTo(map);
                 }
             }
 
@@ -914,7 +962,6 @@
                 const mapElement = document.getElementById('route-map');
                 if (!mapElement) return;
 
-                // Clear existing map if any
                 if (routeMapInstance) {
                     routeMapInstance.remove();
                 }
@@ -930,18 +977,16 @@
                         scrollWheelZoom: false
                     }).setView(center, 12);
 
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        attribution: '&copy; OpenStreetMap'
+                    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                        attribution: '&copy; OpenStreetMap &copy; CARTO'
                     }).addTo(routeMapInstance);
 
-                    // Force a small delay to ensure the container is fully rendered
                     setTimeout(() => {
                         routeMapInstance.invalidateSize();
                     }, 100);
 
                     routeMarkers = [];
                     const routeCoords = [];
-                    const dayColors = ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EF4444', '#06B6D4', '#84CC16'];
                     let totalDestinations = 0;
                     let totalDistance = 0;
 
@@ -959,8 +1004,7 @@
                                     const latLngData = getDisplayLatLngForActivity(act, center, markerIndex, usedCoords);
                                     const latlng = latLngData.display;
                                     const rawLatLng = latLngData.raw;
-                                    
-                                    // Calculate distance from previous point
+
                                     if (routeCoords.length > 0) {
                                         const prev = routeCoords[routeCoords.length - 1];
                                         totalDistance += calculateHaversineDistance(prev[0], prev[1], rawLatLng[0], rawLatLng[1]);
@@ -981,12 +1025,11 @@
                                 });
                             }
                             if (dayCoords.length >= 2) {
-                                addRoute(routeMapInstance, dayCoords, dayColors[dayIdx % dayColors.length]);
+                                addRoute(routeMapInstance, dayCoords, '#FFFFFF');
                             }
                         });
                     }
 
-                    // Update UI Labels
                     const distanceEl = document.getElementById('total-distance');
                     if (distanceEl) distanceEl.innerText = totalDistance.toFixed(1);
 
@@ -994,7 +1037,6 @@
                     if (countEl) countEl.innerText = `${totalDestinations} Destinations`;
 
                     if (routeCoords.length > 0) {
-                        // Ensure map renders correctly after some layout stabilization
                         setTimeout(() => {
                             routeMapInstance.invalidateSize();
                         }, 500);
@@ -1002,7 +1044,7 @@
                         const group = new L.featureGroup(routeMarkers);
                         routeMapInstance.fitBounds(group.getBounds().pad(0.2));
                     }
-                    
+
                     L.control.zoom({ position: 'topright' }).addTo(routeMapInstance);
 
                     mapElement.addEventListener('click', function (ev) {
@@ -1012,8 +1054,7 @@
                             ev.stopPropagation();
                         }
                     });
-                    
-                    // Force refresh size
+
                     setTimeout(() => {
                         routeMapInstance.invalidateSize();
                     }, 500);
@@ -1023,7 +1064,6 @@
                 }
             }
 
-            // Handle Optimize Button
             const optimizeBtn = document.getElementById('optimize-route-btn');
             if (optimizeBtn) {
                 optimizeBtn.addEventListener('click', () => {
@@ -1031,22 +1071,18 @@
                     if (!dataStr) return;
 
                     let data = JSON.parse(dataStr);
-                    
-                    // Show loading state
-                    optimizeBtn.innerHTML = `<span class="material-icons-round text-[12px] animate-spin">sync</span> OPTIMIZING...`;
+
+                    optimizeBtn.innerHTML = `<span class="material-icons-round" style="font-size:12px;animation:spin 1s linear infinite">sync</span> OPTIMIZING...`;
                     optimizeBtn.disabled = true;
 
                     setTimeout(() => {
                         const optimizedData = optimizeRouteDijkstra(data);
                         sessionStorage.setItem('ai_trip_data', JSON.stringify(optimizedData));
-                        
-                        // Re-render UI and Map
-                        location.reload(); // Simplest way to re-render everything
+                        location.reload();
                     }, 800);
                 });
             }
 
-            // Handle Regenerate Full Itinerary
             const regenerateBtn = document.getElementById('btn-regenerate-full');
             if (regenerateBtn) {
                 regenerateBtn.addEventListener('click', async () => {
@@ -1070,9 +1106,10 @@
                     const originalMarkup = regenerateBtn.innerHTML;
                     const icon = regenerateBtn.querySelector('.material-icons-round');
                     regenerateBtn.disabled = true;
-                    regenerateBtn.classList.add('opacity-70', 'cursor-not-allowed');
-                    if (icon) icon.classList.add('animate-spin');
-                    regenerateBtn.innerHTML = '<span class="material-icons-round text-primary animate-spin">refresh</span><span>Regenerating...</span>';
+                    regenerateBtn.style.opacity = '0.7';
+                    regenerateBtn.style.cursor = 'not-allowed';
+                    if (icon) icon.style.animation = 'spin 1s linear infinite';
+                    regenerateBtn.innerHTML = '<span class="material-icons-round" style="animation:spin 1s linear infinite;font-size:20px">refresh</span><span>Regenerating...</span>';
 
                     try {
                         const response = await fetch('/api/ai-plan', {
@@ -1101,12 +1138,12 @@
                         alert(error.message || 'Failed to regenerate itinerary. Please try again.');
                         regenerateBtn.innerHTML = originalMarkup;
                         regenerateBtn.disabled = false;
-                        regenerateBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+                        regenerateBtn.style.opacity = '';
+                        regenerateBtn.style.cursor = '';
                     }
                 });
             }
 
-            // Handle Save Itinerary Button
             const saveBtn = document.getElementById('save-itinerary-btn');
             const savePdfBtn = document.getElementById('btn-save-plan-pdf');
 
@@ -1135,10 +1172,10 @@
                 const coverPage = document.createElement('section');
                 coverPage.className = 'print-cover-page';
                 coverPage.innerHTML = `
-                    <div class="bg-white rounded-3xl p-8 border border-border-light shadow-premium">
-                        <p class="text-xs font-bold text-text-muted uppercase tracking-[0.2em] mb-4">Trip Itinerary</p>
-                        <h1 class="text-4xl font-extrabold text-text-main leading-tight mb-3">${escapeHtml(currentDestinationName)}</h1>
-                        <p class="text-sm text-text-muted font-semibold">Day-wise itinerary plan</p>
+                    <div style="background:#0A0A0A;border-radius:24px;padding:32px;border: 1px solid rgba(255,255,255,0.06)">
+                        <p style="font-size:11px;font-weight:700;color:#FFFFFF;text-transform:uppercase;letter-spacing:0.2em;margin-bottom:16px">Trip Itinerary</p>
+                        <h1 style="font-size:2.5rem;font-weight:900;color:#FFFFFF;line-height:1.2;margin-bottom:12px">${escapeHtml(currentDestinationName)}</h1>
+                        <p style="font-size:14px;color:#FFFFFF;font-weight:600">Day-wise itinerary plan</p>
                     </div>
                 `;
                 printInner.appendChild(coverPage);
@@ -1159,9 +1196,9 @@
                 const totalPage = document.createElement('section');
                 totalPage.className = 'print-total-page';
                 totalPage.innerHTML = `
-                    <div class="bg-white rounded-3xl p-8 border border-border-light shadow-premium">
-                        <p class="text-xs font-bold text-text-muted uppercase tracking-[0.2em] mb-3">Trip Total Amount</p>
-                        <h2 class="text-4xl font-extrabold text-text-main">${escapeHtml(totalAmountEl.textContent || '₹0')}</h2>
+                    <div style="background:#0A0A0A;border-radius:24px;padding:32px;border: 1px solid rgba(255,255,255,0.06)">
+                        <p style="font-size:11px;font-weight:700;color:#FFFFFF;text-transform:uppercase;letter-spacing:0.2em;margin-bottom:12px">Trip Total Amount</p>
+                        <h2 style="font-size:2.5rem;font-weight:900;color:#FFFFFF">${escapeHtml(totalAmountEl.textContent || '₹0')}</h2>
                     </div>
                 `;
                 printInner.appendChild(totalPage);
@@ -1196,7 +1233,7 @@
                 const container = document.getElementById('plan-chat-messages');
                 if (!container) return [];
                 return Array.from(container.children).map((el) => {
-                    const isUser = (el.className || '').includes('bg-primary');
+                    const isUser = (el.className || '').includes('user');
                     const text = (el.textContent || '').trim();
                     return { role: isUser ? 'user' : 'assistant', content: text };
                 }).filter((m) => m.content);
@@ -1214,11 +1251,10 @@
                     const btnText = document.getElementById('save-text');
                     const btnIcon = document.getElementById('save-icon');
 
-                    // UI State
                     saveBtn.disabled = true;
                     btnText.innerText = "Saving Journey...";
                     btnIcon.innerText = "autorenew";
-                    btnIcon.classList.add('animate-spin');
+                    btnIcon.style.animation = 'spin 1s linear infinite';
 
                     try {
                         const response = await fetch('/api/save-itinerary', {
@@ -1242,9 +1278,7 @@
                         if (result.success) {
                             btnText.innerText = "Saved to Trips";
                             btnIcon.innerText = "check_circle";
-                            btnIcon.classList.remove('animate-spin');
-                            saveBtn.classList.remove('bg-primary');
-                            saveBtn.classList.add('bg-green-500', 'shadow-green-500/20');
+                            btnIcon.style.animation = '';
                         } else {
                             throw new Error(result.error);
                         }
@@ -1253,7 +1287,7 @@
                         alert("Failed to save trip. Please try again.");
                         btnText.innerText = "Save Itinerary";
                         btnIcon.innerText = "bookmark";
-                        btnIcon.classList.remove('animate-spin');
+                        btnIcon.style.animation = '';
                         saveBtn.disabled = false;
                     }
                 });
@@ -1261,7 +1295,7 @@
             if (savePdfBtn) {
                 savePdfBtn.addEventListener('click', openPlanItineraryPdfView);
             }
-            // --- Plan Trip AI Chatbot ---
+
             const chatInput = document.querySelector('input[placeholder="Ask AI anything..."]');
             const sendBtn = chatInput.nextElementSibling;
             const chatContainer = document.getElementById('plan-chat-messages');
@@ -1273,7 +1307,7 @@
                 } else {
                     div.className = 'plan-chat-bubble ai';
                 }
-                div.innerHTML = `<p class="text-xs leading-relaxed">${text}</p>`;
+                div.innerHTML = `<p style="font-size:12px;line-height:1.6">${text}</p>`;
                 chatContainer.appendChild(div);
                 chatContainer.scrollTop = chatContainer.scrollHeight;
             }
@@ -1285,12 +1319,12 @@
                 addChatMessage('user', message);
                 chatInput.value = '';
 
-                // Typing indicator
                 const typingId = 'typing-' + Date.now();
                 const typingDiv = document.createElement('div');
                 typingDiv.id = typingId;
-                typingDiv.className = 'plan-chat-bubble ai animate-pulse';
-                typingDiv.innerHTML = `<p class="text-xs leading-relaxed">...</p>`;
+                typingDiv.className = 'plan-chat-bubble ai';
+                typingDiv.style.opacity = '0.5';
+                typingDiv.innerHTML = `<p style="font-size:12px;line-height:1.6">...</p>`;
                 chatContainer.appendChild(typingDiv);
                 chatContainer.scrollTop = chatContainer.scrollHeight;
 
@@ -1329,9 +1363,8 @@
             });
         });
     </script>
+
+    <script src="/static/js/background.js"></script>
 </body>
 
 </html>
-
-
-

@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>RoutheonSkups - Profile Hub</title>
+    <link rel="stylesheet" href="/static/css/tailwind-output.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link href="/static/css/charcoal.css" rel="stylesheet" />
+    <style>
+        body { font-family: 'Inter', -apple-system, sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+        /* === PROFILE LAYOUT === */
+        .pf-layout { display: grid; grid-template-columns: 260px 1fr; gap: 0; min-height: 100vh; padding-top: 5rem; }
+        .pf-sidebar {
+            position: sticky; top: 5rem; align-self: start; height: calc(100vh - 5rem);
+            display: flex; flex-direction: column; background: var(--bg-elevated);
+            border-right: 1px solid var(--border-subtle); padding: 1.5rem 0.75rem;
+            overflow-y: auto; z-index: 10;
+        }
+        .pf-sidebar-header { display: flex; align-items: center; gap: 0.875rem; padding: 0.75rem; margin-bottom: 1.5rem; }
+        .pf-avatar {
+            width: 48px; height: 48px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+            border: 2px solid var(--border-default); display: flex; align-items: center; justify-content: center;
+            font-size: 1.25rem; font-weight: 800; color: var(--text-primary); background: var(--bg-surface);
+        }
+        .pf-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .pf-user-name { font-size: 0.875rem; font-weight: 700; color: var(--text-primary); line-height: 1.3; }
+        .pf-user-email { font-size: 0.6875rem; color: var(--text-muted); line-height: 1.3; margin-top: 2px; }
+
+        .pf-nav { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+        .pf-nav-item {
+            display: flex; align-items: center; gap: 0.75rem; padding: 0.6875rem 0.875rem;
+            border-radius: var(--radius-sm); font-size: 0.8125rem; font-weight: 600;
+            color: var(--text-muted); cursor: pointer; transition: all 0.2s var(--ease-spring);
+            border: 1px solid transparent; background: none; width: 100%; text-align: left; position: relative;
+        }
+        .pf-nav-item:hover { color: var(--text-secondary); background: var(--bg-surface); }
+        .pf-nav-item.active { color: var(--text-primary); background: var(--bg-surface-active); border-color: var(--border-subtle); }
+        .pf-nav-item.active::before {
+            content: ''; position: absolute; left: -0.75rem; top: 50%; transform: translateY(-50%);
+            width: 3px; height: 60%; border-radius: 0 4px 4px 0; background: var(--text-primary);
+        }
+        .pf-nav-icon {
+            width: 32px; height: 32px; border-radius: var(--radius-sm); display: flex; align-items: center;
+            justify-content: center; background: var(--bg-surface); flex-shrink: 0; transition: all 0.2s var(--ease-spring);
+        }
+        .pf-nav-item.active .pf-nav-icon { background: var(--text-primary); color: #000000; }
+        .pf-nav-icon .material-icons-round { font-size: 18px; }
+        .pf-nav-bottom { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border-subtle); }
+        .pf-logout {
+            display: flex; align-items: center; gap: 0.75rem; padding: 0.6875rem 0.875rem;
+            border-radius: var(--radius-sm); font-size: 0.8125rem; font-weight: 600;
+            color: var(--accent-rose); cursor: pointer; transition: all 0.2s var(--ease-spring); text-decoration: none; width: 100%;
+        }
+        .pf-logout:hover { background: var(--accent-rose-soft); }
+
+        .pf-content { padding: 1.5rem 2rem 4rem 2rem; min-width: 0; max-width: 96rem; }
+        .pf-section { display: none; animation: ks-slide-up 0.35s var(--ease-out-expo) both; }
+        .pf-section.active { display: block; }
+
+        /* === COMPONENTS === */
+        .pf-card { background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 2rem; }
+        .pf-card-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.75rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border-subtle); }
+        .pf-card-icon { width: 40px; height: 40px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; background: var(--bg-surface-active); }
+        .pf-card-title { font-size: 1.125rem; font-weight: 700; color: var(--text-primary); }
+
+        .pf-input {
+            width: 100%; height: 48px; padding: 0 1rem; background: var(--bg-base);
+            border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); color: var(--text-primary);
+            font-family: inherit; font-size: 0.875rem; font-weight: 500; outline: none; transition: all 0.25s var(--ease-spring);
+        }
+        .pf-input::placeholder { color: var(--text-faint); font-weight: 400; }
+        .pf-input:focus { border-color: var(--border-focus); background: var(--bg-elevated); box-shadow: 0 0 0 3px rgba(255,255,255,0.04); }
+        .pf-input[readonly] { opacity: 0.6; cursor: not-allowed; }
+        .pf-label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.06em; }
+
+        .pf-btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            height: 44px; padding: 0 1.5rem; border-radius: var(--radius-sm); font-family: inherit;
+            font-size: 0.8125rem; font-weight: 700; cursor: pointer; transition: all 0.25s var(--ease-spring);
+            border: 1px solid var(--border-default); background: var(--bg-surface); color: var(--text-primary); text-decoration: none;
+        }
+        .pf-btn:hover { background: var(--bg-surface-hover); border-color: var(--border-hover); transform: translateY(-1px); }
+        .pf-btn:active { transform: translateY(0) scale(0.98); }
+        .pf-btn-solid { background: var(--text-primary); color: #000000; border-color: transparent; }
+        .pf-btn-solid:hover { background: #E0E0E0; box-shadow: var(--shadow-md); }
+        .pf-btn-danger { color: var(--accent-rose); background: var(--accent-rose-soft); border-color: var(--accent-rose-border); }
+        .pf-btn-danger:hover { background: rgba(251,113,133,0.18); border-color: rgba(251,113,133,0.3); }
+        .pf-btn-sm { height: 36px; padding: 0 1rem; font-size: 0.75rem; }
+
+        .pf-chip {
+            padding: 0.5rem 1.125rem; border-radius: var(--radius-full); font-size: 0.8125rem; font-weight: 600;
+            background: var(--bg-surface); border: 1px solid var(--border-subtle); color: var(--text-muted);
+            cursor: pointer; transition: all 0.2s var(--ease-spring); display: inline-flex; align-items: center; gap: 6px; user-select: none;
+        }
+        .pf-chip:hover { color: var(--text-secondary); border-color: var(--border-hover); }
+        .pf-chip.checked { background: var(--text-primary); color: #000000; border-color: transparent; box-shadow: var(--shadow-sm); }
+
+        .pf-toggle {
+            appearance: none; width: 44px; height: 24px; background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; cursor: pointer;
+            position: relative; flex-shrink: 0; transition: all 0.25s var(--ease-spring);
+        }
+        .pf-toggle::after {
+            content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px;
+            border-radius: 50%; background: rgba(255,255,255,0.5); transition: all 0.25s var(--ease-spring);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        .pf-toggle:checked { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.2); }
+        .pf-toggle:checked::after { transform: translateX(20px); background: #fff; }
+
+        .pf-radio-group { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .pf-radio-pill {
+            display: inline-flex; align-items: center; gap: 8px; padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm); cursor: pointer; transition: all 0.2s var(--ease-spring);
+            background: var(--bg-surface); border: 1px solid var(--border-subtle);
+        }
+        .pf-radio-pill input { display: none; }
+        .pf-radio-pill span { font-size: 0.8125rem; font-weight: 600; }
+        .pf-radio-pill:has(input:checked) { background: var(--text-primary); border-color: transparent; }
+        .pf-radio-pill:has(input:checked) span { color: #000000; }
+        .pf-radio-pill:hover { border-color: var(--border-hover); }
+
+        .pf-stat-row { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+        .pf-stat { flex: 1; padding: 1rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); text-align: center; }
+        .pf-stat-value { font-size: 1.5rem; font-weight: 800; color: var(--text-primary); }
+        .pf-stat-label { font-size: 0.6875rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
+
+        .pf-setting-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 1rem 1.25rem; border-radius: var(--radius-sm); background: var(--bg-surface);
+            border: 1px solid var(--border-subtle); transition: border-color 0.2s;
+        }
+        .pf-setting-row:hover { border-color: var(--border-hover); }
+        .pf-setting-label { font-size: 0.875rem; font-weight: 600; color: var(--text-primary); }
+        .pf-setting-desc { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+
+        .pf-trip-card {
+            background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg);
+            overflow: hidden; transition: all 0.3s var(--ease-spring);
+        }
+        .pf-trip-card:hover { border-color: var(--border-hover); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+        .pf-empty { padding: 3rem; text-align: center; border: 2px dashed var(--border-subtle); border-radius: var(--radius-lg); background: var(--bg-surface); }
+        .pf-badge {
+            display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px;
+            border-radius: var(--radius-full); font-size: 0.6875rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.06em; background: var(--bg-surface);
+            border: 1px solid var(--border-subtle); color: var(--text-muted);
+        }
+
+        /* === MENUS === */
+        .menu-panel { display: none; position: absolute; left: 100%; margin-left: 0.5rem; top: 0; width: 11rem; z-index: 40; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); overflow: hidden; box-shadow: var(--shadow-lg); }
+        .menu-panel.open { display: block; }
+        .menu-action { width: 100%; text-align: left; padding: 0.5rem 0.75rem; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; color: var(--text-primary); background: none; border: none; cursor: pointer; transition: background 0.15s; }
+        .menu-action:hover { background: var(--bg-surface-hover); }
+        .menu-action-danger { color: var(--accent-rose); }
+        .menu-action-danger:hover { background: var(--accent-rose-soft); }
+        .item-menu { position: absolute; right: 0.75rem; top: 0.75rem; z-index: 20; }
+        .menu-trigger { width: 36px; height: 36px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; background: var(--bg-elevated); border: 1px solid var(--border-subtle); color: var(--text-primary); cursor: pointer; transition: all 0.2s; }
+        .menu-trigger:hover { border-color: var(--border-hover); }
+
+        /* === CALENDAR === */
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+        .calendar-day { min-height: 80px; padding: 0.5rem; border-radius: var(--radius-sm); transition: all 0.15s; cursor: pointer; background: var(--bg-surface); border: 1px solid var(--border-subtle); }
+        .calendar-day:hover { border-color: var(--border-focus); }
+        .calendar-day.muted { opacity: 0.35; }
+        .calendar-day.today { box-shadow: 0 0 0 2px var(--text-primary); border-color: var(--text-primary); }
+        .calendar-day.selected { box-shadow: 0 0 0 2px var(--accent-blue); border-color: var(--accent-blue); }
+        .day-number { font-size: 0.8125rem; font-weight: 700; color: var(--text-primary); }
+        .day-number.muted { color: var(--text-faint); }
+        .trip-chip { width: 100%; margin-top: 4px; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; display: flex; align-items: center; gap: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .trip-chip.active { background: var(--accent-emerald-soft); color: var(--accent-emerald); border: 1px solid var(--accent-emerald-border); }
+        .trip-chip.done { background: var(--bg-surface-active); color: var(--text-faint); border: 1px solid var(--border-subtle); }
+        .trip-chip.more { background: var(--bg-surface-active); color: var(--text-faint); border: 1px solid var(--border-subtle); justify-content: center; }
+        .week-header { padding: 0.5rem; text-align: center; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-faint); }
+        .week-view-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+        .view-toggle-btn { padding: 0.5rem 1rem; font-size: 0.75rem; font-weight: 700; border-radius: 8px; color: var(--text-faint); cursor: pointer; background: none; border: none; transition: all 0.2s; }
+        .view-toggle-btn.active { background: var(--text-primary); color: #000; box-shadow: var(--shadow-sm); }
+        .view-toggle-btn:hover:not(.active) { color: var(--text-secondary); }
+
+        /* === AI CHAT === */
+        .ai-bubble { background: var(--bg-surface); border: 1px solid var(--border-subtle); color: var(--text-primary); border-radius: 20px 20px 20px 4px; padding: 1rem; max-width: 80%; }
+        .user-bubble { background: var(--bg-surface-active); border: 1px solid var(--border-default); color: var(--text-primary); border-radius: 20px 20px 4px 20px; padding: 1rem; max-width: 80%; }
+        .action-chip { padding: 0.5rem 1rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: all 0.2s; }
+        .action-chip:hover { border-color: var(--border-focus); color: var(--text-primary); }
+        .sidebar-chat-item { display: flex; align-items: flex-start; gap: 10px; padding: 0.625rem; border-radius: var(--radius-sm); cursor: pointer; transition: all 0.2s; border: 1px solid transparent; position: relative; min-height: 52px; }
+        .sidebar-chat-item:hover { background: var(--bg-surface); }
+        .sidebar-chat-item.active { background: var(--bg-surface); border-color: var(--border-subtle); }
+        .message-actions { margin-top: 4px; display: flex; align-items: center; gap: 4px; }
+        .user-actions { opacity: 0; pointer-events: none; transition: opacity 0.18s; }
+        .assistant-actions { opacity: 1; pointer-events: auto; }
+        .message-row:hover .user-actions, .message-row:focus-within .user-actions { opacity: 1; pointer-events: auto; }
+        .message-action-btn { width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--text-faint); cursor: pointer; background: none; border: none; transition: all 0.15s; }
+        .message-action-btn:hover { color: var(--text-primary); background: var(--bg-surface-hover); }
+        .message-action-btn.active { color: var(--text-primary); background: var(--bg-surface-active); }
+        .message-action-btn.copy-success { color: var(--text-primary); background: var(--bg-surface-hover); }
+        .message-action-btn .material-icons-round { font-size: 14px; }
+        .floating-session-menu { position: fixed; display: none; width: 160px; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); z-index: 1200; overflow: hidden; box-shadow: var(--shadow-lg); }
+        .floating-session-menu.open { display: block; }
+        .floating-message-menu { position: fixed; display: none; width: 176px; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); z-index: 1400; overflow: hidden; box-shadow: var(--shadow-lg); }
+        .floating-message-menu.open { display: block; }
+        @keyframes typingPulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+        .typing-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--text-faint); animation: typingPulse 1.4s infinite ease-in-out; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        /* === MODALS === */
+        .modal-overlay { display: none; position: fixed; inset: 0; z-index: 1500; align-items: center; justify-content: center; padding: 1rem; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
+        .modal-overlay.open { display: flex; }
+        .modal-card { width: 100%; max-width: 28rem; padding: 1.5rem; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); box-shadow: var(--shadow-xl); }
+        .modal-enter { animation: fadeIn 180ms ease-out; }
+        .modal-card-enter { animation: slideUp 220ms ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 10px; }
+
+        @media (max-width: 1024px) {
+            .pf-layout { grid-template-columns: 1fr; }
+            .pf-sidebar { position: static; height: auto; flex-direction: row; overflow-x: auto; padding: 0.75rem; border-right: none; border-bottom: 1px solid var(--border-subtle); }
+            .pf-sidebar-header { display: none; }
+            .pf-nav { flex-direction: row; gap: 4px; }
+            .pf-nav-item { white-space: nowrap; padding: 0.5rem 1rem; font-size: 0.75rem; }
+            .pf-nav-item.active::before { display: none; }
+            .pf-nav-icon { display: none; }
+            .pf-nav-bottom { display: none; }
+            .pf-content { padding: 1.5rem 1rem; }
+        }
+
+        /* AI tab: full-width, no sidebar */
+        .pf-layout.ai-active { grid-template-columns: 1fr; }
+        .pf-layout.ai-active .pf-sidebar { display: none; }
+        .pf-layout.ai-active .pf-content { padding: 0; max-width: none; }
+    </style>
+</head>
+<body class="min-h-screen relative" style="background:#000;color:#fff;">
+    <div class="relative z-10">
+        {% include 'components/navbar.html' %}
+
+        <div class="pf-layout">
+            <aside class="pf-sidebar">
+                <div class="pf-sidebar-header">
+                    <div class="pf-avatar">
+                        {% if current_user.image_url %}
+                        <img alt="{{ current_user.name }}" src="{{ current_user.image_url }}" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&q=80&w=2000'" />
+                        {% else %}
+                        {{ current_user.name[0]|upper }}
+                        {% endif %}
+                    </div>
+                    <div>
+                        <div class="pf-user-name">{{ current_user.name }}</div>
+                        <div class="pf-user-email">{{ current_user.email }}</div>
+                    </div>
+                </div>
+                <nav class="pf-nav">
+                    <button class="pf-nav-item active" data-tab="personal" onclick="switchTab('personal')">
+                        <span class="pf-nav-icon"><span class="material-icons-round">person</span></span>Personal Info
+                    </button>
+                    <button class="pf-nav-item" data-tab="trips" onclick="switchTab('trips')">
+                        <span class="pf-nav-icon"><span class="material-icons-round">flight_takeoff</span></span>My Trips
+                    </button>
+                    <button class="pf-nav-item" data-tab="calendar" onclick="switchTab('calendar')">
+                        <span class="pf-nav-icon"><span class="material-icons-round">calendar_today</span></span>Calendar
+                    </button>
+                    <button class="pf-nav-item" data-tab="settings" onclick="switchTab('settings')">
+                        <span class="pf-nav-icon"><span class="material-icons-round">settings</span></span>Settings
+                    </button>
+                    <button class="pf-nav-item" data-tab="ai" onclick="switchTab('ai')">
+                        <span class="pf-nav-icon"><span class="material-icons-round">smart_toy</span></span>AI Assistant
+                    </button>
+                </nav>
+                <div class="pf-nav-bottom">
+                    <a href="{{ url_for('main.logout') }}" class="pf-logout">
+                        <span class="material-icons-round" style="font-size:18px;">logout</span>Logout
+                    </a>
+                </div>
+            </aside>
+
+            <div class="pf-content">
+                <!-- ========== SECTION: PERSONAL ========== -->
+                <div id="section-personal" class="pf-section active">
+                    <div class="pf-stat-row">
+                        <div class="pf-stat">
+                            <div class="pf-stat-value">{{ trip_count }}</div>
+                            <div class="pf-stat-label">Trips</div>
+                        </div>
+                        <div class="pf-stat">
+                            <div class="pf-stat-value">{{ saved_count }}</div>
+                            <div class="pf-stat-label">Saved</div>
+                        </div>
+                    </div>
+
+                    <form id="profile-image-upload-form" action="{{ url_for('main.upload_profile_image') }}" method="POST" enctype="multipart/form-data"></form>
+                    <form id="profile-image-delete-form" action="{{ url_for('main.delete_profile_image') }}" method="POST"></form>
+                    <form action="{{ url_for('main.update_profile') }}" method="POST">
+                        <div class="pf-card" style="margin-bottom:1.5rem;">
+                            <div class="pf-card-header">
+                                <div class="pf-card-icon"><span class="material-icons-round" style="font-size:20px;">account_circle</span></div>
+                                <div class="pf-card-title">Personal Details</div>
+                            </div>
+                            <div style="display:grid;grid-template-columns:200px 1fr;gap:2rem;align-items:start;">
+                                <div style="display:flex;flex-direction:column;align-items:center;gap:0.75rem;">
+                                    <div style="width:120px;height:120px;border-radius:50%;overflow:hidden;border:2px solid var(--border-default);display:flex;align-items:center;justify-content:center;font-size:2.5rem;font-weight:800;color:var(--text-primary);background:var(--bg-surface);">
+                                        {% if current_user.image_url %}
+                                        <img alt="Profile" style="width:100%;height:100%;object-fit:cover;" src="{{ current_user.image_url }}" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&q=80&w=2000'" />
+                                        {% else %}
+                                        {{ current_user.name[0]|upper }}
+                                        {% endif %}
+                                    </div>
+                                    <input id="profile-image-input" name="profile_image" type="file" accept="image/*" class="hidden" form="profile-image-upload-form" />
+                                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;width:100%;">
+                                        <button type="button" id="choose-profile-image-btn" class="pf-btn pf-btn-sm">{{ 'Edit' if current_user.image_url else 'Upload' }}</button>
+                                        <button type="button" id="upload-profile-image-btn" class="pf-btn pf-btn-solid pf-btn-sm">Save</button>
+                                        {% if current_user.image_url %}
+                                        <button type="button" id="view-profile-image-btn" class="pf-btn pf-btn-sm">View</button>
+                                        <button type="submit" form="profile-image-delete-form" class="pf-btn pf-btn-danger pf-btn-sm" onclick="return confirm('Delete profile image?');">Delete</button>
+                                        {% else %}
+                                        <span class="pf-btn pf-btn-sm" style="opacity:0.4;cursor:not-allowed;pointer-events:none;">View</span>
+                                        <span class="pf-btn pf-btn-sm" style="opacity:0.4;cursor:not-allowed;pointer-events:none;">Delete</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                                    <div>
+                                        <label class="pf-label">Full Name</label>
+                                        <input class="pf-input" name="name" placeholder="Enter full name" type="text" value="{{ current_user.name }}" required />
+                                    </div>
+                                    <div>
+                                        <label class="pf-label">Email Address</label>
+                                        <input class="pf-input" placeholder="Enter email" type="email" value="{{ current_user.email }}" readonly />
+                                    </div>
+                                    <div>
+                                        <label class="pf-label">Phone Number</label>
+                                        <input class="pf-input" name="phone" placeholder="Enter phone number" type="tel" value="{{ current_user.phone or '' }}" />
+                                    </div>
+                                    <div>
+                                        <label class="pf-label">Home City</label>
+                                        <input class="pf-input" name="city" placeholder="Enter city" type="text" value="{{ current_user.city or '' }}" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pf-card" style="margin-bottom:1.5rem;">
+                            <div class="pf-card-header">
+                                <div class="pf-card-icon"><span class="material-icons-round" style="font-size:20px;">explore</span></div>
+                                <div class="pf-card-title">Travel Preferences</div>
+                            </div>
+                            <div id="preferences-container" style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+                                {% set default_prefs = ['Adventure', 'Heritage', 'Luxury', 'Solo Travel', 'Nature & Eco', 'Culinary', 'Wellness', 'Spiritual', 'Family'] %}
+                                {% for pref in default_prefs %}
+                                <label class="pf-chip{% if pref in user_prefs %} checked{% endif %}">
+                                    <input type="checkbox" name="preferences" value="{{ pref }}" class="hidden" {% if pref in user_prefs %}checked{% endif %} />
+                                    {{ pref }}
+                                    <span class="material-icons-round" style="font-size:14px;{% if pref not in user_prefs %}display:none;{% endif %}">check</span>
+                                </label>
+                                {% endfor %}
+                                {% for pref in user_prefs %}
+                                    {% if pref not in default_prefs %}
+                                <label class="pf-chip checked">
+                                    <input type="checkbox" name="preferences" value="{{ pref }}" class="hidden" checked />
+                                    {{ pref }}
+                                    <span class="material-icons-round" style="font-size:14px;">check</span>
+                                </label>
+                                    {% endif %}
+                                {% endfor %}
+                                <button type="button" id="add-style-btn" class="pf-chip" style="border-style:dashed;">
+                                    <span class="material-icons-round" style="font-size:14px;">add</span> Add Style
+                                </button>
+                            </div>
+                        </div>
+
+                        <div style="display:flex;justify-content:flex-end;">
+                            <button type="submit" class="pf-btn pf-btn-solid" style="padding:0 3rem;height:48px;">Save Changes</button>
+                        </div>
+                    </form>
+
+                    <div class="pf-card" style="margin-top:1.5rem;">
+                        <div class="pf-card-header">
+                            <div class="pf-card-icon"><span class="material-icons-round" style="font-size:20px;">bookmark</span></div>
+                            <div class="pf-card-title">Saved Destinations</div>
+                            <span id="saved-total-count" class="pf-badge" style="margin-left:auto;">{{ saved_count }} Total</span>
+                        </div>
+                        {% if saved_destinations %}
+                        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+                            {% for dest in saved_destinations %}
+                            <div data-destination-id="{{ dest.id }}" data-destination-name="{{ dest.name }}" class="pf-trip-card" style="position:relative;">
+                                <div class="item-menu">
+                                    <button class="menu-trigger"><span class="material-icons-round" style="font-size:16px;">more_vert</span></button>
+                                    <div class="menu-panel">
+                                        <a href="{{ url_for('main.destination_info', name=dest.name) }}" class="menu-action no-underline"><span class="material-icons-round" style="font-size:14px;">visibility</span>View Details</a>
+                                        <button class="menu-action menu-action-danger unsave-destination-btn" data-destination-id="{{ dest.id }}" data-destination-name="{{ dest.name }}"><span class="material-icons-round" style="font-size:14px;">bookmark_remove</span>Delete / Unsave</button>
+                                    </div>
+                                </div>
+                                <div style="aspect-video;overflow:hidden;position:relative;">
+                                    <img src="{{ dest.image_url or 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1' }}" alt="{{ dest.name }}" style="width:100%;height:100%;object-fit:cover;" />
+                                    <div style="position:absolute;top:0.75rem;right:0.75rem;" class="pf-badge">{{ dest.tag or 'Destination' }}</div>
+                                </div>
+                                <div style="padding:1rem;">
+                                    <h3 style="font-weight:700;font-size:0.9375rem;color:var(--text-primary);margin-bottom:0.25rem;">{{ dest.name }}</h3>
+                                    <p style="font-size:0.75rem;color:var(--text-muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:0.75rem;">{{ dest.description }}</p>
+                                    <a href="{{ url_for('main.destination_info', name=dest.name) }}" class="pf-btn pf-btn-sm" style="width:100%;justify-content:center;">View Details</a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="pf-empty">
+                            <span class="material-icons-round" style="font-size:2.5rem;color:var(--text-faint);display:block;margin-bottom:0.75rem;">bookmark_border</span>
+                            <p style="color:var(--text-muted);">You haven't saved any destinations yet.</p>
+                            <a href="{{ url_for('main.explore') }}" style="color:var(--text-primary);font-weight:700;font-size:0.875rem;display:inline-block;margin-top:0.75rem;">Explore Destinations</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- ========== SECTION: TRIPS ========== -->
+                <div id="section-trips" class="pf-section">
+                    <div style="margin-bottom:1.5rem;">
+                        <h2 style="font-size:1.25rem;font-weight:800;color:var(--text-primary);display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem;">
+                            <span class="material-icons-round" style="font-size:22px;">flight_takeoff</span> Upcoming Journeys
+                        </h2>
+                        {% if upcoming_trips %}
+                        <div style="display:flex;flex-direction:column;gap:1rem;">
+                            {% for trip in upcoming_trips %}
+                            <div class="pf-trip-card" data-trip-id="{{ trip.id }}" style="position:relative;">
+                                <div class="item-menu">
+                                    <button class="menu-trigger"><span class="material-icons-round" style="font-size:16px;">more_vert</span></button>
+                                    <div class="menu-panel">
+                                        <a href="{{ url_for('main.view_trip', trip_id=trip.id) }}" class="menu-action no-underline"><span class="material-icons-round" style="font-size:14px;">visibility</span>View Trip</a>
+                                        <button class="menu-action delete-trip-btn" data-trip-id="{{ trip.id }}"><span class="material-icons-round" style="font-size:14px;">delete</span>Delete Trip</button>
+                                    </div>
+                                </div>
+                                <div style="display:flex;flex-direction:row;min-height:180px;">
+                                    <div style="width:200px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--bg-surface);position:relative;">
+                                        <span class="material-icons-round" style="font-size:3rem;color:var(--text-faint);">map</span>
+                                        <div style="position:absolute;top:1rem;left:1rem;" class="pf-badge">UPCOMING</div>
+                                    </div>
+                                    <div style="flex:1;padding:1.5rem;display:flex;flex-direction:column;justify-content:space-between;">
+                                        <div>
+                                            <h3 style="font-size:1.25rem;font-weight:800;color:var(--text-primary);margin-bottom:0.25rem;">{{ trip.destination }}</h3>
+                                            <p style="font-size:0.8125rem;color:var(--text-muted);display:flex;align-items:center;gap:0.375rem;">
+                                                <span class="material-icons-round" style="font-size:14px;">calendar_today</span>
+                                                {{ trip.start_date.strftime('%b %d') }} - {{ trip.end_date.strftime('%b %d, %Y') }}
+                                            </p>
+                                        </div>
+                                        <div style="display:flex;gap:1rem;margin-top:0.75rem;">
+                                            <div class="pf-badge">Budget: {{ trip.budget or 'N/A' }}</div>
+                                            <div class="pf-badge">Style: {{ trip.interests or 'Standard' }}</div>
+                                        </div>
+                                        <div style="display:flex;justify-content:flex-end;gap:0.75rem;margin-top:1rem;">
+                                            <a href="{{ url_for('main.view_trip', trip_id=trip.id) }}" class="pf-btn pf-btn-sm">Details</a>
+                                            <a href="{{ url_for('main.view_trip', trip_id=trip.id) }}" class="pf-btn pf-btn-solid pf-btn-sm">View Plan</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="pf-empty">
+                            <span class="material-icons-round" style="font-size:2.5rem;color:var(--text-faint);display:block;margin-bottom:0.75rem;">event_busy</span>
+                            <p style="color:var(--text-muted);">No upcoming journeys planned yet.</p>
+                            <a href="{{ url_for('main.create_trip') }}" style="color:var(--text-primary);font-weight:700;font-size:0.875rem;display:inline-block;margin-top:0.75rem;">Plan your first trip &rarr;</a>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div style="margin-bottom:1.5rem;">
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+                            <h2 style="font-size:1.25rem;font-weight:800;color:var(--text-primary);display:flex;align-items:center;gap:0.5rem;">
+                                <span class="material-icons-round" style="font-size:22px;">auto_awesome</span> Created Journeys
+                            </h2>
+                            <a href="{{ url_for('main.create_trip') }}" class="pf-btn pf-btn-sm">Create New Trip</a>
+                        </div>
+                        {% if all_trips %}
+                        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+                            {% for trip in all_trips %}
+                            <div class="pf-trip-card" data-trip-id="{{ trip.id }}" style="position:relative;">
+                                <div class="item-menu">
+                                    <button class="menu-trigger"><span class="material-icons-round" style="font-size:16px;">more_vert</span></button>
+                                    <div class="menu-panel">
+                                        <a href="{{ url_for('main.view_trip', trip_id=trip.id) }}" class="menu-action no-underline"><span class="material-icons-round" style="font-size:14px;">visibility</span>View Trip</a>
+                                        <button class="menu-action delete-trip-btn" data-trip-id="{{ trip.id }}"><span class="material-icons-round" style="font-size:14px;">delete</span>Delete Trip</button>
+                                    </div>
+                                </div>
+                                <a href="{{ url_for('main.view_trip', trip_id=trip.id) }}" style="text-decoration:none;display:block;">
+                                    <div style="height:12rem;overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--bg-surface);">
+                                        <span class="material-icons-round" style="font-size:2rem;color:var(--text-faint);">map</span>
+                                    </div>
+                                    <div style="padding:1.25rem;">
+                                        <h3 style="font-weight:700;color:var(--text-primary);margin-bottom:0.25rem;">{{ trip.destination }}</h3>
+                                        <p style="font-size:0.8125rem;color:var(--text-muted);margin-bottom:0.75rem;">{{ (trip.end_date - trip.start_date).days }} Days{% if trip.budget %} &bull; {{ trip.budget }}{% endif %}</p>
+                                        <div style="display:flex;align-items:center;justify-content:space-between;padding-top:0.75rem;border-top:1px solid var(--border-subtle);">
+                                            <span style="font-size:0.75rem;font-weight:700;color:var(--text-muted);">View Itinerary</span>
+                                            <span class="material-icons-round" style="font-size:18px;color:var(--text-muted);">arrow_forward</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="pf-empty"><p style="color:var(--text-muted);">No trips created yet.</p></div>
+                        {% endif %}
+                    </div>
+
+                    {% if past_trips %}
+                    <div style="margin-bottom:1.5rem;">
+                        <h2 style="font-size:1.25rem;font-weight:800;color:var(--text-primary);display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem;">
+                            <span class="material-icons-round" style="font-size:22px;">history</span> Travel History
+                        </h2>
+                        <div class="pf-card" style="padding:0;overflow:hidden;">
+                            {% for trip in past_trips %}
+                            <div style="padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-subtle);{% if loop.last %}border-bottom:none;{% endif %}" data-trip-id="{{ trip.id }}">
+                                <div style="display:flex;align-items:center;gap:1rem;">
+                                    <div style="width:3rem;height:3rem;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;background:var(--bg-surface);">
+                                        <span class="material-icons-round" style="font-size:20px;color:var(--text-muted);">history</span>
+                                    </div>
+                                    <div>
+                                        <h4 style="font-weight:700;color:var(--text-primary);">{{ trip.destination }}</h4>
+                                        <p style="font-size:0.8125rem;color:var(--text-muted);">{{ trip.start_date.strftime('%b %d') }} - {{ trip.end_date.strftime('%b %d, %Y') }} &bull; {{ (trip.end_date - trip.start_date).days }} Days</p>
+                                    </div>
+                                </div>
+                                <div style="position:relative;">
+                                    <button class="menu-trigger"><span class="material-icons-round" style="font-size:16px;">more_vert</span></button>
+                                    <div class="menu-panel">
+                                        <a href="{{ url_for('main.view_trip', trip_id=trip.id) }}" class="menu-action no-underline"><span class="material-icons-round" style="font-size:14px;">visibility</span>View Trip</a>
+                                        <button class="menu-action delete-trip-btn" data-trip-id="{{ trip.id }}"><span class="material-icons-round" style="font-size:14px;">delete</span>Delete Trip</button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+                        <div>
+                            <h2 style="font-size:1.125rem;font-weight:800;color:var(--text-primary);display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem;">
+                                <span class="material-icons-round" style="font-size:20px;">bookmark</span> Saved Destinations
+                            </h2>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+                                {% set saved_list = all_saved %}
+                                {% if saved_list %}
+                                {% for dest in saved_list %}
+                                <div data-destination-id="{{ dest.id }}" data-destination-name="{{ dest.name }}" style="position:relative;height:12rem;border-radius:var(--radius-lg);overflow:hidden;">
+                                    <div class="item-menu" style="z-index:20;">
+                                        <button class="menu-trigger"><span class="material-icons-round" style="font-size:16px;">more_vert</span></button>
+                                        <div class="menu-panel">
+                                            <a href="{{ url_for('main.destination_info', name=dest.name) }}" class="menu-action no-underline"><span class="material-icons-round" style="font-size:14px;">visibility</span>View Details</a>
+                                            <button class="menu-action menu-action-danger unsave-destination-btn" data-destination-id="{{ dest.id }}" data-destination-name="{{ dest.name }}"><span class="material-icons-round" style="font-size:14px;">bookmark_remove</span>Delete / Unsave</button>
+                                        </div>
+                                    </div>
+                                    <a href="{{ url_for('main.destination_info', name=dest.name) }}" style="display:block;width:100%;height:100%;text-decoration:none;">
+                                        <img style="width:100%;height:100%;object-cover;" src="{{ dest.image_url or 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&h=600&fit=crop' }}" />
+                                        <div style="position:absolute;inset:0;background:linear-gradient(to top,#0A0A0A,transparent);"></div>
+                                        <div style="position:absolute;bottom:1rem;left:1rem;">
+                                            <p style="font-weight:700;color:var(--text-primary);">{{ dest.name }}</p>
+                                            <p style="font-size:0.75rem;color:var(--text-muted);">{{ dest.tag or 'Destination' }}</p>
+                                        </div>
+                                    </a>
+                                </div>
+                                {% endfor %}
+                                {% else %}
+                                <div class="pf-empty" style="grid-column:span 2;"><p style="color:var(--text-muted);font-size:0.875rem;">No saved destinations yet.</p></div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div>
+                            <h2 style="font-size:1.125rem;font-weight:800;color:var(--text-primary);display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem;">
+                                <span class="material-icons-round" style="font-size:20px;">visibility</span> Recently Explored
+                            </h2>
+                            {% set explored_list = recent_explore_list %}
+                            {% set destination_items = explored_list | selectattr('kind', 'equalto', 'destination') | list %}
+                            {% set itinerary_items = explored_list | selectattr('kind', 'equalto', 'trip') | list %}
+                            {% if destination_items %}
+                            <div style="margin-bottom:0.75rem;">
+                                <p style="font-size:0.6875rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-faint);margin-bottom:0.5rem;">Destinations</p>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+                                    {% for item in destination_items %}
+                                    <a href="{{ item.url }}" style="position:relative;height:12rem;border-radius:var(--radius-lg);overflow:hidden;display:block;text-decoration:none;">
+                                        <img style="width:100%;height:100%;object-fit:cover;" src="{{ item.image }}" />
+                                        <div style="position:absolute;inset:0;background:linear-gradient(to top,#0A0A0A,transparent);"></div>
+                                        <div style="position:absolute;bottom:1rem;left:1rem;">
+                                            <p style="font-weight:700;color:var(--text-primary);font-size:0.9375rem;">{{ item.title }}</p>
+                                            <p style="font-size:0.75rem;color:var(--text-muted);">{{ item.subtitle }}</p>
+                                        </div>
+                                    </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if itinerary_items %}
+                            <div style="margin-bottom:0.75rem;">
+                                <p style="font-size:0.6875rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-faint);margin-bottom:0.5rem;">Itineraries</p>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+                                    {% for item in itinerary_items %}
+                                    <a href="{{ item.url }}" style="position:relative;height:12rem;border-radius:var(--radius-lg);overflow:hidden;display:block;text-decoration:none;">
+                                        <img style="width:100%;height:100%;object-fit:cover;" src="{{ item.image }}" />
+                                        <div style="position:absolute;inset:0;background:linear-gradient(to top,#0A0A0A,transparent);"></div>
+                                        <div style="position:absolute;bottom:1rem;left:1rem;">
+                                            <p style="font-weight:700;color:var(--text-primary);font-size:0.9375rem;">{{ item.title }}</p>
+                                            <p style="font-size:0.75rem;color:var(--text-muted);">{{ item.subtitle }}</p>
+                                        </div>
+                                    </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if not explored_list %}
+                            <div class="pf-empty"><p style="color:var(--text-muted);font-size:0.875rem;">No recent destinations or itineraries yet.</p></div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========== SECTION: CALENDAR ========== -->
+                <div id="section-calendar" class="pf-section">
+                    <div class="pf-card" style="margin-bottom:1.5rem;padding:0;overflow:hidden;">
+                        <div style="padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-subtle);">
+                            <div style="display:flex;align-items:center;gap:0.75rem;">
+                                <button id="prev-month" class="pf-btn pf-btn-sm" style="width:36px;height:36px;padding:0;justify-content:center;">
+                                    <span class="material-icons-round" style="font-size:20px;">chevron_left</span>
+                                </button>
+                                <h2 id="current-month" style="font-size:1.5rem;font-weight:800;color:var(--text-primary);min-width:200px;text-align:center;">October 2026</h2>
+                                <button id="next-month" class="pf-btn pf-btn-sm" style="width:36px;height:36px;padding:0;justify-content:center;">
+                                    <span class="material-icons-round" style="font-size:20px;">chevron_right</span>
+                                </button>
+                            </div>
+                            <button id="today-btn" class="pf-btn pf-btn-sm">Today</button>
+                        </div>
+                        <div style="padding:0.5rem 1.5rem;display:flex;align-items:center;gap:0.75rem;border-bottom:1px solid var(--border-subtle);">
+                            <div style="display:flex;padding:3px;border-radius:8px;background:var(--bg-surface);border:1px solid var(--border-subtle);">
+                                <button id="month-view-btn" class="view-toggle-btn active">Month</button>
+                                <button id="week-view-btn" class="view-toggle-btn">Week</button>
+                            </div>
+                            <a href="{{ url_for('main.create_trip') }}" class="pf-btn pf-btn-sm" style="margin-left:auto;">
+                                <span class="material-icons-round" style="font-size:16px;">add</span> New Trip
+                            </a>
+                        </div>
+                        <div id="calendar-grid" class="calendar-grid" style="padding:1rem;"></div>
+                    </div>
+
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                        <div class="pf-card">
+                            <h3 style="font-weight:700;color:var(--text-primary);margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;">
+                                <span class="material-icons-round" style="font-size:20px;">event_note</span> Upcoming Schedule
+                            </h3>
+                            {% if upcoming_trips %}
+                            <p style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-faint);margin-bottom:0.75rem;">Upcoming</p>
+                            {% for trip in upcoming_trips[:3] %}
+                            <a href="{{ url_for('main.view_trip', trip_id=trip.id) }}" style="display:flex;gap:0.75rem;padding:0.75rem 0;text-decoration:none;{% if not loop.last %}border-bottom:1px solid var(--border-subtle);{% endif %}">
+                                <div style="width:3rem;height:3rem;border-radius:var(--radius-sm);display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg-surface);border:1px solid var(--border-subtle);flex-shrink:0;">
+                                    <span style="font-size:0.625rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);line-height:1;">{{ trip.start_date.strftime('%b') }}</span>
+                                    <span style="font-size:1rem;font-weight:800;color:var(--text-primary);line-height:1.2;">{{ trip.start_date.strftime('%d') }}</span>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight:700;font-size:0.875rem;color:var(--text-primary);">{{ trip.destination }}</h4>
+                                    <p style="font-size:0.75rem;color:var(--text-muted);margin-top:2px;">{{ trip.budget or 'Travel Plan' }}</p>
+                                    <span class="pf-badge" style="margin-top:0.375rem;">Scheduled</span>
+                                </div>
+                            </a>
+                            {% endfor %}
+                            {% endif %}
+                            {% if past_trips %}
+                            <p style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-faint);margin:1rem 0 0.75rem;">Recently Finished</p>
+                            {% for trip in past_trips[:3] %}
+                            <a href="{{ url_for('main.view_trip', trip_id=trip.id) }}" style="display:flex;gap:0.75rem;padding:0.75rem 0;text-decoration:none;opacity:0.6;{% if not loop.last %}border-bottom:1px solid var(--border-subtle);{% endif %}">
+                                <div style="width:3rem;height:3rem;border-radius:var(--radius-sm);display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg-surface);border:1px solid var(--border-subtle);flex-shrink:0;">
+                                    <span style="font-size:0.625rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);line-height:1;">{{ trip.start_date.strftime('%b') }}</span>
+                                    <span style="font-size:1rem;font-weight:800;color:var(--text-primary);line-height:1.2;">{{ trip.start_date.strftime('%d') }}</span>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight:700;font-size:0.875rem;color:var(--text-primary);">{{ trip.destination }}</h4>
+                                    <p style="font-size:0.75rem;color:var(--text-muted);margin-top:2px;">Completed Journey</p>
+                                </div>
+                            </a>
+                            {% endfor %}
+                            {% endif %}
+                            {% if not upcoming_trips and not past_trips %}
+                            <p style="font-size:0.8125rem;color:var(--text-muted);">No trips scheduled.</p>
+                            {% endif %}
+                            <a href="{{ url_for('main.my_trips') }}" class="pf-btn pf-btn-sm" style="width:100%;justify-content:center;margin-top:1rem;">
+                                View All Journeys <span class="material-icons-round" style="font-size:16px;">arrow_forward</span>
+                            </a>
+                        </div>
+
+                        <div class="pf-card" style="display:flex;flex-direction:column;">
+                            <span class="material-icons-round" style="font-size:1.75rem;color:var(--accent-amber);margin-bottom:0.75rem;">lightbulb</span>
+                            <h4 style="font-weight:700;font-size:1.125rem;color:var(--text-primary);margin-bottom:0.375rem;">Smart Sync</h4>
+                            <p style="font-size:0.8125rem;color:var(--text-muted);margin-bottom:1rem;">Sync your Routheon calendar with Google or Apple Calendar to never miss a flight.</p>
+                            <p id="sync-status" style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-faint);margin-bottom:0.5rem;">Not connected</p>
+                            <button id="connect-calendar-btn" class="pf-btn" style="width:100%;justify-content:center;">Connect Calendar</button>
+                            <div id="sync-actions" class="hidden" style="display:none;margin-top:0.75rem;display:flex;flex-direction:column;gap:0.5rem;">
+                                <button id="download-ics-btn" class="pf-btn pf-btn-sm" style="width:100%;justify-content:center;">Download Calendar (.ics)</button>
+                                <button id="google-sync-btn" class="pf-btn pf-btn-sm" style="width:100%;justify-content:center;">Quick Add To Google Calendar</button>
+                                <button id="disconnect-calendar-btn" class="pf-btn pf-btn-sm pf-btn-danger" style="width:100%;justify-content:center;">Disconnect</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========== SECTION: SETTINGS ========== -->
+                <div id="section-settings" class="pf-section">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                    <div style="margin-bottom:1rem;">
+                        {% for category, message in messages %}
+                        <div style="padding:1rem;border-radius:var(--radius-sm);border:1px solid {% if category == 'success' %}var(--accent-emerald-border){% else %}var(--accent-rose-border){% endif %};background:{% if category == 'success' %}var(--accent-emerald-soft){% else %}var(--accent-rose-soft){% endif %};color:var(--text-primary);margin-bottom:0.5rem;">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+
+                    <div class="pf-card" style="margin-bottom:1.5rem;">
+                        <div class="pf-card-header">
+                            <div class="pf-card-icon"><span class="material-icons-round" style="font-size:20px;">notifications_active</span></div>
+                            <div class="pf-card-title">Notification Settings</div>
+                        </div>
+                        <form method="POST" action="{{ url_for('main.update_notification_settings') }}">
+                            <div class="pf-setting-row" style="margin-bottom:1rem;">
+                                <div>
+                                    <div class="pf-setting-label">Notifications</div>
+                                    <div class="pf-setting-desc">Set all platform notifications to On or Off.</div>
+                                </div>
+                                <div class="pf-radio-group">
+                                    <label class="pf-radio-pill">
+                                        <input type="radio" name="notifications_enabled" value="on" {% if notification_settings.notifications_enabled %}checked{% endif %} />
+                                        <span>On</span>
+                                    </label>
+                                    <label class="pf-radio-pill">
+                                        <input type="radio" name="notifications_enabled" value="off" {% if not notification_settings.notifications_enabled %}checked{% endif %} />
+                                        <span>Off</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1.25rem;">
+                                <label class="pf-setting-row">
+                                    <div>
+                                        <div class="pf-setting-label">Trip Alerts</div>
+                                        <div class="pf-setting-desc">Upcoming trip reminders</div>
+                                    </div>
+                                    <input type="checkbox" name="trip_alerts" data-notification-subsetting class="pf-toggle" {% if notification_settings.trip_alerts %}checked{% endif %} />
+                                </label>
+                                <label class="pf-setting-row">
+                                    <div>
+                                        <div class="pf-setting-label">AI Suggestions</div>
+                                        <div class="pf-setting-desc">Smart recommendations</div>
+                                    </div>
+                                    <input type="checkbox" name="ai_suggestions" data-notification-subsetting class="pf-toggle" {% if notification_settings.ai_suggestions %}checked{% endif %} />
+                                </label>
+                                <label class="pf-setting-row">
+                                    <div>
+                                        <div class="pf-setting-label">System Notifications</div>
+                                        <div class="pf-setting-desc">Platform &amp; security updates</div>
+                                    </div>
+                                    <input type="checkbox" name="system_notifications" data-notification-subsetting class="pf-toggle" {% if notification_settings.system_notifications %}checked{% endif %} />
+                                </label>
+                                <label class="pf-setting-row">
+                                    <div>
+                                        <div class="pf-setting-label">Seasonal Recommendations</div>
+                                        <div class="pf-setting-desc">Season-wise destination tips</div>
+                                    </div>
+                                    <input type="checkbox" name="seasonal_recommendations" data-notification-subsetting class="pf-toggle" {% if notification_settings.seasonal_recommendations %}checked{% endif %} />
+                                </label>
+                                <label class="pf-setting-row">
+                                    <div>
+                                        <div class="pf-setting-label">Email Notifications</div>
+                                        <div class="pf-setting-desc">Deliver to registered email</div>
+                                    </div>
+                                    <input type="checkbox" name="email_notifications" data-notification-subsetting class="pf-toggle" {% if notification_settings.email_notifications %}checked{% endif %} />
+                                </label>
+                            </div>
+
+                            <div style="display:flex;justify-content:flex-end;gap:0.75rem;">
+                                <button type="button" id="generate-smart-notifications" class="pf-btn pf-btn-sm">Generate Recommendations Now</button>
+                                <button type="submit" class="pf-btn pf-btn-solid">Save Notification Settings</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="pf-card">
+                        <div class="pf-card-header">
+                            <div class="pf-card-icon"><span class="material-icons-round" style="font-size:20px;">smart_toy</span></div>
+                            <div class="pf-card-title">AI Assistant Settings (Skupheon)</div>
+                        </div>
+                        <form id="ai-assistant-settings-form" method="POST" action="{{ url_for('main.update_ai_assistant_settings') }}">
+                            <div style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.25rem;">
+                                <label class="pf-setting-row">
+                                    <div style="display:flex;align-items:center;gap:1rem;">
+                                        <div style="width:40px;height:40px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;background:var(--bg-surface);">
+                                            <span class="material-icons-round" style="font-size:20px;">bolt</span>
+                                        </div>
+                                        <div>
+                                            <div class="pf-setting-label">Proactive Tips</div>
+                                            <div class="pf-setting-desc">Allow Skupheon to suggest seasonal and trip-aware recommendations.</div>
+                                        </div>
+                                    </div>
+                                    <input type="checkbox" name="proactive_tips" class="pf-toggle" {% if ai_assistant_settings.proactive_tips %}checked{% endif %} />
+                                </label>
+                                <label class="pf-setting-row">
+                                    <div style="display:flex;align-items:center;gap:1rem;">
+                                        <div style="width:40px;height:40px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;background:var(--bg-surface);">
+                                            <span class="material-icons-round" style="font-size:20px;">history</span>
+                                        </div>
+                                        <div>
+                                            <div class="pf-setting-label">Chat History</div>
+                                            <div class="pf-setting-desc">Store your AI chats for future context.</div>
+                                        </div>
+                                    </div>
+                                    <input type="checkbox" name="chat_history" class="pf-toggle" {% if ai_assistant_settings.chat_history %}checked{% endif %} />
+                                </label>
+                            </div>
+                            <div style="display:flex;justify-content:flex-end;align-items:center;gap:0.75rem;">
+                                <span id="ai-settings-live-status" style="font-size:0.75rem;font-weight:600;color:var(--text-muted);display:none;"></span>
+                                <button type="submit" class="pf-btn pf-btn-solid">Save AI Assistant Settings</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- ========== SECTION: AI ASSISTANT ========== -->
+                <div id="section-ai" class="pf-section">
+                    <div style="display:flex;height:calc(100vh - 5rem);overflow:hidden;">
+                        <aside style="width:280px;flex-shrink:0;display:flex;flex-direction:column;background:var(--bg-elevated);border-right:1px solid var(--border-subtle);">
+                            <div style="padding:1rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-subtle);">
+                                <h3 style="font-weight:700;font-size:0.875rem;color:var(--text-primary);">Recent Chats</h3>
+                                <button id="new-chat-btn" style="width:28px;height:28px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;background:var(--bg-surface);border:1px solid var(--border-subtle);color:var(--text-primary);cursor:pointer;" title="New chat">
+                                    <span class="material-icons-round" style="font-size:16px;">add</span>
+                                </button>
+                            </div>
+                            <div style="padding:0.5rem 0.75rem;border-bottom:1px solid var(--border-subtle);">
+                                <div style="position:relative;">
+                                    <span class="material-icons-round" style="position:absolute;left:0.5rem;top:50%;transform:translateY(-50%);font-size:14px;color:var(--text-faint);">search</span>
+                                    <input id="chat-search-input" type="text" placeholder="Search chats..." style="width:100%;padding:0.5rem 0.75rem 0.5rem 2rem;font-size:0.75rem;background:var(--bg-base);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);color:var(--text-primary);outline:none;" />
+                                </div>
+                            </div>
+                            <div id="sessions-container" class="custom-scrollbar" style="flex:1;overflow-y:auto;padding:0.5rem;display:flex;flex-direction:column;gap:4px;">
+                                <div style="padding:2rem;text-align:center;"><p style="font-size:0.75rem;color:var(--text-muted);">Loading chats...</p></div>
+                            </div>
+                        </aside>
+
+                        <div style="flex:1;display:flex;flex-direction:column;background:var(--bg-base);">
+                            <div style="padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-subtle);background:var(--bg-elevated);">
+                                <div style="display:flex;align-items:center;gap:0.75rem;">
+                                    <div style="width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;background:var(--bg-surface);color:var(--text-primary);">
+                                        <span class="material-icons-round" style="font-size:20px;">smart_toy</span>
+                                    </div>
+                                    <div>
+                                        <h2 style="font-weight:700;font-size:0.9375rem;color:var(--text-primary);line-height:1.2;">Skupheon AI</h2>
+                                        <span style="font-size:0.625rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);display:flex;align-items:center;gap:4px;margin-top:2px;">
+                                            <span style="width:6px;height:6px;border-radius:50%;background:var(--accent-emerald);"></span> Online and Ready
+                                        </span>
+                                    </div>
+                                </div>
+                                <div style="position:relative;">
+                                    <button id="chat-menu-btn" style="padding:0.5rem;border-radius:var(--radius-sm);color:var(--text-primary);background:none;border:none;cursor:pointer;">
+                                        <span class="material-icons-round" style="font-size:20px;">more_vert</span>
+                                    </button>
+                                    <div id="chat-menu" class="hidden" style="position:absolute;right:0;top:100%;margin-top:0.5rem;width:14rem;z-index:20;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);overflow:hidden;">
+                                        <button id="refresh-sessions-btn" style="width:100%;text-align:left;padding:0.75rem 1rem;font-size:0.8125rem;font-weight:600;color:var(--text-primary);background:none;border:none;cursor:pointer;">Refresh chats</button>
+                                        <button id="share-current-btn" style="width:100%;text-align:left;padding:0.75rem 1rem;font-size:0.8125rem;font-weight:600;color:var(--text-primary);background:none;border:none;cursor:pointer;">Share current chat</button>
+                                        <button id="delete-current-btn" style="width:100%;text-align:left;padding:0.75rem 1rem;font-size:0.8125rem;font-weight:600;color:var(--text-primary);background:none;border:none;cursor:pointer;">Delete current chat</button>
+                                        <button id="clear-all-btn" style="width:100%;text-align:left;padding:0.75rem 1rem;font-size:0.8125rem;font-weight:600;color:var(--accent-rose);background:none;border:none;cursor:pointer;">Clear all chats</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="chat-messages" class="custom-scrollbar" style="flex:1;min-height:0;overflow-y:auto;padding:2rem;display:flex;flex-direction:column;gap:1.5rem;background:var(--bg-base);"></div>
+
+                            <div style="padding:1.5rem;border-top:1px solid var(--border-subtle);background:var(--bg-elevated);">
+                                <input id="chat-image-input" type="file" accept="image/*" style="display:none;" />
+                                <div id="image-preview-wrap" style="display:none;margin-bottom:0.75rem;padding:0.75rem;border-radius:var(--radius-sm);align-items:center;gap:0.75rem;background:var(--bg-surface);border:1px solid var(--border-subtle);">
+                                    <img id="image-preview" style="width:3rem;height:3rem;border-radius:var(--radius-sm);object-fit:cover;border:1px solid var(--border-subtle);" alt="Preview" />
+                                    <div style="min-width:0;flex:1;">
+                                        <p id="image-preview-name" style="font-size:0.75rem;font-weight:700;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></p>
+                                        <p style="font-size:0.6875rem;color:var(--text-muted);">Image will be analyzed with your message.</p>
+                                    </div>
+                                    <button id="remove-image-btn" class="pf-btn pf-btn-sm">Remove</button>
+                                </div>
+                                <div style="position:relative;display:flex;align-items:center;">
+                                    <input id="chat-input" style="width:100%;padding:0.75rem 5rem 0.75rem 1.25rem;font-size:0.875rem;background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);color:var(--text-primary);outline:none;" placeholder="Type your travel query here..." type="text" />
+                                    <div style="position:absolute;right:0.5rem;display:flex;align-items:center;gap:4px;">
+                                        <button id="attach-btn" style="padding:0.5rem;border-radius:var(--radius-sm);color:var(--text-muted);background:none;border:none;cursor:pointer;transition:color 0.15s;" title="Pin image">
+                                            <span class="material-icons-round" style="font-size:18px;">push_pin</span>
+                                        </button>
+                                        <button id="send-btn" style="width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;background:var(--text-primary);color:#000;border:none;cursor:pointer;transition:all 0.2s;">
+                                            <span class="material-icons-round" style="font-size:18px;">send</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p style="font-size:0.625rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-faint);margin-top:0.5rem;">Press Enter to send message</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ========== MODALS ========== -->
+    <div id="add-style-modal" class="modal-overlay">
+        <div class="modal-card modal-card-enter">
+            <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.25rem;">
+                <span class="material-icons-round" style="font-size:1.5rem;">add_location_alt</span>
+                <h3 style="font-size:1.125rem;font-weight:800;color:var(--text-primary);">Add Travel Style</h3>
+            </div>
+            <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:1rem;">Enter a custom travel style to add to your preferences.</p>
+            <input id="add-style-input" type="text" placeholder="e.g. Camping, Road Trip, Backpacking..." class="pf-input" maxlength="50" />
+            <p id="add-style-error" style="font-size:0.75rem;font-weight:600;color:var(--accent-rose);margin-top:0.5rem;display:none;"></p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:1.25rem;">
+                <button id="cancel-add-style-btn" class="pf-btn" style="justify-content:center;">Cancel</button>
+                <button id="confirm-add-style-btn" class="pf-btn pf-btn-solid" style="justify-content:center;">Add Style</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="profile-image-modal" class="modal-overlay">
+        <div style="position:relative;width:100%;max-width:48rem;overflow:hidden;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-xl);">
+            <button id="close-profile-image-modal-btn" style="position:absolute;top:0.75rem;right:0.75rem;width:2.25rem;height:2.25rem;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--bg-elevated);border:1px solid var(--border-subtle);color:var(--text-primary);cursor:pointer;z-index:10;">
+                <span class="material-icons-round" style="font-size:18px;">close</span>
+            </button>
+            {% if current_user.image_url %}
+            <img id="profile-image-modal-img" src="{{ current_user.image_url }}" alt="Profile image preview" style="width:100%;max-height:80vh;object-fit:contain;background:var(--bg-base);" />
+            {% else %}
+            <div style="padding:3rem;text-align:center;font-weight:600;color:var(--text-muted);">No profile image available.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div id="saved-delete-modal" class="modal-overlay">
+        <div class="modal-card modal-card-enter">
+            <h3 style="font-size:1.125rem;font-weight:800;color:var(--text-primary);">Delete Saved Item?</h3>
+            <p style="font-size:0.875rem;color:var(--text-muted);margin-top:0.5rem;">This will remove the destination from your saved list immediately.</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:1.5rem;">
+                <button id="cancel-saved-delete-btn" class="pf-btn" style="justify-content:center;">Cancel</button>
+                <button id="confirm-saved-delete-btn" class="pf-btn pf-btn-danger" style="justify-content:center;">Delete / Unsave</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="action-modal" class="modal-overlay">
+        <div class="modal-card modal-card-enter">
+            <h3 id="action-modal-title" style="font-size:1.125rem;font-weight:800;color:var(--text-primary);">Confirm Action</h3>
+            <p id="action-modal-message" style="font-size:0.875rem;color:var(--text-muted);margin-top:0.5rem;">Are you sure?</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:1.5rem;">
+                <button id="action-modal-cancel" class="pf-btn" style="justify-content:center;">Cancel</button>
+                <button id="action-modal-confirm" class="pf-btn pf-btn-danger" style="justify-content:center;">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="calendar-action-modal" class="modal-overlay">
+        <div class="modal-card modal-card-enter" style="max-width:32rem;">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:0.75rem;">
+                <div>
+                    <p style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-faint);">Trip Calendar Alert</p>
+                    <h3 id="calendar-modal-title" style="font-size:1.25rem;font-weight:800;color:var(--text-primary);margin-top:0.25rem;">Choose Action</h3>
+                    <p id="calendar-modal-subtitle" style="font-size:0.875rem;color:var(--text-muted);margin-top:0.375rem;"></p>
+                </div>
+                <button id="calendar-modal-close" class="pf-btn pf-btn-sm" style="width:36px;height:36px;padding:0;justify-content:center;flex-shrink:0;">
+                    <span class="material-icons-round" style="font-size:18px;">close</span>
+                </button>
+            </div>
+            <div style="margin-top:1.5rem;display:flex;flex-direction:column;gap:0.5rem;">
+                <button data-modal-choice="delete" style="width:100%;text-align:left;padding:0.75rem 1rem;border-radius:var(--radius-sm);background:var(--accent-rose-soft);border:1px solid var(--accent-rose-border);cursor:pointer;">
+                    <span style="font-weight:800;font-size:0.875rem;color:var(--accent-rose);">1. Delete Trip</span>
+                </button>
+                <button data-modal-choice="keep" class="pf-btn" style="width:100%;justify-content:flex-start;">
+                    <span style="font-weight:800;font-size:0.875rem;">2. Keep Trip</span>
+                </button>
+                <button data-modal-choice="later" style="width:100%;text-align:left;padding:0.75rem 1rem;border-radius:var(--radius-sm);background:var(--bg-surface);border:1px solid var(--border-subtle);cursor:pointer;">
+                    <span style="font-weight:800;font-size:0.875rem;color:var(--text-primary);">3. Remind Later</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="edit-title-modal" class="modal-overlay">
+        <div class="modal-card modal-card-enter">
+            <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.25rem;">
+                <span class="material-icons-round" style="font-size:1.5rem;">edit</span>
+                <h3 style="font-size:1.125rem;font-weight:800;color:var(--text-primary);">Edit Chat Title</h3>
+            </div>
+            <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:1rem;">Rename this conversation to something memorable.</p>
+            <input id="edit-title-input" type="text" placeholder="Enter chat title..." class="pf-input" maxlength="150" />
+            <p id="edit-title-error" style="font-size:0.75rem;font-weight:600;color:var(--accent-rose);margin-top:0.5rem;display:none;"></p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:1.25rem;">
+                <button id="cancel-edit-title-btn" class="pf-btn" style="justify-content:center;">Cancel</button>
+                <button id="confirm-edit-title-btn" class="pf-btn pf-btn-solid" style="justify-content:center;">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SCRIPTS ========== -->
+    <script>
+        // === TAB SWITCHING ===
+        function switchTab(tab) {
+            document.querySelectorAll('.pf-nav-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.pf-section').forEach(el => el.classList.remove('active'));
+            document.querySelector(`.pf-nav-item[data-tab="${tab}"]`)?.classList.add('active');
+            document.getElementById(`section-${tab}`)?.classList.add('active');
+            const layout = document.querySelector('.pf-layout');
+            if (tab === 'ai') { layout.classList.add('ai-active'); } else { layout.classList.remove('ai-active'); }
+            history.replaceState(null, '', '#' + tab);
+        }
+        window.switchTab = switchTab;
+
+        (function() {
+            const hash = location.hash.replace('#', '');
+            const valid = ['personal','trips','calendar','settings','ai'];
+            switchTab(valid.includes(hash) ? hash : 'personal');
+        })();
+    </script>
+
+    <script>
+        // === PROFILE IMAGE ===
+        (function() {
+            const chooseBtn = document.getElementById('choose-profile-image-btn');
+            const uploadBtn = document.getElementById('upload-profile-image-btn');
+            const fileInput = document.getElementById('profile-image-input');
+            const uploadForm = document.getElementById('profile-image-upload-form');
+            const viewBtn = document.getElementById('view-profile-image-btn');
+            const modal = document.getElementById('profile-image-modal');
+            const closeModalBtn = document.getElementById('close-profile-image-modal-btn');
+            if (!chooseBtn || !uploadBtn || !fileInput || !uploadForm) return;
+
+            chooseBtn.addEventListener('click', () => fileInput.click());
+            uploadBtn.addEventListener('click', () => {
+                if (!fileInput.files || !fileInput.files.length) { alert('Please choose an image first.'); return; }
+                uploadForm.submit();
+            });
+            fileInput.addEventListener('change', () => { uploadBtn.textContent = fileInput.files?.length ? 'Upload' : 'Save'; });
+            if (viewBtn && modal) {
+                viewBtn.addEventListener('click', () => modal.classList.add('open'));
+            }
+            if (closeModalBtn) closeModalBtn.addEventListener('click', () => modal.classList.remove('open'));
+            if (modal) modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+            document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal?.classList.contains('open')) modal.classList.remove('open'); });
+        })();
+    </script>
+
+    <script>
+        // === ADD STYLE MODAL ===
+        (function() {
+            const addBtn = document.getElementById('add-style-btn');
+            const modal = document.getElementById('add-style-modal');
+            const input = document.getElementById('add-style-input');
+            const errorEl = document.getElementById('add-style-error');
+            const confirmBtn = document.getElementById('confirm-add-style-btn');
+            const cancelBtn = document.getElementById('cancel-add-style-btn');
+            if (!addBtn || !modal) return;
+
+            function showModal() { modal.classList.add('open'); input.value=''; errorEl.style.display='none'; setTimeout(()=>input.focus(),100); }
+            function hideModal() { modal.classList.remove('open'); }
+            function addCustomStyle() {
+                const v = input.value.trim();
+                if (!v) { errorEl.textContent='Please enter a travel style name.'; errorEl.style.display='block'; input.focus(); return; }
+                const container = document.getElementById('preferences-container');
+                const existing = Array.from(container.querySelectorAll('input[name="preferences"]')).map(el=>el.value.trim().toLowerCase());
+                if (existing.includes(v.toLowerCase())) { errorEl.textContent='This travel style already exists.'; errorEl.style.display='block'; input.focus(); return; }
+                const label = document.createElement('label');
+                label.className = 'pf-chip checked';
+                label.innerHTML = `<input type="checkbox" name="preferences" value="${v}" class="hidden" checked />${v}<span class="material-icons-round" style="font-size:14px;">check</span>`;
+                container.insertBefore(label, addBtn);
+                hideModal();
+            }
+            addBtn.addEventListener('click', showModal);
+            confirmBtn.addEventListener('click', addCustomStyle);
+            cancelBtn.addEventListener('click', hideModal);
+            input?.addEventListener('keypress', e => { if (e.key==='Enter') { e.preventDefault(); addCustomStyle(); } });
+            modal.addEventListener('click', e => { if (e.target===modal) hideModal(); });
+            document.addEventListener('keydown', e => { if (e.key==='Escape' && modal.classList.contains('open')) hideModal(); });
+        })();
+    </script>
+
+    <script>
+        // === PREFERENCE CHIPS ===
+        document.getElementById('preferences-container')?.addEventListener('click', e => {
+            const chip = e.target.closest('.pf-chip');
+            if (!chip || chip.id === 'add-style-btn') return;
+            const cb = chip.querySelector('input[type="checkbox"]');
+            if (!cb) return;
+            cb.checked = !cb.checked;
+            chip.classList.toggle('checked', cb.checked);
+            const icon = chip.querySelector('.material-icons-round');
+            if (icon) icon.style.display = cb.checked ? '' : 'none';
+        });
+    </script>
+
+    <script>
+        // === MENUS ===
+        function closeMenus() { document.querySelectorAll('.menu-panel.open').forEach(el => el.classList.remove('open')); }
+        document.addEventListener('click', e => { if (!e.target.closest('.menu-trigger')) closeMenus(); });
+        document.addEventListener('click', e => {
+            const btn = e.target.closest('.menu-trigger');
+            if (!btn) return;
+            e.preventDefault(); e.stopPropagation();
+            const panel = btn.parentElement.querySelector('.menu-panel');
+            const isOpen = panel?.classList.contains('open');
+            closeMenus();
+            if (!isOpen && panel) panel.classList.add('open');
+        });
+    </script>
+
+    <script>
+        // === SAVED DELETE ===
+        (function() {
+            const modal = document.getElementById('saved-delete-modal');
+            const cancelBtn = document.getElementById('cancel-saved-delete-btn');
+            const confirmBtn = document.getElementById('confirm-saved-delete-btn');
+            const savedTotalCount = document.getElementById('saved-total-count');
+            let pendingBtn = null;
+
+            function openModal(btn) { pendingBtn = btn; modal.classList.add('open'); }
+            function closeModal() { pendingBtn = null; modal.classList.remove('open'); }
+            cancelBtn?.addEventListener('click', closeModal);
+            modal?.addEventListener('click', e => { if (e.target===modal) closeModal(); });
+
+            confirmBtn?.addEventListener('click', async () => {
+                if (!pendingBtn) return;
+                const id = Number(pendingBtn.dataset.destinationId);
+                const name = pendingBtn.dataset.destinationName || '';
+                const res = await fetch('/api/unsave-destination', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id:id||null, name}) });
+                const data = await res.json();
+                if (data?.success) {
+                    document.querySelectorAll(`[data-destination-id="${id}"]`).forEach(el=>el.remove());
+                    if (savedTotalCount) { const c = parseInt(savedTotalCount.textContent)||0; savedTotalCount.textContent = `${Math.max(0,c-1)} Total`; }
+                }
+                closeModal();
+            });
+
+            document.addEventListener('click', e => { const b = e.target.closest('.unsave-destination-btn'); if (!b) return; e.preventDefault(); e.stopPropagation(); openModal(b); });
+        })();
+    </script>
+
+    <script>
+        // === TRIP ACTIONS ===
+        (function() {
+            const modal = document.getElementById('action-modal');
+            const titleEl = document.getElementById('action-modal-title');
+            const msgEl = document.getElementById('action-modal-message');
+            const cancelBtn = document.getElementById('action-modal-cancel');
+            const confirmBtn = document.getElementById('action-modal-confirm');
+            let pendingAction = null;
+
+            function openModal({title, message, onConfirm}) { pendingAction = onConfirm; titleEl.textContent=title||'Confirm'; msgEl.textContent=message||'Are you sure?'; modal.classList.add('open'); }
+            function closeModal() { pendingAction = null; modal.classList.remove('open'); }
+            cancelBtn?.addEventListener('click', closeModal);
+            modal?.addEventListener('click', e => { if (e.target===modal) closeModal(); });
+            confirmBtn?.addEventListener('click', async () => { if (typeof pendingAction==='function') await pendingAction(); closeModal(); });
+
+            async function postJson(url, body) { const r = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body||{})}); return r.json(); }
+
+            document.addEventListener('click', async e => {
+                const delBtn = e.target.closest('.delete-trip-btn');
+                if (delBtn) {
+                    e.preventDefault(); e.stopPropagation();
+                    const tripId = Number(delBtn.dataset.tripId);
+                    if (!tripId) return;
+                    openModal({ title:'Delete Trip?', message:'This trip will be removed immediately.', onConfirm: async()=>{ const d = await postJson(`/api/trip/${tripId}/delete`); if (d?.success) document.querySelectorAll(`[data-trip-id="${tripId}"]`).forEach(el=>el.remove()); }});
+                }
+            });
+        })();
+    </script>
+
+    <script>
+        // === CALENDAR ===
+        (function() {
+            const trips = {{ all_trips_js | tojson }};
+            let currentDate = new Date();
+            let selectedDateKey = null;
+            let currentView = 'month';
+            const SYNC_KEY = 'routheon_calendar_sync_connected';
+
+            function normalizeDate(d) { d = new Date(d); d.setHours(0,0,0,0); return d; }
+            function formatDateYMD(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+            function escapeICS(v) { return String(v||'').replace(/\\/g,'\\\\').replace(/\n/g,'\\n').replace(/,/g,'\\,').replace(/;/g,'\\;'); }
+
+            function buildICS(allTrips) {
+                const lines = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//RoutheonSkups//Travel Calendar//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH'];
+                allTrips.forEach(t => {
+                    const s = normalizeDate(new Date(t.start_date));
+                    const endIncl = normalizeDate(new Date(t.end_date));
+                    const endExcl = new Date(endIncl); endExcl.setDate(endExcl.getDate()+1);
+                    const now = new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
+                    lines.push('BEGIN:VEVENT',`UID:routheon-trip-${t.id}@routheonskups`,`DTSTAMP:${now}`,`DTSTART;VALUE=DATE:${formatDateYMD(s).replace(/-/g,'')}`,`DTEND;VALUE=DATE:${formatDateYMD(endExcl).replace(/-/g,'')}`,`SUMMARY:${escapeICS('Trip: '+t.destination)}`,`DESCRIPTION:${escapeICS('Budget: '+(t.budget||'N/A'))}`,'END:VEVENT');
+                });
+                lines.push('END:VCALENDAR'); return lines.join('\r\n');
+            }
+
+            function downloadICS() { if(!trips.length) return; const b=new Blob([buildICS(trips)],{type:'text/calendar;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='routheon-trips.ics'; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href); }
+
+            function quickAddGoogle() {
+                const now = normalizeDate(new Date());
+                const upcoming = trips.map(t=>({...t,startDateObj:normalizeDate(new Date(t.start_date)),endDateObj:normalizeDate(new Date(t.end_date))})).filter(t=>t.endDateObj>=now).sort((a,b)=>a.startDateObj-b.startDateObj);
+                const target = upcoming[0]; if(!target) return;
+                const s = formatDateYMD(target.startDateObj).replace(/-/g,'');
+                const endExcl = new Date(target.endDateObj); endExcl.setDate(endExcl.getDate()+1);
+                const e = formatDateYMD(endExcl).replace(/-/g,'');
+                const text = encodeURIComponent('Trip: '+target.destination);
+                const details = encodeURIComponent('Planned with RoutheonSkups. Budget: '+(target.budget||'N/A'));
+                window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&details=${details}&dates=${s}/${e}`, '_blank');
+            }
+
+            function updateSmartSyncUI() {
+                const connected = localStorage.getItem(SYNC_KEY)==='1';
+                document.getElementById('sync-status').innerText = connected ? 'Connected' : 'Not connected';
+                document.getElementById('sync-actions').style.display = connected ? 'flex' : 'none';
+                document.getElementById('connect-calendar-btn').style.display = connected ? 'none' : 'flex';
+            }
+
+            function getTripsForDay(dateObj) { const d = normalizeDate(dateObj); return trips.filter(t => { const s=normalizeDate(new Date(t.start_date)), e=normalizeDate(new Date(t.end_date)); return d>=s&&d<=e; }); }
+
+            function buildDayCell(dayDate, dayNum, muted=false) {
+                const dayKey = formatDateYMD(dayDate);
+                const today = normalizeDate(new Date());
+                const isToday = dayKey===formatDateYMD(today);
+                const isSelected = dayKey===selectedDateKey;
+                const div = document.createElement('div');
+                div.className = `calendar-day${muted?' muted':''}${isToday?' today':''}${isSelected?' selected':''}`;
+                div.dataset.date = dayKey;
+                const num = document.createElement('span');
+                num.className = `day-number${muted?' muted':''}`;
+                num.innerText = String(dayNum);
+                div.appendChild(num);
+                if (!muted) {
+                    const dayTrips = getTripsForDay(dayDate);
+                    dayTrips.slice(0,2).forEach(t => {
+                        const chip = document.createElement('button');
+                        const tripEnd = normalizeDate(new Date(t.end_date));
+                        chip.className = `trip-chip ${tripEnd<today?'done':'active'}`;
+                        chip.innerHTML = `<span class="material-icons-round" style="font-size:12px;">explore</span><span class="truncate">${t.destination}</span>`;
+                        chip.onclick = e => { e.stopPropagation(); window.location.href=`/view-trip/${t.id}`; };
+                        div.appendChild(chip);
+                    });
+                    if (dayTrips.length>2) { const m=document.createElement('div'); m.className='trip-chip more'; m.innerText=`+${dayTrips.length-2} more`; div.appendChild(m); }
+                }
+                div.addEventListener('click', () => { selectedDateKey=dayKey; renderCalendar(); });
+                return div;
+            }
+
+            function renderMonthView(grid) {
+                const y=currentDate.getFullYear(), m=currentDate.getMonth();
+                const first=new Date(y,m,1), firstWD=first.getDay(), daysInMonth=new Date(y,m+1,0).getDate(), daysInPrev=new Date(y,m,0).getDate();
+                for(let i=firstWD-1;i>=0;i--) grid.appendChild(buildDayCell(new Date(y,m-1,daysInPrev-i),daysInPrev-i,true));
+                for(let d=1;d<=daysInMonth;d++) grid.appendChild(buildDayCell(new Date(y,m,d),d,false));
+                const filled=grid.children.length-7, trailing=42-filled;
+                for(let d=1;d<=trailing;d++) grid.appendChild(buildDayCell(new Date(y,m+1,d),d,true));
+            }
+
+            function renderWeekView(grid) {
+                const base=normalizeDate(currentDate), weekStart=new Date(base);
+                weekStart.setDate(base.getDate()-base.getDay());
+                grid.classList.add('week-view-grid'); grid.classList.remove('calendar-grid');
+                for(let i=0;i<7;i++) { const date=new Date(weekStart); date.setDate(weekStart.getDate()+i); const h=document.createElement('div'); h.className='week-header'; h.innerText=new Intl.DateTimeFormat('en-US',{weekday:'short'}).format(date).toUpperCase(); grid.appendChild(h); }
+                for(let i=0;i<7;i++) { const date=new Date(weekStart); date.setDate(weekStart.getDate()+i); grid.appendChild(buildDayCell(date,date.getDate(),false)); }
+            }
+
+            function renderCalendar() {
+                const grid=document.getElementById('calendar-grid'), title=document.getElementById('current-month');
+                grid.innerHTML='';
+                if (currentView==='month') {
+                    grid.classList.add('calendar-grid'); grid.classList.remove('week-view-grid');
+                    ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d=>{ const h=document.createElement('div'); h.className='week-header'; h.innerText=d; grid.appendChild(h); });
+                    title.innerText = new Intl.DateTimeFormat('en-US',{month:'long',year:'numeric'}).format(currentDate);
+                    renderMonthView(grid);
+                } else {
+                    const ws=new Date(normalizeDate(currentDate)); ws.setDate(ws.getDate()-ws.getDay());
+                    const we=new Date(ws); we.setDate(ws.getDate()+6);
+                    title.innerText = `${new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric'}).format(ws)} - ${new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',year:'numeric'}).format(we)}`;
+                    renderWeekView(grid);
+                }
+            }
+
+            document.getElementById('prev-month')?.addEventListener('click',()=>{ if(currentView==='month') currentDate.setMonth(currentDate.getMonth()-1); else currentDate.setDate(currentDate.getDate()-7); renderCalendar(); });
+            document.getElementById('next-month')?.addEventListener('click',()=>{ if(currentView==='month') currentDate.setMonth(currentDate.getMonth()+1); else currentDate.setDate(currentDate.getDate()+7); renderCalendar(); });
+            document.getElementById('today-btn')?.addEventListener('click',()=>{ currentDate=new Date(); selectedDateKey=formatDateYMD(normalizeDate(currentDate)); renderCalendar(); });
+            document.getElementById('month-view-btn')?.addEventListener('click',()=>{ currentView='month'; document.getElementById('month-view-btn').classList.add('active'); document.getElementById('week-view-btn').classList.remove('active'); renderCalendar(); });
+            document.getElementById('week-view-btn')?.addEventListener('click',()=>{ currentView='week'; document.getElementById('week-view-btn').classList.add('active'); document.getElementById('month-view-btn').classList.remove('active'); renderCalendar(); });
+            document.getElementById('connect-calendar-btn')?.addEventListener('click',()=>{ localStorage.setItem(SYNC_KEY,'1'); updateSmartSyncUI(); });
+            document.getElementById('disconnect-calendar-btn')?.addEventListener('click',()=>{ localStorage.removeItem(SYNC_KEY); updateSmartSyncUI(); });
+            document.getElementById('download-ics-btn')?.addEventListener('click', downloadICS);
+            document.getElementById('google-sync-btn')?.addEventListener('click', quickAddGoogle);
+
+            // Calendar action modal
+            (function() {
+                const modal = document.getElementById('calendar-action-modal');
+                const modalTitle = document.getElementById('calendar-modal-title');
+                const modalSubtitle = document.getElementById('calendar-modal-subtitle');
+                const modalCloseBtn = document.getElementById('calendar-modal-close');
+                let pendingCtx = null;
+                function openModal(cfg) { pendingCtx=cfg||null; modalTitle.textContent=cfg.title||'Choose Action'; modalSubtitle.textContent=cfg.subtitle||''; modal.classList.add('open'); }
+                function closeModal() { pendingCtx=null; modal.classList.remove('open'); }
+                modalCloseBtn?.addEventListener('click', closeModal);
+                modal?.addEventListener('click', e => { if(e.target===modal) closeModal(); });
+
+                async function deleteTrip(tripId) {
+                    const r = await fetch(`/api/trip/${tripId}/delete`,{method:'POST'});
+                    const d = await r.json();
+                    if (d?.success) {
+                        document.querySelectorAll(`[data-trip-id="${tripId}"]`).forEach(el=>el.remove());
+                        const idx=trips.findIndex(x=>Number(x.id)===Number(tripId)); if(idx>=0) trips.splice(idx,1);
+                        renderCalendar(); return true;
+                    }
+                    return false;
+                }
+
+                document.querySelectorAll('.delete-trip-btn').forEach(btn => {
+                    btn.addEventListener('click', async e => {
+                        e.preventDefault(); e.stopPropagation();
+                        const tripId=Number(btn.dataset.tripId); if(!tripId) return;
+                        openModal({ title:'Delete This Trip?', subtitle:'Select an option below to continue.', tripId });
+                    });
+                });
+
+                modal?.querySelectorAll('[data-modal-choice]').forEach(choice => {
+                    choice.addEventListener('click', async () => {
+                        if (!pendingCtx) return;
+                        const action=choice.dataset.modalChoice, tripId=Number(pendingCtx.tripId);
+                        if (action==='delete') await deleteTrip(tripId);
+                        else if (action==='later') localStorage.setItem(`trip-delete-remind-later-${tripId}`, String(Date.now()));
+                        closeModal();
+                    });
+                });
+
+                // Check for past trips to prompt
+                const today = new Date(); today.setHours(0,0,0,0);
+                for (const trip of trips) {
+                    const end = new Date(trip.end_date); end.setHours(0,0,0,0);
+                    if (end >= today) continue;
+                    const remindKey = `trip-delete-remind-later-${trip.id}`;
+                    const remindedAt = Number(localStorage.getItem(remindKey)||0);
+                    if (remindedAt && (Date.now()-remindedAt)<24*60*60*1000) continue;
+                    setTimeout(()=>openModal({title:'Trip Date Has Passed',subtitle:`${trip.destination}: choose what to do next.`,tripId:trip.id}),600);
+                    break;
+                }
+            })();
+
+            selectedDateKey = formatDateYMD(normalizeDate(new Date()));
+            updateSmartSyncUI();
+            renderCalendar();
+        })();
+    </script>
+
+    <script>
+        // === SETTINGS ===
+        (function() {
+            function syncNotificationSubSettingsState() {
+                const isEnabled = document.querySelector('input[name="notifications_enabled"]:checked')?.value === 'on';
+                document.querySelectorAll('[data-notification-subsetting]').forEach(input => { input.disabled = !isEnabled; });
+                const btn = document.getElementById('generate-smart-notifications');
+                if (btn) { btn.disabled = !isEnabled; btn.style.opacity = isEnabled ? '' : '0.5'; btn.style.pointerEvents = isEnabled ? '' : 'none'; }
+            }
+            document.querySelectorAll('input[name="notifications_enabled"]').forEach(r => r.addEventListener('change', syncNotificationSubSettingsState));
+            syncNotificationSubSettingsState();
+
+            document.getElementById('generate-smart-notifications')?.addEventListener('click', async function() {
+                const btn = this;
+                const enabled = document.querySelector('input[name="notifications_enabled"]:checked')?.value === 'on';
+                if (!enabled) { alert('Notifications are currently off.'); return; }
+                const orig = btn.textContent.trim();
+                try {
+                    btn.disabled=true; btn.textContent='Generating...'; btn.style.opacity='0.5';
+                    const r = await fetch('{{ url_for("main.generate_notifications_now") }}', {method:'POST'});
+                    const d = await r.json();
+                    alert(d?.success ? `Generated ${d.created} new notifications.` : 'Could not generate notifications.');
+                } catch(e) { alert('Failed to generate notifications.'); }
+                finally { btn.disabled=false; btn.textContent=orig; btn.style.opacity=''; }
+            });
+
+            // AI settings realtime save
+            (function() {
+                const form = document.getElementById('ai-assistant-settings-form');
+                const statusEl = document.getElementById('ai-settings-live-status');
+                if (!form) return;
+                const proactiveInput = form.querySelector('input[name="proactive_tips"]');
+                const chatHistoryInput = form.querySelector('input[name="chat_history"]');
+                if (!proactiveInput || !chatHistoryInput) return;
+                let saveTimer = null, inFlight = null;
+                function setStatus(text, mode) { if(!text) { statusEl.style.display='none'; return; } statusEl.style.display='inline'; statusEl.textContent=text; statusEl.style.color = mode==='error'?'var(--accent-rose)':mode==='ok'?'var(--text-primary)':'var(--text-muted)'; }
+                async function saveRealtime() {
+                    if(inFlight) inFlight.abort(); inFlight=new AbortController(); setStatus('Saving...','muted');
+                    try {
+                        const fd = new FormData(form);
+                        const r = await fetch(form.action,{method:'POST',headers:{'X-Requested-With':'XMLHttpRequest','Accept':'application/json'},body:fd,signal:inFlight.signal});
+                        const d = await r.json();
+                        if(!r.ok||!d.success) throw new Error(d.error||'Failed');
+                        setStatus(d.message||'Saved','ok'); setTimeout(()=>setStatus('','muted'),2000);
+                    } catch(e) { if(e.name==='AbortError') return; setStatus('Save failed.','error'); }
+                    finally { inFlight=null; }
+                }
+                function scheduleSave() { if(saveTimer) clearTimeout(saveTimer); saveTimer=setTimeout(saveRealtime,250); }
+                proactiveInput.addEventListener('change', scheduleSave);
+                chatHistoryInput.addEventListener('change', scheduleSave);
+            })();
+        })();
+    </script>
+
+    <script>
+        // === AI CHAT ===
+        (function() {
+            const AI_SETTINGS = {{ ai_assistant_settings | tojson }};
+            const chatMessages = document.getElementById('chat-messages');
+            const chatInput = document.getElementById('chat-input');
+            const chatSearchInput = document.getElementById('chat-search-input');
+            const sendBtn = document.getElementById('send-btn');
+            const sessionsContainer = document.getElementById('sessions-container');
+            const newChatBtn = document.getElementById('new-chat-btn');
+            const chatMenuBtn = document.getElementById('chat-menu-btn');
+            const chatMenu = document.getElementById('chat-menu');
+            const attachBtn = document.getElementById('attach-btn');
+            const chatImageInput = document.getElementById('chat-image-input');
+            const imagePreviewWrap = document.getElementById('image-preview-wrap');
+            const imagePreview = document.getElementById('image-preview');
+            const imagePreviewName = document.getElementById('image-preview-name');
+            const removeImageBtn = document.getElementById('remove-image-btn');
+
+            let currentSessionId = null, sending = false, allSessionsCache = [];
+            let selectedImageBase64 = null, selectedImageMime = null, selectedImageName = null;
+            let editingMessageMeta = null, floatingSessionMenu = null, floatingSessionMenuSession = null;
+            let floatingMessageMenu = null, floatingMessageContext = null;
+
+            function escapeHtml(t) { const d=document.createElement('div'); d.innerText=t||''; return d.innerHTML; }
+            function buildTimeNow() { const n=new Date(); return `${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`; }
+
+            function renderWelcomeMessage(isNew=false) {
+                const firstName = "{{ current_user.name.split(' ')[0] }}";
+                const welcome = isNew ? 'New chat started. Tell me your next trip idea.' : `Hello ${firstName}! How can I assist your travels today?`;
+                chatMessages.innerHTML = `
+                    <div style="display:flex;flex-direction:column;align-items:flex-start;gap:0.5rem;">
+                        <div class="ai-bubble"><p style="font-size:0.875rem;font-weight:500;line-height:1.6;">${escapeHtml(welcome)}</p></div>
+                        <span style="font-size:0.625rem;font-weight:700;margin-left:4px;color:var(--text-muted);">Skupheon AI &bull; ${buildTimeNow()}</span>
+                    </div>
+                    <div id="suggestions-container" style="display:flex;flex-wrap:wrap;gap:0.5rem;padding-top:0.5rem;">
+                        <div class="action-chip" onclick="handleChipClick('Analyze my upcoming trip')">Analyze my upcoming trip</div>
+                        <div class="action-chip" onclick="handleChipClick('Find hidden gems in Karnataka')">Find hidden gems in Karnataka</div>
+                        <div class="action-chip" onclick="handleChipClick('Help with my budget')">Help with my budget</div>
+                    </div>`;
+            }
+
+            function closeAllSessionMenus() { if(floatingSessionMenu){floatingSessionMenu.classList.remove('open');floatingSessionMenu.innerHTML='';} floatingSessionMenuSession=null; }
+
+            function ensureFloatingSessionMenu() { if(floatingSessionMenu) return floatingSessionMenu; const m=document.createElement('div'); m.className='floating-session-menu'; m.addEventListener('click',e=>e.stopPropagation()); document.body.appendChild(m); floatingSessionMenu=m; return m; }
+
+            function openSessionMenu(anchor, session) {
+                const menu=ensureFloatingSessionMenu();
+                const rect=anchor.getBoundingClientRect();
+                menu.innerHTML = `<button class="w-full text-left px-3 py-2 text-xs font-semibold session-pin" style="color:var(--text-primary);background:none;border:none;cursor:pointer;">${session.pinned?'Unpin chat':'Pin chat'}</button><button class="w-full text-left px-3 py-2 text-xs font-semibold session-edit" style="color:var(--text-primary);background:none;border:none;cursor:pointer;">Edit chat</button><button class="w-full text-left px-3 py-2 text-xs font-semibold session-share" style="color:var(--text-primary);background:none;border:none;cursor:pointer;">Share chat</button><button class="w-full text-left px-3 py-2 text-xs font-semibold session-delete" style="color:var(--accent-rose);background:none;border:none;cursor:pointer;">Delete chat</button>`;
+                let left=Math.max(8,rect.right-160); left=Math.min(left,window.innerWidth-168);
+                let top=rect.bottom+6; if(top+132>window.innerHeight-8) top=Math.max(8,rect.top-138);
+                menu.style.left=left+'px'; menu.style.top=top+'px'; menu.classList.add('open');
+                floatingSessionMenuSession=session;
+                menu.querySelector('.session-pin').onclick = async e=>{e.stopPropagation();await togglePinSession(session.id,!session.pinned);};
+                menu.querySelector('.session-edit').onclick = async e=>{e.stopPropagation();closeAllSessionMenus();openEditTitleModal(session.id,session.title||'New Conversation');};
+                menu.querySelector('.session-share').onclick = async e=>{e.stopPropagation();await shareSession(session.id,session.title||'Chat');};
+                menu.querySelector('.session-delete').onclick = async e=>{e.stopPropagation();await deleteSession(session.id);};
+            }
+
+            function renderSessions(sessions) {
+                sessionsContainer.innerHTML='';
+                if(!Array.isArray(sessions)||!sessions.length) {
+                    const info = !AI_SETTINGS.chat_history ? 'Chat history is disabled in Settings.' : 'No chats found.';
+                    sessionsContainer.innerHTML=`<div style="padding:2rem;text-align:center;"><p style="font-size:0.75rem;color:var(--text-muted);">${info}</p></div>`;
+                    return;
+                }
+                sessions.forEach(s => {
+                    const item=document.createElement('div');
+                    item.className=`sidebar-chat-item${currentSessionId===s.id?' active':''}`;
+                    item.dataset.sessionId=String(s.id);
+                    item.innerHTML=`<div style="width:28px;height:28px;border-radius:var(--radius-sm);flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--bg-surface);color:${currentSessionId===s.id?'var(--text-primary)':'var(--text-faint)'};"><span class="material-icons-round" style="font-size:14px;">chat_bubble</span></div><div style="min-width:0;flex:1;"><div style="display:flex;align-items:center;gap:4px;">${s.pinned?'<span class="material-icons-round" style="font-size:12px;color:var(--text-muted);">push_pin</span>':''}<h4 style="font-size:0.75rem;font-weight:700;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(s.title||'New Conversation')}</h4></div><p style="font-size:0.625rem;color:var(--text-faint);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px;">${escapeHtml(s.last_message||'No messages yet')}</p></div><button class="session-menu-btn" style="padding:4px;border-radius:var(--radius-sm);color:var(--text-faint);background:none;border:none;cursor:pointer;flex-shrink:0;" data-session-id="${s.id}"><span class="material-icons-round" style="font-size:14px;">more_horiz</span></button>`;
+                    item.addEventListener('click', e=>{ if(e.target.closest('.session-menu-btn')) return; selectSession(s.id); });
+                    item.querySelector('.session-menu-btn').addEventListener('click', e=>{
+                        e.stopPropagation();
+                        if(floatingSessionMenuSession&&floatingSessionMenuSession.id===s.id&&floatingSessionMenu?.classList.contains('open')){closeAllSessionMenus();return;}
+                        closeAllSessionMenus(); openSessionMenu(item.querySelector('.session-menu-btn'),s);
+                    });
+                    sessionsContainer.appendChild(item);
+                });
+            }
+
+            function applySessionSearch() {
+                const q=(chatSearchInput.value||'').trim().toLowerCase();
+                if(!q){renderSessions(allSessionsCache);return;}
+                renderSessions(allSessionsCache.filter(s=>(s.title||'').toLowerCase().includes(q)||(s.last_message||'').toLowerCase().includes(q)));
+            }
+
+            async function loadSessions() {
+                try {
+                    const r=await fetch('/api/chat/sessions');
+                    const s=await r.json();
+                    allSessionsCache=Array.isArray(s)?s:[];
+                    if(!allSessionsCache.length) { const info=!AI_SETTINGS.chat_history?'Chat history is disabled in Settings.':'No recent chats. Start a new one!'; sessionsContainer.innerHTML=`<div style="padding:2rem;text-align:center;"><p style="font-size:0.75rem;color:var(--text-muted);">${info}</p></div>`; return; }
+                    applySessionSearch();
+                } catch(e) { sessionsContainer.innerHTML='<div style="padding:2rem;text-align:center;"><p style="font-size:0.75rem;color:var(--accent-rose);">Could not load chats.</p></div>'; }
+            }
+
+            async function togglePinSession(id, pinned) {
+                closeAllSessionMenus();
+                try { const r=await fetch(`/api/chat/session/${id}/pin`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pinned})}); const d=await r.json(); if(!r.ok||!d.success){alert(d.error||'Could not update.');return;} const row=allSessionsCache.find(x=>x.id===id); if(row) row.pinned=d.pinned; await loadSessions(); } catch(e) { alert('Could not update.'); }
+            }
+
+            let editSessionId=null;
+            function openEditTitleModal(id, title) { editSessionId=id; document.getElementById('edit-title-input').value=title||'New Conversation'; document.getElementById('edit-title-modal').classList.add('open'); setTimeout(()=>document.getElementById('edit-title-input').focus(),100); }
+            function closeEditTitleModal() { editSessionId=null; document.getElementById('edit-title-modal').classList.remove('open'); }
+            async function confirmEditTitle() {
+                const input=document.getElementById('edit-title-input'), trimmed=input.value.trim();
+                if(!trimmed){document.getElementById('edit-title-error').style.display='block';document.getElementById('edit-title-error').textContent='Title cannot be empty.';input.focus();return;}
+                document.getElementById('edit-title-error').style.display='none';
+                try{const r=await fetch(`/api/chat/session/${editSessionId}/title`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:trimmed})});const d=await r.json();if(!r.ok||!d.success){alert(d.error||'Could not update.');return;}await loadSessions();closeEditTitleModal();}catch(e){alert('Could not update.');}
+            }
+            window.confirmEditTitle = confirmEditTitle;
+            window.closeEditTitleModal = closeEditTitleModal;
+
+            async function shareSession(id, title) {
+                closeAllSessionMenus();
+                try{const r=await fetch(`/api/chat/session/${id}`);const msgs=await r.json();if(!r.ok||!Array.isArray(msgs)){alert('Could not load chat.');return;}const text=`RoutheonSkups - ${title}\n\n`+msgs.map(m=>`${m.role==='user'?'You':'Skupheon AI'}: ${m.content}`).join('\n\n');if(navigator.share){try{await navigator.share({title:`Chat: ${title}`,text});return;}}catch(e){}await navigator.clipboard.writeText(text);alert('Chat copied to clipboard.');}catch(e){alert('Could not share.');}
+            }
+
+            async function selectSession(id) {
+                currentSessionId=id; editingMessageMeta=null;
+                attachBtn.style.display=''; await loadSessions();
+                chatMessages.innerHTML='<div style="padding:2rem;text-align:center;"><p style="font-size:0.75rem;color:var(--text-muted);">Loading conversation...</p></div>';
+                try{const r=await fetch(`/api/chat/session/${id}`);const msgs=await r.json();chatMessages.innerHTML='';if(!Array.isArray(msgs)||!msgs.length){chatMessages.innerHTML='<div style="padding:2rem;text-align:center;"><p style="font-size:0.75rem;color:var(--text-muted);">Start chatting with Skupheon.</p></div>';return;}msgs.forEach(m=>appendMessage(m.role,m.content,m.created_at));}catch(e){chatMessages.innerHTML='<div style="padding:2rem;text-align:center;"><p style="font-size:0.75rem;color:var(--accent-rose);">Could not load this chat.</p></div>';}
+            }
+
+            function appendMessage(role, content, time=null) {
+                const safeTime=time||buildTimeNow();
+                const normalizedRole=role==='user'?'user':'assistant';
+                const bubbleClass=normalizedRole==='user'?'user-bubble':'ai-bubble';
+                const author=normalizedRole==='user'?'You':'Skupheon AI';
+                const div=document.createElement('div');
+                div.className=`message-row group flex flex-col ${normalizedRole==='user'?'items-end':'items-start'} gap-2`;
+                div.dataset.role=normalizedRole; div.dataset.content=content||'';
+
+                const userActions=`<div class="message-actions user-actions self-end relative mr-1" style="margin-top:4px;display:flex;gap:4px;align-items:center;"><button data-action="copy" title="Copy" style="all:unset;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;color:var(--text-faint);"><span class="material-icons-round" style="font-size:14px;">content_copy</span></button><button data-action="edit" title="Edit" style="all:unset;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;color:var(--text-faint);"><span class="material-icons-round" style="font-size:14px;">edit</span></button></div>`;
+                const aiActions=`<div class="message-actions assistant-actions self-start relative ml-1" style="margin-top:4px;display:flex;gap:4px;align-items:center;"><button data-action="copy" title="Copy" style="all:unset;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;color:var(--text-faint);"><span class="material-icons-round" style="font-size:14px;">content_copy</span></button><button data-action="thumb-up" title="Thumb up" style="all:unset;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;color:var(--text-faint);"><span class="material-icons-round" style="font-size:14px;">thumb_up</span></button><button data-action="thumb-down" title="Thumb down" style="all:unset;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;color:var(--text-faint);"><span class="material-icons-round" style="font-size:14px;">thumb_down</span></button></div>`;
+
+                div.innerHTML=`<div class="${bubbleClass}"><p class="message-text" style="font-size:0.875rem;font-weight:500;line-height:1.6;white-space:pre-wrap;">${escapeHtml(content)}</p></div><span style="font-size:0.625rem;font-weight:700;${normalizedRole==='user'?'margin-right:4px;':'margin-left:4px;'}color:var(--text-muted);">${author} &bull; ${safeTime}</span>${normalizedRole==='user'?userActions:aiActions}`;
+                chatMessages.appendChild(div);
+                chatMessages.scrollTop=chatMessages.scrollHeight;
+            }
+
+            function closeMessageMenu() { if(floatingMessageMenu){floatingMessageMenu.classList.remove('open');floatingMessageMenu.innerHTML='';} floatingMessageContext=null; }
+            function ensureFloatingMessageMenu() { if(floatingMessageMenu)return floatingMessageMenu; const m=document.createElement('div'); m.className='floating-message-menu'; m.addEventListener('click',e=>e.stopPropagation()); document.body.appendChild(m); floatingMessageMenu=m; return m; }
+
+            async function copyText(v) { if(!v)return; if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(v);return;} const t=document.createElement('textarea'); t.value=v; t.style.position='fixed'; t.style.left='-9999px'; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); }
+            function flashCopySuccess(el) { if(!el)return; const icon=el.querySelector('.material-icons-round'); if(!icon)return; const prev=icon.textContent; icon.textContent='check'; el.classList.add('copy-success'); setTimeout(()=>{icon.textContent=prev||'content_copy';el.classList.remove('copy-success');},900); }
+
+            async function sendMessage() {
+                if(sending) return;
+                const message=chatInput.value.trim();
+                if(!message&&!selectedImageBase64) return;
+                const sug=document.getElementById('suggestions-container'); if(sug) sug.remove();
+                const outgoingMessage=message; chatInput.value='';
+
+                if(editingMessageMeta){const t=editingMessageMeta.querySelector('.message-text'),s=editingMessageMeta.querySelector('span');if(t)t.textContent=outgoingMessage;if(s)s.textContent=`You \u2022 ${buildTimeNow()}`;editingMessageMeta.dataset.content=outgoingMessage;editingMessageMeta=null;attachBtn.style.display='';}
+                else if(selectedImageBase64&&outgoingMessage) appendMessage('user',`${outgoingMessage}\n[Image attached: ${selectedImageName}]`);
+                else if(selectedImageBase64) appendMessage('user',`[Image attached: ${selectedImageName}]`);
+                else appendMessage('user',outgoingMessage);
+
+                const typingId=`typing-${Date.now()}`; const tDiv=document.createElement('div'); tDiv.id=typingId; tDiv.style.cssText='display:flex;flex-direction:column;align-items:flex-start;gap:0.5rem;';
+                tDiv.innerHTML='<div class="ai-bubble"><div style="display:flex;align-items:center;gap:6px;"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span><span style="font-size:0.75rem;font-weight:500;margin-left:4px;color:var(--text-muted);">Skupheon is thinking...</span></div></div>';
+                chatMessages.appendChild(tDiv); chatMessages.scrollTop=chatMessages.scrollHeight;
+                sending=true; sendBtn.disabled=true;
+
+                try {
+                    const payload={message:outgoingMessage,session_id:currentSessionId};
+                    if(selectedImageBase64){payload.image_base64=selectedImageBase64;payload.image_mime=selectedImageMime;payload.image_name=selectedImageName;}
+                    const r=await fetch('/api/chat/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+                    const d=await r.json();
+                    const tn=document.getElementById(typingId); if(tn) tn.remove();
+                    if(!r.ok||d.error){appendMessage('ai',d.error||'I encountered an error.');return;}
+                    currentSessionId=d.session_id; appendMessage('ai',d.response,d.created_at); clearSelectedImage(); await loadSessions();
+                } catch(e) { const tn=document.getElementById(typingId); if(tn) tn.remove(); appendMessage('ai','Sorry, I am having trouble connecting right now.'); }
+                finally { sending=false; sendBtn.disabled=false; }
+            }
+
+            async function deleteSession(id) { closeAllSessionMenus(); if(!id)return; if(!confirm('Delete this chat session?'))return; try{const r=await fetch(`/api/chat/session/${id}`,{method:'DELETE'});const d=await r.json();if(!r.ok||!d.success){alert(d.error||'Could not delete.');return;}if(currentSessionId===id){currentSessionId=null;renderWelcomeMessage();}await loadSessions();}catch(e){alert('Could not delete.');} }
+            async function clearAllSessions() { if(!confirm('Clear all chat sessions? This cannot be undone.'))return; try{const r=await fetch('/api/chat/sessions/clear',{method:'POST'});const d=await r.json();if(!r.ok||!d.success){alert(d.error||'Could not clear.');return;}currentSessionId=null;renderWelcomeMessage();await loadSessions();}catch(e){alert('Could not clear.');} }
+
+            function handleChipClick(text) { chatInput.value=text; sendMessage(); }
+            window.handleChipClick = handleChipClick;
+            function clearSelectedImage() { selectedImageBase64=null;selectedImageMime=null;selectedImageName=null;chatImageInput.value='';imagePreview.src='';imagePreviewName.innerText='';imagePreviewWrap.style.display='none'; }
+            function handleImageSelect(file) { if(!file||!file.type.startsWith('image/')){if(file)alert('Please choose an image file.');return;} const reader=new FileReader(); reader.onload=()=>{const r=String(reader.result||'');const ci=r.indexOf(',');if(ci===-1){alert('Could not process image.');return;}                selectedImageMime=file.type||'image/jpeg';selectedImageBase64=r.substring(ci+1);selectedImageName=file.name||'image';imagePreview.src=r;imagePreviewName.innerText=selectedImageName;imagePreviewWrap.style.display='flex';chatInput.focus();}; reader.readAsDataURL(file); }
+
+            // Event listeners
+            chatMessages?.addEventListener('click', async e=>{
+                const btn=e.target.closest('[data-action]'); if(!btn)return; e.stopPropagation();
+                const action=btn.dataset.action, row=btn.closest('.message-row'); if(!row)return;
+                const role=row.dataset.role||'assistant', textEl=row.querySelector('.message-text');
+                const messageText=textEl?textEl.textContent:(row.dataset.content||'');
+                if(action==='copy'){await copyText(messageText);flashCopySuccess(btn);return;}
+                if(action==='edit'){if(role!=='user')return;editingMessageMeta=row;chatInput.value=messageText;attachBtn.style.display='none';chatInput.focus();closeMessageMenu();return;}
+                if(action==='thumb-up'||action==='thumb-down'){const up=row.querySelector('[data-action="thumb-up"]'),dn=row.querySelector('[data-action="thumb-down"]');if(action==='thumb-up'){up?.classList.toggle('active');dn?.classList.remove('active');}else{dn?.classList.toggle('active');up?.classList.remove('active');}return;}
+            });
+
+            sendBtn?.addEventListener('click', sendMessage);
+            chatInput?.addEventListener('keydown', e=>{ if(e.key==='Enter'){e.preventDefault();sendMessage();} if(e.key==='Escape'&&editingMessageMeta){editingMessageMeta=null;chatInput.value='';attachBtn.style.display='';} });
+            attachBtn?.addEventListener('click',()=>chatImageInput.click());
+            chatImageInput?.addEventListener('change',e=>handleImageSelect(e.target.files?.[0]));
+            removeImageBtn?.addEventListener('click',clearSelectedImage);
+
+            newChatBtn?.addEventListener('click', async()=>{ currentSessionId=null;editingMessageMeta=null;attachBtn.style.display='';clearSelectedImage();renderWelcomeMessage(true);await loadSessions();chatInput.focus(); });
+            chatMenuBtn?.addEventListener('click',e=>{e.stopPropagation();chatMenu.classList.toggle('hidden');});
+            chatSearchInput?.addEventListener('input',applySessionSearch);
+            document.addEventListener('click',()=>{chatMenu?.classList.add('hidden');closeAllSessionMenus();closeMessageMenu();});
+            chatMenu?.addEventListener('click',e=>e.stopPropagation());
+            sessionsContainer?.addEventListener('click',e=>e.stopPropagation());
+            sessionsContainer?.addEventListener('scroll',()=>closeAllSessionMenus());
+            chatMessages?.addEventListener('scroll',()=>closeMessageMenu());
+
+            document.getElementById('refresh-sessions-btn')?.addEventListener('click',async()=>{chatMenu?.classList.add('hidden');await loadSessions();});
+            document.getElementById('share-current-btn')?.addEventListener('click',async()=>{chatMenu?.classList.add('hidden');if(!currentSessionId){alert('No active chat selected.');return;}await shareSession(currentSessionId,'Current Chat');});
+            document.getElementById('delete-current-btn')?.addEventListener('click',async()=>{chatMenu?.classList.add('hidden');if(!currentSessionId){alert('No active chat selected.');return;}await deleteSession(currentSessionId);});
+            document.getElementById('clear-all-btn')?.addEventListener('click',async()=>{chatMenu?.classList.add('hidden');await clearAllSessions();});
+
+            // Edit title modal
+            document.getElementById('cancel-edit-title-btn')?.addEventListener('click',closeEditTitleModal);
+            document.getElementById('confirm-edit-title-btn')?.addEventListener('click',confirmEditTitle);
+            document.getElementById('edit-title-input')?.addEventListener('keypress',e=>{if(e.key==='Enter'){e.preventDefault();confirmEditTitle();}});
+            document.getElementById('edit-title-modal')?.addEventListener('click',function(e){if(e.target===this)closeEditTitleModal();});
+            document.addEventListener('keydown',e=>{const m=document.getElementById('edit-title-modal');if(e.key==='Escape'&&m?.classList.contains('open'))closeEditTitleModal();});
+
+            renderWelcomeMessage();
+            loadSessions();
+        })();
+    </script>
+    <script src="/static/js/background.js"></script>
+</body>
+</html>

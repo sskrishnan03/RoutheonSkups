@@ -335,15 +335,32 @@ def _send_password_reset_email(user):
     token = user.get_reset_token()
     reset_url = url_for('main.reset_token', token=token, _external=True)
     msg = Message(
-        subject='Password Reset Request',
+        subject='Reset Your Password — RoutheonSkups',
         recipients=[user.email],
         sender=sender
     )
-    msg.body = f'''To reset your password, visit the following link:
+    msg.body = f'''RoutheonSkups
+
+Your gateway to smarter travel planning. Plan trips, explore destinations, and discover India like never before.
+
+Reset your password here:
 {reset_url}
 
-If you did not make this request then simply ignore this email and no changes will be made.
-'''
+If you didn't request this, you can safely ignore this email.'''
+    msg.html = f'''<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#000000;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#000000;padding:40px 20px;">
+<tr><td align="center">
+  <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:#FFFFFF;letter-spacing:-0.02em;">RoutheonSkups</h1>
+  <p style="margin:0 0 24px;font-size:13px;color:rgba(255,255,255,0.4);font-style:italic;">Your gateway to smarter travel planning. Plan trips, explore destinations, and discover India like never before.</p>
+  <a href="{reset_url}" style="display:inline-block;padding:12px 32px;background:#FFFFFF;color:#000000;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;">Reset Password</a>
+  <p style="margin:24px 0 0;font-size:12px;color:rgba(255,255,255,0.35);">If you didn't request this, you can safely ignore this email.</p>
+</td></tr>
+</table>
+</body>
+</html>'''
     return _send_mail_message(msg, "Password reset", getattr(user, 'id', None))
 
 
@@ -497,10 +514,6 @@ def index():
         return redirect(url_for('main.landing'))
     return render_template('firstpage.html')
 
-@main_bp.route('/secondpage')
-def secondpage():
-    return render_template('secondpage.html')
-
 @main_bp.route('/home')
 def home():
     if current_user.is_authenticated:
@@ -538,8 +551,7 @@ def register():
             flash('Email already registered.', 'danger')
             return redirect(url_for('main.register'))
 
-        admin_email = (current_app.config.get('ADMIN_EMAIL') or '').strip().lower()
-        user = User(name=name, email=email, password=hashed_password, is_admin=(email == admin_email))
+        user = User(name=name, email=email, password=hashed_password)
         db.session.add(user)
         db.session.commit()
         flash('Registration successful! Please login.', 'success')
@@ -589,7 +601,7 @@ def reset_password():
             flash('If an account exists with that email, a password reset link has been sent.', 'success')
             
         return redirect(url_for('main.login'))
-    return redirect(url_for('main.login'))
+    return render_template('forgot_password.html')
 
 @main_bp.route('/reset-password/<token>', methods=['GET', 'POST'])
 def reset_token(token):
@@ -650,8 +662,6 @@ def google_callback():
     email = user_info['email'].strip().lower()
     name = user_info.get('name', email.split('@')[0])
     picture = user_info.get('picture')
-    admin_email = (current_app.config.get('ADMIN_EMAIL') or '').strip().lower()
-
     # Check if user exists by google_id or email
     user = User.query.filter_by(google_id=google_id).first()
     if not user:
@@ -659,507 +669,19 @@ def google_callback():
         if user:
             # Link existing email user to their Google account
             user.google_id = google_id
-            user.is_admin = (email == admin_email)
             if not user.image_url and picture:
                 user.image_url = picture
             db.session.commit()
         else:
             # Create new user
-            user = User(name=name, email=email, google_id=google_id, image_url=picture, is_admin=(email == admin_email))
+            user = User(name=name, email=email, google_id=google_id, image_url=picture)
             db.session.add(user)
             db.session.commit()
     else:
-        user.is_admin = (email == admin_email)
         db.session.commit()
 
     login_user(user)
     return redirect(url_for('main.landing'))
-
-@main_bp.route('/admin/users')
-@login_required
-def admin_users():
-    if not current_user.is_admin:
-        flash('Access denied. Admin privileges required.', 'danger')
-        return redirect(url_for('main.landing'))
-    users_with_metrics = (
-        db.session.query(
-            User,
-            func.count(func.distinct(Trip.id)).label('trip_count'),
-            func.count(func.distinct(SavedDestination.id)).label('saved_count'),
-            func.count(func.distinct(Notification.id)).label('notification_count'),
-            func.count(func.distinct(ChatSession.id)).label('chat_session_count'),
-            func.max(Trip.created_at).label('last_trip_at'),
-            func.max(SavedDestination.created_at).label('last_saved_at'),
-            func.max(ChatSession.updated_at).label('last_chat_at')
-        )
-        .outerjoin(Trip, Trip.user_id == User.id)
-        .outerjoin(SavedDestination, SavedDestination.user_id == User.id)
-        .outerjoin(Notification, Notification.user_id == User.id)
-        .outerjoin(ChatSession, ChatSession.user_id == User.id)
-        .group_by(User.id)
-        .order_by(User.created_at.desc())
-        .all()
-    )
-
-    return render_template('admin_users.html', users_with_metrics=users_with_metrics)
-
-@main_bp.route('/admin/dashboard')
-@login_required
-def admin_dashboard():
-    if not current_user.is_admin:
-        flash('Access denied. Admin privileges required.', 'danger')
-        return redirect(url_for('main.landing'))
-    
-    total_users = User.query.count()
-    total_trips = Trip.query.count()
-    total_destinations = Destination.query.count()
-    total_saves = SavedDestination.query.count()
-    total_itineraries = Trip.query.filter(Trip.itinerary_text.isnot(None), Trip.itinerary_text != '').count()
-    total_notifications = Notification.query.count()
-    total_chat_sessions = ChatSession.query.count()
-    total_chat_messages = ChatMessage.query.count()
-    total_favorites = FavoriteDestination.query.count()
-    admin_users_count = User.query.filter_by(is_admin=True).count()
-    google_only_accounts = User.query.filter(User.google_id.isnot(None), User.password.is_(None)).count()
-
-    recent_users = User.query.order_by(User.created_at.desc()).limit(5).all()
-
-    def _to_json(val):
-        if isinstance(val, (datetime, date)):
-            return val.isoformat() if val else None
-        return val
-
-    def _ser_cols(items):
-        return [{c.name: _to_json(getattr(item, c.name)) for c in item.__table__.columns} for item in items]
-
-    all_users = User.query.order_by(User.created_at.desc()).all()
-    all_users_json = _ser_cols(all_users)
-    for u, d in zip(all_users, all_users_json):
-        d['password'] = bool(u.password)
-        d['preferences'] = u.preferences
-
-    all_trips = Trip.query.order_by(Trip.created_at.desc()).all()
-    all_trips_json = _ser_cols(all_trips)
-    for t, d in zip(all_trips, all_trips_json):
-        d['author'] = {'name': t.author.name} if t.author else None
-
-    all_destinations = Destination.query.order_by(Destination.created_at.desc()).all()
-    all_destinations_json = _ser_cols(all_destinations)
-
-    itinerary_trips = Trip.query.filter(Trip.itinerary_text.isnot(None), Trip.itinerary_text != '').order_by(Trip.created_at.desc()).all()
-    all_itineraries = itinerary_trips
-    all_itineraries_json = []
-    for t in itinerary_trips:
-        duration = (t.end_date - t.start_date).days if t.start_date and t.end_date else 0
-        all_itineraries_json.append({
-            'id': t.id,
-            'destination': t.destination,
-            'start_date': t.start_date.isoformat() if t.start_date else None,
-            'duration_days': duration,
-            'plan_json': t.itinerary_text,
-            'created_at': t.created_at.isoformat() if t.created_at else None,
-            'updated_at': t.updated_at.isoformat() if t.updated_at else None,
-            'user': {'name': t.author.name} if t.author else None
-        })
-
-    all_saved = SavedDestination.query.order_by(SavedDestination.created_at.desc()).all()
-    all_saved_json = _ser_cols(all_saved)
-    for s, d in zip(all_saved, all_saved_json):
-        d['user'] = {'name': s.user.name} if s.user else None
-
-    all_favorites = FavoriteDestination.query.order_by(FavoriteDestination.created_at.desc()).all()
-    all_favorites_json = _ser_cols(all_favorites)
-    for f, d in zip(all_favorites, all_favorites_json):
-        d['user'] = {'name': f.user.name} if f.user else None
-
-    all_notifications = Notification.query.order_by(Notification.created_at.desc()).all()
-    all_notifications_json = _ser_cols(all_notifications)
-    for n, d in zip(all_notifications, all_notifications_json):
-        d['user'] = {'name': n.user.name} if n.user else None
-
-    all_chat_sessions = ChatSession.query.order_by(ChatSession.updated_at.desc()).all()
-    all_chat_sessions_json = _ser_cols(all_chat_sessions)
-    for s, d in zip(all_chat_sessions, all_chat_sessions_json):
-        d['user'] = {'name': s.user.name} if s.user else None
-        d['messages'] = [{'id': m.id} for m in s.messages]
-
-    all_chat_messages = ChatMessage.query.order_by(ChatMessage.created_at.desc()).all()
-    all_chat_messages_json = _ser_cols(all_chat_messages)
-
-    total_activities = DestinationActivity.query.count()
-    all_activities = DestinationActivity.query.order_by(DestinationActivity.created_at.desc()).all()
-    all_activities_json = _ser_cols(all_activities)
-    for a, d in zip(all_activities, all_activities_json):
-        d['user'] = {'name': a.user.name} if a.user else None
-
-    return render_template(
-        'admin_panel.html',
-        total_users=total_users,
-        total_trips=total_trips,
-        total_destinations=total_destinations,
-        total_saves=total_saves,
-        total_itineraries=total_itineraries,
-        total_notifications=total_notifications,
-        total_chat_sessions=total_chat_sessions,
-        total_chat_messages=total_chat_messages,
-        total_favorites=total_favorites,
-        admin_users_count=admin_users_count,
-        google_only_accounts=google_only_accounts,
-        recent_users=recent_users,
-        all_users=all_users,
-        all_users_json=all_users_json,
-        all_trips=all_trips,
-        all_trips_json=all_trips_json,
-        all_destinations=all_destinations,
-        all_destinations_json=all_destinations_json,
-        all_itineraries=all_itineraries,
-        all_itineraries_json=all_itineraries_json,
-        all_saved=all_saved,
-        all_saved_json=all_saved_json,
-        all_favorites=all_favorites,
-        all_favorites_json=all_favorites_json,
-        all_notifications=all_notifications,
-        all_notifications_json=all_notifications_json,
-        all_chat_sessions=all_chat_sessions,
-        all_chat_sessions_json=all_chat_sessions_json,
-        all_chat_messages=all_chat_messages,
-        all_chat_messages_json=all_chat_messages_json,
-        total_activities=total_activities,
-        all_activities=all_activities,
-        all_activities_json=all_activities_json
-    )
-
-@main_bp.route('/admin/delete-user/<int:user_id>', methods=['POST'])
-@login_required
-def delete_user(user_id):
-    if not current_user.is_admin:
-        return jsonify({'success': False, 'message': 'Admin access required'}), 403
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify({'success': False, 'message': 'User not found'}), 404
-    if user.id == current_user.id:
-        return jsonify({'success': False, 'message': 'Cannot delete yourself'}), 400
-    # Delete all user related data
-    DestinationActivity.query.filter_by(user_id=user.id).delete()
-    Trip.query.filter_by(user_id=user.id).delete()
-    SavedDestination.query.filter_by(user_id=user.id).delete()
-    FavoriteDestination.query.filter_by(user_id=user.id).delete()
-    Notification.query.filter_by(user_id=user.id).delete()
-    chat_sessions = ChatSession.query.filter_by(user_id=user.id).all()
-    for cs in chat_sessions:
-        ChatMessage.query.filter_by(session_id=cs.id).delete()
-        db.session.delete(cs)
-    db.session.delete(user)
-    db.session.commit()
-    return jsonify({'success': True, 'message': 'User and all related data deleted'})
-
-
-@main_bp.route('/admin/users/export-csv')
-@login_required
-def admin_users_export_csv():
-    if not current_user.is_admin:
-        flash('Access denied. Admin privileges required.', 'danger')
-        return redirect(url_for('main.landing'))
-
-    users = User.query.order_by(User.created_at.desc()).all()
-
-    csv_buffer = StringIO()
-    writer = csv.writer(csv_buffer)
-    writer.writerow([
-        'id', 'name', 'email', 'is_admin', 'google_connected', 'has_password',
-        'google_id', 'phone', 'city', 'preferences_json', 'created_at', 'updated_at',
-        'trip_count', 'saved_places_count', 'notification_count', 'chat_session_count'
-    ])
-    for user in users:
-        trip_count = Trip.query.filter_by(user_id=user.id).count()
-        saved_count = SavedDestination.query.filter_by(user_id=user.id).count()
-        notification_count = Notification.query.filter_by(user_id=user.id).count()
-        chat_session_count = ChatSession.query.filter_by(user_id=user.id).count()
-        writer.writerow([
-            user.id,
-            user.name or '',
-            user.email or '',
-            'Yes' if user.is_admin else 'No',
-            'Yes' if user.google_id else 'No',
-            'Yes' if user.password else 'No',
-            user.google_id or '',
-            user.phone or '',
-            user.city or '',
-            json.dumps(user.preferences or {}, ensure_ascii=False),
-            user.created_at.strftime('%Y-%m-%d %H:%M:%S') if user.created_at else '',
-            user.updated_at.strftime('%Y-%m-%d %H:%M:%S') if user.updated_at else '',
-            trip_count,
-            saved_count,
-            notification_count,
-            chat_session_count
-        ])
-
-    csv_content = csv_buffer.getvalue()
-    csv_buffer.close()
-
-    timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
-    filename = f'users_export_{timestamp}.csv'
-
-    return Response(
-        csv_content,
-        mimetype='text/csv',
-        headers={'Content-Disposition': f'attachment; filename={filename}'}
-    )
-
-
-@main_bp.route('/admin/update-user/<int:user_id>', methods=['POST'])
-@login_required
-def admin_update_user(user_id):
-    if not current_user.is_admin:
-        return jsonify({'success': False, 'message': 'Admin access required'}), 403
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify({'success': False, 'message': 'User not found'}), 404
-    data = request.get_json(silent=True) or {}
-    name = (data.get('name') or '').strip()
-    email = (data.get('email') or '').strip().lower()
-    phone = (data.get('phone') or '').strip()
-    city = (data.get('city') or '').strip()
-    if name:
-        user.name = name
-    if email:
-        user.email = email
-    if phone:
-        user.phone = phone
-    if city:
-        user.city = city
-    db.session.commit()
-    return jsonify({'success': True, 'message': 'User updated'})
-
-
-@main_bp.route('/admin/delete-trip/<int:trip_id>', methods=['POST'])
-@login_required
-def admin_delete_trip(trip_id):
-    if not current_user.is_admin:
-        return jsonify({'success': False, 'message': 'Admin access required'}), 403
-    trip = Trip.query.get(trip_id)
-    if not trip:
-        return jsonify({'success': False, 'message': 'Trip not found'}), 404
-    db.session.delete(trip)
-    db.session.commit()
-    return jsonify({'success': True, 'message': 'Trip deleted'})
-
-@main_bp.route('/admin/add-destination', methods=['POST'])
-@login_required
-def admin_add_destination():
-    if not current_user.is_admin:
-        return jsonify({'success': False, 'message': 'Admin access required'}), 403
-    data = request.get_json(silent=True) or {}
-    name = (data.get('name') or '').strip()
-    category = (data.get('category') or '').strip()
-    if not name or not category:
-        return jsonify({'success': False, 'message': 'Name and category are required'}), 400
-    dest = Destination(
-        name=name,
-        category=category,
-        season=(data.get('season') or '').strip(),
-        age_group=(data.get('age_group') or '').strip(),
-        description=(data.get('description') or '').strip(),
-        location=(data.get('location') or '').strip(),
-        image_url=(data.get('image_url') or '').strip() or None,
-        timings=(data.get('timings') or '').strip() or None,
-        best_time=(data.get('best_time') or '').strip() or None,
-        weather_city=(data.get('weather_city') or '').strip() or None
-    )
-    db.session.add(dest)
-    db.session.commit()
-    return jsonify({'success': True, 'message': 'Destination added', 'id': dest.id})
-
-@main_bp.route('/admin/delete-destination/<int:dest_id>', methods=['POST'])
-@login_required
-def admin_delete_destination(dest_id):
-    if not current_user.is_admin:
-        return jsonify({'success': False, 'message': 'Admin access required'}), 403
-    dest = Destination.query.get(dest_id)
-    if not dest:
-        return jsonify({'success': False, 'message': 'Destination not found'}), 404
-    db.session.delete(dest)
-    db.session.commit()
-    return jsonify({'success': True, 'message': 'Destination deleted'})
-
-@main_bp.route('/admin/delete-itinerary/<int:itin_id>', methods=['POST'])
-@login_required
-def admin_delete_itinerary(itin_id):
-    if not current_user.is_admin:
-        return jsonify({'success': False, 'message': 'Admin access required'}), 403
-    itin = Itinerary.query.get(itin_id)
-    if not itin:
-        return jsonify({'success': False, 'message': 'Itinerary not found'}), 404
-    db.session.delete(itin)
-    db.session.commit()
-    return jsonify({'success': True, 'message': 'Itinerary deleted'})
-
-@main_bp.route('/admin/delete-saved/<int:saved_id>', methods=['POST'])
-@login_required
-def admin_delete_saved(saved_id):
-    if not current_user.is_admin:
-        return jsonify({'success': False, 'message': 'Admin access required'}), 403
-    saved = SavedDestination.query.get(saved_id)
-    if not saved:
-        return jsonify({'success': False, 'message': 'Saved destination not found'}), 404
-    db.session.delete(saved)
-    db.session.commit()
-    return jsonify({'success': True, 'message': 'Saved destination deleted'})
-
-@main_bp.route('/admin/delete-favorite/<int:fav_id>', methods=['POST'])
-@login_required
-def admin_delete_favorite(fav_id):
-    if not current_user.is_admin:
-        return jsonify({'success': False, 'message': 'Admin access required'}), 403
-    fav = FavoriteDestination.query.get(fav_id)
-    if not fav:
-        return jsonify({'success': False, 'message': 'Favorite not found'}), 404
-    db.session.delete(fav)
-    db.session.commit()
-    return jsonify({'success': True, 'message': 'Favorite deleted'})
-
-@main_bp.route('/admin/delete-notification/<int:notif_id>', methods=['POST'])
-@login_required
-def admin_delete_notification(notif_id):
-    if not current_user.is_admin:
-        return jsonify({'success': False, 'message': 'Admin access required'}), 403
-    notif = Notification.query.get(notif_id)
-    if not notif:
-        return jsonify({'success': False, 'message': 'Notification not found'}), 404
-    db.session.delete(notif)
-    db.session.commit()
-    return jsonify({'success': True, 'message': 'Notification deleted'})
-
-@main_bp.route('/admin/delete-chat-session/<int:session_id>', methods=['POST'])
-@login_required
-def admin_delete_chat_session(session_id):
-    if not current_user.is_admin:
-        return jsonify({'success': False, 'message': 'Admin access required'}), 403
-    session = ChatSession.query.get(session_id)
-    if not session:
-        return jsonify({'success': False, 'message': 'Chat session not found'}), 404
-    ChatMessage.query.filter_by(session_id=session.id).delete()
-    db.session.delete(session)
-    db.session.commit()
-    return jsonify({'success': True, 'message': 'Chat session deleted'})
-
-@main_bp.route('/admin/delete-chat-message/<int:msg_id>', methods=['POST'])
-@login_required
-def admin_delete_chat_message(msg_id):
-    if not current_user.is_admin:
-        return jsonify({'success': False, 'message': 'Admin access required'}), 403
-    msg = ChatMessage.query.get(msg_id)
-    if not msg:
-        return jsonify({'success': False, 'message': 'Chat message not found'}), 404
-    db.session.delete(msg)
-    db.session.commit()
-    return jsonify({'success': True, 'message': 'Chat message deleted'})
-
-@main_bp.route('/admin/delete-destination-activity/<int:activity_id>', methods=['POST'])
-@login_required
-def admin_delete_destination_activity(activity_id):
-    if not current_user.is_admin:
-        return jsonify({'success': False, 'message': 'Admin access required'}), 403
-    activity = DestinationActivity.query.get(activity_id)
-    if not activity:
-        return jsonify({'success': False, 'message': 'Activity not found'}), 404
-    db.session.delete(activity)
-    db.session.commit()
-    return jsonify({'success': True, 'message': 'Activity deleted'})
-
-@main_bp.route('/admin/generate-notifications', methods=['POST'])
-@login_required
-def admin_generate_notifications():
-    if not current_user.is_admin:
-        return jsonify({'success': False, 'message': 'Admin access required'}), 403
-    users = User.query.all()
-    total_created = 0
-    for user in users:
-        created_count = _generate_smart_notifications(user, force=True)
-        total_created += created_count
-    return jsonify({'success': True, 'created': total_created, 'message': f'{total_created} notifications generated'})
-
-@main_bp.route('/admin/ai-chat', methods=['POST'])
-@login_required
-def admin_ai_chat():
-    if not current_user.is_admin:
-        return jsonify({'success': False, 'message': 'Admin access required'}), 403
-
-    payload = request.get_json(silent=True) or {}
-    message = (payload.get('message') or '').strip()
-    if not message:
-        return jsonify({'success': False, 'message': 'Message is required'}), 400
-
-    total_users = User.query.count()
-    total_trips = Trip.query.count()
-    total_destinations = Destination.query.count()
-    total_saves = SavedDestination.query.count()
-    total_favorites = FavoriteDestination.query.count()
-    total_itineraries = Trip.query.filter(Trip.itinerary_text.isnot(None), Trip.itinerary_text != '').count()
-    total_notifications = Notification.query.count()
-    total_chat_sessions = ChatSession.query.count()
-    total_chat_messages = ChatMessage.query.count()
-    admin_users_count = User.query.filter_by(is_admin=True).count()
-    google_only_accounts = User.query.filter(User.google_id.isnot(None), User.password.is_(None)).count()
-
-    all_users_list = User.query.order_by(User.created_at.desc()).limit(50).all()
-    users_detail = "\n".join([f"  - ID:{u.id} Name:{u.name} Email:{u.email} Phone:{u.phone or 'N/A'} City:{u.city or 'N/A'} Admin:{u.is_admin} Google:{bool(u.google_id)} Created:{u.created_at.strftime('%Y-%m-%d') if u.created_at else 'N/A'}" for u in all_users_list])
-
-    all_trips_list = Trip.query.order_by(Trip.created_at.desc()).limit(30).all()
-    trips_detail = "\n".join([f"  - ID:{t.id} User:{t.author.name if t.author else '?'} Dest:{t.destination} Start:{t.start_date} End:{t.end_date} Budget:{t.budget or 'N/A'}" for t in all_trips_list])
-
-    all_saved_list = SavedDestination.query.order_by(SavedDestination.created_at.desc()).limit(20).all()
-    saved_detail = "\n".join([f"  - ID:{s.id} User:{s.user.name if s.user else '?'} Name:{s.name} Tag:{s.tag or 'N/A'}" for s in all_saved_list])
-
-    all_notif_list = Notification.query.order_by(Notification.created_at.desc()).limit(20).all()
-    notif_detail = "\n".join([f"  - ID:{n.id} User:{n.user.name if n.user else '?'} Msg:{n.message[:50]} Type:{n.type} Read:{n.is_read}" for n in all_notif_list])
-
-    all_chat_list = ChatSession.query.order_by(ChatSession.updated_at.desc()).limit(20).all()
-    chat_detail = "\n".join([f"  - ID:{c.id} User:{c.user.name if c.user else '?'} Title:{c.title or 'Untitled'} Msgs:{len(c.messages)} Updated:{c.updated_at.strftime('%Y-%m-%d') if c.updated_at else 'N/A'}" for c in all_chat_list])
-
-    all_dest_list = Destination.query.order_by(Destination.created_at.desc()).limit(20).all()
-    dest_detail = "\n".join([f"  - ID:{d.id} Name:{d.name} Category:{d.category} Location:{d.location} Season:{d.season}" for d in all_dest_list])
-
-    all_itin_list = Trip.query.filter(Trip.itinerary_text.isnot(None), Trip.itinerary_text != '').order_by(Trip.created_at.desc()).limit(20).all()
-    itin_detail = "\n".join([f"  - ID:{t.id} User:{t.author.name if t.author else '?'} Dest:{t.destination} Start:{t.start_date} End:{t.end_date}" for t in all_itin_list])
-
-    admin_scope_prompt = (
-        "You are an admin operations assistant for RoutheonSkups. You have FULL access to ALL platform data. "
-        "Answer ANY question about the platform including users, trips, destinations, saved places, favorites, "
-        "itineraries, notifications, chat sessions, chat messages, and all other data. "
-        "If asked about a specific user by name or email, look through the user list and provide their details. "
-        "If asked about a specific destination, trip, or any entity, use the data provided below to answer. "
-        "Be helpful, detailed, and accurate. If you don't know something specific, say so but offer a suggestion. "
-        "DO NOT say 'I don't know' - use the data provided to give the best possible answer. "
-        "CRITICAL RESPONSE RULES: "
-        "1. First ANALYZE what the user is asking - understand the core question before answering. "
-        "2. Answer ONLY what was asked - do not dump all data or list everything you know. Be concise and relevant. "
-        "3. Structure your response with BOLD headers (**header**) and bullet points (- point). "
-        "4. Keep responses short, scannable, and professional. Never write long paragraphs.\n\n"
-        f"CURRENT PLATFORM SNAPSHOT:\n"
-        f"- Total users: {total_users}\n"
-        f"- Admin users: {admin_users_count}\n"
-        f"- Google-only accounts: {google_only_accounts}\n"
-        f"- Trips generated: {total_trips}\n"
-        f"- Destinations: {total_destinations}\n"
-        f"- Saved places: {total_saves}\n"
-        f"- Favorites: {total_favorites}\n"
-        f"- Itineraries: {total_itineraries}\n"
-        f"- Notifications: {total_notifications}\n"
-        f"- Chat sessions: {total_chat_sessions}\n"
-        f"- Chat messages: {total_chat_messages}\n\n"
-        f"USERS (latest 50):\n{users_detail}\n\n"
-        f"TRIPS (latest 30):\n{trips_detail}\n\n"
-        f"DESTINATIONS (latest 20):\n{dest_detail}\n\n"
-        f"ITINERARIES (latest 20):\n{itin_detail}\n\n"
-        f"SAVED DESTINATIONS (latest 20):\n{saved_detail}\n\n"
-        f"NOTIFICATIONS (latest 20):\n{notif_detail}\n\n"
-        f"CHAT SESSIONS (latest 20):\n{chat_detail}\n\n"
-        f"ADMIN QUESTION: {message}"
-    )
-
-    answer = AIService.general_chat(admin_scope_prompt)
-    return jsonify({'success': True, 'response': answer})
 
 @main_bp.route('/dashboard')
 @login_required
@@ -1197,92 +719,7 @@ def explore():
 @main_bp.route('/my-trips')
 @login_required
 def my_trips():
-    today = datetime.now().date()
-    all_trips = Trip.query.filter_by(user_id=current_user.id).order_by(Trip.start_date.asc()).all()
-    show_saved_all = (request.args.get('saved') or '').lower() == 'all'
-    show_explored_all = (request.args.get('explored') or '').lower() == 'all'
-    
-    upcoming_trips = [t for t in all_trips if t.start_date > today]
-    past_trips = [t for t in all_trips if t.end_date < today]
-    # "Created Journeys" can be used for all trips or ones that aren't strictly history/upcoming
-    
-    trip_count = len(current_user.trips)
-    saved_count = len(current_user.saved_destinations)
-    
-    all_saved = SavedDestination.query.filter_by(user_id=current_user.id).order_by(SavedDestination.created_at.desc()).all()
-    recent_saved = all_saved[:2]
-
-    explored_trips_raw = Trip.query.filter_by(user_id=current_user.id).order_by(Trip.created_at.desc()).all()
-    recent_trips_raw = explored_trips_raw[:2]
-    
-    recent_trips = []
-    for t in recent_trips_raw:
-        img_url = "https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&q=80&w=2000"
-        try:
-            if t.itinerary_text:
-                plan = json.loads(t.itinerary_text)
-                if plan.get('hero_image'):
-                    img_url = plan['hero_image']
-        except:
-            pass
-        t.display_image = img_url
-        recent_trips.append(t)
-
-    explored_trips = []
-    for t in explored_trips_raw:
-        img_url = "https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&q=80&w=2000"
-        try:
-            if t.itinerary_text:
-                plan = json.loads(t.itinerary_text)
-                if plan.get('hero_image'):
-                    img_url = plan['hero_image']
-        except:
-            pass
-        t.display_image = img_url
-        explored_trips.append(t)
-
-    # Build mixed recent explore feed with both saved destinations and trips.
-    recent_explore_items = []
-    for s in all_saved:
-        recent_explore_items.append({
-            "kind": "destination",
-            "id": s.id,
-            "title": s.name,
-            "subtitle": s.tag or "Saved Destination",
-            "image": s.image_url or "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&h=600&fit=crop",
-            "created_at": s.created_at,
-            "url": url_for('main.destination_info', name=s.name)
-        })
-    for t in explored_trips:
-        recent_explore_items.append({
-            "kind": "trip",
-            "id": t.id,
-            "title": t.destination,
-            "subtitle": "Trip Plan",
-            "image": getattr(t, 'display_image', None) or "https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&q=80&w=2000",
-            "created_at": t.created_at,
-            "url": url_for('main.view_trip', trip_id=t.id)
-        })
-
-    recent_explore_items.sort(
-        key=lambda item: item.get("created_at") or datetime.min,
-        reverse=True
-    )
-    recent_explore_list = recent_explore_items if show_explored_all else recent_explore_items[:4]
-    
-    return render_template('profile_page2.html', 
-                           upcoming_trips=upcoming_trips, 
-                           past_trips=past_trips, 
-                           all_trips=all_trips,
-                           trip_count=trip_count,
-                           saved_count=saved_count,
-                           recent_saved=recent_saved,
-                           recent_trips=recent_trips,
-                           all_saved=all_saved,
-                           explored_trips=explored_trips,
-                           recent_explore_list=recent_explore_list,
-                           show_saved_all=show_saved_all,
-                           show_explored_all=show_explored_all)
+    return redirect(url_for('main.profile') + '#trips')
 
 @main_bp.route('/api/trip-cost-estimate', methods=['POST'])
 @login_required
@@ -1585,15 +1022,76 @@ def update_trip(trip_id):
 @main_bp.route('/profile')
 @login_required
 def profile():
+    today = datetime.now().date()
     trip_count = len(current_user.trips)
     saved_count = len(current_user.saved_destinations)
     saved_destinations = current_user.saved_destinations
     user_prefs = _get_user_preferences(current_user).get('categories', [])
-    return render_template('profile_page1.html', 
-                           trip_count=trip_count, 
+
+    all_trips = Trip.query.filter_by(user_id=current_user.id).order_by(Trip.start_date.asc()).all()
+    upcoming_trips = [t for t in all_trips if t.start_date > today]
+    past_trips = [t for t in all_trips if t.end_date < today]
+
+    all_saved = SavedDestination.query.filter_by(user_id=current_user.id).order_by(SavedDestination.created_at.desc()).all()
+    recent_saved = all_saved[:2]
+
+    explored_trips_raw = Trip.query.filter_by(user_id=current_user.id).order_by(Trip.created_at.desc()).all()
+
+    recent_explore_items = []
+    for s in all_saved:
+        recent_explore_items.append({
+            "kind": "destination", "id": s.id, "title": s.name,
+            "subtitle": s.tag or "Saved Destination",
+            "image": s.image_url or "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&h=600&fit=crop",
+            "created_at": s.created_at,
+            "url": url_for('main.destination_info', name=s.name)
+        })
+    for t in explored_trips_raw[:2]:
+        img_url = "https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&q=80&w=2000"
+        try:
+            if t.itinerary_text:
+                plan = json.loads(t.itinerary_text)
+                if plan.get('hero_image'):
+                    img_url = plan['hero_image']
+        except Exception:
+            pass
+        recent_explore_items.append({
+            "kind": "trip", "id": t.id, "title": t.destination,
+            "subtitle": "Trip Plan", "image": img_url,
+            "created_at": t.created_at,
+            "url": url_for('main.view_trip', trip_id=t.id)
+        })
+    recent_explore_items.sort(key=lambda item: item.get("created_at") or datetime.min, reverse=True)
+    recent_explore_list = recent_explore_items[:4]
+
+    trips_data = []
+    for t in all_trips:
+        trips_data.append({
+            'id': t.id, 'destination': t.destination,
+            'start_date': t.start_date.isoformat(),
+            'end_date': t.end_date.isoformat(),
+            'budget': t.budget
+        })
+
+    notification_settings = _get_notification_settings(current_user)
+    ai_assistant_settings = _get_ai_assistant_settings(current_user)
+
+    return render_template('profile.html',
+                           trip_count=trip_count,
                            saved_count=saved_count,
                            saved_destinations=saved_destinations,
-                           user_prefs=user_prefs)
+                           user_prefs=user_prefs,
+                           upcoming_trips=upcoming_trips,
+                           past_trips=past_trips,
+                           all_trips=all_trips,
+                           recent_saved=recent_saved,
+                           all_saved=all_saved,
+                           recent_explore_list=recent_explore_list,
+                           show_saved_all=False,
+                           show_explored_all=False,
+                           all_trips_js=trips_data,
+                           notification_settings=notification_settings,
+                           ai_assistant_settings=ai_assistant_settings)
 
 @main_bp.route('/profile/update', methods=['POST'])
 @login_required
@@ -1624,7 +1122,7 @@ def update_profile():
     db.session.commit()
     
     flash('Profile updated successfully!', 'success')
-    return redirect(url_for('main.profile'))
+    return redirect(url_for('main.profile') + '#personal')
 
 
 @main_bp.route('/profile/image/upload', methods=['POST'])
@@ -1633,14 +1131,14 @@ def upload_profile_image():
     file = request.files.get('profile_image')
     if not file or not file.filename:
         flash('Please select an image file to upload.', 'error')
-        return redirect(request.referrer or url_for('main.profile'))
+        return redirect(url_for('main.profile') + '#personal')
 
     filename = secure_filename(file.filename)
     extension = filename.rsplit('.', 1)[-1].lower() if '.' in filename else ''
     content_type = (file.mimetype or '').lower()
     if extension not in ALLOWED_PROFILE_IMAGE_EXTENSIONS and not content_type.startswith('image/'):
         flash('Unsupported file type. Please upload an image.', 'error')
-        return redirect(request.referrer or url_for('main.profile'))
+        return redirect(url_for('main.profile') + '#personal')
 
     upload_dir = os.path.join(current_app.static_folder, PROFILE_UPLOAD_DIR)
     os.makedirs(upload_dir, exist_ok=True)
@@ -1654,7 +1152,7 @@ def upload_profile_image():
     _delete_local_profile_image(old_image_url)
 
     flash('Profile image updated successfully.', 'success')
-    return redirect(request.referrer or url_for('main.profile'))
+    return redirect(url_for('main.profile') + '#personal')
 
 
 @main_bp.route('/profile/image/delete', methods=['POST'])
@@ -1668,49 +1166,17 @@ def delete_profile_image():
         flash('Profile image deleted.', 'success')
     else:
         flash('No profile image found.', 'info')
-    return redirect(request.referrer or url_for('main.profile'))
+    return redirect(url_for('main.profile') + '#personal')
 
 @main_bp.route('/calendar')
 @login_required
 def calendar():
-    today = datetime.now().date()
-    all_trips = Trip.query.filter_by(user_id=current_user.id).order_by(Trip.start_date.asc()).all()
-    upcoming_trips = [t for t in all_trips if t.start_date >= today]
-    past_trips = [t for t in all_trips if t.end_date < today]
-    
-    trip_count = len(current_user.trips)
-    saved_count = len(current_user.saved_destinations)
-    
-    # Prepare trips for JS (JSON serializable)
-    trips_data = []
-    for t in all_trips:
-        trips_data.append({
-            'id': t.id,
-            'destination': t.destination,
-            'start_date': t.start_date.isoformat(),
-            'end_date': t.end_date.isoformat(),
-            'budget': t.budget
-        })
-
-    return render_template('profile_page3.html', 
-                           upcoming_trips=upcoming_trips,
-                           past_trips=past_trips,
-                           all_trips_js=trips_data,
-                           trip_count=trip_count,
-                           saved_count=saved_count)
+    return redirect(url_for('main.profile') + '#calendar')
 
 @main_bp.route('/settings')
 @login_required
 def settings():
-    trip_count = len(current_user.trips)
-    saved_count = len(current_user.saved_destinations)
-    notification_settings = _get_notification_settings(current_user)
-    ai_assistant_settings = _get_ai_assistant_settings(current_user)
-    return render_template('profile_page4.html', 
-                           trip_count=trip_count, 
-                           saved_count=saved_count,
-                           notification_settings=notification_settings,
-                           ai_assistant_settings=ai_assistant_settings)
+    return redirect(url_for('main.profile') + '#settings')
 
 
 @main_bp.route('/settings/notifications', methods=['POST'])
@@ -1727,7 +1193,7 @@ def update_notification_settings():
     _set_user_notification_settings(current_user, updated)
     db.session.commit()
     flash('Notification settings updated successfully.', 'success')
-    return redirect(url_for('main.settings'))
+    return redirect(url_for('main.profile') + '#settings')
 
 
 @main_bp.route('/settings/ai-assistant', methods=['POST'])
@@ -1766,18 +1232,12 @@ def update_ai_assistant_settings():
     else:
         flash('AI assistant settings updated successfully.', 'success')
 
-    return redirect(url_for('main.settings'))
+    return redirect(url_for('main.profile') + '#settings')
 
 @main_bp.route('/profile-ai')
 @login_required
 def profile_ai():
-    trip_count = len(current_user.trips)
-    saved_count = len(current_user.saved_destinations)
-    ai_assistant_settings = _get_ai_assistant_settings(current_user)
-    return render_template('profile_page5.html', 
-                           trip_count=trip_count, 
-                           saved_count=saved_count,
-                           ai_assistant_settings=ai_assistant_settings)
+    return redirect(url_for('main.profile') + '#ai')
 
 @main_bp.route('/api/explore-destinations')
 @login_required
@@ -2654,26 +2114,27 @@ def contact():
             )
 
             admin_msg.html = f"""
-            <div style="font-family:Arial,sans-serif;background:#f8fafc;padding:24px;">
-              <div style="max-width:700px;margin:0 auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;overflow:hidden;">
-                <div style="background:#2563eb;color:#ffffff;padding:20px 24px;">
-                  <div style="display:flex;align-items:center;gap:12px;">{logo_html}</div>
-                  <h1 style="margin:12px 0 0;font-size:20px;line-height:1.3;">New Contact Form Submission</h1>
-                  <p style="margin:8px 0 0;font-size:13px;opacity:0.95;">Project: RoutheonSkups | Submitted on {submitted_on}</p>
-                </div>
-                <div style="padding:24px;">
+            <div style="font-family:'Segoe UI',Arial,sans-serif;background:#000000;padding:40px 20px;">
+              <div style="max-width:560px;margin:0 auto;">
+                <div style="text-align:center;margin-bottom:32px;">{logo_html}</div>
+                <div style="background:#0A0A0A;border:1px solid #1A1A1A;border-radius:16px;padding:36px 32px;">
+                  <h1 style="margin:0 0 8px;font-size:20px;font-weight:800;color:#FFFFFF;">New Contact Form Submission</h1>
+                  <p style="margin:0 0 24px;font-size:13px;color:rgba(255,255,255,0.5);">Submitted on {submitted_on}</p>
                   <table style="width:100%;border-collapse:collapse;">
-                    <tr><td style="padding:8px 0;color:#475569;width:180px;"><strong>Name</strong></td><td style="padding:8px 0;color:#0f172a;">{esc_name}</td></tr>
-                    <tr><td style="padding:8px 0;color:#475569;"><strong>Email</strong></td><td style="padding:8px 0;color:#0f172a;">{esc_email}</td></tr>
-                    <tr><td style="padding:8px 0;color:#475569;"><strong>Phone</strong></td><td style="padding:8px 0;color:#0f172a;">{esc_phone}</td></tr>
-                    <tr><td style="padding:8px 0;color:#475569;"><strong>Subject</strong></td><td style="padding:8px 0;color:#0f172a;">{esc_subject}</td></tr>
-                    <tr><td style="padding:8px 0;color:#475569;"><strong>Trip Reference</strong></td><td style="padding:8px 0;color:#0f172a;">{esc_trip_ref}</td></tr>
+                    <tr><td style="padding:8px 0;color:rgba(255,255,255,0.5);width:140px;font-size:13px;"><strong>Name</strong></td><td style="padding:8px 0;color:#FFFFFF;font-size:13px;">{esc_name}</td></tr>
+                    <tr><td style="padding:8px 0;color:rgba(255,255,255,0.5);font-size:13px;"><strong>Email</strong></td><td style="padding:8px 0;color:#FFFFFF;font-size:13px;">{esc_email}</td></tr>
+                    <tr><td style="padding:8px 0;color:rgba(255,255,255,0.5);font-size:13px;"><strong>Phone</strong></td><td style="padding:8px 0;color:#FFFFFF;font-size:13px;">{esc_phone}</td></tr>
+                    <tr><td style="padding:8px 0;color:rgba(255,255,255,0.5);font-size:13px;"><strong>Subject</strong></td><td style="padding:8px 0;color:#FFFFFF;font-size:13px;">{esc_subject}</td></tr>
+                    <tr><td style="padding:8px 0;color:rgba(255,255,255,0.5);font-size:13px;"><strong>Trip Ref</strong></td><td style="padding:8px 0;color:#FFFFFF;font-size:13px;">{esc_trip_ref}</td></tr>
                   </table>
                   <div style="margin-top:18px;">
-                    <p style="margin:0 0 8px;color:#475569;"><strong>Message</strong></p>
-                    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px;color:#0f172a;white-space:pre-wrap;">{esc_message}</div>
+                    <p style="margin:0 0 8px;color:rgba(255,255,255,0.5);font-size:13px;"><strong>Message</strong></p>
+                    <div style="background:#141414;border:1px solid #1A1A1A;border-radius:10px;padding:14px;color:rgba(255,255,255,0.8);font-size:13px;white-space:pre-wrap;">{esc_message}</div>
                   </div>
                 </div>
+                <p style="margin:28px 0 0;font-size:11.5px;color:rgba(255,255,255,0.4);text-align:center;">
+                  <strong style="color:rgba(255,255,255,0.6);">RoutheonSkups</strong> — AI Travel Planning
+                </p>
               </div>
             </div>
             """
@@ -2707,20 +2168,19 @@ def contact():
                 "Regards,\nRoutheonSkups Team"
             )
             user_msg.html = f"""
-            <div style="font-family:Arial,sans-serif;background:#f8fafc;padding:24px;">
-                <div style="max-width:640px;margin:0 auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;overflow:hidden;">
-                <div style="background:#2563eb;color:#ffffff;padding:20px 24px;">
-                  <div style="display:flex;align-items:center;gap:12px;">{user_logo_html}</div>
-                  <p style="margin:8px 0 0;font-size:14px;opacity:0.95;">We received your message</p>
+            <div style="font-family:'Segoe UI',Arial,sans-serif;background:#000000;padding:40px 20px;">
+              <div style="max-width:480px;margin:0 auto;">
+                <div style="text-align:center;margin-bottom:32px;">{user_logo_html}</div>
+                <div style="background:#0A0A0A;border:1px solid #1A1A1A;border-radius:16px;padding:36px 32px;">
+                  <h1 style="margin:0 0 8px;font-size:21px;font-weight:800;color:#FFFFFF;">We Received Your Message</h1>
+                  <p style="margin:0 0 20px;font-size:14px;color:rgba(255,255,255,0.8);line-height:1.6;">Hi {esc_name}, thank you for contacting <strong>RoutheonSkups</strong>. Our team has received your request and will get back to you soon.</p>
+                  <p style="margin:0 0 4px;font-size:13px;color:rgba(255,255,255,0.5);"><strong>Submitted On:</strong> {submitted_on}</p>
+                  <p style="margin:0 0 16px;font-size:13px;color:rgba(255,255,255,0.5);"><strong>Subject:</strong> {esc_subject}</p>
+                  <div style="background:#141414;border:1px solid #1A1A1A;border-radius:10px;padding:14px;color:rgba(255,255,255,0.8);font-size:13px;white-space:pre-wrap;">{esc_message}</div>
                 </div>
-                <div style="padding:24px;">
-                  <p style="margin:0 0 12px;color:#0f172a;">Hi {esc_name},</p>
-                  <p style="margin:0 0 12px;color:#334155;">Thank you for contacting RoutheonSkups. Our team has received your request and will get back to you soon.</p>
-                  <p style="margin:0 0 4px;color:#475569;"><strong>Submitted On:</strong> {submitted_on}</p>
-                  <p style="margin:0 0 16px;color:#475569;"><strong>Subject:</strong> {esc_subject}</p>
-                  <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px;color:#0f172a;white-space:pre-wrap;">{esc_message}</div>
-                  <p style="margin:16px 0 0;color:#64748b;font-size:13px;">This is an automated acknowledgment from the RoutheonSkups Contact Center.</p>
-                </div>
+                <p style="margin:28px 0 0;font-size:11.5px;color:rgba(255,255,255,0.4);text-align:center;">
+                  <strong style="color:rgba(255,255,255,0.6);">RoutheonSkups</strong> — AI Travel Planning
+                </p>
               </div>
             </div>
             """
@@ -2749,100 +2209,6 @@ def _csv_response(filename, headers, rows):
         mimetype='text/csv',
         headers={'Content-Disposition': f'attachment; filename={filename}_{timestamp}.csv'}
     )
-
-@main_bp.route('/admin/export/trips')
-@login_required
-def admin_export_trips():
-    if not current_user.is_admin: return redirect(url_for('main.landing'))
-    trips = Trip.query.order_by(Trip.created_at.desc()).all()
-    rows = [[t.id, t.author.name if t.author else '', t.destination, str(t.start_date or ''), str(t.end_date or ''), t.budget or '', t.interests or '', t.created_at.strftime('%Y-%m-%d %H:%M:%S') if t.created_at else ''] for t in trips]
-    return _csv_response('trips_export', ['ID','User','Destination','Start Date','End Date','Budget','Interests','Created'], rows)
-
-@main_bp.route('/admin/export/destinations')
-@login_required
-def admin_export_destinations():
-    if not current_user.is_admin: return redirect(url_for('main.landing'))
-    dests = Destination.query.order_by(Destination.created_at.desc()).all()
-    rows = [[d.id, d.name, d.category, d.season, d.location, d.description[:100] if d.description else '', d.created_at.strftime('%Y-%m-%d %H:%M:%S') if d.created_at else ''] for d in dests]
-    return _csv_response('destinations_export', ['ID','Name','Category','Season','Location','Description','Created'], rows)
-
-@main_bp.route('/admin/export/itineraries')
-@login_required
-def admin_export_itineraries():
-    if not current_user.is_admin: return redirect(url_for('main.landing'))
-    itins = Trip.query.filter(Trip.itinerary_text.isnot(None), Trip.itinerary_text != '').order_by(Trip.created_at.desc()).all()
-    rows = [[i.id, i.destination, str(i.start_date or ''), (i.end_date - i.start_date).days if i.start_date and i.end_date else '', i.created_at.strftime('%Y-%m-%d %H:%M:%S') if i.created_at else ''] for i in itins]
-    return _csv_response('itineraries_export', ['ID','Destination','Start Date','Duration Days','Created'], rows)
-
-@main_bp.route('/admin/export/saved')
-@login_required
-def admin_export_saved():
-    if not current_user.is_admin: return redirect(url_for('main.landing'))
-    saved = SavedDestination.query.order_by(SavedDestination.created_at.desc()).all()
-    rows = [[s.id, s.user.name if s.user else '', s.name, s.tag or '', s.description[:100] if s.description else '', s.created_at.strftime('%Y-%m-%d %H:%M:%S') if s.created_at else ''] for s in saved]
-    return _csv_response('saved_destinations_export', ['ID','User','Name','Tag','Description','Created'], rows)
-
-@main_bp.route('/admin/export/favorites')
-@login_required
-def admin_export_favorites():
-    if not current_user.is_admin: return redirect(url_for('main.landing'))
-    favs = FavoriteDestination.query.order_by(FavoriteDestination.created_at.desc()).all()
-    rows = [[f.id, f.user.name if f.user else '', f.name, f.tag or '', f.description[:100] if f.description else '', f.created_at.strftime('%Y-%m-%d %H:%M:%S') if f.created_at else ''] for f in favs]
-    return _csv_response('favorites_export', ['ID','User','Name','Tag','Description','Created'], rows)
-
-@main_bp.route('/admin/export/notifications')
-@login_required
-def admin_export_notifications():
-    if not current_user.is_admin: return redirect(url_for('main.landing'))
-    notifs = Notification.query.order_by(Notification.created_at.desc()).all()
-    rows = [[n.id, n.user.name if n.user else '', n.message, n.type, 'Read' if n.is_read else 'Unread', n.created_at.strftime('%Y-%m-%d %H:%M:%S') if n.created_at else ''] for n in notifs]
-    return _csv_response('notifications_export', ['ID','User','Message','Type','Status','Created'], rows)
-
-@main_bp.route('/admin/export/chat-sessions')
-@login_required
-def admin_export_chat_sessions():
-    if not current_user.is_admin: return redirect(url_for('main.landing'))
-    sessions = ChatSession.query.order_by(ChatSession.updated_at.desc()).all()
-    rows = [[s.id, s.user.name if s.user else '', s.title or 'Untitled', len(s.messages), s.created_at.strftime('%Y-%m-%d %H:%M:%S') if s.created_at else ''] for s in sessions]
-    return _csv_response('chat_sessions_export', ['ID','User','Title','Messages','Created'], rows)
-
-@main_bp.route('/admin/export/chat-messages')
-@login_required
-def admin_export_chat_messages():
-    if not current_user.is_admin: return redirect(url_for('main.landing'))
-    msgs = ChatMessage.query.order_by(ChatMessage.created_at.desc()).all()
-    rows = [[m.id, m.session_id, m.role, m.content[:200], m.created_at.strftime('%Y-%m-%d %H:%M:%S') if m.created_at else ''] for m in msgs]
-    return _csv_response('chat_messages_export', ['ID','Session ID','Role','Content','Created'], rows)
-
-@main_bp.route('/admin/export/destination-activity')
-@login_required
-def admin_export_destination_activity():
-    if not current_user.is_admin: return redirect(url_for('main.landing'))
-    acts = DestinationActivity.query.order_by(DestinationActivity.created_at.desc()).all()
-    rows = [[a.id, a.user.name if a.user else 'Anonymous', a.destination_name, a.action_type, json.dumps(a.extra_data or {}), a.created_at.strftime('%Y-%m-%d %H:%M:%S') if a.created_at else ''] for a in acts]
-    return _csv_response('destination_activity_export', ['ID','User','Destination','Action','Metadata','Created'], rows)
-
-@main_bp.route('/admin/reset-data', methods=['POST'])
-@login_required
-def admin_reset_data():
-    if not current_user.is_admin:
-        return jsonify({'success': False, 'error': 'Unauthorized'}), 403
-    try:
-        DestinationActivity.query.delete()
-        ChatMessage.query.delete()
-        ChatSession.query.delete()
-        Notification.query.delete()
-        FavoriteDestination.query.delete()
-        SavedDestination.query.delete()
-        Itinerary.query.delete()
-        Destination.query.delete()
-        Trip.query.delete()
-        db.session.commit()
-        return jsonify({'success': True})
-    except Exception as e:
-        db.session.rollback()
-        print(f"Reset data error: {e}")
-        return jsonify({'success': False, 'error': str(e)}), 500
 
 @main_bp.route('/api/track-destination-click', methods=['POST'])
 @login_required

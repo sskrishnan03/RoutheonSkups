@@ -1,316 +1,498 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RoutheonSkups</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign In | RoutheonSkups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
-  <!-- Corporate Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
-    rel="stylesheet">
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #000000;
+    color: #E5E5E5;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+  .cinema-bg {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  }
+  .cinema-bg::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, #000000 0%, transparent 70%);
+  }
+  .bg-orb {
+    position: absolute; border-radius: 50%; filter: blur(100px); pointer-events: none;
+  }
+  .bg-orb-1 { width: 500px; height: 500px; top: -15%; left: 30%; background: #000000; animation: orbDrift 18s ease-in-out infinite; }
+  .bg-orb-2 { width: 400px; height: 400px; bottom: -10%; right: 20%; background: #000000; animation: orbDrift 22s ease-in-out infinite reverse; }
+  .bg-orb-3 { width: 300px; height: 300px; top: 50%; left: 10%; background: #000000; animation: orbDrift 15s ease-in-out infinite; }
+  @keyframes orbDrift {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 1; }
+    50% { transform: translate(40px, -30px) scale(1.12); opacity: 1.2; }
+  }
 
-  <style>
-    * {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
+  .grain {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.3;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+  }
 
-    .card-animate {
-      animation: fadeSlide 0.4s ease forwards;
-    }
+  .vignette {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background: radial-gradient(ellipse 70% 70% at 50% 50%, transparent 30%, #000000 100%);
+  }
 
-    @keyframes fadeSlide {
-      from {
-        opacity: 0;
-        transform: translateY(25px) scale(0.97);
-      }
+  .auth-layout {
+    display: flex;
+    height: 100vh;
+    position: relative;
+    z-index: 10;
+  }
 
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
+  .left-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 48px 56px;
+    background: #000000;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+    overflow: hidden;
+    height: 100vh;
+  }
 
-    .floating-input {
-      position: relative;
-    }
+  .flashlight-beam {
+    position: absolute;
+    top: -100px;
+    right: -150px;
+    width: 350px;
+    height: 900px;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(255,255,255,0.04) 15%,
+      rgba(255,255,255,0.07) 35%,
+      rgba(255,255,255,0.09) 50%,
+      rgba(255,255,255,0.07) 65%,
+      rgba(255,255,255,0.04) 85%,
+      transparent 100%
+    );
+    transform: rotate(-20deg);
+    pointer-events: none;
+    filter: blur(30px);
+    animation: flashlightSweep 7s ease-in-out infinite;
+    z-index: 0;
+  }
+  @keyframes flashlightSweep {
+    0% { transform: rotate(-20deg) translateX(-120px); opacity: 0; }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { transform: rotate(-20deg) translateX(120px); opacity: 0; }
+  }
 
-    .floating-input input {
-      background: transparent;
-    }
+  .left-glow {
+    position: absolute; border-radius: 50%; pointer-events: none; filter: blur(60px);
+  }
+  .left-glow-1 { width: 300px; height: 300px; top: -80px; right: -80px; background: rgba(255,255,255,0.03); }
+  .left-glow-2 { width: 250px; height: 250px; bottom: -60px; left: -60px; background: rgba(255,255,255,0.02); }
 
-    .floating-input label {
-      position: absolute;
-      left: 12px;
-      top: 9px;
-      font-size: 14px;
-      color: #6b7280;
-      transition: all 0.2s ease;
-      pointer-events: none;
-      font-weight: 500;
-    }
+  .left-content { position: relative; z-index: 2; }
 
-    .floating-input input:focus+label,
-    .floating-input input:not(:placeholder-shown)+label {
-      top: -8px;
-      left: 10px;
-      font-size: 11px;
-      background: white;
-      padding: 0 4px;
-      color: black;
-    }
+  .logo-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 44px;
+  }
+  .logo-box {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: #111111;
+    border: 1px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s ease;
+  }
+  .logo-box:hover {
+    background: #1a1a1a;
+    border-color: rgba(255,255,255,0.12);
+  }
+  .logo-box img { width: 28px; height: 28px; object-fit: contain; }
+  .logo-text { font-size: 18px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; }
 
-    /* Flash messages */
-    .flash-msg {
-      padding: 8px 16px;
-      border-radius: 10px;
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 12px;
-      text-align: center;
-    }
+  .ws-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 0.04em;
+    margin-bottom: 28px;
+  }
 
-    .flash-danger {
-      background: #fef2f2;
-      color: #dc2626;
-      border: 1px solid #fecaca;
-    }
+  .tagline {
+    font-size: clamp(26px, 3vw, 34px);
+    font-weight: 800;
+    color: #FFFFFF;
+    line-height: 1.15;
+    letter-spacing: -0.035em;
+    margin-bottom: 16px;
+  }
 
-    .flash-success {
-      background: #f0fdf4;
-      color: #16a34a;
-      border: 1px solid #bbf7d0;
-    }
+  .tagline-desc {
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.7;
+    max-width: 400px;
+    font-weight: 500;
+  }
 
-    .auth-bg {
-      background-image: linear-gradient(rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.55)),
-        url("{{ url_for('static', filename='img/loginbackground.png') }}");
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
-  </style>
+  .feature-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 36px;
+  }
+  .feature-list li {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 8px 0;
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 500;
+    line-height: 1.5;
+  }
+  .feat-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+  }
+  .feat-icon:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.15);
+  }
+  .feat-icon svg { width: 13px; height: 13px; }
+
+  .left-footer {
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    font-weight: 500;
+    position: relative;
+    z-index: 2;
+  }
+
+  .right-panel {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000000;
+    position: relative;
+    overflow: hidden;
+    height: 100vh;
+    padding: 40px;
+  }
+
+  .float-shape {
+    position: absolute;
+    opacity: 0.06;
+    pointer-events: none;
+    animation: floatDrift 24s ease-in-out infinite;
+  }
+  .float-shape:nth-child(2) { animation-delay: -8s; animation-duration: 28s; }
+  .float-shape:nth-child(3) { animation-delay: -16s; animation-duration: 20s; }
+  @keyframes floatDrift {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(2deg); }
+  }
+
+  .form-area {
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    z-index: 10;
+    text-align: center;
+  }
+
+  .mobile-logo {
+    display: none;
+    justify-content: center;
+    margin-bottom: 28px;
+  }
+  .mobile-logo .logo-box {
+    width: 48px; height: 48px; border-radius: 14px;
+  }
+  .mobile-logo .logo-box img { width: 32px; height: 32px; }
+
+  .form-header { margin-bottom: 36px; }
+  .form-header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #FFFFFF;
+    letter-spacing: -0.03em;
+    margin-bottom: 8px;
+  }
+  .form-header p {
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 500;
+  }
+
+  .input-group { position: relative; }
+  .auth-input {
+    width: 100%;
+    height: 50px;
+    background: #0A0A0A;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 0 16px;
+    font-size: 14px;
+    color: #FFF;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+  }
+  .auth-input::placeholder { color: rgba(255,255,255,0.25); }
+  .auth-input:focus {
+    border-color: rgba(255,255,255,0.2);
+    background: #0A0A0A;
+    box-shadow: 0 0 0 4px rgba(255,255,255,0.04);
+  }
+
+  .input-group label {
+    position: absolute;
+    left: 16px; top: 15px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.35);
+    font-weight: 500;
+    pointer-events: none;
+    transition: all 0.25s cubic-bezier(0.22,1,0.36,1);
+    transform-origin: left top;
+  }
+  .input-group input:focus ~ label,
+  .input-group input:not(:placeholder-shown) ~ label {
+    top: -8px; left: 12px; font-size: 11px; color: rgba(255,255,255,0.5);
+    background: #000000; padding: 0 6px;
+  }
+
+  .pw-toggle {
+    position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; color: rgba(255,255,255,0.35); cursor: pointer;
+    padding: 4px; transition: color 0.2s ease; display: flex; align-items: center;
+  }
+  .pw-toggle:hover { color: rgba(255,255,255,0.7); }
+
+  .form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 14px;
+    margin-bottom: 24px;
+  }
+  .form-options label {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12.5px; color: rgba(255,255,255,0.5); font-weight: 500; cursor: pointer;
+  }
+  .form-options a {
+    font-size: 12.5px; color: #FFFFFF; font-weight: 600;
+    text-decoration: none; transition: color 0.2s;
+  }
+  .form-options a:hover { color: rgba(255,255,255,0.8); text-decoration: underline; }
+
+  .custom-checkbox {
+    appearance: none; width: 18px; height: 18px;
+    border: 1.5px solid rgba(255,255,255,0.15); border-radius: 5px;
+    background: #0A0A0A; cursor: pointer; transition: all 0.2s ease;
+    position: relative; flex-shrink: 0;
+  }
+  .custom-checkbox:checked { background: #FFFFFF; border-color: #FFFFFF; }
+  .custom-checkbox:checked::after {
+    content: ''; position: absolute; left: 5px; top: 2px; width: 5px; height: 9px;
+    border: solid #000; border-width: 0 2px 2px 0; transform: rotate(45deg);
+  }
+  .custom-checkbox:hover { border-color: rgba(255,255,255,0.3); }
+
+  .btn-primary {
+    width: 100%; height: 50px; background: #FFFFFF; color: #000000;
+    border: 1px solid #FFFFFF; border-radius: 14px; font-size: 14px;
+    font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.22,1,0.36,1); position: relative; overflow: hidden;
+  }
+  .btn-primary:hover {
+    background: #E5E5E5; border-color: #E5E5E5;
+    transform: translateY(-1px); box-shadow: 0 8px 32px rgba(255,255,255,0.1);
+  }
+  .btn-primary:active { transform: translateY(0) scale(0.98); }
+
+  .btn-social {
+    width: 100%; height: 50px; background: #0A0A0A;
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; font-size: 14px;
+    font-weight: 600; color: #E5E5E5; font-family: 'Inter', sans-serif; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: all 0.35s cubic-bezier(0.22,1,0.36,1); text-decoration: none;
+  }
+  .btn-social:hover { background: #111111; border-color: rgba(255,255,255,0.15); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.5); }
+
+  .divider { display: flex; align-items: center; gap: 16px; }
+  .divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.08); }
+  .divider-text { font-size: 11px; color: rgba(255,255,255,0.35); font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
+
+  .flash-msg {
+    padding: 12px 18px; border-radius: 12px; font-size: 13px; font-weight: 600;
+    margin-bottom: 14px; text-align: center; animation: fadeSlide 0.4s ease forwards;
+  }
+  .flash-danger { background: #1a0000; color: #ff6b6b; border: 1px solid rgba(255,100,100,0.2); }
+  .flash-success { background: #001a00; color: #6bffa8; border: 1px solid rgba(100,255,168,0.2); }
+  .flash-info { background: #001a2a; color: #6bb8ff; border: 1px solid rgba(100,168,255,0.2); }
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+  @media (max-width: 1023px) { .left-panel { display: none; } .mobile-logo { display: flex; } }
+</style>
 </head>
+<body>
 
-<body class="auth-bg min-h-screen flex items-center justify-center p-4">
+<div class="cinema-bg">
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+</div>
 
-  <div class="w-full max-w-sm">
+<div class="auth-layout">
+  <div class="left-panel">
+    <div class="flashlight-beam"></div>
+    <div class="left-glow left-glow-1"></div>
+    <div class="left-glow left-glow-2"></div>
+    <div class="left-content">
+      <div class="logo-row">
+        <div class="logo-box"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo"></div>
+        <span class="logo-text">RoutheonSkups</span>
+      </div>
+      <div class="ws-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        AI Travel Planning
+      </div>
+      <h1 class="tagline">Plan Smarter. Travel Better.</h1>
+      <p class="tagline-desc">Your intelligent AI travel companion for planning trips, discovering destinations, and organizing every journey in one place.</p>
+      <ul class="feature-list">
+        <li><span class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Z"/><path d="M12 6v6l4 2"/></svg></span><span>AI-powered itinerary generation in seconds</span></li>
+        <li><span class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span><span>Smart budget planning with cost breakdowns</span></li>
+        <li><span class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span><span>Explore 36+ Indian states with curated picks</span></li>
+        <li><span class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg></span><span>Interactive route maps with driving times</span></li>
+        <li><span class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg></span><span>Live weather forecasts for every destination</span></li>
+        <li><span class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><span>AI travel chatbot for instant insights</span></li>
+        <li><span class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span><span>Save and favorite your dream destinations</span></li>
+        <li><span class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><span>Calendar view and trip scheduling built in</span></li>
+      </ul>
+    </div>
+    <p class="left-footer">&copy; 2026 RoutheonSkups. All rights reserved.</p>
+  </div>
 
-    <!-- Flash Messages -->
+  <div class="right-panel">
+    <svg class="float-shape" style="top:12%;left:10%;width:50px;" viewBox="0 0 60 40" fill="none"><path d="M5 35L30 5l25 30" stroke="rgba(255,255,255,0.6)" stroke-width="1"/></svg>
+    <svg class="float-shape" style="bottom:18%;right:12%;width:42px;" viewBox="0 0 50 50" fill="none"><circle cx="25" cy="25" r="20" stroke="rgba(255,255,255,0.6)" stroke-width="1"/><path d="M5 25h40M25 5v40" stroke="rgba(255,255,255,0.6)" stroke-width="0.5"/></svg>
+    <svg class="float-shape" style="top:55%;left:18%;width:55px;" viewBox="0 0 80 20" fill="none"><path d="M0 10Q20 0 40 10Q60 20 80 10" stroke="rgba(255,255,255,0.6)" stroke-width="1" stroke-dasharray="4 4"/></svg>
+
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-    {% for category, message in messages %}
-    <div class="flash-msg flash-{{ category }}">{{ message }}</div>
-    {% endfor %}
+    <div style="position:fixed;top:20px;right:20px;z-index:100;width:360px;">
+      {% for category, message in messages %}
+      <div class="flash-msg flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
     {% endif %}
     {% endwith %}
 
-    <!-- MAIN VIEW -->
-    <div id="mainView" class="relative bg-white/95 rounded-2xl border shadow-xl p-8 card-animate overflow-hidden">
-
-      <div class="flex justify-center mb-6">
-        <div
-          class="w-16 h-16 border border-gray-300 rounded-xl flex items-center justify-center bg-white shadow-sm overflow-hidden">
-          <img src="{{ url_for('static', filename='img/logo.png') }}" class="w-11 h-11 object-contain">
-        </div>
+    <div class="form-area">
+      <div class="mobile-logo">
+        <div class="logo-box"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo"></div>
+      </div>
+      <div class="form-header">
+        <h1>Welcome Back</h1>
+        <p>Sign in to continue planning your trips.</p>
       </div>
 
-      <div class="text-center">
-        <h1 class="text-1xl font-semibold tracking-wide">
-          RoutheonSkups
-        </h1>
-        <p class="text-sm text-gray-500 mt-1 font-medium">
-          Plan better. create unforgettable trips.
-        </p>
+      <a href="{{ url_for('main.google_login') }}" class="btn-social" style="margin-bottom:24px;">
+        <svg width="17" height="17" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.2 3.61l6.86-6.86C35.7 2.09 30.3 0 24 0 14.63 0 6.36 5.48 2.44 13.44l7.98 6.19C12.42 13.1 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.14 24.5c0-1.64-.15-3.21-.42-4.73H24v9h12.4c-.53 2.86-2.13 5.28-4.53 6.9l7.04 5.47C43.95 36.68 46.14 31.09 46.14 24.5z"/><path fill="#FBBC05" d="M10.42 28.63a14.5 14.5 0 010-9.26l-7.98-6.19A23.93 23.93 0 000 24c0 3.87.92 7.53 2.56 10.82l7.86-6.19z"/><path fill="#34A853" d="M24 48c6.3 0 11.7-2.08 15.6-5.66l-7.04-5.47c-2 1.35-4.55 2.13-8.56 2.13-6.26 0-11.58-3.6-13.58-8.83l-7.86 6.19C6.36 42.52 14.63 48 24 48z"/></svg>
+        Continue with Google
+      </a>
+
+      <div class="divider" style="margin-bottom:24px;">
+        <div class="divider-line"></div>
+        <span class="divider-text">or</span>
+        <div class="divider-line"></div>
       </div>
 
-      <div class="mt-8 space-y-4">
-
-        <a href="{{ url_for('main.google_login') }}"
-          class="w-full flex items-center justify-center gap-3 h-11 bg-white border rounded-xl text-sm font-medium hover:shadow-md hover:scale-[1.03] transition-all duration-300 no-underline text-black">
-
-          <svg width="18" height="18" viewBox="0 0 48 48">
-            <path fill="#EA4335"
-              d="M24 9.5c3.54 0 6.71 1.22 9.2 3.61l6.86-6.86C35.7 2.09 30.3 0 24 0 14.63 0 6.36 5.48 2.44 13.44l7.98 6.19C12.42 13.1 17.74 9.5 24 9.5z" />
-            <path fill="#4285F4"
-              d="M46.14 24.5c0-1.64-.15-3.21-.42-4.73H24v9h12.4c-.53 2.86-2.13 5.28-4.53 6.9l7.04 5.47C43.95 36.68 46.14 31.09 46.14 24.5z" />
-            <path fill="#FBBC05"
-              d="M10.42 28.63a14.5 14.5 0 010-9.26l-7.98-6.19A23.93 23.93 0 000 24c0 3.87.92 7.53 2.56 10.82l7.86-6.19z" />
-            <path fill="#34A853"
-              d="M24 48c6.3 0 11.7-2.08 15.6-5.66l-7.04-5.47c-2 1.35-4.55 2.13-8.56 2.13-6.26 0-11.58-3.6-13.58-8.83l-7.86 6.19C6.36 42.52 14.63 48 24 48z" />
-          </svg>
-
-          Continue with Google
-        </a>
-
-        <div class="relative">
-          <div class="absolute inset-0 flex items-center">
-            <span class="w-full border-t"></span>
+      <form method="POST" action="{{ url_for('main.login') }}" style="text-align:left;">
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div class="input-group">
+            <input type="email" name="email" placeholder=" " required class="auth-input" autocomplete="email">
+            <label>Email Address</label>
           </div>
-          <div class="relative flex justify-center text-xs uppercase font-medium">
-            <span class="bg-white px-3 text-gray-400">or</span>
+          <div class="input-group">
+            <input type="password" name="password" id="login-password" placeholder=" " required class="auth-input" autocomplete="current-password">
+            <label>Password</label>
+            <button type="button" class="pw-toggle" onclick="togglePw('login-password',this)" aria-label="Toggle password">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
           </div>
         </div>
 
-        <button onclick="showEmail()"
-          class="w-full flex items-center justify-center gap-2 h-11 border rounded-xl text-sm font-medium hover:bg-gray-100 hover:scale-[1.03] transition-all duration-300">
-          <i data-lucide="mail" class="w-4 h-4"></i>
-          Continue with Email
-        </button>
-
-      </div>
-
-      <div class="mt-6 text-center">
-        <a href="{{ url_for('main.home') }}" class="text-sm text-gray-400 hover:text-black transition font-medium">
-          Continue without signing in
-        </a>
-      </div>
-
-    </div>
-
-    <!-- EMAIL LOGIN -->
-    <div id="emailView"
-      class="hidden relative bg-white/95 rounded-2xl border shadow-xl p-8 card-animate overflow-hidden">
-
-      <div class="flex justify-center mb-6">
-        <div
-          class="w-16 h-16 border border-gray-300 rounded-xl flex items-center justify-center bg-white shadow-sm overflow-hidden">
-          <img src="{{ url_for('static', filename='img/logo.png') }}" class="w-11 h-11 object-contain">
-        </div>
-      </div>
-
-      <h2 class="text-1xl font-semibold text-center">
-        Sign In
-      </h2>
-
-      <form method="POST" action="{{ url_for('main.login') }}" class="mt-8 space-y-6">
-
-        <div class="floating-input">
-          <input type="email" name="email" placeholder=" " required
-            class="w-full h-11 border rounded-xl px-3 text-sm focus:outline-none focus:ring-2 focus:ring-black" />
-          <label>Email address</label>
+        <div class="form-options">
+          <label>
+            <input type="checkbox" name="remember" class="custom-checkbox">
+            Remember me
+          </label>
+          <a href="{{ url_for('main.reset_password') }}">Forgot password?</a>
         </div>
 
-        <div class="floating-input">
-          <input type="password" name="password" placeholder=" " required
-            class="w-full h-11 border rounded-xl px-3 text-sm focus:outline-none focus:ring-2 focus:ring-black" />
-          <label>Password</label>
-        </div>
-
-        <div class="flex justify-end text-sm font-medium">
-          <button type="button" onclick="showReset()" class="text-gray-500 hover:text-black">
-            Forgot password?
-          </button>
-        </div>
-
-        <button type="submit"
-          class="w-full h-11 bg-black text-white rounded-xl text-sm font-medium hover:scale-[1.03] transition-all duration-300">
-          Sign In
-        </button>
-
+        <button type="submit" class="btn-primary">Sign In</button>
       </form>
 
-      <div class="mt-6 text-center">
-        <a href="{{ url_for('main.home') }}" class="text-sm text-gray-400 hover:text-black transition font-medium">
-          Continue without signing in
-        </a>
-      </div>
-
-      <div class="mt-4 text-center">
-        <button onclick="goHome()" class="text-sm text-gray-500 hover:text-black font-medium">
-          Back
-        </button>
-      </div>
-
-    </div>
-
-    <!-- RESET PAGE -->
-    <div id="resetView"
-      class="hidden relative bg-white/95 rounded-2xl border shadow-xl p-8 card-animate overflow-hidden">
-
-      <div class="flex justify-center mb-6">
-        <div
-          class="w-16 h-16 border border-gray-300 rounded-xl flex items-center justify-center bg-white shadow-sm overflow-hidden">
-          <img src="{{ url_for('static', filename='img/logo.png') }}" class="w-11 h-11 object-contain">
-        </div>
-      </div>
-
-      <h2 class="text-2xl font-semibold text-center">
-        Reset Password
-      </h2>
-
-      <p class="text-sm text-gray-500 text-center mt-2 font-medium">
-        We will send you reset instructions.
-      </p>
-
-      <form method="POST" action="{{ url_for('main.reset_password') }}" class="mt-8 space-y-6">
-
-        <div class="floating-input">
-          <input type="email" name="email" placeholder=" " required
-            class="w-full h-11 border rounded-xl px-3 text-sm focus:outline-none focus:ring-2 focus:ring-black" />
-          <label>Email address</label>
-        </div>
-
-        <button type="submit"
-          class="w-full h-11 bg-black text-white rounded-xl text-sm font-medium hover:scale-[1.03] transition-all duration-300">
-          Send Reset Link
-        </button>
-
-      </form>
-
-      <div class="mt-6 text-center">
-        <a href="{{ url_for('main.home') }}" class="text-sm text-gray-400 hover:text-black transition font-medium">
-          Continue without signing in
-        </a>
-      </div>
-
-      <div class="mt-4 text-center">
-        <button onclick="goHome()" class="text-sm text-gray-500 hover:text-black font-medium">
-          Back to Login
-        </button>
-      </div>
-
-    </div>
-
-    <!-- SIGN UP LINK -->
-    <div class="mt-4 text-center">
-      <p class="text-sm text-gray-500 font-medium">
-        Don't have an account?
-        <a href="{{ url_for('main.register') }}" class="text-black hover:underline font-semibold">Sign Up</a>
+      <p style="text-align:center;font-size:13px;color:#FFFFFF;margin-top:24px;font-weight:500;">
+        Don't have an account? <a href="{{ url_for('main.register') }}" style="color:#FFFFFF;text-decoration:underline;font-weight:700;">Sign Up</a>
       </p>
     </div>
-
   </div>
+</div>
 
-  <script>
-    lucide.createIcons();
-
-    function showEmail() {
-      mainView.classList.add("hidden");
-      emailView.classList.remove("hidden");
-      resetView.classList.add("hidden");
-    }
-
-    function showReset() {
-      emailView.classList.add("hidden");
-      resetView.classList.remove("hidden");
-    }
-
-    function goHome() {
-      mainView.classList.remove("hidden");
-      emailView.classList.add("hidden");
-      resetView.classList.add("hidden");
-    }
-
-    const mode = new URLSearchParams(window.location.search).get("mode");
-    if (mode === "email") {
-      showEmail();
-    }
-  </script>
+<script>
+function togglePw(id, btn) {
+  const f = document.getElementById(id);
+  const show = f.type === 'password';
+  f.type = show ? 'text' : 'password';
+  btn.innerHTML = show
+    ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>'
+    : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+}
+if (window.innerWidth < 1024) document.querySelector('.mobile-logo').style.display = 'flex';
+window.addEventListener('resize', () => {
+  document.querySelector('.mobile-logo').style.display = window.innerWidth < 1024 ? 'flex' : 'none';
+});
+</script>
 
 </body>
-
 </html>

@@ -4,109 +4,200 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RoutheonSkups</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Inter", Arial, sans-serif;
-}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
-body {
-  height: 100vh;
-  background-color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  transition: opacity 0.5s ease;
-}
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #000000;
+    color: #FFFFFF;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
 
-body.fade-out {
-  opacity: 0;
-}
+  /* Cinematic BG */
+  .bg-layer {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  }
+  .bg-layer::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, #000000 0%, transparent 70%);
+  }
+  .bg-orb {
+    position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none;
+  }
+  .bg-orb-1 {
+    width: 500px; height: 500px; top: -10%; left: 20%;
+    background: #000000;
+    animation: orbFloat 12s ease-in-out infinite;
+  }
+  .bg-orb-2 {
+    width: 400px; height: 400px; bottom: -10%; right: 15%;
+    background: #000000;
+    animation: orbFloat 15s ease-in-out infinite reverse;
+  }
+  @keyframes orbFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 1; }
+    50% { transform: translate(30px, -20px) scale(1.08); opacity: 1.3; }
+  }
 
-/* Wrapper */
-.brand-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 26px;
-}
+  /* Grain */
+  .grain {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.3;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-repeat: repeat; background-size: 200px 200px;
+  }
 
-/* Logo */
-.logo-img {
-  width: 95px;
-  height: auto;
-  opacity: 0;
-  transform: translateY(40px) scale(0.9);
-  animation: logoReveal 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
+  /* Vignette */
+  .vignette {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background: radial-gradient(ellipse 70% 70% at 50% 50%, transparent 30%, #000000 100%);
+  }
 
-/* App Name */
-.brand-name {
-  font-size: 44px;
-  font-weight: 700;
-  color: #1f242d;
-  letter-spacing: 0.5px;
-  opacity: 0;
-  transform: translateX(-30px);
-  animation: textReveal 1.2s ease forwards;
-  animation-delay: 0.3s;
-}
+  /* Brand */
+  .brand-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    position: relative;
+    z-index: 10;
+  }
 
-/* Logo animation (runs once) */
-@keyframes logoReveal {
-  0% {
+  .logo-img {
+    width: 88px; height: 88px;
+    object-fit: contain;
     opacity: 0;
-    transform: translateY(40px) scale(0.9);
+    transform: translateY(30px) scale(0.85);
+    animation: logoReveal 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
+    filter: drop-shadow(0 0 40px #000000);
   }
-  60% {
-    opacity: 1;
-    transform: translateY(-5px) scale(1.03);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
 
-/* Text animation (runs once) */
-@keyframes textReveal {
-  0% {
+  .brand-name {
+    font-size: 48px;
+    font-weight: 800;
+    color: #FFFFFF;
+    letter-spacing: -0.03em;
     opacity: 0;
-    transform: translateX(-30px);
+    transform: translateX(-20px);
+    animation: textReveal 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.5s forwards;
   }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
 
+  /* Line underneath */
+  .brand-line {
+    position: absolute;
+    bottom: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+    animation: lineExpand 1.5s cubic-bezier(0.22, 1, 0.36, 1) 1s forwards;
+  }
+
+  /* Ambient glow behind brand */
+  .brand-glow {
+    position: absolute;
+    width: 400px; height: 200px;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(ellipse, #000000 0%, transparent 70%);
+    filter: blur(40px);
+    pointer-events: none;
+    opacity: 0;
+    animation: glowFade 2s ease 0.8s forwards;
+  }
+
+  @keyframes logoReveal {
+    0% { opacity: 0; transform: translateY(30px) scale(0.85); }
+    60% { opacity: 1; transform: translateY(-4px) scale(1.02); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes textReveal {
+    0% { opacity: 0; transform: translateX(-20px); }
+    100% { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes lineExpand {
+    0% { width: 0; opacity: 0; }
+    100% { width: 200px; opacity: 1; }
+  }
+  @keyframes glowFade {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  /* Fade out */
+  body.fade-out {
+    animation: fadeOut 0.6s ease forwards;
+  }
+  @keyframes fadeOut {
+    to { opacity: 0; transform: scale(1.02); }
+  }
+
+  /* Floating particles */
+  .particles { position: fixed; inset: 0; z-index: 2; pointer-events: none; }
+  .particle {
+    position: absolute;
+    width: 2px; height: 2px;
+    background: #000000;
+    border-radius: 50%;
+    animation: particleFloat linear infinite;
+  }
+  @keyframes particleFloat {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+  }
 </style>
 </head>
-
 <body>
 
+<div class="bg-layer">
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+</div>
+
+<div class="particles" id="particles"></div>
+
 <div class="brand-wrapper">
-  
-  <img src="{{ url_for('static', filename='img/logo.png') }}" alt="RoutheonSkups Logo" class="logo-img">
-
-  <div class="brand-name">
-    RoutheonSkups
+  <div class="brand-glow"></div>
+  <img src="{{ url_for('static', filename='img/logo.png') }}" alt="RoutheonSkups" class="logo-img">
+  <div style="position:relative;">
+    <div class="brand-name">RoutheonSkups</div>
+    <div class="brand-line"></div>
   </div>
-
 </div>
 
 <script>
-  // After animations complete (~2.5s), fade out and redirect to home
+  // Generate particles
+  (function() {
+    var c = document.getElementById('particles');
+    for (var i = 0; i < 30; i++) {
+      var p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDuration = (6 + Math.random() * 8) + 's';
+      p.style.animationDelay = Math.random() * 6 + 's';
+      p.style.width = p.style.height = (1 + Math.random() * 2) + 'px';
+      p.style.opacity = 0.03 + Math.random() * 0.1;
+      c.appendChild(p);
+    }
+  })();
+
+  // Redirect after brand reveal
   setTimeout(function() {
     document.body.classList.add('fade-out');
     setTimeout(function() {
-      window.location.href = "{{ url_for('main.secondpage') }}";
-    }, 500); // wait for fade-out transition
-  }, 2000); // wait for brand animations to finish
+      window.location.href = "{{ url_for('main.home') }}";
+    }, 600);
+  }, 2500);
 </script>
 
 </body>

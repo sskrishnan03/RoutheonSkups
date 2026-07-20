@@ -5,52 +5,44 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>RoutheonSkups - Travel Calendar</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"
-        rel="stylesheet" />
+    <link rel="stylesheet" href="/static/css/tailwind-output.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        primary: "#3B82F6",
-                        "primary-hover": "#2563EB",
-                        "background-light": "#FFFFFF",
-                        "surface-light": "#F8FAFC",
-                        "text-main-light": "#1E293B",
-                        "text-muted-light": "#64748B",
-                        "border-light": "#E2E8F0",
-                    },
-                    fontFamily: {
-                        display: ["'Plus Jakarta Sans'", "sans-serif"],
-                        body: ["'Plus Jakarta Sans'", "sans-serif"],
-                    },
-                    borderRadius: {
-                        'DEFAULT': '0.5rem',
-                        'xl': '1rem',
-                        '2xl': '1.5rem',
-                        '3xl': '2rem',
-                    },
-                    boxShadow: {
-                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
-                        'premium': '0 10px 40px -10px rgba(0, 0, 0, 0.08)',
-                    }
-                },
-            },
-        };
-    </script>
-    <style type="text/tailwindcss">
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link href="/static/css/charcoal.css" rel="stylesheet" />
+    <style>
+        body { font-family: 'Inter', -apple-system, sans-serif; }
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
+        .glass-panel {
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 24px;
+        }
+        .glass-card {
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 24px;
+            transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s cubic-bezier(0.22,1,0.36,1);
+        }
+        .glass-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px #111111;
+        }
+        .glass-btn {
+            background: #0A0A0A;
+            color: #FFFFFF;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+        }
+        .glass-btn:hover { background: #0A0A0A; }
         .active-tab {
-            @apply bg-primary text-white shadow-lg shadow-blue-500/30;
+            background: #111111;
+            color: #FFFFFF;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px #0A0A0A;
         }
         .calendar-grid {
             display: grid;
@@ -58,758 +50,756 @@
             gap: 8px;
         }
         .calendar-shell {
-            @apply rounded-3xl border border-border-light bg-white overflow-hidden;
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: #0A0A0A;
+            overflow: hidden;
         }
         .calendar-toolbar {
-            @apply px-7 py-6 border-b border-border-light;
+            padding-left: 1.75rem;
+            padding-right: 1.75rem;
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
         }
         .calendar-subtoolbar {
-            @apply px-7 py-3 border-b border-border-light bg-surface-light/40 flex items-center gap-3;
+            padding-left: 1.75rem;
+            padding-right: 1.75rem;
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            background: #0A0A0A;
         }
         .view-toggle-btn {
-            @apply px-4 py-2 text-xs font-bold rounded-lg transition-all text-text-muted-light;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            font-size: 0.75rem;
+            line-height: 1rem;
+            font-weight: 700;
+            border-radius: 0.5rem;
+            color: #888888;
+            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
         }
         .view-toggle-btn.active {
-            @apply bg-white text-primary shadow-sm border border-border-light;
+            background: #0A0A0A;
+            color: #FFFFFF;
+            box-shadow: 0 2px 8px #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
         }
         .calendar-day {
-            @apply min-h-[88px] p-2.5 bg-white border border-border-light rounded-2xl hover:border-primary/30 hover:shadow-soft transition-all cursor-pointer relative;
+            min-height: 88px;
+            padding: 0.625rem;
+            border-radius: 1rem;
+            transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
         }
-        .calendar-day.muted {
-            @apply opacity-55 bg-slate-50/70;
+        .calendar-day:hover {
+            border-color: rgba(255,255,255,0.7);
+            box-shadow: 0 4px 12px #0A0A0A;
         }
-        .calendar-day.today {
-            @apply ring-2 ring-primary/20 border-primary/40 bg-blue-50/40;
-        }
-        .calendar-day.selected {
-            @apply ring-2 ring-primary/30 border-primary;
-        }
+        .calendar-day.muted { opacity: 0.4; background: #0A0A0A; }
+        .calendar-day.today { box-shadow: 0 0 0 2px #111111; border-color: rgba(255,255,255,0.7); }
+        .calendar-day.selected { box-shadow: 0 0 0 2px #0A0A0A; border-color: rgba(255,255,255,0.7); }
         .day-number {
-            @apply text-sm font-bold text-text-main-light;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            font-weight: 700;
+            color: #FFFFFF;
         }
-        .day-number.muted {
-            @apply text-text-muted-light;
-        }
+        .day-number.muted { color: #666666; }
         .trip-chip {
-            @apply w-full mt-1.5 px-2 py-1 rounded-lg text-[10px] font-semibold flex items-center gap-1.5 truncate;
+            width: 100%;
+            margin-top: 0.375rem;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+            border-radius: 0.5rem;
+            font-size: 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
-        .trip-chip.active {
-            @apply bg-blue-50 text-blue-700 border border-blue-100;
-        }
-        .trip-chip.done {
-            @apply bg-slate-100 text-slate-600 border border-slate-200;
-        }
-        .trip-chip.more {
-            @apply bg-surface-light text-text-muted-light border border-border-light justify-center;
-        }
+        .trip-chip.active { background: #0A0A0A; color: #FFFFFF; border: 1px solid rgba(255,255,255,0.06); }
+        .trip-chip.done { background: #0A0A0A; color: #888888; border: 1px solid rgba(255,255,255,0.06); }
+        .trip-chip.more { background: #0A0A0A; color: #888888; border: 1px solid rgba(255,255,255,0.06); justify-content: center; }
         .week-header {
-            @apply py-3 text-center text-[11px] font-bold text-text-muted-light uppercase tracking-widest;
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #888888;
         }
         .week-view-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 10px;
         }
-        .invisible-scroll {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        .invisible-scroll::-webkit-scrollbar {
-            width: 0;
-            height: 0;
-            display: none;
-        }
-        .calendar-scroll-viewport {
-            overflow: visible;
-            max-height: none;
-        }
-        .calendar-content-min {
-            min-width: 0;
-        }
+        .calendar-scroll-viewport { overflow: visible; max-height: none; }
+        .calendar-content-min { min-width: 0; }
         .menu-panel {
-            @apply hidden absolute right-0 mt-2 w-44 bg-white border border-border-light rounded-xl shadow-lg overflow-hidden z-30;
+            display: none;
+            position: absolute;
+            right: 0;
+            margin-top: 0.5rem;
+            width: 11rem;
+            z-index: 30;
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            overflow: hidden;
         }
         .menu-panel.open { display: block; }
         .menu-action {
-            @apply w-full text-left px-3 py-2 text-xs font-semibold hover:bg-surface-light transition-colors flex items-center gap-2;
+            width: 100%;
+            text-align: left;
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            font-size: 0.75rem;
+            line-height: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #FFFFFF;
+            transition: background 0.35s cubic-bezier(0.22,1,0.36,1), color 0.35s cubic-bezier(0.22,1,0.36,1);
         }
-        .menu-action-danger { @apply text-red-600 hover:bg-red-50; }
-        .modal-enter {
-            animation: fadeIn 180ms ease-out;
-        }
-        .modal-card-enter {
-            animation: slideUp 220ms ease-out;
-        }
+        .menu-action:hover { background: #0A0A0A; }
+        .menu-action-danger { color: #DC2626; }
+        .menu-action-danger:hover { background: rgba(220,38,38,0.1); }
+        .modal-enter { animation: fadeIn 180ms ease-out; }
+        .modal-card-enter { animation: slideUp 220ms ease-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 
-<body class="bg-background-light text-text-main-light min-h-screen">
-    {% include 'components/navbar.html' %}
-    <main class="max-w-[96rem] mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-10 space-y-8">
-        {% set back_fallback = url_for('main.profile') %}
-        {% include 'components/back_button.html' %}
-        <section
-            class="bg-white rounded-3xl border border-border-light shadow-premium p-8 md:p-12 relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-            <div class="relative z-10 flex flex-col items-center text-center">
-                <div class="relative mb-6">
-                    <div
-                        class="w-32 h-32 rounded-full ring-4 ring-white shadow-xl overflow-hidden bg-surface-light flex items-center justify-center text-primary text-5xl font-bold">
-                        {% if current_user.image_url %}
-                        <img alt="{{ current_user.name }}" class="w-full h-full object-cover"
-                            src="{{ current_user.image_url }}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&q=80&w=2000'" />
+<body class="min-h-screen relative" style="background:#0A0A0A;color:#FFFFFF;">
+    <div class="ks-cinema-bg"></div>
+    <div class="ks-grain"></div>
+    <div class="ks-vignette"></div>
+    <canvas id="ks-particles-canvas"></canvas>
+    <div class="relative z-10">
+        {% include 'components/navbar.html' %}
+        <main class="max-w-[96rem] mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-10 space-y-8">
+            {% set back_fallback = url_for('main.profile') %}
+            {% include 'components/back_button.html' %}
+            <section class="glass-panel p-8 md:p-12 relative overflow-hidden">
+                <div class="relative z-10 flex flex-col items-center text-center">
+                    <div class="relative mb-6">
+                        <div class="w-32 h-32 rounded-full ring-4 ring-white/20 shadow-xl overflow-hidden flex items-center justify-center text-5xl font-bold" style="background:#0A0A0A;">
+                            {% if current_user.image_url %}
+                            <img alt="{{ current_user.name }}" class="w-full h-full object-cover" src="{{ current_user.image_url }}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&q=80&w=2000'" />
+                            {% else %}
+                            {{ current_user.name[0]|upper }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <h1 class="text-3xl font-extrabold mb-2">{{ current_user.name }}</h1>
+                    <div class="mb-8"></div>
+                    <div class="grid grid-cols-2 gap-12 pt-8 w-full max-w-md mx-auto" style="border-top: 1px solid rgba(255,255,255,0.06);">
+                        <div>
+                            <div class="text-2xl font-extrabold">{{ trip_count }}</div>
+                            <div class="text-sm font-medium" style="color:#FFFFFF;">Trips</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-extrabold">{{ saved_count }}</div>
+                            <div class="text-sm font-medium" style="color:#FFFFFF;">Saved Destinations</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <nav class="flex justify-center">
+                <div class="flex flex-wrap items-center p-2 rounded-3xl gap-1" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);">
+                    <a href="{{ url_for('main.profile') }}" class="px-6 py-3 rounded-2xl text-sm font-bold transition-all" style="color:#FFFFFF;" onmouseover="this.style.color='#fff';this.style.background='#0A0A0A'" onmouseout="this.style.color='#888888';this.style.background='transparent'">PERSONAL INFO</a>
+                    <a href="{{ url_for('main.my_trips') }}" class="px-6 py-3 rounded-2xl text-sm font-bold transition-all" style="color:#FFFFFF;" onmouseover="this.style.color='#fff';this.style.background='#0A0A0A'" onmouseout="this.style.color='#888888';this.style.background='transparent'">MY TRIPS</a>
+                    <a href="{{ url_for('main.calendar') }}" class="active-tab px-6 py-3 text-sm font-bold transition-all">CALENDAR</a>
+                    <a href="{{ url_for('main.settings') }}" class="px-6 py-3 rounded-2xl text-sm font-bold transition-all" style="color:#FFFFFF;" onmouseover="this.style.color='#fff';this.style.background='#0A0A0A'" onmouseout="this.style.color='#888888';this.style.background='transparent'">SETTINGS</a>
+                    <a href="{{ url_for('main.profile_ai') }}" class="px-6 py-3 rounded-2xl text-sm font-bold flex items-center gap-2 transition-all" style="color:#FFFFFF;" onmouseover="this.style.color='#fff';this.style.background='#0A0A0A'" onmouseout="this.style.color='#888888';this.style.background='transparent'">
+                        <span class="material-icons-round text-lg">smart_toy</span>
+                        AI ASSISTANT
+                    </a>
+                </div>
+            </nav>
+            <div class="space-y-8 pb-20">
+                <section class="glass-panel overflow-hidden">
+                    <div class="calendar-shell m-4">
+                        <div class="calendar-scroll-viewport">
+                            <div class="calendar-content-min">
+                                <div class="calendar-toolbar flex items-center justify-between gap-4">
+                                    <div class="flex items-center gap-4">
+                                        <button id="prev-month" class="glass-btn w-11 h-11 flex items-center justify-center">
+                                            <span class="material-icons-round">chevron_left</span>
+                                        </button>
+                                        <h2 id="current-month" class="text-3xl md:text-4xl font-extrabold min-w-[220px]">October 2026</h2>
+                                        <button id="next-month" class="glass-btn w-11 h-11 flex items-center justify-center">
+                                            <span class="material-icons-round">chevron_right</span>
+                                        </button>
+                                    </div>
+                                    <button id="today-btn" class="glass-btn px-6 py-2.5 text-base font-bold">Today</button>
+                                </div>
+                                <div class="calendar-subtoolbar">
+                                    <div class="flex p-1 rounded-xl" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);">
+                                        <button id="month-view-btn" class="view-toggle-btn active">Month</button>
+                                        <button id="week-view-btn" class="view-toggle-btn">Week</button>
+                                    </div>
+                                    <a href="{{ url_for('main.create_trip') }}" class="flex items-center gap-2 px-6 py-2.5 rounded-2xl font-bold text-sm text-white" style="background:#0A0A0A;box-shadow:0 4px 20px #0A0A0A;">
+                                        <span class="material-icons-round text-sm">add</span> New Trip
+                                    </a>
+                                </div>
+                                <div id="calendar-grid" class="calendar-grid p-3 md:p-4" style="background:#0A0A0A;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch">
+                <div class="glass-card p-6 h-full">
+                    <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
+                        <span class="material-icons-round" style="color:#FFFFFF;">event_note</span>
+                        Upcoming Schedule
+                    </h3>
+                    <div class="space-y-6">
+                        {% if upcoming_trips or past_trips %}
+
+                        {% if upcoming_trips %}
+                        <div class="text-[10px] font-bold uppercase tracking-widest mb-4" style="color:#FFFFFF;">Upcoming</div>
+                        {% for trip in upcoming_trips[:3] %}
+                        <div class="group block mb-4 relative" data-trip-id="{{ trip.id }}">
+                            <div class="absolute right-0 top-0">
+                                <button class="menu-trigger w-8 h-8 rounded-lg flex items-center justify-center" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);color:#FFFFFF;">
+                                    <span class="material-icons-round text-sm">more_vert</span>
+                                </button>
+                                <div class="menu-panel">
+                                    <a href="{{ url_for('main.view_trip', trip_id=trip.id) }}" class="menu-action no-underline"><span class="material-icons-round text-sm">visibility</span>View Trip</a>
+                                    <button class="menu-action unsave-trip-btn" data-trip-id="{{ trip.id }}"><span class="material-icons-round text-sm">bookmark_remove</span>Unsave Trip</button>
+                                    <button class="menu-action menu-action-danger delete-trip-btn" data-trip-id="{{ trip.id }}"><span class="material-icons-round text-sm">delete</span>Delete Trip</button>
+                                </div>
+                            </div>
+                        <a href="{{ url_for('main.view_trip', trip_id=trip.id) }}" class="cursor-pointer no-underline">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 rounded-2xl flex flex-col items-center justify-center group-hover:opacity-100 transition-colors" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);">
+                                    <span class="text-[10px] font-bold uppercase leading-none mb-0.5" style="color:#FFFFFF;">{{ trip.start_date.strftime('%b') }}</span>
+                                    <span class="text-lg font-extrabold leading-none">{{ trip.start_date.strftime('%d') }}</span>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-sm group-hover:text-white transition-colors">{{ trip.destination }}</h4>
+                                    <p class="text-xs mt-1" style="color:#FFFFFF;">{{ trip.budget or 'Travel Plan' }}</p>
+                                    <span class="inline-block mt-2 px-2 py-0.5 text-[10px] font-bold rounded-md" style="background:#0A0A0A;color:#FFFFFF;border: 1px solid rgba(255,255,255,0.06);">Scheduled</span>
+                                </div>
+                            </div>
+                        </a>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+
+                        {% if past_trips %}
+                        <div class="text-[10px] font-bold uppercase tracking-widest my-4" style="color:#FFFFFF;">Recently Finished</div>
+                        {% for trip in past_trips[:3] %}
+                        <div class="group block mb-4 relative opacity-70 hover:opacity-100 transition-opacity" data-trip-id="{{ trip.id }}">
+                            <div class="absolute right-0 top-0">
+                                <button class="menu-trigger w-8 h-8 rounded-lg flex items-center justify-center" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);color:#FFFFFF;">
+                                    <span class="material-icons-round text-sm">more_vert</span>
+                                </button>
+                                <div class="menu-panel">
+                                    <a href="{{ url_for('main.view_trip', trip_id=trip.id) }}" class="menu-action no-underline"><span class="material-icons-round text-sm">visibility</span>View Trip</a>
+                                    <button class="menu-action unsave-trip-btn" data-trip-id="{{ trip.id }}"><span class="material-icons-round text-sm">bookmark_remove</span>Unsave Trip</button>
+                                    <button class="menu-action menu-action-danger delete-trip-btn" data-trip-id="{{ trip.id }}"><span class="material-icons-round text-sm">delete</span>Delete Trip</button>
+                                </div>
+                            </div>
+                        <a href="{{ url_for('main.view_trip', trip_id=trip.id) }}" class="cursor-pointer no-underline">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 rounded-2xl flex flex-col items-center justify-center group-hover:opacity-100 transition-colors" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);">
+                                    <span class="text-[10px] font-bold uppercase leading-none mb-0.5" style="color:#FFFFFF;">{{ trip.start_date.strftime('%b') }}</span>
+                                    <span class="text-lg font-extrabold leading-none" style="color:#FFFFFF;">{{ trip.start_date.strftime('%d') }}</span>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-sm transition-colors" style="color:#FFFFFF;">{{ trip.destination }}</h4>
+                                    <p class="text-xs mt-1" style="color:#FFFFFF;">Completed Journey</p>
+                                </div>
+                            </div>
+                        </a>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+
                         {% else %}
-                        {{ current_user.name[0]|upper }}
+                        <p class="text-xs" style="color:#FFFFFF;">No trips scheduled.</p>
                         {% endif %}
                     </div>
-                </div>
-                <h1 class="text-3xl font-extrabold text-text-main-light mb-2">{{ current_user.name }}</h1>
-                <div class="mb-8"></div>
-                <div class="grid grid-cols-2 gap-12 border-t border-border-light pt-8 w-full max-w-md mx-auto">
-                    <div>
-                        <div class="text-2xl font-extrabold text-text-main-light">{{ trip_count }}</div>
-                        <div class="text-sm font-medium text-text-muted-light">Trips</div>
-                    </div>
-                    <div>
-                        <div class="text-2xl font-extrabold text-text-main-light">{{ saved_count }}</div>
-                        <div class="text-sm font-medium text-text-muted-light">Saved Destinations</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <nav class="flex justify-center">
-            <div
-                class="flex flex-wrap items-center bg-surface-light p-2 rounded-3xl border border-border-light shadow-sm gap-1">
-                <a href="{{ url_for('main.profile') }}"
-                    class="px-6 py-3 rounded-2xl text-sm font-bold text-text-muted-light hover:text-text-main-light hover:bg-white transition-all">PERSONAL
-                    INFO</a>
-                <a href="{{ url_for('main.my_trips') }}"
-                    class="px-6 py-3 rounded-2xl text-sm font-bold text-text-muted-light hover:text-text-main-light hover:bg-white transition-all">MY
-                    TRIPS</a>
-                <a href="{{ url_for('main.calendar') }}"
-                    class="active-tab px-6 py-3 rounded-2xl text-sm font-bold transition-all">CALENDAR</a>
-                <a href="{{ url_for('main.settings') }}"
-                    class="px-6 py-3 rounded-2xl text-sm font-bold text-text-muted-light hover:text-text-main-light hover:bg-white transition-all">SETTINGS</a>
-                <a href="{{ url_for('main.profile_ai') }}"
-                    class="px-6 py-3 rounded-2xl text-sm font-bold text-text-muted-light hover:text-text-main-light hover:bg-white flex items-center gap-2 transition-all">
-                    <span class="material-icons-round text-lg text-primary">smart_toy</span>
-                    AI ASSISTANT
-                </a>
-            </div>
-        </nav>
-        <div class="space-y-8 pb-20">
-            <section class="bg-white rounded-3xl border border-border-light shadow-premium overflow-hidden">
-                <div class="calendar-shell m-4">
-                    <div class="calendar-scroll-viewport">
-                        <div class="calendar-content-min">
-                            <div class="calendar-toolbar flex items-center justify-between gap-4">
-                                <div class="flex items-center gap-4">
-                                    <button id="prev-month"
-                                        class="w-11 h-11 hover:bg-surface-light rounded-2xl transition-colors border border-border-light flex items-center justify-center">
-                                        <span class="material-icons-round">chevron_left</span>
-                                    </button>
-                                    <h2 id="current-month" class="text-3xl md:text-4xl font-extrabold text-text-main-light min-w-[220px]">
-                                        October 2026
-                                    </h2>
-                                    <button id="next-month"
-                                        class="w-11 h-11 hover:bg-surface-light rounded-2xl transition-colors border border-border-light flex items-center justify-center">
-                                        <span class="material-icons-round">chevron_right</span>
-                                    </button>
-                                </div>
-                                <button id="today-btn"
-                                    class="px-6 py-2.5 text-base font-bold bg-surface-light text-text-main-light rounded-2xl border border-border-light hover:bg-white transition-all">
-                                    Today
-                                </button>
-                            </div>
-                            <div class="calendar-subtoolbar">
-                                <div class="flex bg-surface-light p-1 rounded-xl border border-border-light">
-                                    <button id="month-view-btn" class="view-toggle-btn active">Month</button>
-                                    <button id="week-view-btn" class="view-toggle-btn">Week</button>
-                                </div>
-                                <a href="{{ url_for('main.create_trip') }}"
-                                    class="flex items-center gap-2 px-6 py-2.5 bg-primary text-white rounded-2xl font-bold text-sm shadow-lg shadow-blue-500/20 hover:bg-primary-hover transition-all">
-                                    <span class="material-icons-round text-sm">add</span> New Trip
-                                </a>
-                            </div>
-                            <div id="calendar-grid" class="calendar-grid p-3 md:p-4 bg-surface-light/70">
-                                <!-- Calendar header will be injected by JS -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <section class="grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch">
-            <div class="bg-white rounded-3xl border border-border-light shadow-premium p-6 h-full">
-                <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
-                    <span class="material-icons-round text-primary">event_note</span>
-                    Upcoming Schedule
-                </h3>
-                <div class="space-y-6">
-                    {% if upcoming_trips or past_trips %}
-
-                    {% if upcoming_trips %}
-                    <div class="text-[10px] font-bold text-text-muted-light uppercase tracking-widest mb-4">Upcoming
-                    </div>
-                    {% for trip in upcoming_trips[:3] %}
-                    <div class="group block mb-4 relative" data-trip-id="{{ trip.id }}">
-                        <div class="absolute right-0 top-0">
-                            <button class="menu-trigger w-8 h-8 rounded-lg bg-white border border-border-light flex items-center justify-center text-text-muted-light hover:text-primary">
-                                <span class="material-icons-round text-sm">more_vert</span>
-                            </button>
-                            <div class="menu-panel">
-                                <a href="{{ url_for('main.view_trip', trip_id=trip.id) }}" class="menu-action no-underline"><span class="material-icons-round text-sm">visibility</span>View Trip</a>
-                                <button class="menu-action unsave-trip-btn" data-trip-id="{{ trip.id }}"><span class="material-icons-round text-sm">bookmark_remove</span>Unsave Trip</button>
-                                <button class="menu-action menu-action-danger delete-trip-btn" data-trip-id="{{ trip.id }}"><span class="material-icons-round text-sm">delete</span>Delete Trip</button>
-                            </div>
-                        </div>
-                    <a href="{{ url_for('main.view_trip', trip_id=trip.id) }}" class="cursor-pointer no-underline">
-                        <div class="flex items-start gap-4">
-                            <div
-                                class="w-12 h-12 bg-blue-50 rounded-2xl flex flex-col items-center justify-center border border-blue-100 group-hover:bg-primary group-hover:text-white transition-colors">
-                                <span class="text-[10px] font-bold uppercase leading-none mb-0.5">{{
-                                    trip.start_date.strftime('%b') }}</span>
-                                <span class="text-lg font-extrabold leading-none">{{ trip.start_date.strftime('%d')
-                                    }}</span>
-                            </div>
-                            <div class="flex-1">
-                                <h4
-                                    class="font-bold text-sm text-text-main-light group-hover:text-primary transition-colors">
-                                    {{ trip.destination }}</h4>
-                                <p class="text-xs text-text-muted-light mt-1">{{ trip.budget or 'Travel Plan' }}</p>
-                                <span
-                                    class="inline-block mt-2 px-2 py-0.5 bg-green-50 text-green-600 text-[10px] font-bold rounded-md">Scheduled</span>
-                            </div>
-                        </div>
+                    <a href="{{ url_for('main.my_trips') }}" class="w-full mt-8 py-3 font-bold text-xs rounded-xl flex items-center justify-center gap-2 no-underline glass-btn" style="color:#FFFFFF;">
+                        View All Journeys
+                        <span class="material-icons-round text-sm">arrow_forward</span>
                     </a>
+                </div>
+                <div class="rounded-3xl p-6 text-white h-full" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);box-shadow:0 10px 40px #0A0A0A;">
+                    <span class="material-icons-round text-3xl mb-4" style="color:#FFFFFF;">lightbulb</span>
+                    <h4 class="font-bold text-lg leading-tight mb-2">Smart Sync</h4>
+                    <p class="text-sm mb-6" style="color:#FFFFFF;">Sync your Routheon calendar with Google or Apple Calendar to never miss a flight.</p>
+                    <p id="sync-status" class="text-xs font-bold uppercase tracking-wider mb-3" style="color:#FFFFFF;">Not connected</p>
+                    <button id="connect-calendar-btn" class="w-full py-3 font-bold text-sm rounded-xl transition-colors glass-btn">
+                        Connect Calendar
+                    </button>
+                    <div id="sync-actions" class="hidden mt-3 space-y-2">
+                        <button id="download-ics-btn" class="w-full py-2.5 font-bold text-xs rounded-xl transition-colors glass-btn">
+                            Download Calendar (.ics)
+                        </button>
+                        <button id="google-sync-btn" class="w-full py-2.5 font-bold text-xs rounded-xl transition-colors glass-btn">
+                            Quick Add To Google Calendar
+                        </button>
+                        <button id="disconnect-calendar-btn" class="w-full py-2.5 font-bold text-xs rounded-xl transition-colors glass-btn" style="color:#FFFFFF;">
+                            Disconnect
+                        </button>
                     </div>
-                    {% endfor %}
-                    {% endif %}
-
-                    {% if past_trips %}
-                    <div class="text-[10px] font-bold text-text-muted-light uppercase tracking-widest my-4">Recently
-                        Finished</div>
-                    {% for trip in past_trips[:3] %}
-                    <div class="group block mb-4 relative opacity-70 hover:opacity-100 transition-opacity" data-trip-id="{{ trip.id }}">
-                        <div class="absolute right-0 top-0">
-                            <button class="menu-trigger w-8 h-8 rounded-lg bg-white border border-border-light flex items-center justify-center text-text-muted-light hover:text-primary">
-                                <span class="material-icons-round text-sm">more_vert</span>
-                            </button>
-                            <div class="menu-panel">
-                                <a href="{{ url_for('main.view_trip', trip_id=trip.id) }}" class="menu-action no-underline"><span class="material-icons-round text-sm">visibility</span>View Trip</a>
-                                <button class="menu-action unsave-trip-btn" data-trip-id="{{ trip.id }}"><span class="material-icons-round text-sm">bookmark_remove</span>Unsave Trip</button>
-                                <button class="menu-action menu-action-danger delete-trip-btn" data-trip-id="{{ trip.id }}"><span class="material-icons-round text-sm">delete</span>Delete Trip</button>
-                            </div>
-                        </div>
-                    <a href="{{ url_for('main.view_trip', trip_id=trip.id) }}" class="cursor-pointer no-underline">
-                        <div class="flex items-start gap-4">
-                            <div
-                                class="w-12 h-12 bg-gray-50 rounded-2xl flex flex-col items-center justify-center border border-gray-100 group-hover:bg-gray-200 transition-colors">
-                                <span class="text-[10px] font-bold uppercase leading-none mb-0.5 text-gray-500">{{
-                                    trip.start_date.strftime('%b') }}</span>
-                                <span class="text-lg font-extrabold leading-none text-gray-600">{{
-                                    trip.start_date.strftime('%d')
-                                    }}</span>
-                            </div>
-                            <div class="flex-1">
-                                <h4
-                                    class="font-bold text-sm text-text-muted-light group-hover:text-text-main-light transition-colors">
-                                    {{ trip.destination }}</h4>
-                                <p class="text-xs text-text-muted-light mt-1">Completed Journey</p>
-                            </div>
-                        </div>
-                    </a>
+                </div>
+                </section>
+            </div>
+        </main>
+        <footer class="border-t py-10" style="background:#0A0A0A;border-color:#FFFFFF;">
+            <div class="max-w-7xl mx-auto px-4 text-center">
+                <p class="text-sm font-medium" style="color:#FFFFFF;">@2026 RoutheonSkups. All rights reserved. Made with ❤️ for India.</p>
+            </div>
+        </footer>
+        <div id="calendar-action-modal" class="hidden fixed inset-0 z-[1500] items-center justify-center p-4 modal-enter" style="background:#0A0A0A;">
+            <div class="w-full max-w-lg p-6 modal-card-enter" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);border-radius:24px;box-shadow:0 20px 60px #111111;">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-widest" style="color:#FFFFFF;">Trip Calendar Alert</p>
+                        <h3 id="calendar-modal-title" class="text-xl font-extrabold mt-1">Choose Action</h3>
+                        <p id="calendar-modal-subtitle" class="text-sm mt-2" style="color:#FFFFFF;"></p>
                     </div>
-                    {% endfor %}
-                    {% endif %}
-
-                    {% else %}
-                    <p class="text-xs text-text-muted-light">No trips scheduled.</p>
-                    {% endif %}
+                    <button id="calendar-modal-close" class="w-9 h-9 rounded-xl flex items-center justify-center glass-btn">
+                        <span class="material-icons-round text-lg">close</span>
+                    </button>
                 </div>
-                <a href="{{ url_for('main.my_trips') }}"
-                    class="w-full mt-8 py-3 bg-surface-light text-text-muted-light font-bold text-xs rounded-xl hover:text-primary transition-colors flex items-center justify-center gap-2 no-underline">
-                    View All Journeys
-                    <span class="material-icons-round text-sm">arrow_forward</span>
-                </a>
-            </div>
-            <div
-                class="bg-gradient-to-br from-primary to-blue-600 rounded-3xl p-6 text-white shadow-lg shadow-blue-500/20 h-full">
-                <span class="material-icons-round text-3xl mb-4 opacity-80">lightbulb</span>
-                <h4 class="font-bold text-lg leading-tight mb-2">Smart Sync</h4>
-                <p class="text-sm text-blue-50/80 mb-6">Sync your Routheon calendar with Google or Apple Calendar to
-                    never miss a flight.</p>
-                <p id="sync-status" class="text-xs font-bold uppercase tracking-wider text-blue-100 mb-3">Not connected</p>
-                <button id="connect-calendar-btn"
-                    class="w-full py-3 bg-white text-primary font-bold text-sm rounded-xl hover:bg-blue-50 transition-colors">
-                    Connect Calendar
-                </button>
-                <div id="sync-actions" class="hidden mt-3 space-y-2">
-                    <button id="download-ics-btn"
-                        class="w-full py-2.5 bg-blue-500/40 border border-blue-200/30 text-white font-bold text-xs rounded-xl hover:bg-blue-500/50 transition-colors">
-                        Download Calendar (.ics)
+                <div class="mt-6 space-y-2">
+                    <button data-modal-choice="delete" class="w-full text-left px-4 py-3 rounded-2xl transition-all" style="background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.2);">
+                        <span class="font-extrabold text-sm" style="color:#DC2626;">1. Delete Trip</span>
                     </button>
-                    <button id="google-sync-btn"
-                        class="w-full py-2.5 bg-blue-500/40 border border-blue-200/30 text-white font-bold text-xs rounded-xl hover:bg-blue-500/50 transition-colors">
-                        Quick Add To Google Calendar
+                    <button data-modal-choice="keep" class="w-full text-left px-4 py-3 rounded-2xl transition-all glass-btn">
+                        <span class="font-extrabold text-sm">2. Keep Trip</span>
                     </button>
-                    <button id="disconnect-calendar-btn"
-                        class="w-full py-2.5 bg-white/20 border border-white/30 text-white font-bold text-xs rounded-xl hover:bg-white/30 transition-colors">
-                        Disconnect
+                    <button data-modal-choice="later" class="w-full text-left px-4 py-3 rounded-2xl transition-all" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);">
+                        <span class="font-extrabold text-sm" style="color:#FFFFFF;">3. Remind Later</span>
                     </button>
                 </div>
             </div>
-            </section>
         </div>
-    </main>
-    <footer class="bg-white border-t border-border-light py-10">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <p class="text-sm text-text-muted-light font-medium">@2026 RoutheonSkups. All rights reserved. Made with ❤️ for India.</p>
-        </div>
-    </footer>
-    <div id="calendar-action-modal" class="hidden fixed inset-0 z-[1500] bg-slate-900/45 backdrop-blur-sm items-center justify-center p-4 modal-enter">
-        <div class="w-full max-w-lg bg-white border border-border-light rounded-3xl shadow-2xl p-6 modal-card-enter">
-            <div class="flex items-start justify-between gap-3">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-widest text-primary">Trip Calendar Alert</p>
-                    <h3 id="calendar-modal-title" class="text-xl font-extrabold text-text-main-light mt-1">Choose Action</h3>
-                    <p id="calendar-modal-subtitle" class="text-sm text-text-muted-light mt-2"></p>
-                </div>
-                <button id="calendar-modal-close" class="w-9 h-9 rounded-xl border border-border-light text-text-muted-light hover:text-text-main-light hover:bg-surface-light">
-                    <span class="material-icons-round text-lg">close</span>
-                </button>
-            </div>
-            <div class="mt-6 space-y-2">
-                <button data-modal-choice="delete" class="w-full text-left px-4 py-3 rounded-2xl border border-red-200 bg-red-50 hover:bg-red-100 transition-all">
-                    <span class="font-extrabold text-red-600 text-sm">1. Delete Trip</span>
-                </button>
-                <button data-modal-choice="keep" class="w-full text-left px-4 py-3 rounded-2xl border border-border-light bg-white hover:bg-surface-light transition-all">
-                    <span class="font-extrabold text-text-main-light text-sm">2. Keep Trip</span>
-                </button>
-                <button data-modal-choice="later" class="w-full text-left px-4 py-3 rounded-2xl border border-blue-200 bg-blue-50 hover:bg-blue-100 transition-all">
-                    <span class="font-extrabold text-primary text-sm">3. Remind Later</span>
-                </button>
-            </div>
-        </div>
-    </div>
 
-    <script>
-        const trips = {{ all_trips_js | tojson }};
-        let currentDate = new Date();
-        let selectedDateKey = null;
-        let currentView = 'month';
+        <script>
+            const trips = {{ all_trips_js | tojson }};
+            let currentDate = new Date();
+            let selectedDateKey = null;
+            let currentView = 'month';
 
-        const SYNC_KEY = 'routheon_calendar_sync_connected';
+            const SYNC_KEY = 'routheon_calendar_sync_connected';
 
-        function normalizeDate(date) {
-            const d = new Date(date);
-            d.setHours(0, 0, 0, 0);
-            return d;
-        }
-
-        function formatDateYMD(date) {
-            const y = date.getFullYear();
-            const m = String(date.getMonth() + 1).padStart(2, '0');
-            const d = String(date.getDate()).padStart(2, '0');
-            return `${y}-${m}-${d}`;
-        }
-
-        function escapeICS(value) {
-            return String(value || '')
-                .replace(/\\/g, '\\\\')
-                .replace(/\n/g, '\\n')
-                .replace(/,/g, '\\,')
-                .replace(/;/g, '\\;');
-        }
-
-        function buildICS(allTrips) {
-            const lines = [
-                'BEGIN:VCALENDAR',
-                'VERSION:2.0',
-                'PRODID:-//RoutheonSkups//Travel Calendar//EN',
-                'CALSCALE:GREGORIAN',
-                'METHOD:PUBLISH'
-            ];
-
-            allTrips.forEach((trip) => {
-                const start = normalizeDate(new Date(trip.start_date));
-                const endInclusive = normalizeDate(new Date(trip.end_date));
-                const endExclusive = new Date(endInclusive);
-                endExclusive.setDate(endExclusive.getDate() + 1);
-                const nowStamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
-
-                lines.push('BEGIN:VEVENT');
-                lines.push(`UID:routheon-trip-${trip.id}@routheonskups`);
-                lines.push(`DTSTAMP:${nowStamp}`);
-                lines.push(`DTSTART;VALUE=DATE:${formatDateYMD(start).replace(/-/g, '')}`);
-                lines.push(`DTEND;VALUE=DATE:${formatDateYMD(endExclusive).replace(/-/g, '')}`);
-                lines.push(`SUMMARY:${escapeICS(`Trip: ${trip.destination}`)}`);
-                lines.push(`DESCRIPTION:${escapeICS(`Budget: ${trip.budget || 'N/A'}`)}`);
-                lines.push('END:VEVENT');
-            });
-
-            lines.push('END:VCALENDAR');
-            return lines.join('\r\n');
-        }
-
-        function downloadICS() {
-            if (!trips.length) {
-                return;
-            }
-            const ics = buildICS(trips);
-            const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'routheon-trips.ics';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(link.href);
-        }
-
-        function quickAddGoogle() {
-            const now = normalizeDate(new Date());
-            const upcoming = trips
-                .map((trip) => ({
-                    ...trip,
-                    startDateObj: normalizeDate(new Date(trip.start_date)),
-                    endDateObj: normalizeDate(new Date(trip.end_date))
-                }))
-                .filter((trip) => trip.endDateObj >= now)
-                .sort((a, b) => a.startDateObj - b.startDateObj);
-
-            const target = upcoming[0] || null;
-            if (!target) {
-                return;
+            function normalizeDate(date) {
+                const d = new Date(date);
+                d.setHours(0, 0, 0, 0);
+                return d;
             }
 
-            const start = formatDateYMD(target.startDateObj).replace(/-/g, '');
-            const endExclusive = new Date(target.endDateObj);
-            endExclusive.setDate(endExclusive.getDate() + 1);
-            const end = formatDateYMD(endExclusive).replace(/-/g, '');
+            function formatDateYMD(date) {
+                const y = date.getFullYear();
+                const m = String(date.getMonth() + 1).padStart(2, '0');
+                const d = String(date.getDate()).padStart(2, '0');
+                return `${y}-${m}-${d}`;
+            }
 
-            const text = encodeURIComponent(`Trip: ${target.destination}`);
-            const details = encodeURIComponent(`Planned with RoutheonSkups. Budget: ${target.budget || 'N/A'}`);
-            const dates = `${start}/${end}`;
-            const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&details=${details}&dates=${dates}`;
-            window.open(url, '_blank');
-        }
+            function escapeICS(value) {
+                return String(value || '')
+                    .replace(/\\/g, '\\\\')
+                    .replace(/\n/g, '\\n')
+                    .replace(/,/g, '\\,')
+                    .replace(/;/g, '\\;');
+            }
 
-        function updateSmartSyncUI() {
-            const isConnected = localStorage.getItem(SYNC_KEY) === '1';
-            const status = document.getElementById('sync-status');
-            const actions = document.getElementById('sync-actions');
-            const connectBtn = document.getElementById('connect-calendar-btn');
+            function buildICS(allTrips) {
+                const lines = [
+                    'BEGIN:VCALENDAR',
+                    'VERSION:2.0',
+                    'PRODID:-//RoutheonSkups//Travel Calendar//EN',
+                    'CALSCALE:GREGORIAN',
+                    'METHOD:PUBLISH'
+                ];
 
-            status.innerText = isConnected ? 'Connected' : 'Not connected';
-            actions.classList.toggle('hidden', !isConnected);
-            connectBtn.classList.toggle('hidden', isConnected);
-        }
+                allTrips.forEach((trip) => {
+                    const start = normalizeDate(new Date(trip.start_date));
+                    const endInclusive = normalizeDate(new Date(trip.end_date));
+                    const endExclusive = new Date(endInclusive);
+                    endExclusive.setDate(endExclusive.getDate() + 1);
+                    const nowStamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
 
-        function getTripsForDay(dateObj) {
-            const day = normalizeDate(dateObj);
-            return trips.filter((trip) => {
-                const start = normalizeDate(new Date(trip.start_date));
-                const end = normalizeDate(new Date(trip.end_date));
-                return day >= start && day <= end;
-            });
-        }
-
-        function buildDayCell(dayDate, dayNum, muted = false) {
-            const dayKey = formatDateYMD(dayDate);
-            const today = normalizeDate(new Date());
-            const isToday = dayKey === formatDateYMD(today);
-            const isSelected = dayKey === selectedDateKey;
-
-            const dayDiv = document.createElement('div');
-            dayDiv.className = `calendar-day ${muted ? 'muted' : ''} ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}`;
-            dayDiv.dataset.date = dayKey;
-
-            const number = document.createElement('span');
-            number.className = `day-number ${muted ? 'muted' : ''}`;
-            number.innerText = String(dayNum);
-            dayDiv.appendChild(number);
-
-            if (!muted) {
-                const dayTrips = getTripsForDay(dayDate);
-                dayTrips.slice(0, 2).forEach((trip) => {
-                    const tripEnd = normalizeDate(new Date(trip.end_date));
-                    const chip = document.createElement('button');
-                    chip.type = 'button';
-                    chip.className = `trip-chip ${tripEnd < today ? 'done' : 'active'}`;
-                    chip.innerHTML = `<span class="material-icons-round text-[12px]">explore</span><span class="truncate">${trip.destination}</span>`;
-                    chip.onclick = (e) => {
-                        e.stopPropagation();
-                        window.location.href = `/view-trip/${trip.id}`;
-                    };
-                    dayDiv.appendChild(chip);
+                    lines.push('BEGIN:VEVENT');
+                    lines.push(`UID:routheon-trip-${trip.id}@routheonskups`);
+                    lines.push(`DTSTAMP:${nowStamp}`);
+                    lines.push(`DTSTART;VALUE=DATE:${formatDateYMD(start).replace(/-/g, '')}`);
+                    lines.push(`DTEND;VALUE=DATE:${formatDateYMD(endExclusive).replace(/-/g, '')}`);
+                    lines.push(`SUMMARY:${escapeICS(`Trip: ${trip.destination}`)}`);
+                    lines.push(`DESCRIPTION:${escapeICS(`Budget: ${trip.budget || 'N/A'}`)}`);
+                    lines.push('END:VEVENT');
                 });
 
-                if (dayTrips.length > 2) {
-                    const moreChip = document.createElement('div');
-                    moreChip.className = 'trip-chip more';
-                    moreChip.innerText = `+${dayTrips.length - 2} more`;
-                    dayDiv.appendChild(moreChip);
+                lines.push('END:VCALENDAR');
+                return lines.join('\r\n');
+            }
+
+            function downloadICS() {
+                if (!trips.length) { return; }
+                const ics = buildICS(trips);
+                const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'routheon-trips.ics';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(link.href);
+            }
+
+            function quickAddGoogle() {
+                const now = normalizeDate(new Date());
+                const upcoming = trips
+                    .map((trip) => ({
+                        ...trip,
+                        startDateObj: normalizeDate(new Date(trip.start_date)),
+                        endDateObj: normalizeDate(new Date(trip.end_date))
+                    }))
+                    .filter((trip) => trip.endDateObj >= now)
+                    .sort((a, b) => a.startDateObj - b.startDateObj);
+
+                const target = upcoming[0] || null;
+                if (!target) { return; }
+
+                const start = formatDateYMD(target.startDateObj).replace(/-/g, '');
+                const endExclusive = new Date(target.endDateObj);
+                endExclusive.setDate(endExclusive.getDate() + 1);
+                const end = formatDateYMD(endExclusive).replace(/-/g, '');
+
+                const text = encodeURIComponent(`Trip: ${target.destination}`);
+                const details = encodeURIComponent(`Planned with RoutheonSkups. Budget: ${target.budget || 'N/A'}`);
+                const dates = `${start}/${end}`;
+                const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&details=${details}&dates=${dates}`;
+                window.open(url, '_blank');
+            }
+
+            function updateSmartSyncUI() {
+                const isConnected = localStorage.getItem(SYNC_KEY) === '1';
+                const status = document.getElementById('sync-status');
+                const actions = document.getElementById('sync-actions');
+                const connectBtn = document.getElementById('connect-calendar-btn');
+
+                status.innerText = isConnected ? 'Connected' : 'Not connected';
+                actions.classList.toggle('hidden', !isConnected);
+                connectBtn.classList.toggle('hidden', isConnected);
+            }
+
+            function getTripsForDay(dateObj) {
+                const day = normalizeDate(dateObj);
+                return trips.filter((trip) => {
+                    const start = normalizeDate(new Date(trip.start_date));
+                    const end = normalizeDate(new Date(trip.end_date));
+                    return day >= start && day <= end;
+                });
+            }
+
+            function buildDayCell(dayDate, dayNum, muted = false) {
+                const dayKey = formatDateYMD(dayDate);
+                const today = normalizeDate(new Date());
+                const isToday = dayKey === formatDateYMD(today);
+                const isSelected = dayKey === selectedDateKey;
+
+                const dayDiv = document.createElement('div');
+                dayDiv.className = `calendar-day ${muted ? 'muted' : ''} ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}`;
+                dayDiv.dataset.date = dayKey;
+
+                const number = document.createElement('span');
+                number.className = `day-number ${muted ? 'muted' : ''}`;
+                number.innerText = String(dayNum);
+                dayDiv.appendChild(number);
+
+                if (!muted) {
+                    const dayTrips = getTripsForDay(dayDate);
+                    dayTrips.slice(0, 2).forEach((trip) => {
+                        const tripEnd = normalizeDate(new Date(trip.end_date));
+                        const chip = document.createElement('button');
+                        chip.type = 'button';
+                        chip.className = `trip-chip ${tripEnd < today ? 'done' : 'active'}`;
+                        chip.innerHTML = `<span class="material-icons-round text-[12px]">explore</span><span class="truncate">${trip.destination}</span>`;
+                        chip.onclick = (e) => {
+                            e.stopPropagation();
+                            window.location.href = `/view-trip/${trip.id}`;
+                        };
+                        dayDiv.appendChild(chip);
+                    });
+
+                    if (dayTrips.length > 2) {
+                        const moreChip = document.createElement('div');
+                        moreChip.className = 'trip-chip more';
+                        moreChip.innerText = `+${dayTrips.length - 2} more`;
+                        dayDiv.appendChild(moreChip);
+                    }
+                }
+
+                dayDiv.addEventListener('click', () => {
+                    selectedDateKey = dayKey;
+                    renderCalendar();
+                });
+
+                return dayDiv;
+            }
+
+            function renderMonthView(grid) {
+                const year = currentDate.getFullYear();
+                const month = currentDate.getMonth();
+
+                const firstDay = new Date(year, month, 1);
+                const firstWeekday = firstDay.getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                const daysInPrev = new Date(year, month, 0).getDate();
+
+                for (let i = firstWeekday - 1; i >= 0; i--) {
+                    const date = new Date(year, month - 1, daysInPrev - i);
+                    grid.appendChild(buildDayCell(date, daysInPrev - i, true));
+                }
+
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const date = new Date(year, month, d);
+                    grid.appendChild(buildDayCell(date, d, false));
+                }
+
+                const filledCells = grid.children.length - 7;
+                const trailing = 42 - filledCells;
+                for (let d = 1; d <= trailing; d++) {
+                    const date = new Date(year, month + 1, d);
+                    grid.appendChild(buildDayCell(date, d, true));
                 }
             }
 
-            dayDiv.addEventListener('click', () => {
-                selectedDateKey = dayKey;
+            function renderWeekView(grid) {
+                const base = normalizeDate(currentDate);
+                const weekStart = new Date(base);
+                weekStart.setDate(base.getDate() - base.getDay());
+
+                grid.classList.add('week-view-grid');
+                grid.classList.remove('calendar-grid');
+
+                for (let i = 0; i < 7; i++) {
+                    const date = new Date(weekStart);
+                    date.setDate(weekStart.getDate() + i);
+                    const header = document.createElement('div');
+                    header.className = 'week-header';
+                    header.innerText = new Intl.DateTimeFormat('en-US', { weekday: 'short' }).format(date).toUpperCase();
+                    grid.appendChild(header);
+                }
+
+                for (let i = 0; i < 7; i++) {
+                    const date = new Date(weekStart);
+                    date.setDate(weekStart.getDate() + i);
+                    grid.appendChild(buildDayCell(date, date.getDate(), false));
+                }
+            }
+
+            function renderCalendar() {
+                const grid = document.getElementById('calendar-grid');
+                const monthTitle = document.getElementById('current-month');
+                grid.innerHTML = '';
+
+                if (currentView === 'month') {
+                    grid.classList.add('calendar-grid');
+                    grid.classList.remove('week-view-grid');
+                    ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach((day) => {
+                        const header = document.createElement('div');
+                        header.className = 'week-header';
+                        header.innerText = day;
+                        grid.appendChild(header);
+                    });
+
+                    monthTitle.innerText = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(currentDate);
+                    renderMonthView(grid);
+                } else {
+                    const weekStart = new Date(normalizeDate(currentDate));
+                    weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+                    const weekEnd = new Date(weekStart);
+                    weekEnd.setDate(weekStart.getDate() + 6);
+                    monthTitle.innerText = `${new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(weekStart)} - ${new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(weekEnd)}`;
+                    renderWeekView(grid);
+                }
+            }
+
+            document.getElementById('prev-month').addEventListener('click', () => {
+                if (currentView === 'month') { currentDate.setMonth(currentDate.getMonth() - 1); } else { currentDate.setDate(currentDate.getDate() - 7); }
                 renderCalendar();
             });
 
-            return dayDiv;
-        }
-
-        function renderMonthView(grid) {
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
-
-            const firstDay = new Date(year, month, 1);
-            const firstWeekday = firstDay.getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const daysInPrev = new Date(year, month, 0).getDate();
-
-            for (let i = firstWeekday - 1; i >= 0; i--) {
-                const date = new Date(year, month - 1, daysInPrev - i);
-                grid.appendChild(buildDayCell(date, daysInPrev - i, true));
-            }
-
-            for (let d = 1; d <= daysInMonth; d++) {
-                const date = new Date(year, month, d);
-                grid.appendChild(buildDayCell(date, d, false));
-            }
-
-            const filledCells = grid.children.length - 7;
-            const trailing = 42 - filledCells;
-            for (let d = 1; d <= trailing; d++) {
-                const date = new Date(year, month + 1, d);
-                grid.appendChild(buildDayCell(date, d, true));
-            }
-        }
-
-        function renderWeekView(grid) {
-            const base = normalizeDate(currentDate);
-            const weekStart = new Date(base);
-            weekStart.setDate(base.getDate() - base.getDay()); // Sunday
-
-            grid.classList.add('week-view-grid');
-            grid.classList.remove('calendar-grid');
-
-            for (let i = 0; i < 7; i++) {
-                const date = new Date(weekStart);
-                date.setDate(weekStart.getDate() + i);
-                const header = document.createElement('div');
-                header.className = 'week-header';
-                header.innerText = new Intl.DateTimeFormat('en-US', { weekday: 'short' }).format(date).toUpperCase();
-                grid.appendChild(header);
-            }
-
-            for (let i = 0; i < 7; i++) {
-                const date = new Date(weekStart);
-                date.setDate(weekStart.getDate() + i);
-                grid.appendChild(buildDayCell(date, date.getDate(), false));
-            }
-        }
-
-        function renderCalendar() {
-            const grid = document.getElementById('calendar-grid');
-            const monthTitle = document.getElementById('current-month');
-            grid.innerHTML = '';
-
-            if (currentView === 'month') {
-                grid.classList.add('calendar-grid');
-                grid.classList.remove('week-view-grid');
-                ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach((day) => {
-                    const header = document.createElement('div');
-                    header.className = 'week-header';
-                    header.innerText = day;
-                    grid.appendChild(header);
-                });
-
-                monthTitle.innerText = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(currentDate);
-                renderMonthView(grid);
-            } else {
-                const weekStart = new Date(normalizeDate(currentDate));
-                weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-                const weekEnd = new Date(weekStart);
-                weekEnd.setDate(weekStart.getDate() + 6);
-                monthTitle.innerText = `${new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(weekStart)} - ${new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(weekEnd)}`;
-                renderWeekView(grid);
-            }
-
-            // Keep full month visible without forcing inner scroll.
-        }
-
-        document.getElementById('prev-month').addEventListener('click', () => {
-            if (currentView === 'month') {
-                currentDate.setMonth(currentDate.getMonth() - 1);
-            } else {
-                currentDate.setDate(currentDate.getDate() - 7);
-            }
-            renderCalendar();
-        });
-
-        document.getElementById('next-month').addEventListener('click', () => {
-            if (currentView === 'month') {
-                currentDate.setMonth(currentDate.getMonth() + 1);
-            } else {
-                currentDate.setDate(currentDate.getDate() + 7);
-            }
-            renderCalendar();
-        });
-
-        document.getElementById('today-btn').addEventListener('click', () => {
-            currentDate = new Date();
-            selectedDateKey = formatDateYMD(normalizeDate(currentDate));
-            renderCalendar();
-        });
-
-        document.getElementById('month-view-btn').addEventListener('click', () => {
-            currentView = 'month';
-            document.getElementById('month-view-btn').classList.add('active');
-            document.getElementById('week-view-btn').classList.remove('active');
-            renderCalendar();
-        });
-
-        document.getElementById('week-view-btn').addEventListener('click', () => {
-            currentView = 'week';
-            document.getElementById('week-view-btn').classList.add('active');
-            document.getElementById('month-view-btn').classList.remove('active');
-            renderCalendar();
-        });
-
-        document.getElementById('connect-calendar-btn').addEventListener('click', () => {
-            localStorage.setItem(SYNC_KEY, '1');
-            updateSmartSyncUI();
-        });
-
-        document.getElementById('disconnect-calendar-btn').addEventListener('click', () => {
-            localStorage.removeItem(SYNC_KEY);
-            updateSmartSyncUI();
-        });
-
-        document.getElementById('download-ics-btn').addEventListener('click', downloadICS);
-        document.getElementById('google-sync-btn').addEventListener('click', quickAddGoogle);
-
-        (function () {
-            const actionModal = document.getElementById('calendar-action-modal');
-            const modalTitle = document.getElementById('calendar-modal-title');
-            const modalSubtitle = document.getElementById('calendar-modal-subtitle');
-            const modalCloseBtn = document.getElementById('calendar-modal-close');
-            let pendingModalContext = null;
-
-            function closeMenus() {
-                document.querySelectorAll('.menu-panel.open').forEach((el) => el.classList.remove('open'));
-            }
-            document.querySelectorAll('.menu-trigger').forEach((btn) => {
-                btn.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const panel = btn.parentElement.querySelector('.menu-panel');
-                    const isOpen = panel.classList.contains('open');
-                    closeMenus();
-                    if (!isOpen) panel.classList.add('open');
-                });
-            });
-            document.addEventListener('click', closeMenus);
-
-            function openActionModal(config) {
-                pendingModalContext = config || null;
-                modalTitle.textContent = config.title || 'Choose Action';
-                modalSubtitle.textContent = config.subtitle || '';
-                actionModal.classList.remove('hidden');
-                actionModal.classList.add('flex');
-            }
-
-            function closeActionModal() {
-                pendingModalContext = null;
-                actionModal.classList.add('hidden');
-                actionModal.classList.remove('flex');
-            }
-
-            modalCloseBtn?.addEventListener('click', closeActionModal);
-            actionModal?.addEventListener('click', (e) => {
-                if (e.target === actionModal) closeActionModal();
+            document.getElementById('next-month').addEventListener('click', () => {
+                if (currentView === 'month') { currentDate.setMonth(currentDate.getMonth() + 1); } else { currentDate.setDate(currentDate.getDate() + 7); }
+                renderCalendar();
             });
 
-            async function deleteTrip(tripId) {
-                const res = await fetch(`/api/trip/${tripId}/delete`, { method: 'POST' });
-                const data = await res.json();
-                if (data && data.success) {
-                    const card = document.querySelector(`[data-trip-id="${tripId}"]`);
-                    if (card) card.remove();
-                    const idx = trips.findIndex((x) => Number(x.id) === Number(tripId));
-                    if (idx >= 0) trips.splice(idx, 1);
-                    renderCalendar();
-                    return true;
+            document.getElementById('today-btn').addEventListener('click', () => {
+                currentDate = new Date();
+                selectedDateKey = formatDateYMD(normalizeDate(currentDate));
+                renderCalendar();
+            });
+
+            document.getElementById('month-view-btn').addEventListener('click', () => {
+                currentView = 'month';
+                document.getElementById('month-view-btn').classList.add('active');
+                document.getElementById('week-view-btn').classList.remove('active');
+                renderCalendar();
+            });
+
+            document.getElementById('week-view-btn').addEventListener('click', () => {
+                currentView = 'week';
+                document.getElementById('week-view-btn').classList.add('active');
+                document.getElementById('month-view-btn').classList.remove('active');
+                renderCalendar();
+            });
+
+            document.getElementById('connect-calendar-btn').addEventListener('click', () => {
+                localStorage.setItem(SYNC_KEY, '1');
+                updateSmartSyncUI();
+            });
+
+            document.getElementById('disconnect-calendar-btn').addEventListener('click', () => {
+                localStorage.removeItem(SYNC_KEY);
+                updateSmartSyncUI();
+            });
+
+            document.getElementById('download-ics-btn').addEventListener('click', downloadICS);
+            document.getElementById('google-sync-btn').addEventListener('click', quickAddGoogle);
+
+            (function () {
+                const actionModal = document.getElementById('calendar-action-modal');
+                const modalTitle = document.getElementById('calendar-modal-title');
+                const modalSubtitle = document.getElementById('calendar-modal-subtitle');
+                const modalCloseBtn = document.getElementById('calendar-modal-close');
+                let pendingModalContext = null;
+
+                function closeMenus() {
+                    document.querySelectorAll('.menu-panel.open').forEach((el) => el.classList.remove('open'));
                 }
-                return false;
-            }
-
-            document.querySelectorAll('.delete-trip-btn, .unsave-trip-btn').forEach((btn) => {
-                btn.addEventListener('click', async function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const tripId = Number(btn.dataset.tripId);
-                    if (!tripId) return;
-                    const mode = btn.classList.contains('delete-trip-btn') ? 'delete' : 'unsave';
-                    openActionModal({
-                        title: mode === 'delete' ? 'Delete This Trip?' : 'Unsave This Trip?',
-                        subtitle: mode === 'delete'
-                            ? 'Select an option below to continue.'
-                            : 'You can remove it now or keep it in your list.',
-                        tripId
+                document.querySelectorAll('.menu-trigger').forEach((btn) => {
+                    btn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const panel = btn.parentElement.querySelector('.menu-panel');
+                        const isOpen = panel.classList.contains('open');
+                        closeMenus();
+                        if (!isOpen) panel.classList.add('open');
                     });
                 });
-            });
+                document.addEventListener('click', closeMenus);
 
-            actionModal?.querySelectorAll('[data-modal-choice]').forEach((choiceBtn) => {
-                choiceBtn.addEventListener('click', async function () {
-                    if (!pendingModalContext) return;
-                    const action = choiceBtn.dataset.modalChoice;
-                    const tripId = Number(pendingModalContext.tripId);
-                    if (action === 'delete') {
-                        await deleteTrip(tripId);
-                    } else if (action === 'later') {
-                        localStorage.setItem(`trip-delete-remind-later-${tripId}`, String(Date.now()));
+                function openActionModal(config) {
+                    pendingModalContext = config || null;
+                    modalTitle.textContent = config.title || 'Choose Action';
+                    modalSubtitle.textContent = config.subtitle || '';
+                    actionModal.classList.remove('hidden');
+                    actionModal.classList.add('flex');
+                }
+
+                function closeActionModal() {
+                    pendingModalContext = null;
+                    actionModal.classList.add('hidden');
+                    actionModal.classList.remove('flex');
+                }
+
+                modalCloseBtn?.addEventListener('click', closeActionModal);
+                actionModal?.addEventListener('click', (e) => {
+                    if (e.target === actionModal) closeActionModal();
+                });
+
+                async function deleteTrip(tripId) {
+                    const res = await fetch(`/api/trip/${tripId}/delete`, { method: 'POST' });
+                    const data = await res.json();
+                    if (data && data.success) {
+                        const card = document.querySelector(`[data-trip-id="${tripId}"]`);
+                        if (card) card.remove();
+                        const idx = trips.findIndex((x) => Number(x.id) === Number(tripId));
+                        if (idx >= 0) trips.splice(idx, 1);
+                        renderCalendar();
+                        return true;
                     }
-                    closeActionModal();
-                });
-            });
+                    return false;
+                }
 
-            // Smart prompt for already-passed trips with explicit user choice.
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            for (const trip of trips) {
-                const end = new Date(trip.end_date);
-                end.setHours(0, 0, 0, 0);
-                if (end >= today) continue;
-
-                const remindKey = `trip-delete-remind-later-${trip.id}`;
-                const remindedAt = Number(localStorage.getItem(remindKey) || 0);
-                if (remindedAt && (Date.now() - remindedAt) < 24 * 60 * 60 * 1000) continue;
-
-                setTimeout(() => {
-                    openActionModal({
-                        title: 'Trip Date Has Passed',
-                        subtitle: `${trip.destination}: choose what to do next.`,
-                        tripId: trip.id,
-                        remindKey
+                document.querySelectorAll('.delete-trip-btn, .unsave-trip-btn').forEach((btn) => {
+                    btn.addEventListener('click', async function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const tripId = Number(btn.dataset.tripId);
+                        if (!tripId) return;
+                        const mode = btn.classList.contains('delete-trip-btn') ? 'delete' : 'unsave';
+                        openActionModal({
+                            title: mode === 'delete' ? 'Delete This Trip?' : 'Unsave This Trip?',
+                            subtitle: mode === 'delete' ? 'Select an option below to continue.' : 'You can remove it now or keep it in your list.',
+                            tripId
+                        });
                     });
-                }, 600);
-                break;
-            }
-        })();
+                });
 
-        selectedDateKey = formatDateYMD(normalizeDate(new Date()));
-        updateSmartSyncUI();
-        renderCalendar();
-    </script>
+                actionModal?.querySelectorAll('[data-modal-choice]').forEach((choiceBtn) => {
+                    choiceBtn.addEventListener('click', async function () {
+                        if (!pendingModalContext) return;
+                        const action = choiceBtn.dataset.modalChoice;
+                        const tripId = Number(pendingModalContext.tripId);
+                        if (action === 'delete') {
+                            await deleteTrip(tripId);
+                        } else if (action === 'later') {
+                            localStorage.setItem(`trip-delete-remind-later-${tripId}`, String(Date.now()));
+                        }
+                        closeActionModal();
+                    });
+                });
+
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                for (const trip of trips) {
+                    const end = new Date(trip.end_date);
+                    end.setHours(0, 0, 0, 0);
+                    if (end >= today) continue;
+
+                    const remindKey = `trip-delete-remind-later-${trip.id}`;
+                    const remindedAt = Number(localStorage.getItem(remindKey) || 0);
+                    if (remindedAt && (Date.now() - remindedAt) < 24 * 60 * 60 * 1000) continue;
+
+                    setTimeout(() => {
+                        openActionModal({
+                            title: 'Trip Date Has Passed',
+                            subtitle: `${trip.destination}: choose what to do next.`,
+                            tripId: trip.id,
+                            remindKey
+                        });
+                    }, 600);
+                    break;
+                }
+            })();
+
+            selectedDateKey = formatDateYMD(normalizeDate(new Date()));
+            updateSmartSyncUI();
+            renderCalendar();
+        </script>
+    </div>
+    <script src="/static/js/background.js"></script>
 </body>
 
 </html>
-
-
-

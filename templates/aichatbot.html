@@ -1,4 +1,4 @@
-<html class="scroll-smooth" lang="en">
+﻿<html class="scroll-smooth" lang="en">
 
 <head>
     <meta charset="utf-8" />
@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
     <link
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap"
         rel="stylesheet" />
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
@@ -15,54 +15,22 @@
     <!-- Leaflet Map -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: "#3B82F6",
-                        "sage-tint": "#F1F5F2",
-                        "cream-tint": "#FAF9F6",
-                        "brand-green": "#E8F3EB",
-                        "text-main-light": "#1E293B",
-                        "text-main-dark": "#F1F5F9",
-                        "surface-dark": "#1E293B",
-                        "background-dark": "#0F172A",
-                    },
-                    fontFamily: {
-                        sans: ["Plus Jakarta Sans", "sans-serif"],
-                    },
-                    borderRadius: {
-                        'custom': '2rem',
-                        'chat': '1.5rem',
-                    },
-                    boxShadow: {
-                        'premium': '0 20px 50px -12px rgba(0, 0, 0, 0.05)',
-                        'hover-lift': '0 30px 60px -15px rgba(0, 0, 0, 0.12)',
-                        'bubble': '0 4px 20px rgba(0, 0, 0, 0.03)',
-                    }
-                },
-            },
-        };
-    </script>
-    <style type="text/tailwindcss">
-        @layer base {
-            body {
-                @apply bg-slate-50 text-slate-800 antialiased;
-            }
-        }
-        .glass-nav {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(24px);
+    <link rel="stylesheet" href="/static/css/tailwind-output.css">
+    <link rel="stylesheet" href="/static/css/charcoal.css" />
+    <style>
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         .hero-gradient {
             background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.7) 100%);
         }
         .glass-pill {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
         }
         #leaflet-map {
             height: 400px;
@@ -70,13 +38,31 @@
             z-index: 10;
         }
         .info-card {
-            @apply bg-white p-8 rounded-custom border border-slate-50 shadow-soft hover:shadow-premium transition-all duration-500;
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 24px;
+            padding: 2rem;
+            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+            position: relative;
+            overflow: hidden;
         }
-        .shadow-soft {
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
+        .info-card:hover {
+            background: #0A0A0A;
+            border-color: rgba(255,255,255,0.7);
         }
         .active-tab {
-            @apply text-emerald-600 relative after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-8 after:h-0.5 after:bg-emerald-600;
+            position: relative;
+            color: #FFFFFF;
+        }
+        .active-tab::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2rem;
+            height: 0.125rem;
+            background: #0A0A0A;
         }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
@@ -95,7 +81,10 @@
             .masonry-grid { columns: 1; }
         }
         .typing-dot {
-            @apply w-1.5 h-1.5 bg-slate-400 rounded-full;
+            width: 0.375rem;
+            height: 0.375rem;
+            border-radius: 9999px;
+            background: #0A0A0A;
             animation: bounce 1.4s infinite ease-in-out both;
         }
         .typing-dot:nth-child(1) { animation-delay: -0.32s; }
@@ -105,60 +94,153 @@
             40% { transform: scale(1.0); }
         }
         .chat-shell {
-            @apply rounded-[2rem] border border-emerald-100/60 overflow-hidden;
-            background: radial-gradient(circle at 10% 8%, #f0fdf4 0%, #ffffff 45%, #f8fafc 100%);
-            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
+            overflow: hidden;
+            background: radial-gradient(circle at 10% 8%, #0A0A0A 0%, #000000 45%, #0A0A0A 100%);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 32px;
+            box-shadow: 0 24px 60px #111111;
         }
         .chat-header {
-            @apply border-b border-emerald-100/70;
-            background: linear-gradient(120deg, rgba(16, 185, 129, 0.1) 0%, rgba(255, 255, 255, 0.95) 40%, rgba(59, 130, 246, 0.08) 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            background: linear-gradient(120deg, #0A0A0A 0%, #000000 40%, #0A0A0A 100%);
         }
         .chat-container {
             height: 560px;
         }
 	        .message-bubble {
-	            @apply rounded-[1.4rem] px-5 py-4 max-w-[80%];
+	            border-radius: 1.4rem;
+	            padding-left: 1.25rem;
+	            padding-right: 1.25rem;
+	            padding-top: 1rem;
+	            padding-bottom: 1rem;
+	            max-width: 80%;
+	            position: relative;
+	            overflow: hidden;
 	        }
 	        .ai-bubble {
-	            @apply bg-white/95 border border-white shadow-[0_14px_36px_rgba(15,23,42,0.08)] text-slate-700 rounded-bl-md;
+	            background: #0A0A0A;
+	            border: 1px solid rgba(255,255,255,0.06);
+	            box-shadow: 0 14px 36px #0A0A0A;
+	            color: rgba(255,255,255,0.7);
+	            border-bottom-left-radius: 0.375rem;
+	            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
 	        }
 	        .user-bubble {
-	            background: linear-gradient(135deg, #059669 0%, #0ea5a4 100%);
-	            @apply text-white shadow-[0_14px_30px_rgba(5,150,105,0.32)] rounded-br-md;
+	            background: #111111;
+	            border: 1px solid rgba(255,255,255,0.06);
+	            color: #FFFFFF;
+	            box-shadow: 0 14px 30px rgba(0,0,0,0.25);
+	            border-bottom-right-radius: 0.375rem;
+	            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+	        }
+	        .user-bubble:hover {
+	            border-color: rgba(255,255,255,0.7);
 	        }
 	        .message-actions {
-	            /* Reserve space so bubbles don't "jump" on hover */
-	            @apply h-8 flex items-center gap-2 opacity-0 pointer-events-none transition-opacity;
+	            height: 2rem;
+	            display: flex;
+	            align-items: center;
+	            gap: 0.5rem;
+	            opacity: 0;
+	            pointer-events: none;
+	            transition: opacity 150ms;
 	        }
 	        .chat-row:hover .message-actions,
 	        .chat-row:focus-within .message-actions {
-	            @apply opacity-100 pointer-events-auto;
+	            opacity: 1;
+	            pointer-events: auto;
 	        }
 	        .msg-action-btn {
-	            @apply w-8 h-8 inline-flex items-center justify-center rounded-full text-slate-400 hover:text-emerald-700 hover:bg-slate-50 transition-colors;
+	            width: 2rem;
+	            height: 2rem;
+	            display: inline-flex;
+	            align-items: center;
+	            justify-content: center;
+	            border-radius: 9999px;
+	            color: rgba(255,255,255,0.7);
+	            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+	        }
+	        .msg-action-btn:hover {
+	            background: #0A0A0A;
+	            color: #FFFFFF;
 	        }
 	        .msg-action-btn.is-active {
-	            @apply text-emerald-700 bg-emerald-50;
+	            color: #FFFFFF;
+	            background: #0A0A0A;
 	        }
 	        .msg-menu {
-	            @apply absolute right-0 mt-2 w-44 bg-white border border-slate-100 rounded-2xl shadow-premium overflow-hidden z-20 hidden;
+	            position: absolute;
+	            right: 0;
+	            margin-top: 0.5rem;
+	            width: 11rem;
+	            overflow: hidden;
+	            z-index: 20;
+	            display: none;
+	            background: #000000;
+	            border: 1px solid rgba(255,255,255,0.06);
+	            border-radius: 16px;
+	            box-shadow: 0 20px 50px -12px #111111;
 	        }
 	        .msg-menu.open {
-	            @apply block;
+	            display: block;
 	        }
 	        .msg-menu-item {
-	            @apply w-full text-left px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors;
+	            width: 100%;
+	            text-align: left;
+	            padding-left: 1rem;
+	            padding-right: 1rem;
+	            padding-top: 0.75rem;
+	            padding-bottom: 0.75rem;
+	            font-size: 0.875rem;
+	            line-height: 1.25rem;
+	            font-weight: 600;
+	            color: rgba(255,255,255,0.7);
+	            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+	        }
+	        .msg-menu-item:hover {
+	            background: #0A0A0A;
+	            color: #FFFFFF;
 	        }
 	        .msg-menu-item.danger {
-	            @apply text-rose-600 hover:bg-rose-50;
+	            color: rgba(255,255,255,0.7);
+	        }
+	        .msg-menu-item.danger:hover {
+	            background: #0A0A0A;
+	            color: rgba(255,255,255,0.7);
 	        }
             .suggestion-chip {
-                @apply px-5 py-2.5 rounded-full text-sm font-semibold text-slate-600 border border-emerald-100 bg-white/80 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 transition-all;
+                padding-left: 1.25rem;
+                padding-right: 1.25rem;
+                padding-top: 0.625rem;
+                padding-bottom: 0.625rem;
+                border-radius: 9999px;
+                font-size: 0.875rem;
+                line-height: 1.25rem;
+                font-weight: 600;
+                color: rgba(255,255,255,0.7);
+                border: 1px solid rgba(255,255,255,0.06);
+                background: #0A0A0A;
+                position: relative;
+                overflow: hidden;
+                transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+            }
+            .suggestion-chip:hover {
+                background: #0A0A0A;
+                color: #FFFFFF;
+                border-color: rgba(255,255,255,0.7);
             }
             .chat-input-shell {
-                @apply relative rounded-[1.7rem] p-2.5 border border-emerald-100/80;
-                background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
-                box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+                position: relative;
+                padding: 0.625rem;
+                background: linear-gradient(145deg, #0A0A0A 0%, #0A0A0A 100%);
+                border: 1px solid rgba(255,255,255,0.06);
+                border-radius: 28px;
+                box-shadow: 0 10px 28px #0A0A0A;
+                transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+            }
+            .chat-input-shell:focus-within {
+                border-color: rgba(255,255,255,0.7);
+                box-shadow: 0 10px 28px #0A0A0A;
             }
             @media (max-width: 768px) {
                 .chat-container { height: 470px; }
@@ -168,14 +250,13 @@
 	            position: fixed;
 	            inset: 0;
 	            z-index: 100;
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(8px);
+            background: #111111;
             align-items: center;
             justify-content: center;
             padding: 1.5rem;
         }
         .story-gradient {
-            background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+            background: linear-gradient(135deg, #0A0A0A 0%, #0A0A0A 100%);
         }
         @keyframes modal-pop {
             from { opacity: 0; transform: scale(0.95) translateY(20px); }
@@ -185,10 +266,17 @@
             animation: modal-pop 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
     </style>
+</head>
 
+<body class="ks-glass">
+    <!-- Cinematic Background -->
+    <div class="ks-cinema-bg"></div>
+    <div class="ks-grain"></div>
+    <div class="ks-vignette"></div>
+    <canvas id="ks-particles-canvas"></canvas>
 
     {% include 'components/navbar.html' %}
-    <main class="pb-20">
+    <main class="pb-20 ks-content">
         <section class="relative h-[75vh] w-full overflow-hidden mb-12 shadow-2xl group">
             {% set back_fallback = url_for('main.destination_info', name=name) %}
             {% include 'components/back_button_hero.html' %}
@@ -198,38 +286,38 @@
             <div class="absolute inset-0 hero-gradient"></div>
             <div class="absolute top-28 left-10 md:left-12">
                 <div class="glass-pill px-6 py-2.5 rounded-full flex items-center gap-2">
-                    <span class="material-symbols-outlined text-white text-sm">location_on</span>
-                    <span class="text-white text-xs font-bold tracking-[0.2em] uppercase">{{ data.state | upper }},
-                        INDIA • {{ data.coordinates }}</span>
+                    <span class="material-symbols-outlined text-sm" style="color: #FFFFFF;">location_on</span>
+                    <span class="text-xs font-bold tracking-[0.2em] uppercase" style="color: #FFFFFF;">{{ data.state | upper }},
+                        INDIA &#x2022; {{ data.coordinates }}</span>
                 </div>
             </div>
             <div class="absolute bottom-12 left-10 md:left-12">
-                <h1 class="text-5xl md:text-7xl font-extrabold text-white tracking-tighter mb-4">{{ data.name }}, {{ data.state
+                <h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter mb-4" style="color: #FFFFFF;">{{ data.name }}, {{ data.state
                     }}</h1>
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center border border-white/20">
-                        <span class="material-symbols-outlined text-white text-lg">smart_toy</span>
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: #0A0A0A; border: 1px solid rgba(255,255,255,0.06);">
+                        <span class="material-symbols-outlined text-lg" style="color: #FFFFFF;">smart_toy</span>
                     </div>
-                    <p class="text-xl md:text-2xl text-white/95 font-medium">Destination Expert: Skupheon AI</p>
+                    <p class="text-xl md:text-2xl font-medium" style="color: rgba(255,255,255,0.7);">Destination Expert: Skupheon AI</p>
                 </div>
             </div>
             <div class="absolute bottom-12 right-10 md:right-12 flex items-center gap-3">
                 <button id="save-btn"
-                    class="glass-pill px-8 py-3.5 rounded-full text-white font-bold flex items-center gap-2 hover:bg-white hover:text-emerald-900 transition-all">
+                    class="glass-pill px-8 py-3.5 rounded-full font-bold flex items-center gap-2 transition-all" style="color: #FFFFFF;">
                     <span class="material-symbols-outlined">bookmark</span>
                     <span class="btn-text">Save</span>
                 </button>
                 <button id="favorite-btn"
-                    class="glass-pill px-8 py-3.5 rounded-full text-white font-bold flex items-center gap-2 hover:bg-white hover:text-rose-700 transition-all">
+                    class="glass-pill px-8 py-3.5 rounded-full font-bold flex items-center gap-2 transition-all" style="color: #FFFFFF;">
                     <span class="material-symbols-outlined">favorite</span>
                     <span class="favorite-text">Favorite</span>
                 </button>
                 <button id="share-btn"
-                    class="glass-pill w-14 h-14 rounded-full text-white flex items-center justify-center hover:bg-white hover:text-emerald-900 transition-all">
+                    class="glass-pill w-14 h-14 rounded-full flex items-center justify-center transition-all" style="color: #FFFFFF;">
                     <span class="material-symbols-outlined">share</span>
                 </button>
                 <button id="story-btn"
-                    class="glass-pill px-8 py-3.5 rounded-full text-white font-bold flex items-center gap-2 hover:bg-white hover:text-emerald-900 transition-all">
+                    class="glass-pill px-8 py-3.5 rounded-full font-bold flex items-center gap-2 transition-all" style="color: #FFFFFF;">
                     <span class="material-symbols-outlined">auto_stories</span>
                     Story
                 </button>
@@ -237,16 +325,15 @@
         </section>
         <div class="max-w-[1600px] mx-auto px-6">
             <nav class="mb-16 flex justify-center sticky top-28 z-40">
-                <div
-                    class="bg-white/90 backdrop-blur-xl rounded-full p-2 shadow-2xl flex items-center gap-1 border border-white/50">
+                <div class="ks-glass-panel flex items-center gap-1" style="padding: 6px; border-radius: 9999px;">
                     <button data-tab="overview"
-                        class="tab-btn px-8 py-4 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors">Overview</button>
+                        class="tab-btn px-8 py-4 text-xs font-black uppercase tracking-widest transition-colors" style="color: rgba(255,255,255,0.7);">Overview</button>
                     <button data-tab="attractions"
-                        class="tab-btn px-8 py-4 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors">Attractions</button>
+                        class="tab-btn px-8 py-4 text-xs font-black uppercase tracking-widest transition-colors" style="color: rgba(255,255,255,0.7);">Attractions</button>
                     <button data-tab="itinerary"
-                        class="tab-btn px-8 py-4 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors">Itinerary</button>
+                        class="tab-btn px-8 py-4 text-xs font-black uppercase tracking-widest transition-colors" style="color: rgba(255,255,255,0.7);">Itinerary</button>
                     <button data-tab="photos"
-                        class="tab-btn px-8 py-4 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors">Photos
+                        class="tab-btn px-8 py-4 text-xs font-black uppercase tracking-widest transition-colors" style="color: rgba(255,255,255,0.7);">Photos
                         &amp; Gallery</button>
                     <button data-tab="chat"
                         class="tab-btn px-8 py-4 text-xs font-black uppercase tracking-widest active-tab">AI
@@ -261,30 +348,26 @@
                     <div class="col-span-12 lg:col-span-8 space-y-12">
                         <section class="info-card">
                             <div class="flex items-center gap-3 mb-6">
-                                <span
-                                    class="px-3 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-md uppercase tracking-wider">{{
-                                    data.tag }}</span>
-                                <h2 class="text-3xl font-extrabold tracking-tight text-slate-800">About {{ data.name }}
-                                </h2>
+                                <span class="ks-badge">{{ data.tag }}</span>
+                                <h2 class="text-3xl font-extrabold tracking-tight" style="color: #FFFFFF;">About {{ data.name }}</h2>
                             </div>
-                            <div class="prose prose-slate max-w-none text-slate-600 leading-relaxed text-lg space-y-4">
+                            <div class="prose prose-slate max-w-none leading-relaxed text-lg space-y-4" style="color: rgba(255,255,255,0.7);">
                                 <p>{{ data.overview_p1 }}</p>
                                 <p>{{ data.overview_p2 }}</p>
                             </div>
                         </section>
 
                         <section class="info-card">
-                            <h2 class="text-3xl font-extrabold tracking-tight mb-8 text-slate-800">Must-Do Highlights
-                            </h2>
+                            <h2 class="text-3xl font-extrabold tracking-tight mb-8" style="color: #FFFFFF;">Must-Do Highlights</h2>
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                                 {% for highlight in data.highlights %}
                                 <div class="group cursor-pointer">
-                                    <div class="relative h-40 rounded-2xl overflow-hidden mb-3">
+                                    <div class="relative h-40 overflow-hidden mb-3" style="border-radius: 16px;">
                                         <img src="{{ highlight.image }}"
                                             class="w-full h-full object-cover transition-transform group-hover:scale-110"
                                             alt="{{ highlight.name }}">
                                     </div>
-                                    <p class="font-bold text-sm leading-tight text-slate-800">{{ highlight.name }}</p>
+                                    <p class="font-bold text-sm leading-tight" style="color: #FFFFFF;">{{ highlight.name }}</p>
                                 </div>
                                 {% endfor %}
                             </div>
@@ -294,74 +377,74 @@
                     <!-- Sidebar -->
                     <aside class="col-span-12 lg:col-span-4 space-y-8">
                         <!-- Live Weather -->
-                        <section class="info-card !p-6">
+                        <section class="info-card" style="padding: 1.5rem;">
                             <div class="flex items-center justify-between mb-6">
-                                <h3 class="font-extrabold text-xl tracking-tight text-slate-800">Live Weather</h3>
-                                <span class="text-xs font-bold text-emerald-600 flex items-center gap-1">
-                                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse inline-block"></span> 
+                                <h3 class="font-extrabold text-xl tracking-tight" style="color: #FFFFFF;">Live Weather</h3>
+                                <span class="text-xs font-bold flex items-center gap-1" style="color: #FFFFFF;">
+                                    <span class="w-2 h-2 rounded-full animate-pulse inline-block" style="background: #0A0A0A;"></span> 
                                     LIVE
                                 </span>
                             </div>
                             {% if weather and weather.forecast and weather.forecast.forecastday %}
-                            <div class="flex items-center gap-5 mb-6 p-4 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100/50">
+                            <div class="flex items-center gap-5 mb-6 p-4 rounded-2xl" style="background: linear-gradient(to right, #0A0A0A 0%, #0A0A0A 100%); border: 1px solid rgba(255,255,255,0.06);">
                                 <img src="{{ weather.forecast.forecastday[0].day.condition.icon }}" alt="weather" class="w-16 h-16" />
                                 <div>
-                                    <div class="text-4xl font-extrabold text-slate-800">{{ weather.forecast.forecastday[0].day.avgtemp_c }}°C</div>
-                                    <span class="text-emerald-600 font-bold text-sm">{{ weather.forecast.forecastday[0].day.condition.text }}</span>
+                                    <div class="text-4xl font-extrabold" style="color: #FFFFFF;">{{ weather.forecast.forecastday[0].day.avgtemp_c }}°C</div>
+                                    <span class="font-bold text-sm" style="color: rgba(255,255,255,0.7);">{{ weather.forecast.forecastday[0].day.condition.text }}</span>
                                 </div>
                             </div>
                             <div class="grid grid-cols-2 gap-3 mb-6">
-                                <div class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl">
-                                    <span class="material-symbols-outlined text-blue-500 text-lg">water_drop</span>
+                                <div class="flex items-center gap-2 p-3" style="background: #0A0A0A; border-radius: 12px;">
+                                    <span class="material-symbols-outlined text-lg" style="color: #FFFFFF;">water_drop</span>
                                     <div>
-                                        <p class="text-[10px] font-bold text-slate-400 uppercase">Humidity</p>
-                                        <p class="text-sm font-bold text-slate-800">{{ weather.forecast.forecastday[0].day.humidity }}%</p>
+                                        <p class="text-[10px] font-bold uppercase" style="color: rgba(255,255,255,0.7);">Humidity</p>
+                                        <p class="text-sm font-bold" style="color: #FFFFFF;">{{ weather.forecast.forecastday[0].day.humidity }}%</p>
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl">
-                                    <span class="material-symbols-outlined text-slate-500 text-lg">air</span>
+                                <div class="flex items-center gap-2 p-3" style="background: #0A0A0A; border-radius: 12px;">
+                                    <span class="material-symbols-outlined text-lg" style="color: rgba(255,255,255,0.7);">air</span>
                                     <div>
-                                        <p class="text-[10px] font-bold text-slate-400 uppercase">Wind</p>
-                                        <p class="text-sm font-bold text-slate-800">{{ weather.forecast.forecastday[0].day.wind_kph }} km/h</p>
+                                        <p class="text-[10px] font-bold uppercase" style="color: rgba(255,255,255,0.7);">Wind</p>
+                                        <p class="text-sm font-bold" style="color: #FFFFFF;">{{ weather.forecast.forecastday[0].day.wind_kph }} km/h</p>
                                     </div>
                                 </div>
                             </div>
                             {% if weather.forecast.forecastday|length > 1 %}
-                            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-3 text-center">5-Day Forecast</p>
+                            <p class="text-[10px] font-extrabold uppercase tracking-widest mb-3 text-center" style="color: rgba(255,255,255,0.7);">5-Day Forecast</p>
                             <div class="flex justify-between gap-1">
                                 {% for fday in weather.forecast.forecastday %}
-                                <div class="flex flex-col items-center gap-1 p-2 {% if loop.first %}bg-emerald-50 border border-emerald-100{% else %}bg-slate-50{% endif %} rounded-xl flex-1">
-                                    <span class="text-[10px] font-bold {% if loop.first %}text-emerald-600{% else %}text-slate-400{% endif %} uppercase">{{ fday.date_label }}</span>
+                                <div class="flex flex-col items-center gap-1 p-2 flex-1" style="border-radius: 12px; {% if loop.first %}background: #0A0A0A; border: 1px solid rgba(255,255,255,0.06);{% else %}background: #0A0A0A;{% endif %}">
+                                    <span class="text-[10px] font-bold uppercase" style="color: {% if loop.first %}#FFFFFF{% else %}#0A0A0A{% endif %};">{{ fday.date_label }}</span>
                                     <img src="{{ fday.day.condition.icon }}" alt="" class="w-8 h-8" />
-                                    <span class="text-xs font-extrabold text-slate-800">{{ fday.day.avgtemp_c }}°</span>
+                                    <span class="text-xs font-extrabold" style="color: #FFFFFF;">{{ fday.day.avgtemp_c }}°</span>
                                 </div>
                                 {% endfor %}
                             </div>
                             {% endif %}
                             {% else %}
-                            <div class="p-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-                                <span class="material-symbols-outlined text-slate-300 text-4xl mb-3">cloud_off</span>
-                                <p class="text-sm text-slate-400 font-medium">Weather data temporarily unavailable</p>
+                            <div class="p-8 text-center" style="background: #0A0A0A; border-radius: 16px; border: 1px dashed #0A0A0A;">
+                                <span class="material-symbols-outlined text-4xl mb-3" style="color: rgba(255,255,255,0.7);">cloud_off</span>
+                                <p class="text-sm font-medium" style="color: rgba(255,255,255,0.7);">Weather data temporarily unavailable</p>
                             </div>
                             {% endif %}
                         </section>
 
                         <!-- Location Map -->
-                        <section class="info-card !p-6 overflow-hidden">
+                        <section class="info-card overflow-hidden" style="padding: 1.5rem;">
                             <div class="flex items-center justify-between mb-6">
-                                <h3 class="font-extrabold text-xl tracking-tight text-slate-800">Location Map</h3>
-                                <span class="material-symbols-outlined text-emerald-600">map</span>
+                                <h3 class="font-extrabold text-xl tracking-tight" style="color: #FFFFFF;">Location Map</h3>
+                                <span class="material-symbols-outlined" style="color: #FFFFFF;">map</span>
                             </div>
-                            <div class="relative w-full rounded-2xl overflow-hidden shadow-soft border border-slate-100">
+                            <div class="relative w-full overflow-hidden" style="border-radius: 16px; border: 1px solid rgba(255,255,255,0.06);">
                                 <div id="leaflet-map" class="h-64"></div>
-                                <div class="absolute bottom-4 left-4 right-4 p-4 bg-white/90 backdrop-blur-md rounded-xl shadow-lg border border-white/50 z-[1000]">
+                                <div class="absolute bottom-4 left-4 right-4 p-4 z-[1000]" style="background: rgba(0,0,0,0.85); border-radius: 12px; box-shadow: 0 8px 32px #0A0A0A; border: 1px solid rgba(255,255,255,0.06);">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
-                                            <span class="material-symbols-outlined text-emerald-600 text-sm">explore</span>
+                                        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: #0A0A0A;">
+                                            <span class="material-symbols-outlined text-sm" style="color: #FFFFFF;">explore</span>
                                         </div>
                                         <div>
-                                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Coordinates</p>
-                                            <p class="text-xs font-bold text-slate-700">{{ data.coordinates }}</p>
+                                            <p class="text-[10px] font-black uppercase tracking-widest leading-none mb-1" style="color: rgba(255,255,255,0.7);">Coordinates</p>
+                                            <p class="text-xs font-bold" style="color: rgba(255,255,255,0.7);">{{ data.coordinates }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -375,9 +458,9 @@
             <div id="tab-attractions" class="tab-content">
                 <div id="attractions-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
                     <!-- Loading Skeleton -->
-                    <div class="bg-white rounded-custom h-80 animate-pulse"></div>
-                    <div class="bg-white rounded-custom h-80 animate-pulse"></div>
-                    <div class="bg-white rounded-custom h-80 animate-pulse"></div>
+                    <div class="ks-skeleton h-80"></div>
+                    <div class="ks-skeleton h-80"></div>
+                    <div class="ks-skeleton h-80"></div>
                 </div>
             </div>
 
@@ -385,7 +468,7 @@
             <div id="tab-itinerary" class="tab-content">
                 <div id="itinerary-timeline" class="max-w-4xl mx-auto mb-24">
                     <!-- Loading Skeleton -->
-                    <div class="bg-white rounded-custom h-96 animate-pulse"></div>
+                    <div class="ks-skeleton h-96"></div>
                 </div>
             </div>
 
@@ -393,9 +476,9 @@
             <div id="tab-photos" class="tab-content">
                 <div id="gallery-grid" class="masonry-grid mb-24">
                     <!-- Loading Skeleton -->
-                    <div class="bg-white rounded-custom h-64 animate-pulse"></div>
-                    <div class="bg-white rounded-custom h-48 animate-pulse"></div>
-                    <div class="bg-white rounded-custom h-56 animate-pulse"></div>
+                    <div class="ks-skeleton h-64"></div>
+                    <div class="ks-skeleton h-48"></div>
+                    <div class="ks-skeleton h-56"></div>
                 </div>
             </div>
 
@@ -405,36 +488,38 @@
                 <div class="chat-header px-6 md:px-10 py-7 flex items-center justify-between">
                     <div class="flex items-center gap-4 md:gap-5">
                         <div class="relative shrink-0">
-                            <div class="w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center border border-emerald-200 bg-white shadow-[0_10px_24px_rgba(16,185,129,0.18)]">
-                                <span class="material-symbols-outlined text-emerald-600 text-2xl md:text-3xl">smart_toy</span>
+                            <div class="w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center" style="background: #0A0A0A; border: 1px solid rgba(255,255,255,0.06); box-shadow: 0 10px 24px #0A0A0A;">
+                                <span class="material-symbols-outlined text-2xl md:text-3xl" style="color: #FFFFFF;">smart_toy</span>
                             </div>
-                            <div class="absolute -bottom-1 -right-1 w-4 h-4 md:w-5 md:h-5 bg-green-500 border-[3px] border-white rounded-full">
+                            <div class="absolute -bottom-1 -right-1 w-4 h-4 md:w-5 md:h-5 rounded-full" style="background: #0A0A0A; border: 3px solid rgba(0,0,0,0.9);">
                             </div>
                         </div>
                         <div>
-                            <h3 class="font-extrabold text-lg md:text-xl text-slate-800">Skupheon AI</h3>
-                            <p class="text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em]">{{ data.name }}
+                            <h3 class="font-extrabold text-lg md:text-xl" style="color: #FFFFFF;">Skupheon AI</h3>
+                            <p class="text-[10px] font-black uppercase tracking-[0.2em]" style="color: rgba(255,255,255,0.7);">{{ data.name }}
                                 Destination Expert</p>
                         </div>
                     </div>
                     <div class="flex gap-3">
                         <button
-                            class="w-10 h-10 flex items-center justify-center hover:bg-slate-50 rounded-full text-slate-400 transition-colors"><span
-                                class="material-symbols-outlined">restart_alt</span></button>
+                            class="w-10 h-10 flex items-center justify-center rounded-full transition-colors" style="color: rgba(255,255,255,0.7);">
+                            <span class="material-symbols-outlined">restart_alt</span>
+                        </button>
                         <button
-                            class="w-10 h-10 flex items-center justify-center hover:bg-slate-50 rounded-full text-slate-400 transition-colors"><span
-                                class="material-symbols-outlined">more_vert</span></button>
+                            class="w-10 h-10 flex items-center justify-center rounded-full transition-colors" style="color: rgba(255,255,255,0.7);">
+                            <span class="material-symbols-outlined">more_vert</span>
+                        </button>
                     </div>
                 </div>
 	                <div class="chat-container overflow-y-auto px-4 md:px-10 py-8 flex flex-col gap-8" id="chat-messages">
 	                    <div class="chat-row flex gap-5" data-role="assistant" data-msg-id="initial-assistant">
-	                        <div class="w-10 h-10 bg-emerald-50 rounded-xl flex-shrink-0 flex items-center justify-center mt-2">
-	                            <span class="material-symbols-outlined text-emerald-600 text-lg">smart_toy</span>
+	                        <div class="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center mt-2" style="background: #0A0A0A;">
+	                            <span class="material-symbols-outlined text-lg" style="color: #FFFFFF;">smart_toy</span>
 	                        </div>
 	                        <div class="flex flex-col gap-2 max-w-[80%]">
 	                            <div class="message-bubble ai-bubble">
-	                                <p class="leading-relaxed text-base">Namaste! I'm your Skupheon AI guide for {{ data.name }}. I can help you discover the hidden gems, explore {{ data.tag.lower() }} highlights, or plan the perfect adventure here. How can I make your {{ data.name }} trip unforgettable today?</p>
-	                            </div>
+                                <p class="leading-relaxed text-base">Namaste! I'm your Skupheon AI guide for {{ data.name }}. I can help you discover the hidden gems, explore {{ data.tag.lower() }} highlights, or plan the perfect adventure here. How can I make your {{ data.name }} trip unforgettable today?</p>
+                            </div>
 	                            <div class="message-actions assistant-actions">
 	                                <button type="button" class="msg-action-btn" data-action="copy" title="Copy">
 	                                    <span class="material-symbols-outlined text-[18px]">content_copy</span>
@@ -464,18 +549,20 @@
                         {% endfor %}
                     </div>
                 </div>
-                <div class="px-4 md:px-10 py-7 bg-white/70 border-t border-emerald-100/60">
+                <div class="px-4 md:px-10 py-7" style="background: #0A0A0A; border-top: 1px solid rgba(255,255,255,0.06);">
                     <form id="chat-form" class="chat-input-shell flex items-center gap-2 md:gap-3">
                         <button
-                            class="w-12 h-12 flex items-center justify-center text-slate-400 hover:text-emerald-600 transition-colors"
-                            type="button">
+                            class="w-12 h-12 flex items-center justify-center transition-colors"
+                            type="button" style="color: rgba(255,255,255,0.7);">
                             <span class="material-symbols-outlined">attach_file</span>
                         </button>
                         <input id="chat-input"
-                            class="w-full bg-transparent border-none focus:ring-0 text-slate-700 font-semibold px-2 placeholder:text-slate-300"
+                            class="w-full bg-transparent border-none focus:ring-0 font-semibold px-2"
+                            style="color: rgba(255,255,255,0.7);"
                             placeholder="Ask about {{ data.name }}'s secret trails..." type="text" />
                         <button
-                            class="w-12 h-12 md:w-14 md:h-14 bg-emerald-600 text-white rounded-[1.1rem] md:rounded-[1.4rem] hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200 flex items-center justify-center group"
+                            class="w-12 h-12 md:w-14 md:h-14 rounded-[1.1rem] md:rounded-[1.4rem] transition-all flex items-center justify-center group"
+                            style="background: #0A0A0A; border: 1px solid #111111; color: #FFFFFF; box-shadow: 0 8px 24px #0A0A0A;"
                             type="submit">
                             <span
                                 class="material-symbols-outlined group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">send</span>
@@ -506,14 +593,14 @@
                     attributionControl: false
                 }).setView([centerLat, centerLng], 12);
 
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
                     maxZoom: 19
                 }).addTo(map);
 
                 const customIcon = L.divIcon({
                     className: 'custom-marker',
-                    html: `<div class="w-8 h-8 bg-emerald-600 rounded-full border-4 border-white shadow-lg flex items-center justify-center">
-                            <span class="material-symbols-outlined text-white text-sm">location_on</span>
+                    html: `<div class="w-8 h-8 rounded-full border-4 shadow-lg flex items-center justify-center" style="background: #111111; border-color: rgba(255,255,255,0.7);">
+                            <span class="material-symbols-outlined text-sm" style="color: #FFFFFF;">location_on</span>
                            </div>`,
                     iconSize: [32, 32],
                     iconAnchor: [16, 32]
@@ -546,10 +633,10 @@
                     // Update button styles
                     tabBtns.forEach(b => {
                         b.classList.remove('active-tab');
-                        b.classList.add('text-slate-400');
+                        b.style.color = '#FFFFFF';
                     });
                     this.classList.add('active-tab');
-                    this.classList.remove('text-slate-400');
+                    this.style.color = '';
                     // Show correct tab content
                     tabContents.forEach(tc => tc.classList.remove('active'));
                     const target = document.getElementById('tab-' + tabId);
@@ -573,33 +660,42 @@
                 attractionsLoaded = true;
                 const grid = document.getElementById('attractions-grid');
                 fetch(`/api/destination-attractions?name=${encodeURIComponent(DEST_NAME)}`)
-                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.ok) {
+                            if (res.status === 401 || res.status === 403) {
+                                window.location.href = '/login';
+                                return;
+                            }
+                            throw new Error(`Server error (${res.status})`);
+                        }
+                        return res.json();
+                    })
                     .then(data => {
                         if (data.error) {
-                            grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500">${data.error}</div>`;
+                            grid.innerHTML = `<div class="col-span-full text-center py-12" style="color: rgba(255,255,255,0.7);">${data.error}</div>`;
                         } else {
                             renderAttractions(data.attractions);
                         }
                     })
                     .catch(err => {
                         console.error('Error:', err);
-                        grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500">Failed to load attractions.</div>`;
+                        grid.innerHTML = `<div class="col-span-full text-center py-12" style="color: rgba(255,255,255,0.7);">Failed to load attractions.</div>`;
                     });
             }
 
             function renderAttractions(attractions) {
                 const grid = document.getElementById('attractions-grid');
                 grid.innerHTML = attractions.map(attr => `
-                    <div class="bg-white rounded-custom overflow-hidden border border-slate-100 shadow-premium hover:-translate-y-2 transition-all duration-300">
+                    <div class="overflow-hidden transition-all duration-300" style="background: #0A0A0A; border: 1px solid rgba(255,255,255,0.06); border-radius: 24px; box-shadow: 0 10px 30px -10px #0A0A0A;">
                         <div class="h-48 overflow-hidden">
-                            <img src="${attr.image}" alt="${attr.name}" class="w-full h-full object-cover">
+                            <img src="${attr.image}" alt="${attr.name}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
                         </div>
                         <div class="p-6">
-                            <h3 class="font-bold text-xl mb-2 text-slate-800">${attr.name}</h3>
-                            <p class="text-slate-500 text-sm mb-4 line-clamp-2">${attr.description}</p>
+                            <h3 class="font-bold text-xl mb-2" style="color: #FFFFFF;">${attr.name}</h3>
+                            <p class="text-sm mb-4 line-clamp-2" style="color: rgba(255,255,255,0.7);">${attr.description}</p>
                             <div class="flex justify-between items-center">
-                                <span class="text-xs font-bold text-emerald-600 uppercase tracking-widest">${attr.tag}</span>
-                                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">${attr.entry_fee || 'Free'}</span>
+                                <span class="text-xs font-bold uppercase tracking-widest" style="color: #FFFFFF;">${attr.tag}</span>
+                                <span class="text-xs font-bold uppercase tracking-widest" style="color: rgba(255,255,255,0.7);">${attr.entry_fee || 'Free'}</span>
                             </div>
                         </div>
                     </div>
@@ -611,31 +707,40 @@
                 itineraryLoaded = true;
                 const container = document.getElementById('itinerary-timeline');
                 fetch(`/api/destination-itinerary?name=${encodeURIComponent(DEST_NAME)}&days=3`)
-                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.ok) {
+                            if (res.status === 401 || res.status === 403) {
+                                window.location.href = '/login';
+                                return;
+                            }
+                            throw new Error(`Server error (${res.status})`);
+                        }
+                        return res.json();
+                    })
                     .then(data => {
                         if (data.error) {
-                            container.innerHTML = `<div class="text-center py-12 text-slate-500">${data.error}</div>`;
+                            container.innerHTML = `<div class="text-center py-12" style="color: rgba(255,255,255,0.7);">${data.error}</div>`;
                         } else {
                             renderItinerary(data.days);
                         }
                     })
                     .catch(err => {
                         console.error('Error:', err);
-                        container.innerHTML = `<div class="text-center py-12 text-slate-500">Failed to load itinerary.</div>`;
+                        container.innerHTML = `<div class="text-center py-12" style="color: rgba(255,255,255,0.7);">Failed to load itinerary.</div>`;
                     });
             }
 
             function renderItinerary(days) {
                 const container = document.getElementById('itinerary-timeline');
-                let html = '<div class="space-y-12 pl-8 border-l-2 border-emerald-100 relative">';
+                let html = '<div class="space-y-12 pl-8 relative" style="border-left: 2px solid #0A0A0A;">';
                 days.forEach(day => {
                     html += `
                         <div class="relative">
-                            <div class="absolute -left-[2.55rem] top-0 w-5 h-5 bg-emerald-600 rounded-full border-4 border-white"></div>
+                            <div class="absolute -left-[2.55rem] top-0 w-5 h-5 rounded-full" style="background: #0A0A0A; border: 4px solid rgba(255,255,255,0.06);"></div>
                             <div class="mb-4">
-                                <span class="px-4 py-1 bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest rounded-full">Day ${day.day_number}</span>
+                                <span class="px-4 py-1 text-[10px] font-black uppercase tracking-widest rounded-full" style="background: #0A0A0A; color: #FFFFFF; border: 1px solid rgba(255,255,255,0.06);">Day ${day.day_number}</span>
                             </div>
-                            <h3 class="text-2xl font-extrabold text-slate-800 mb-6">${day.title}</h3>
+                            <h3 class="text-2xl font-extrabold mb-6" style="color: #FFFFFF;">${day.title}</h3>
                             <div class="space-y-6">
                                 ${day.activities.map(act => `
                                     <div class="flex gap-6 items-start">
@@ -643,9 +748,9 @@
                                             <img src="${act.image}" class="w-full h-full object-cover" alt="${act.name}">
                                         </div>
                                         <div>
-                                            <div class="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">${act.time}</div>
-                                            <h4 class="font-bold text-slate-800 mb-1">${act.name}</h4>
-                                            <p class="text-sm text-slate-500">${act.description}</p>
+                                            <div class="text-[10px] font-black uppercase tracking-widest mb-1" style="color: #FFFFFF;">${act.time}</div>
+                                            <h4 class="font-bold mb-1" style="color: #FFFFFF;">${act.name}</h4>
+                                            <p class="text-sm" style="color: rgba(255,255,255,0.7);">${act.description}</p>
                                         </div>
                                     </div>
                                 `).join('')}
@@ -662,17 +767,26 @@
                 galleryLoaded = true;
                 const grid = document.getElementById('gallery-grid');
                 fetch(`/api/destination-gallery?name=${encodeURIComponent(DEST_NAME)}`)
-                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.ok) {
+                            if (res.status === 401 || res.status === 403) {
+                                window.location.href = '/login';
+                                return;
+                            }
+                            throw new Error(`Server error (${res.status})`);
+                        }
+                        return res.json();
+                    })
                     .then(data => {
                         if (data.error) {
-                            grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500">${data.error}</div>`;
+                            grid.innerHTML = `<div class="col-span-full text-center py-12" style="color: rgba(255,255,255,0.7);">${data.error}</div>`;
                         } else {
                             renderGallery(data.images);
                         }
                     })
                     .catch(err => {
                         console.error('Error:', err);
-                        grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500">Failed to load gallery.</div>`;
+                        grid.innerHTML = `<div class="col-span-full text-center py-12" style="color: rgba(255,255,255,0.7);">Failed to load gallery.</div>`;
                     });
             }
 
@@ -680,7 +794,7 @@
                 const grid = document.getElementById('gallery-grid');
                 grid.innerHTML = images.map(img => `
                     <div class="gallery-item mb-4 cursor-pointer" onclick="openLightbox('${img}')">
-                        <div class="rounded-3xl overflow-hidden shadow-soft hover:shadow-premium transition-all duration-500">
+                        <div class="overflow-hidden transition-all duration-500" style="border-radius: 24px; box-shadow: 0 8px 30px #0A0A0A;">
                             <img src="${img}" class="w-full h-auto object-cover" alt="{{ data.name }} Photo">
                         </div>
                     </div>
@@ -777,7 +891,16 @@
                             history: chatHistory
                         })
                     })
-	                        .then(res => res.json())
+	                        .then(res => {
+	                            if (!res.ok) {
+	                                if (res.status === 401 || res.status === 403) {
+	                                    window.location.href = '/login';
+	                                    return;
+	                                }
+	                                throw new Error(`Server error (${res.status})`);
+	                            }
+	                            return res.json();
+	                        })
 	                        .then(data => {
 	                            removeTypingIndicator(typingId);
 	                            const reply = data.reply || "I'm sorry, I couldn't process that.";
@@ -790,11 +913,10 @@
                             removeTypingIndicator(typingId);
                             addMessage('assistant', "Oops! Something went wrong. Please try again.");
                         });
-                });
+	                });
 	            }
 
 	            function isDeletableMessage(role, text) {
-	                // User asked for delete only for specific chats (example: "PAC" questions).
 	                return role === 'user' && /\bpac\b/i.test(text || '');
 	            }
 
@@ -830,7 +952,6 @@
 	            }
 
 	            document.addEventListener('click', function (e) {
-	                // Close overflow menu when clicking outside.
 	                if (openMenuEl && !e.target.closest('.msg-menu') && !e.target.closest('[data-action=\"menu\"]')) {
 	                    closeOpenMenu();
 	                }
@@ -843,7 +964,6 @@
                     const chip = e.target.closest('.suggestion-chip');
                     if (chip) {
                         chatInput.value = chip.textContent.trim();
-                        // Trigger submit
                         chatForm.requestSubmit();
                     }
                 });
@@ -859,7 +979,7 @@
 
 	                let icon = '';
 	                if (role === 'assistant') {
-	                    icon = `<div class="w-10 h-10 bg-emerald-50 rounded-xl flex-shrink-0 flex items-center justify-center mt-2"><span class="material-symbols-outlined text-emerald-600 text-lg">smart_toy</span></div>`;
+	                    icon = `<div class="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center mt-2" style="background: #0A0A0A;"><span class="material-symbols-outlined text-lg" style="color: #FFFFFF;">smart_toy</span></div>`;
 	                }
 
 	                const userMenuBtn = isDeletableMessage(role, text) ? `
@@ -940,14 +1060,12 @@
 	                        editingTarget = { rowEl: row, textEl, originalText: text };
 	                        chatInput.value = text;
 	                        chatInput.focus();
-	                        // User asked: when editing, only "send" should remain visible.
 	                        if (attachBtn) attachBtn.classList.add('hidden');
 	                        closeOpenMenu();
 	                        return;
 	                    }
 
 	                    if (action === 'thumb-up' || action === 'thumb-down') {
-	                        // Visual-only feedback toggle (no backend in this template).
 	                        const isUp = action === 'thumb-up';
 	                        const upBtn = row.querySelector('[data-action=\"thumb-up\"]');
 	                        const downBtn = row.querySelector('[data-action=\"thumb-down\"]');
@@ -989,7 +1107,6 @@
 
 	                    if (action === 'delete') {
 	                        closeOpenMenu();
-	                        // Delete only allowed for specific user chats (e.g., "PAC" questions).
 	                        if (!isDeletableMessage(role, text)) return;
 	                        row.remove();
 	                        if (editingTarget && editingTarget.rowEl === row) {
@@ -1008,7 +1125,7 @@
                 div.id = id;
                 div.className = 'flex gap-5';
                 div.innerHTML = `
-                    <div class="w-10 h-10 bg-emerald-50 rounded-xl flex-shrink-0 flex items-center justify-center mt-2"><span class="material-symbols-outlined text-emerald-600 text-lg">smart_toy</span></div>
+                    <div class="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center mt-2" style="background: #0A0A0A;"><span class="material-symbols-outlined text-lg" style="color: #FFFFFF;">smart_toy</span></div>
                     <div class="message-bubble ai-bubble flex items-center justify-center h-14 min-w-[80px]">
                         <div class="flex gap-1.5 items-center">
                             <span class="typing-dot"></span>
@@ -1024,20 +1141,40 @@
 
             // --- Initial Save Check ---
             fetch(`/api/check-saved?name=${encodeURIComponent(DEST_NAME)}`)
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) {
+                        if (res.status === 401 || res.status === 403) {
+                            window.location.href = '/login';
+                            return;
+                        }
+                        throw new Error(`Server error (${res.status})`);
+                    }
+                    return res.json();
+                })
                 .then(data => {
                     if (data.saved) {
-                        saveBtn.classList.add('bg-white', 'text-emerald-900');
+                        saveBtn.style.background = '#0A0A0A';
+                        saveBtn.style.borderColor = 'rgba(255,255,255,0.06)';
                         saveBtn.querySelector('.material-symbols-outlined').style.fontVariationSettings = "'FILL' 1";
                         saveBtn.querySelector('.btn-text').textContent = 'Saved';
                     }
                 });
 
             fetch(`/api/check-favorite?name=${encodeURIComponent(DEST_NAME)}`)
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) {
+                        if (res.status === 401 || res.status === 403) {
+                            window.location.href = '/login';
+                            return;
+                        }
+                        throw new Error(`Server error (${res.status})`);
+                    }
+                    return res.json();
+                })
                 .then(data => {
                     if (data.favorited) {
-                        favoriteBtn.classList.add('bg-rose-100', 'text-rose-700', 'border-rose-200');
+                        favoriteBtn.style.background = '#0A0A0A';
+                        favoriteBtn.style.borderColor = 'rgba(255,255,255,0.06)';
                         favoriteBtn.querySelector('.material-symbols-outlined').style.fontVariationSettings = "'FILL' 1";
                         favoriteBtn.querySelector('.favorite-text').textContent = 'Favorited';
                     }
@@ -1059,15 +1196,26 @@
                         image_url: "{{ data.hero_image }}"
                     })
                 })
-                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.ok) {
+                            if (res.status === 401 || res.status === 403) {
+                                window.location.href = '/login';
+                                return;
+                            }
+                            throw new Error(`Server error (${res.status})`);
+                        }
+                        return res.json();
+                    })
                     .then(data => {
                         if (data.success) {
                             if (data.saved) {
-                                this.classList.add('bg-white', 'text-emerald-900');
+                                this.style.background = '#0A0A0A';
+                                this.style.borderColor = 'rgba(255,255,255,0.06)';
                                 icon.style.fontVariationSettings = "'FILL' 1";
                                 text.textContent = 'Saved';
                             } else {
-                                this.classList.remove('bg-white', 'text-emerald-900');
+                                this.style.background = '';
+                                this.style.borderColor = '';
                                 icon.style.fontVariationSettings = "'FILL' 0";
                                 text.textContent = 'Save';
                             }
@@ -1090,15 +1238,26 @@
                         image_url: "{{ data.hero_image }}"
                     })
                 })
-                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.ok) {
+                            if (res.status === 401 || res.status === 403) {
+                                window.location.href = '/login';
+                                return;
+                            }
+                            throw new Error(`Server error (${res.status})`);
+                        }
+                        return res.json();
+                    })
                     .then(data => {
                         if (data.success) {
                             if (data.favorited) {
-                                this.classList.add('bg-rose-100', 'text-rose-700', 'border-rose-200');
+                                this.style.background = '#0A0A0A';
+                                this.style.borderColor = 'rgba(255,255,255,0.06)';
                                 icon.style.fontVariationSettings = "'FILL' 1";
                                 text.textContent = 'Favorited';
                             } else {
-                                this.classList.remove('bg-rose-100', 'text-rose-700', 'border-rose-200');
+                                this.style.background = '';
+                                this.style.borderColor = '';
                                 icon.style.fontVariationSettings = "'FILL' 0";
                                 text.textContent = 'Favorite';
                             }
@@ -1136,7 +1295,7 @@
                 const voiceIcon = document.getElementById('voice-icon');
 
                 title.textContent = 'Generating Story...';
-                content.innerHTML = '<div class="flex gap-2"><span class="animate-bounce w-2 h-2 bg-emerald-400 rounded-full"></span><span class="animate-bounce w-2 h-2 bg-emerald-400 rounded-full" style="animation-delay: 0.2s"></span><span class="animate-bounce w-2 h-2 bg-emerald-400 rounded-full" style="animation-delay: 0.4s"></span></div>';
+                content.innerHTML = '<div class="flex gap-2"><span class="animate-bounce w-2 h-2 rounded-full" style="background: #0A0A0A;"></span><span class="animate-bounce w-2 h-2 rounded-full" style="background: #0A0A0A; animation-delay: 0.2s;"></span><span class="animate-bounce w-2 h-2 rounded-full" style="background: #0A0A0A; animation-delay: 0.4s;"></span></div>';
                 quote.textContent = '';
                 img.src = "https://lh3.googleusercontent.com/aida-public/AB6AXuDLKtXxuYjbFfOEc40HZ_bJ9CE78Whqg0arv2Xv-UWpf65IDRpopY29tMsftfowAiO_BaKvcgTR8JVbdqNZZr9euynw2YR9VX_h2Eesz2Z0W2YzyfmTWYDm614oHnLkmh_Kxbp1Vlwzz7eT9KadPzuPJ7ZDmL4WUIBE907oT3zedLSe86ZfyFXVQWLPKq0wK4L7fwcWelsgTAujSvllrK7zXuycXkzOH5cWGXkoSnEw9KaxoW0Ra5tRRcClc6tS8GpVtAnu92XlDprU";
                 
@@ -1147,7 +1306,16 @@
                 modal.style.display = 'flex';
 
                 fetch(`/api/get-destination-story?name=${encodeURIComponent(DEST_NAME)}`)
-                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.ok) {
+                            if (res.status === 401 || res.status === 403) {
+                                window.location.href = '/login';
+                                return;
+                            }
+                            throw new Error(`Server error (${res.status})`);
+                        }
+                        return res.json();
+                    })
                     .then(data => {
                         title.textContent = data.name;
                         content.innerHTML = data.story.split('\n\n').map(p => `<p>${p}</p>`).join('');
@@ -1177,8 +1345,8 @@
                     isPlaying = true;
                     voiceIcon.textContent = 'stop';
                     voiceBtn.classList.remove('animate-pulse');
-                    voiceBtn.classList.replace('bg-emerald-50', 'bg-red-50');
-                    voiceBtn.classList.replace('text-emerald-600', 'text-red-600');
+                    voiceBtn.style.background = '#0A0A0A';
+                    voiceBtn.style.color = '#FFFFFF';
                 };
                 currentAudio.onended = () => {
                     stopAudio();
@@ -1202,8 +1370,8 @@
                 if (voiceIcon) voiceIcon.textContent = 'play_arrow';
                 if (voiceBtn) {
                     voiceBtn.classList.remove('animate-pulse');
-                    voiceBtn.classList.replace('bg-red-50', 'bg-emerald-50');
-                    voiceBtn.classList.replace('text-red-600', 'text-emerald-600');
+                    voiceBtn.style.background = '';
+                    voiceBtn.style.color = '';
                 }
             }
 
@@ -1221,29 +1389,29 @@
 
     <!-- Story Modal -->
     <div id="story-modal">
-        <div class="bg-white w-full max-w-4xl max-h-[90vh] rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl animate-pop relative flex flex-col md:flex-row">
+        <div class="w-full max-w-4xl max-h-[90vh] overflow-hidden relative flex flex-col md:flex-row" style="background: #000000; border: 1px solid rgba(255,255,255,0.06); border-radius: 32px; box-shadow: 0 32px 80px #111111; animation: modal-pop 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;">
             <button onclick="closeStory()"
-                class="absolute top-4 right-4 md:top-8 md:right-8 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-black/5 md:bg-slate-100 text-slate-500 hover:bg-red-50 hover:text-red-500 transition-all z-20">
+                class="absolute top-4 right-4 md:top-8 md:right-8 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full z-20 transition-all" style="background: #0A0A0A; color: rgba(255,255,255,0.7);">
                 <span class="material-symbols-outlined">close</span>
             </button>
             <div class="w-full md:w-1/2 h-64 md:h-auto relative overflow-hidden shrink-0">
                 <img id="story-image" src="" alt="Destination" class="absolute inset-0 w-full h-full object-cover">
-                <div class="absolute inset-0 story-gradient opacity-20"></div>
+                <div class="absolute inset-0 story-gradient opacity-30"></div>
             </div>
-            <div class="w-full md:w-1/2 p-8 md:p-12 overflow-y-auto custom-scrollbar flex flex-col">
+            <div class="w-full md:w-1/2 p-8 md:p-12 overflow-y-auto flex flex-col">
                         <div class="flex items-center justify-between mb-3">
-                            <span class="text-[10px] font-black text-emerald-600 uppercase tracking-[0.3em] block">AI Generated Story</span>
-                            <button id="voice-btn" class="w-10 h-10 flex items-center justify-center rounded-full bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-all shadow-sm" title="Listen to Story">
+                            <span class="text-[10px] font-black uppercase tracking-[0.3em] block" style="color: #FFFFFF;">AI Generated Story</span>
+                            <button id="voice-btn" class="w-10 h-10 flex items-center justify-center rounded-full transition-all shadow-sm" style="background: #0A0A0A; color: #FFFFFF;" title="Listen to Story">
                                 <span class="material-symbols-outlined" id="voice-icon">play_arrow</span>
                             </button>
                         </div>
-                        <h2 id="story-title" class="text-4xl font-extrabold text-slate-800 tracking-tight"></h2>
+                        <h2 id="story-title" class="text-4xl font-extrabold tracking-tight" style="color: #FFFFFF;"></h2>
                     <div id="story-content"
-                        class="text-slate-600 leading-relaxed text-lg space-y-6 mb-10 max-h-[400px] overflow-y-auto pr-4 custom-scrollbar">
+                        class="leading-relaxed text-lg space-y-6 mb-10 max-h-[400px] overflow-y-auto pr-4" style="color: rgba(255,255,255,0.7);">
                         <!-- Content here -->
                     </div>
                         <div>
-                            <p id="story-quote" class="italic text-slate-400 font-medium text-lg leading-relaxed"></p>
+                            <p id="story-quote" class="italic font-medium text-lg leading-relaxed" style="color: rgba(255,255,255,0.7);"></p>
                         </div>
                     </div>
                 </div>
@@ -1252,8 +1420,8 @@
     </div>
 
     <!-- Lightbox Modal -->
-    <div id="lightbox-modal" class="fixed inset-0 z-[110] bg-slate-900/95 backdrop-blur-xl hidden flex-col items-center justify-center p-4">
-        <button onclick="closeLightbox()" class="absolute top-8 right-8 text-white hover:text-emerald-400 transition-colors z-[120]">
+    <div id="lightbox-modal" class="fixed inset-0 z-[110] hidden flex-col items-center justify-center p-4" style="background: rgba(0,0,0,0.92);">
+        <button onclick="closeLightbox()" class="absolute top-8 right-8 transition-colors z-[120]" style="color: #FFFFFF;">
             <span class="material-symbols-outlined text-4xl">close</span>
         </button>
         <div class="max-w-5xl w-full h-full flex items-center justify-center">
@@ -1264,6 +1432,7 @@
     {% include 'components/footer.html' %}
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="/static/js/background.js"></script>
 </body>
 
 </html>

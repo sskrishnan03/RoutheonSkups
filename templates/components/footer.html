@@ -1,63 +1,61 @@
-﻿<footer class="bg-white text-slate-700 border-t border-slate-100 pt-16 pb-10">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
-            <!-- Brand Column -->
-            <div class="lg:col-span-1">
-                <div class="flex items-center gap-3 mb-4">
-                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="RoutheonSkups" class="h-10 w-auto">
-                    <span class="font-bold text-xl text-slate-900">RoutheonSkups</span>
+﻿<style>
+    .ks-footer a {
+        transition: color 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .ks-footer a:hover {
+        color: rgba(255,255,255,0.7) !important;
+    }
+</style>
+<footer class="ks-footer" style="background:#000000;border-top: 1px solid rgba(255,255,255,0.08);padding:64px 0 40px;position:relative;z-index:10;">
+    <div style="max-width:1200px;margin:0 auto;padding:0 24px;">
+        <div style="display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px;">
+            <div>
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="RoutheonSkups" style="height:32px;width:auto;">
+                    <span style="font-size:18px;font-weight:700;color:#FFFFFF;letter-spacing:-0.02em;">RoutheonSkups</span>
                 </div>
-                <p class="text-sm text-slate-500 leading-relaxed mb-4">
+                <p style="font-size:13px;color:#FFFFFF;line-height:1.7;margin-bottom:16px;max-width:280px;">
                     Your personal assistant for discovering and planning the perfect Indian getaway. Crafted with love for travelers.
                 </p>
-                <div class="flex items-center gap-4 text-sm text-slate-500">
-                    <a href="mailto:Routheonskups@gmail.com" class="flex items-center gap-2 hover:text-emerald-600 transition-colors">
-                        <span class="material-symbols-outlined text-lg">email</span>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                    <a href="mailto:Routheonskups@gmail.com" style="display:flex;align-items:center;gap:8px;font-size:13px;color:#FFFFFF;text-decoration:none;transition:color 0.2s;">
+                        <span class="material-symbols-outlined" style="font-size:16px;">email</span>
                         Routheonskups@gmail.com
                     </a>
-                </div>
-                <div class="flex items-center gap-4 text-sm text-slate-500 mt-2">
-                    <a href="tel:6360080717" class="flex items-center gap-2 hover:text-emerald-600 transition-colors">
-                        <span class="material-symbols-outlined text-lg">phone</span>
+                    <a href="tel:6360080717" style="display:flex;align-items:center;gap:8px;font-size:13px;color:#FFFFFF;text-decoration:none;transition:color 0.2s;">
+                        <span class="material-symbols-outlined" style="font-size:16px;">phone</span>
                         6360080717
                     </a>
                 </div>
             </div>
 
-            <!-- Company Column -->
             <div>
-                <h4 class="font-bold text-base mb-4 text-slate-900">Company</h4>
-                <ul class="space-y-3 text-sm">
-                    <li><a href="{{ url_for('main.about') }}" class="text-slate-500 hover:text-emerald-600 transition-colors">About Us</a></li>
-                    <li><a href="{{ url_for('main.contact') }}" class="text-slate-500 hover:text-emerald-600 transition-colors">Contact</a></li>
+                <h4 style="font-size:13px;font-weight:700;color:#FFFFFF;margin-bottom:16px;letter-spacing:0.02em;">Company</h4>
+                <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:10px;">
+                    <li><a href="{{ url_for('main.about') }}" style="font-size:13px;color:#FFFFFF;text-decoration:none;transition:color 0.2s;">About Us</a></li>
+                    <li><a href="{{ url_for('main.contact') }}" style="font-size:13px;color:#FFFFFF;text-decoration:none;transition:color 0.2s;">Contact</a></li>
                 </ul>
             </div>
 
-            <!-- Explore Column -->
             <div>
-                <h4 class="font-bold text-base mb-4 text-slate-900">Explore</h4>
-                <ul class="space-y-3 text-sm">
-                    <li><a href="{{ url_for('main.explore') }}" class="text-slate-500 hover:text-emerald-600 transition-colors">Destinations</a></li>
-                    <li><a href="{{ url_for('main.plan_trip') }}" class="text-slate-500 hover:text-emerald-600 transition-colors">Plan a Trip</a></li>
-                    <li><a href="{{ url_for('main.my_trips') }}" class="text-slate-500 hover:text-emerald-600 transition-colors">My Trips</a></li>
+                <h4 style="font-size:13px;font-weight:700;color:#FFFFFF;margin-bottom:16px;letter-spacing:0.02em;">Explore</h4>
+                <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:10px;">
+                    <li><a href="{{ url_for('main.explore') }}" style="font-size:13px;color:#FFFFFF;text-decoration:none;transition:color 0.2s;">Destinations</a></li>
+                    <li><a href="{{ url_for('main.plan_trip') }}" style="font-size:13px;color:#FFFFFF;text-decoration:none;transition:color 0.2s;">Plan a Trip</a></li>
+                    <li><a href="{{ url_for('main.profile') }}#trips" style="font-size:13px;color:#FFFFFF;text-decoration:none;transition:color 0.2s;">My Trips</a></li>
                 </ul>
             </div>
 
-            <!-- Support Column -->
             <div>
-                <h4 class="font-bold text-base mb-4 text-slate-900">Support</h4>
-                <ul class="space-y-3 text-sm">
-                    <li><a href="{{ url_for('main.faq') }}" class="text-slate-500 hover:text-emerald-600 transition-colors">FAQs</a></li>
+                <h4 style="font-size:13px;font-weight:700;color:#FFFFFF;margin-bottom:16px;letter-spacing:0.02em;">Support</h4>
+                <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:10px;">
+                    <li><a href="{{ url_for('main.faq') }}" style="font-size:13px;color:#FFFFFF;text-decoration:none;transition:color 0.2s;">FAQs</a></li>
                 </ul>
             </div>
         </div>
 
-        <div class="border-t border-slate-100 pt-8">
-            <p class="text-center text-sm text-slate-400">
-                @2026 RoutheonSkups. All rights reserved. Made with ❤️ for India.
-            </p>
+        <div style="border-top: 1px solid rgba(255,255,255,0.06);padding-top:24px;text-align:center;">
+            <p style="font-size:12px;color:#FFFFFF;">&copy; 2026 RoutheonSkups. All rights reserved.</p>
         </div>
     </div>
 </footer>
-
-

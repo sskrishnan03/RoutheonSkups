@@ -1,4 +1,4 @@
-<html class="scroll-smooth" lang="en">
+﻿<html class="scroll-smooth" lang="en">
 
 <head>
     <meta charset="utf-8" />
@@ -18,35 +18,18 @@
     <!-- Leaflet Routing Machine for road routes -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js" defer></script>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: "#10B981",
-                        "slate-custom": "#0F172A",
-                        "accent-emerald": "#10B981",
-                    },
-                    fontFamily: {
-                        sans: ["Plus Jakarta Sans", "sans-serif"],
-                    },
-                    borderRadius: {
-                        'custom': '2rem',
-                    },
-                    boxShadow: {
-                        'premium': '0 20px 50px -12px rgba(0, 0, 0, 0.04)',
-                        'soft': '0 8px 30px rgba(0, 0, 0, 0.03)',
-                    }
-                },
-            },
-        };
-    </script>
-    <style type="text/tailwindcss">
-        @layer base {
-            body {
-                @apply bg-white text-slate-800 antialiased;
-            }
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/css/charcoal.css" />
+    <link rel="stylesheet" href="/static/css/tailwind-output.css">
+    <script src="/static/js/background.js" defer></script>
+    <style>
+        body {
+            font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, sans-serif;
+            background: #000000;
+            color: #FFFFFF;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
         }
         *,
         *::before,
@@ -58,11 +41,11 @@
             overflow-x: hidden;
         }
         .glass-nav {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(24px);
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
         }
         .hero-gradient {
-            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%);
+            background: linear-gradient(to top, #000000 0%, rgba(0,0,0,0) 60%);
         }
         .hero-desc-clamp {
             display: -webkit-box;
@@ -91,23 +74,54 @@
             line-height: 1.42;
         }
         .glass-pill {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 9999px;
         }
         .active-tab {
-            @apply text-emerald-600 relative after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-10 after:h-0.5 after:bg-emerald-600;
+            color: #FFFFFF;
+            position: relative;
+        }
+        .active-tab::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 2px;
+            background: #0A0A0A;
         }
         .info-card {
-            @apply bg-white p-8 rounded-custom border border-slate-50 shadow-soft hover:shadow-premium transition-all duration-500;
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 2rem;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 8px 30px #0A0A0A;
+        }
+        .info-card:hover {
+            background: #0A0A0A;
+            border-color: rgba(255,255,255,0.7);
+            box-shadow: 0 16px 48px #0A0A0A;
+            transform: translateY(-2px);
         }
         .attraction-card {
-            @apply bg-white rounded-custom overflow-hidden transition-all duration-500 cursor-pointer border border-slate-100;
-            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.04);
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 2rem;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            cursor: pointer;
+            box-shadow: 0 10px 30px -10px #0A0A0A;
         }
         .attraction-card:hover {
-            @apply -translate-y-2 border-emerald-100;
-            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.12);
+            transform: translateY(-4px);
+            border-color: rgba(255,255,255,0.7);
+            box-shadow: 0 24px 64px #111111;
         }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
@@ -129,65 +143,143 @@
             height: 600px;
         }
         .chat-shell {
-            @apply bg-white rounded-[2rem] shadow-premium border border-emerald-100/70 overflow-hidden flex flex-col mb-12;
-            background-image: radial-gradient(circle at 8% 6%, rgba(16, 185, 129, 0.10), transparent 42%), radial-gradient(circle at 92% 10%, rgba(59, 130, 246, 0.10), transparent 36%);
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 2rem;
+            overflow: hidden;
+            position: relative;
+            flex-direction: column;
+            margin-bottom: 3rem;
+            box-shadow: 0 16px 48px #0A0A0A;
+            display: flex;
         }
         .chat-header {
-            @apply border-b border-emerald-100/70;
-            background: linear-gradient(110deg, rgba(236,253,245,0.75) 0%, rgba(255,255,255,0.95) 45%, rgba(239,246,255,0.9) 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            background: #0A0A0A;
         }
         .chat-surface {
-            background:
-                linear-gradient(180deg, rgba(255,255,255,0.85), rgba(248,250,252,0.85)),
-                repeating-linear-gradient(
-                    0deg,
-                    rgba(148, 163, 184, 0.10) 0px,
-                    rgba(148, 163, 184, 0.10) 1px,
-                    transparent 1px,
-                    transparent 36px
-                );
+            background: #0A0A0A;
         }
         .suggestion-chip {
-            @apply px-5 py-2.5 bg-white border border-slate-200 rounded-full text-xs font-bold text-slate-600 hover:border-emerald-300 hover:bg-emerald-50/60 hover:text-emerald-600 transition-all shadow-sm;
+            padding: 10px 20px;
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.7);
+            transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .suggestion-chip:hover {
+            border-color: rgba(255,255,255,0.7);
+            background: #0A0A0A;
+            color: #FFFFFF;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
         }
         .message-bubble {
-            @apply rounded-[1.5rem] px-5 py-3 max-w-[85%] text-sm;
+            border-radius: 1.5rem;
+            padding: 12px 20px;
+            max-width: 85%;
+            font-size: 14px;
+            position: relative;
+            transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
         }
         .ai-bubble {
-            @apply bg-white border border-slate-100 text-slate-700 rounded-bl-none shadow-sm;
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.7);
+            border-bottom-left-radius: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
-	        .user-bubble {
-	            @apply bg-emerald-600 text-white shadow-md shadow-emerald-50 rounded-br-none;
-	        }
-	        .message-actions {
-	            /* Reserve space so bubbles don't "jump" on hover */
-	            @apply h-8 flex items-center gap-2 opacity-0 pointer-events-none transition-opacity;
-	        }
-	        .chat-row:hover .message-actions,
-	        .chat-row:focus-within .message-actions {
-	            @apply opacity-100 pointer-events-auto;
-	        }
-	        .msg-action-btn {
-	            @apply w-6 h-6 inline-flex items-center justify-center rounded-full text-slate-400 hover:text-emerald-700 hover:bg-white transition-colors;
-	        }
-	        .msg-action-btn .material-symbols-outlined {
-	            font-size: 14px;
-	        }
-	        .msg-action-btn.is-active {
-	            @apply text-emerald-700 bg-emerald-50;
-	        }
-	        .msg-menu {
-	            @apply absolute right-0 mt-2 w-44 bg-white border border-slate-100 rounded-2xl shadow-premium overflow-hidden z-20 hidden;
-	        }
-	        .msg-menu.open {
-	            @apply block;
-	        }
-	        .msg-menu-item {
-	            @apply w-full text-left px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors;
-	        }
-	        .msg-menu-item.danger {
-	            @apply text-rose-600 hover:bg-rose-50;
-	        }
+        .user-bubble {
+            background: #111111;
+            color: #FFFFFF;
+            box-shadow: 0 4px 16px #0A0A0A;
+            border-bottom-right-radius: 0;
+            overflow: hidden;
+        }
+        .message-actions {
+            height: 32px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .chat-row:hover .message-actions,
+        .chat-row:focus-within .message-actions {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .msg-action-btn {
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            color: rgba(255,255,255,0.7);
+            transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .msg-action-btn:hover {
+            color: #FFFFFF;
+            background: #0A0A0A;
+        }
+        .msg-action-btn .material-symbols-outlined {
+            font-size: 14px;
+        }
+        .msg-action-btn.is-active {
+            color: #FFFFFF;
+            background: #0A0A0A;
+        }
+        .msg-menu {
+            position: absolute;
+            right: 0;
+            margin-top: 8px;
+            width: 176px;
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            box-shadow: 0 16px 48px #0A0A0A;
+            overflow: hidden;
+            z-index: 20;
+            display: none;
+        }
+        .msg-menu.open {
+            display: block;
+        }
+        .msg-menu-item {
+            width: 100%;
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+            transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .msg-menu-item:hover {
+            background: #0A0A0A;
+            color: #FFFFFF;
+        }
+        .msg-menu-item.danger {
+            color: rgba(255,100,100,0.8);
+        }
+        .msg-menu-item.danger:hover {
+            background: rgba(255,100,100,0.1);
+            color: rgba(255,120,120,1);
+        }
         #leaflet-map {
             height: 500px;
             width: 100%;
@@ -204,21 +296,21 @@
             width: 30px;
             height: 30px;
             border-radius: 50% 50% 50% 0;
-            background: #10B981;
+            background: #111111;
             position: absolute;
             transform: rotate(-45deg);
             left: 50%;
             top: 50%;
             margin: -15px 0 0 -15px;
-            border: 2px solid white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            border: 2px solid rgba(255,255,255,0.06);
+            box-shadow: 0 4px 12px #0A0A0A;
         }
         .marker-pin::after {
             content: '';
             width: 24px;
             height: 24px;
             margin: 1px 0 0 1px;
-            background: #fff;
+            background: #0A0A0A;
             position: absolute;
             border-radius: 50%;
         }
@@ -230,18 +322,28 @@
             left: 5px;
             text-align: center;
             transform: rotate(45deg);
-            color: #10B981;
+            color: #FFFFFF;
             z-index: 100;
         }
         .floating-back-btn {
-            @apply absolute top-6 left-6 md:top-8 md:left-8 z-30 text-white/95 hover:text-white transition-all duration-300;
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            z-index: 30;
+            color: rgba(255,255,255,0.7);
+            transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
             text-shadow: 0 3px 16px rgba(0, 0, 0, 0.75);
         }
+        @media (min-width: 768px) {
+            .floating-back-btn { top: 32px; left: 32px; }
+        }
         .floating-back-btn:hover {
-            @apply -translate-y-0.5 scale-110;
+            transform: translateY(-2px) scale(1.1);
+            color: #FFFFFF;
         }
         .floating-back-btn:focus-visible {
-            @apply outline-none ring-0;
+            outline: none;
+            box-shadow: none;
         }
         #story-modal {
             display: none;
@@ -249,8 +351,7 @@
             inset: 0;
             z-index: 1000;
             padding: clamp(0.75rem, 2vw, 1.5rem);
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.6);
             overflow-y: auto;
             overflow-x: hidden;
         }
@@ -290,7 +391,7 @@
             max-width: 100%;
         }
         .story-gradient {
-            background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+            background: linear-gradient(135deg, #0A0A0A 0%, #0A0A0A 100%);
         }
         @keyframes modal-pop {
             from { opacity: 0; transform: scale(0.95) translateY(20px); }
@@ -299,19 +400,26 @@
         .animate-pop {
             animation: modal-pop 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
+        #save-btn, #favorite-btn, #share-btn, #ai-guide-btn,
+        #btn-regenerate, #btn-refresh-gallery, #btn-load-more-gallery,
+        #btn-add-to-calendar, #btn-download-itinerary-pdf {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+        }
         .custom-scrollbar::-webkit-scrollbar {
             width: 4px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f1f1;
+            background: #0A0A0A;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #10B981;
+            background: #0A0A0A;
             border-radius: 10px;
         }
         @media print {
             body.print-itinerary-only {
-                background: #fff !important;
+                background: #000000 !important;
             }
             body.print-itinerary-only > *:not(#itinerary-print-root) {
                 display: none !important;
@@ -321,8 +429,8 @@
             }
             body.print-itinerary-only #itinerary-print-root {
                 display: block !important;
-                background: #fff !important;
-                color: #111827 !important;
+                background: #000000 !important;
+                color: #FFFFFF !important;
                 width: 100% !important;
                 padding: 0 !important;
                 margin: 0 !important;
@@ -332,7 +440,7 @@
                 max-width: 920px;
                 margin: 0 auto;
                 padding: 8px 0;
-                background: #fff !important;
+                background: #000000 !important;
             }
             body.print-itinerary-only #itinerary-print-root img {
                 max-width: 100% !important;
@@ -352,6 +460,12 @@
 </head>
 
 <body>
+    <!-- Cinematic Background Layers -->
+    <div class="ks-cinema-bg"></div>
+    <div class="ks-grain"></div>
+    <div class="ks-vignette"></div>
+    <canvas id="ks-particles-canvas"></canvas>
+
     {% include 'components/navbar.html' %}
     <main class="pt-24 pb-20">
         <div class="max-w-9xl mx-auto px-6">
@@ -362,16 +476,16 @@
                 {% if data.hero_image %}
                 <img alt="{{ data.name }}" class="absolute inset-0 w-full h-full object-cover"
                     src="{{ data.hero_image }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'" />
-                <div class="absolute inset-0 bg-gradient-to-br from-emerald-600 to-teal-800" style="display:none;"></div>
+                <div class="absolute inset-0 bg-gradient-to-br from-[#0A0A0A] to-[#0A0A0A]" style="display:none;"></div>
                 {% else %}
-                <div class="absolute inset-0 bg-gradient-to-br from-emerald-600 to-teal-800"></div>
+                <div class="absolute inset-0 bg-gradient-to-br from-[#0A0A0A] to-[#0A0A0A]"></div>
                 {% endif %}
                 <div class="absolute inset-0 bg-gradient-to-r from-black/65 via-black/14 to-black/6"></div>
                 <div class="absolute inset-0 bg-gradient-to-t from-black/72 via-black/14 to-transparent"></div>
                 <div class="absolute inset-0 p-6 md:p-10 lg:p-12 flex flex-col justify-between">
                     <div class="pt-6">
                         <div
-                            class="inline-flex items-center gap-3 px-5 py-3 bg-black/35 backdrop-blur-md border border-white/15 rounded-full text-white text-sm md:text-base font-medium">
+                            class="inline-flex items-center gap-3 px-5 py-3 rounded-full text-white text-sm md:text-base font-medium" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);">
                             <span class="material-symbols-outlined text-[20px]">location_on</span>
                             <span>{{ data.country|default('India') }}</span>
                             <span class="text-white/55">›</span>
@@ -381,30 +495,30 @@
 
                     <div class="max-w-3xl">
                     <h1 class="text-5xl md:text-5xl lg:text-6xl font-extrabold text-white mb-3 leading-tight">{{ data.name }},{{ data.country|default('India') }}</h1>
-                        <div class="w-40 h-[2px] bg-white/40 mb-4"></div>
-                    <p class="text-xl md:text-1xl font-medium text-white/90 mb-3">{{ data.tagline }}</p>
+                        <div class="w-40 h-[2px] mb-4" style="background:#111111;"></div>
+                    <p class="text-xl md:text-1xl font-medium text-white mb-3">{{ data.tagline }}</p>
                     <p class="text-sm md:text-base text-white/70 max-w-xl leading-relaxed hero-desc-clamp min-h-[4.8em]">{{ data.overview_p1 }}</p>
                             <div class="mt-6 flex flex-wrap items-center gap-4">
         <button id="save-btn" type="button"
-            class="px-6 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white font-medium rounded-full hover:bg-white/20 transition flex items-center gap-2">
+            class="px-6 py-3 text-white font-medium rounded-full transition flex items-center gap-2" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);">
             <span class="material-symbols-outlined">bookmark</span>
             <span class="save-text">Save</span>
         </button>
 
         <button id="favorite-btn" type="button"
-            class="px-6 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white font-medium rounded-full hover:bg-white/20 transition flex items-center gap-2">
+            class="px-6 py-3 text-white font-medium rounded-full transition flex items-center gap-2" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);">
             <span class="material-symbols-outlined">favorite</span>
             <span class="favorite-text">Favorite</span>
         </button>
 
         <button id="share-btn" type="button"
-            class="px-6 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white font-medium rounded-full hover:bg-white/20 transition flex items-center gap-2">
+            class="px-6 py-3 text-white font-medium rounded-full transition flex items-center gap-2" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);">
             <span class="material-symbols-outlined">share</span>
             <span>Share</span>
         </button>
 
         <button id="ai-guide-btn" type="button"
-            class="px-4 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white font-medium rounded-full hover:bg-white/20 transition flex items-center gap-2">
+            class="px-4 py-3 text-white font-medium rounded-full transition flex items-center gap-2" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);">
             <span class="material-symbols-outlined">menu_book</span>
             <span>AI Story</span>
         </button>
@@ -412,23 +526,23 @@
 
 </div>
                 </div>
-                <div class="absolute inset-0 pointer-events-none border border-white/10 rounded-[2.25rem]"></div>
+                <div class="absolute inset-0 pointer-events-none rounded-[2.25rem]" style="border: 1px solid rgba(255,255,255,0.06);"></div>
             </section>
             <nav class="mb-12 flex justify-center">
-                <div class="bg-white rounded-full p-2 shadow-premium flex items-center gap-1 border border-slate-60">
+                <div class="p-2 flex items-center gap-1 border border-white/[0.06] rounded-full" style="background:#0A0A0A;box-shadow:0 16px 48px #0A0A0A;">
 	                    <button type="button" data-tab="overview"
 	                        class="tab-btn px-8 py-4 text-sm font-extrabold uppercase tracking-widest active-tab">Overview</button>
 	                    <button type="button" data-tab="attractions"
-	                        class="tab-btn px-8 py-4 text-sm font-extrabold uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors">Attractions</button>
+	                        class="tab-btn px-8 py-4 text-sm font-extrabold uppercase tracking-widest" style="color:#FFFFFF;">Attractions</button>
 	                    <button type="button" data-tab="itinerary"
-	                        class="tab-btn px-8 py-4 text-sm font-extrabold uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors">Itinerary</button>
+	                        class="tab-btn px-8 py-4 text-sm font-extrabold uppercase tracking-widest" style="color:#FFFFFF;">Itinerary</button>
 	                    <button type="button" data-tab="reach"
-	                        class="tab-btn px-8 py-4 text-sm font-extrabold uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors">How to Reach</button>
+	                        class="tab-btn px-8 py-4 text-sm font-extrabold uppercase tracking-widest" style="color:#FFFFFF;">How to Reach</button>
 	                    <button type="button" data-tab="photos"
-	                        class="tab-btn px-8 py-4 text-sm font-extrabold uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors">Photos
+	                        class="tab-btn px-8 py-4 text-sm font-extrabold uppercase tracking-widest" style="color:#FFFFFF;">Photos
 	                        &amp; Gallery</button>
 	                    <button type="button" data-tab="chat"
-	                        class="tab-btn px-8 py-4 text-sm font-extrabold uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors">AI
+	                        class="tab-btn px-8 py-4 text-sm font-extrabold uppercase tracking-widest" style="color:#FFFFFF;">AI
 	                        Chatbot</button>
                 </div>
             </nav>
@@ -440,11 +554,11 @@
                         <section class="info-card">
                             <div class="flex items-center gap-3 mb-6">
                                 <span
-                                    class="px-3 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-md uppercase tracking-wider">{{
+                                    class="px-3 py-1 text-[10px] font-bold rounded-md uppercase tracking-wider" style="background:#0A0A0A;color:#FFFFFF;">{{
                                     data.tag }}</span>
                                 <h2 class="text-3xl font-extrabold tracking-tight">About this Destination</h2>
                             </div>
-                            <div class="prose prose-slate max-w-none text-slate-600 leading-relaxed text-lg space-y-4">
+                            <div class="prose prose-slate max-w-none text-[#999999] leading-relaxed text-lg space-y-4">
                                 <p>{{ data.overview_p1 }}</p>
                                 {% if data.overview_p2 %}
                                 <p>{{ data.overview_p2 }}</p>
@@ -466,9 +580,9 @@
                                             src="{{ h.image }}" />
                                         {% else %}
                                         <div
-                                            class="w-full h-full bg-gradient-to-br from-emerald-100 to-teal-200 flex items-center justify-center">
+                                            class="w-full h-full bg-gradient-to-br from-[#0A0A0A] to-[#0A0A0A] flex items-center justify-center">
                                             <span
-                                                class="material-symbols-outlined text-emerald-500 text-4xl">photo_camera</span>
+                                                class="material-symbols-outlined text-[#E5E5E5] text-4xl">photo_camera</span>
                                         </div>
                                         {% endif %}
                                     </div>
@@ -483,33 +597,33 @@
                         <section class="info-card">
                             <div class="flex items-center justify-between mb-8">
                                 <h2 class="text-3xl font-extrabold tracking-tight">Best Time to Visit</h2>
-                                <div class="bg-emerald-600 px-6 py-2 rounded-full text-white font-bold text-sm">Peak: {{
+                                <div class="px-6 py-2 rounded-full text-white font-bold text-sm" style="background:#111111;border: 1px solid rgba(255,255,255,0.06);">Peak: {{
                                     data.best_time.peak }}</div>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                                <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                                <div class="p-6 rounded-2xl border border-white/[0.06]" style="background:#0A0A0A;">
                                     <div class="flex items-center gap-2 mb-3">
-                                        <span class="material-symbols-outlined text-amber-500">sunny</span>
+                                        <span class="material-symbols-outlined" style="color:#FFFFFF;">sunny</span>
                                         <h4 class="font-bold uppercase tracking-widest text-xs">Summer ({{
                                             data.best_time.summer.months }})</h4>
                                     </div>
-                                    <p class="text-sm text-slate-500">{{ data.best_time.summer.description }}</p>
+                                    <p class="text-sm text-[#999999]">{{ data.best_time.summer.description }}</p>
                                 </div>
-                                <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                                <div class="p-6 rounded-2xl border border-white/[0.06]" style="background:#0A0A0A;">
                                     <div class="flex items-center gap-2 mb-3">
-                                        <span class="material-symbols-outlined text-blue-500">rainy</span>
+                                        <span class="material-symbols-outlined text-[#E5E5E5]">rainy</span>
                                         <h4 class="font-bold uppercase tracking-widest text-xs">Monsoon ({{
                                             data.best_time.monsoon.months }})</h4>
                                     </div>
-                                    <p class="text-sm text-slate-500">{{ data.best_time.monsoon.description }}</p>
+                                    <p class="text-sm text-[#999999]">{{ data.best_time.monsoon.description }}</p>
                                 </div>
-                                <div class="p-6 border-2 border-emerald-100 bg-emerald-50/30 rounded-2xl">
+                                <div class="p-6 rounded-2xl border border-white/[0.06]" style="background:#0A0A0A;">
                                     <div class="flex items-center gap-2 mb-3">
-                                        <span class="material-symbols-outlined text-emerald-600">ac_unit</span>
-                                        <h4 class="font-bold uppercase tracking-widest text-xs text-emerald-700">Winter
+                                        <span class="material-symbols-outlined text-[#E5E5E5]">ac_unit</span>
+                                        <h4 class="font-bold uppercase tracking-widest text-xs text-[#E5E5E5]">Winter
                                             ({{ data.best_time.winter.months }})</h4>
                                     </div>
-                                    <p class="text-sm text-slate-600">{{ data.best_time.winter.description }}</p>
+                                    <p class="text-sm text-[#999999]">{{ data.best_time.winter.description }}</p>
                                 </div>
                             </div>
                         </section>
@@ -520,11 +634,11 @@
                             <h2 class="text-3xl font-extrabold tracking-tight mb-8">Local Flavors</h2>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {% for food in data.local_flavors %}
-                                <div class="flex items-start gap-4 p-4 bg-emerald-50/30 rounded-2xl border border-emerald-100/50">
-                                    <span class="material-symbols-outlined text-emerald-600">restaurant</span>
+                                <div class="flex items-start gap-4 p-4 rounded-2xl border" style="background:#0A0A0A;border-color:#FFFFFF;">
+                                    <span class="material-symbols-outlined text-[#E5E5E5]">restaurant</span>
                                     <div>
-                                        <h4 class="font-bold text-slate-800">{{ food.name }}</h4>
-                                        <p class="text-sm text-slate-500">{{ food.description }}</p>
+                                        <h4 class="font-bold text-[#E5E5E5]">{{ food.name }}</h4>
+                                        <p class="text-sm text-[#999999]">{{ food.description }}</p>
                                     </div>
                                 </div>
                                 {% endfor %}
@@ -539,23 +653,23 @@
                                 <div class="space-y-6">
                                     <div class="flex gap-4">
                                         <div
-                                            class="w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center shrink-0">
+                                            class="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style="background:#0A0A0A;color:#FFFFFF;">
                                             <span class="material-symbols-outlined">backpack</span>
                                         </div>
                                         <div>
                                             <h4 class="font-bold mb-1">What to Pack</h4>
-                                            <p class="text-sm text-slate-500 leading-relaxed">{{ data.guide.packing }}
+                                            <p class="text-sm text-[#999999] leading-relaxed">{{ data.guide.packing }}
                                             </p>
                                         </div>
                                     </div>
                                     <div class="flex gap-4">
                                         <div
-                                            class="w-10 h-10 bg-green-50 text-green-600 rounded-full flex items-center justify-center shrink-0">
+                                            class="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style="background:#0A0A0A;color:#FFFFFF;">
                                             <span class="material-symbols-outlined">health_and_safety</span>
                                         </div>
                                         <div>
                                             <h4 class="font-bold mb-1">Safety &amp; Wellness</h4>
-                                            <p class="text-sm text-slate-500 leading-relaxed">{{ data.guide.safety }}
+                                            <p class="text-sm text-[#999999] leading-relaxed">{{ data.guide.safety }}
                                             </p>
                                         </div>
                                     </div>
@@ -563,23 +677,23 @@
                                 <div class="space-y-6">
                                     <div class="flex gap-4">
                                         <div
-                                            class="w-10 h-10 bg-purple-50 text-purple-600 rounded-full flex items-center justify-center shrink-0">
+                                            class="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style="background:#0A0A0A;color:#FFFFFF;">
                                             <span class="material-symbols-outlined">gavel</span>
                                         </div>
                                         <div>
                                             <h4 class="font-bold mb-1">Cultural Etiquette</h4>
-                                            <p class="text-sm text-slate-500 leading-relaxed">{{ data.guide.culture }}
+                                            <p class="text-sm text-[#999999] leading-relaxed">{{ data.guide.culture }}
                                             </p>
                                         </div>
                                     </div>
                                     <div class="flex gap-4">
                                         <div
-                                            class="w-10 h-10 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center shrink-0">
+                                            class="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style="background:#0A0A0A;color:#FFFFFF;">
                                             <span class="material-symbols-outlined">payments</span>
                                         </div>
                                         <div>
                                             <h4 class="font-bold mb-1">Currency &amp; Tips</h4>
-                                            <p class="text-sm text-slate-500 leading-relaxed">{{ data.guide.money }}</p>
+                                            <p class="text-sm text-[#999999] leading-relaxed">{{ data.guide.money }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -593,38 +707,38 @@
                         <section class="info-card">
                             <div class="flex items-center justify-between mb-6">
                                 <h3 class="font-extrabold text-xl tracking-tight">Live Weather</h3>
-                                <span class="text-xs font-bold text-emerald-600 flex items-center gap-1"><span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse inline-block"></span> LIVE</span>
+                                <span class="text-xs font-bold text-[#E5E5E5] flex items-center gap-1"><span class="w-2 h-2 bg-[#0A0A0A] rounded-full animate-pulse inline-block"></span> LIVE</span>
                             </div>
                             {% if weather and weather.forecast and weather.forecast.forecastday %}
-                            <div class="flex items-center gap-5 mb-6 p-4 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100/50">
+                            <div class="flex items-center gap-5 mb-6 p-4 rounded-2xl border border-white/[0.06]" style="background:#0A0A0A;">
                                 <img src="{{ weather.forecast.forecastday[0].day.condition.icon }}" alt="weather" class="w-16 h-16" />
                                 <div>
-                                    <div class="text-4xl font-extrabold text-slate-800">{{ weather.forecast.forecastday[0].day.avgtemp_c }}°C</div>
-                                    <span class="text-emerald-600 font-bold text-sm">{{ weather.forecast.forecastday[0].day.condition.text }}</span>
+                                    <div class="text-4xl font-extrabold text-[#E5E5E5]">{{ weather.forecast.forecastday[0].day.avgtemp_c }}°C</div>
+                                    <span class="text-[#E5E5E5] font-bold text-sm">{{ weather.forecast.forecastday[0].day.condition.text }}</span>
                                 </div>
                             </div>
                             <div class="grid grid-cols-2 gap-3 mb-6">
-                                <div class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl">
-                                    <span class="material-symbols-outlined text-blue-500 text-lg">water_drop</span>
+                                <div class="flex items-center gap-2 p-3 rounded-xl" style="background:#0A0A0A;">
+                                    <span class="material-symbols-outlined text-[#E5E5E5] text-lg">water_drop</span>
                                     <div>
-                                        <p class="text-[10px] font-bold text-slate-400 uppercase">Humidity</p>
+                                        <p class="text-[10px] font-bold text-[#777777] uppercase">Humidity</p>
                                         <p class="text-sm font-bold">{{ weather.forecast.forecastday[0].day.humidity }}%</p>
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl">
-                                    <span class="material-symbols-outlined text-slate-500 text-lg">air</span>
+                                <div class="flex items-center gap-2 p-3 rounded-xl" style="background:#0A0A0A;">
+                                    <span class="material-symbols-outlined text-[#999999] text-lg">air</span>
                                     <div>
-                                        <p class="text-[10px] font-bold text-slate-400 uppercase">Wind</p>
+                                        <p class="text-[10px] font-bold text-[#777777] uppercase">Wind</p>
                                         <p class="text-sm font-bold">{{ weather.forecast.forecastday[0].day.wind_kph }} km/h</p>
                                     </div>
                                 </div>
                             </div>
                             {% if weather.forecast.forecastday|length > 1 %}
-                            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-3">5-Day Forecast</p>
+                            <p class="text-[10px] font-extrabold text-[#777777] uppercase tracking-widest mb-3">5-Day Forecast</p>
                             <div class="flex justify-between gap-1">
                                 {% for fday in weather.forecast.forecastday %}
-                                <div class="flex flex-col items-center gap-1 p-2 {% if loop.first %}bg-emerald-50 border border-emerald-100{% else %}bg-slate-50{% endif %} rounded-xl flex-1">
-                                    <span class="text-[10px] font-bold {% if loop.first %}text-emerald-600{% else %}text-slate-400{% endif %} uppercase">{{ fday.date_label }}</span>
+                                <div class="flex flex-col items-center gap-1 p-2 rounded-xl flex-1" style="{% if loop.first %}background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);{% else %}background:#0A0A0A;{% endif %}">
+                                    <span class="text-[10px] font-bold uppercase" style="{% if loop.first %}color:#FFFFFF;{% else %}color:#FFFFFF;{% endif %}">{{ fday.date_label }}</span>
                                     <img src="{{ fday.day.condition.icon }}" alt="" class="w-8 h-8" />
                                     <span class="text-xs font-extrabold">{{ fday.day.avgtemp_c }}°</span>
                                 </div>
@@ -633,10 +747,10 @@
                             {% endif %}
                             {% else %}
                             <div class="flex items-center gap-6 mb-4">
-                                <div class="text-4xl font-extrabold text-slate-300">--°C</div>
+                                <div class="text-4xl font-extrabold" style="color:#FFFFFF;">--°C</div>
                                 <div class="flex flex-col">
-                                    <span class="text-slate-400 font-bold">Weather data unavailable</span>
-                                    <span class="text-xs text-slate-300">Check server logs for details</span>
+                                    <span class="font-bold" style="color:#FFFFFF;">Weather data unavailable</span>
+                                    <span class="text-xs" style="color:#FFFFFF;">Check server logs for details</span>
                                 </div>
                             </div>
                             {% endif %}
@@ -646,21 +760,21 @@
                         <section class="info-card">
                             <div class="flex items-center justify-between mb-6">
                                 <h3 class="font-extrabold text-xl tracking-tight">Opening & Closing Times</h3>
-                                <span class="material-symbols-outlined text-emerald-600">schedule</span>
+                                <span class="material-symbols-outlined text-[#E5E5E5]">schedule</span>
                             </div>
                             {% if data.general_timings %}
-                            <div class="flex items-center gap-3 p-4 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100/50 mb-5">
-                                <span class="material-symbols-outlined text-emerald-600 text-2xl">nest_clock_farsight_analog</span>
+                            <div class="flex items-center gap-3 p-4 rounded-2xl border mb-5" style="background:#0A0A0A;border-color:#FFFFFF;">
+                                <span class="material-symbols-outlined text-[#E5E5E5] text-2xl">nest_clock_farsight_analog</span>
                                 <div>
-                                    <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">General Timings</p>
-                                    <p class="text-base font-bold text-slate-800">{{ data.general_timings }}</p>
+                                    <p class="text-[10px] font-extrabold text-[#777777] uppercase tracking-widest">General Timings</p>
+                                    <p class="text-base font-bold text-[#E5E5E5]">{{ data.general_timings }}</p>
                                 </div>
                             </div>
                             {% endif %}
                             <div id="overview-attraction-timings">
-                                <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-3">Attraction Hours</p>
+                                <p class="text-[10px] font-extrabold text-[#777777] uppercase tracking-widest mb-3">Attraction Hours</p>
                                 <div class="space-y-2 text-sm" id="overview-timings-list">
-                                    <div class="flex items-center gap-2 text-slate-400 py-2">
+                                    <div class="flex items-center gap-2 text-[#777777] py-2">
                                         <span class="material-symbols-outlined text-sm animate-spin">progress_activity</span>
                                         <span class="text-xs font-medium">Loading attraction timings...</span>
                                     </div>
@@ -674,24 +788,24 @@
                             <div class="space-y-6">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center gap-3">
-                                        <span class="material-symbols-outlined text-emerald-600">trending_up</span>
-                                        <span class="text-sm font-medium text-slate-500">Popularity Level</span>
+                                        <span class="material-symbols-outlined text-[#E5E5E5]">trending_up</span>
+                                        <span class="text-sm font-medium text-[#999999]">Popularity Level</span>
                                     </div>
                                     <span class="font-bold">{{ data.stats.popularity }}</span>
                                 </div>
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center gap-3">
-                                        <span class="material-symbols-outlined text-emerald-600">calendar_today</span>
-                                        <span class="text-sm font-medium text-slate-500">Ideal Duration</span>
+                                        <span class="material-symbols-outlined text-[#E5E5E5]">calendar_today</span>
+                                        <span class="text-sm font-medium text-[#999999]">Ideal Duration</span>
                                     </div>
                                     <span class="font-bold">{{ data.stats.ideal_duration }}</span>
                                 </div>
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center gap-3">
-                                        <span class="material-symbols-outlined text-emerald-600">star</span>
-                                        <span class="text-sm font-medium text-slate-500">Avg. Rating</span>
+                                        <span class="material-symbols-outlined text-[#E5E5E5]">star</span>
+                                        <span class="text-sm font-medium text-[#999999]">Avg. Rating</span>
                                     </div>
-                                    <span class="font-bold text-emerald-600">{{ data.stats.rating }}</span>
+                                    <span class="font-bold text-[#E5E5E5]">{{ data.stats.rating }}</span>
                                 </div>
                             </div>
                         </section>
@@ -701,12 +815,12 @@
                             <h3 class="font-extrabold text-xl tracking-tight mb-6">Quick Actions</h3>
                             <div class="space-y-3">
                                 <a href="{{ url_for('main.explore') }}"
-                                    class="w-full px-6 py-4 bg-slate-custom text-white font-bold rounded-2xl hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 no-underline">
+                                    class="w-full px-6 py-4 text-white font-bold rounded-2xl transition-colors flex items-center justify-center gap-2 no-underline" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);"
                                     <span class="material-symbols-outlined">smart_toy</span>
                                     Explore More Destinations
                                 </a>
                                 <a href="{{ url_for('main.explore') }}"
-                                    class="w-full px-6 py-4 bg-white border-2 border-slate-100 text-slate-700 font-bold rounded-2xl hover:border-emerald-500 hover:text-emerald-600 transition-colors flex items-center justify-center gap-2 no-underline">
+                                    class="w-full px-6 py-4 text-[#CCCCCC] font-bold rounded-2xl transition-colors flex items-center justify-center gap-2 no-underline" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);"
                                     <span class="material-symbols-outlined">arrow_back</span>
                                     Back to Explore
                                 </a>
@@ -724,44 +838,45 @@
                 <section class="info-card">
                     <div class="flex items-center justify-between gap-4 mb-8">
                         <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center">
-                                <span class="material-symbols-outlined text-emerald-600">navigation</span>
+                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center" style="background:#0A0A0A;">
+                                <span class="material-symbols-outlined text-[#E5E5E5]">navigation</span>
                             </div>
                             <h2 class="text-4xl font-extrabold tracking-tight">How to Reach</h2>
                         </div>
-                        <span class="hidden md:inline-flex px-4 py-2 rounded-full text-[11px] font-extrabold uppercase tracking-widest bg-emerald-50 text-emerald-700 border border-emerald-100">Smart Route Guide</span>
+                <div class="flex items-center gap-2 px-4 py-2 rounded-full" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);color:#FFFFFF;">
+                    <span class="px-4 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);">Smart Route Guide</span>
                     </div>
 
-                    <div class="rounded-[2rem] border border-slate-100 bg-gradient-to-br from-white via-emerald-50/40 to-blue-50/30 p-6 md:p-8 shadow-soft">
+                    <div class="                    rounded-[2rem] border p-6 md:p-8 shadow-soft" style="background:#0A0A0A;border-color:#FFFFFF;">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                            <div class="p-6 bg-white/85 rounded-3xl border border-slate-100 flex flex-col items-center text-center group hover:shadow-xl transition-all duration-500">
-                                <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <div class="p-6 rounded-3xl border flex flex-col items-center text-center group hover:shadow-xl transition-all duration-500" style="background:#0A0A0A;border-color:#FFFFFF;">
+                                <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform" style="background:#0A0A0A;color:#FFFFFF;">
                                     <span class="material-symbols-outlined text-3xl">flight</span>
                                 </div>
                                 <h4 class="font-extrabold text-lg mb-2">By Air</h4>
-                                <p class="text-sm text-slate-600 leading-relaxed">{{ data.how_to_reach.air }}</p>
+                                <p class="text-sm leading-relaxed" style="color:#FFFFFF;">{{ data.how_to_reach.air }}</p>
                             </div>
-                            <div class="p-6 bg-white/85 rounded-3xl border border-slate-100 flex flex-col items-center text-center group hover:shadow-xl transition-all duration-500">
-                                <div class="w-14 h-14 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <div class="p-6 rounded-3xl border flex flex-col items-center text-center group hover:shadow-xl transition-all duration-500" style="background:#0A0A0A;border-color:#FFFFFF;">
+                                <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform" style="background:#0A0A0A;color:#FFFFFF;">
                                     <span class="material-symbols-outlined text-3xl">train</span>
                                 </div>
                                 <h4 class="font-extrabold text-lg mb-2">By Rail</h4>
-                                <p class="text-sm text-slate-600 leading-relaxed">{{ data.how_to_reach.rail }}</p>
+                                <p class="text-sm leading-relaxed" style="color:#FFFFFF;">{{ data.how_to_reach.rail }}</p>
                             </div>
-                            <div class="p-6 bg-white/85 rounded-3xl border border-slate-100 flex flex-col items-center text-center group hover:shadow-xl transition-all duration-500">
-                                <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <div class="p-6 rounded-3xl border flex flex-col items-center text-center group hover:shadow-xl transition-all duration-500" style="background:#0A0A0A;border-color:#FFFFFF;">
+                                <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform" style="background:#0A0A0A;color:#FFFFFF;">
                                     <span class="material-symbols-outlined text-3xl">directions_bus</span>
                                 </div>
                                 <h4 class="font-extrabold text-lg mb-2">By Road</h4>
-                                <p class="text-sm text-slate-600 leading-relaxed">{{ data.how_to_reach.road }}</p>
+                                <p class="text-sm leading-relaxed" style="color:#FFFFFF;">{{ data.how_to_reach.road }}</p>
                             </div>
                         </div>
                         {% if data.nearby_cities %}
-                        <div class="mt-6 border-t border-emerald-100 pt-5">
-                            <p class="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-3">Nearby City Distances</p>
+                        <div class="mt-6 border-t border-white/[0.06] pt-5">
+                            <p class="text-[11px] font-extrabold text-[#777777] uppercase tracking-widest mb-3">Nearby City Distances</p>
                             <div class="flex flex-wrap gap-2">
                                 {% for city in data.nearby_cities %}
-                                <span class="px-3 py-1.5 rounded-full bg-white border border-slate-100 text-xs font-bold text-slate-600">{{ city.name }} · {{ city.distance }}</span>
+                                <span class="px-3 py-1.5 rounded-full text-xs font-bold" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);color:#FFFFFF;">{{ city.name }} · {{ city.distance }}</span>
                                 {% endfor %}
                             </div>
                         </div>
@@ -773,31 +888,31 @@
                 <section class="info-card">
                     <div class="flex items-center justify-between mb-8">
                         <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center">
-                                <span class="material-symbols-outlined text-blue-600">map</span>
+                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center" style="background:#0A0A0A;">
+                                <span class="material-symbols-outlined text-[#E5E5E5]">map</span>
                             </div>
                             <h2 class="text-4xl font-extrabold tracking-tight">Location &amp; Map</h2>
                         </div>
                         {% if data.nearby_cities %}
-                        <div class="hidden md:flex gap-4 text-xs font-bold text-slate-400 bg-slate-50 px-6 py-3 rounded-full border border-slate-100">
+                        <div class="hidden md:flex gap-4 text-xs font-bold rounded-full px-6 py-3" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);color:#FFFFFF;">
                             {% for city in data.nearby_cities %}
-                            {% if not loop.first %}<span class="text-slate-200">â€¢</span>{% endif %}
+                            {% if not loop.first %}<span style="color:#FFFFFF;">â€¢</span>{% endif %}
                             <span>{{ city.name }}: {{ city.distance }}</span>
                             {% endfor %}
                         </div>
                         {% endif %}
                     </div>
-                    <div class="relative w-full rounded-[2.5rem] overflow-hidden shadow-2xl border border-slate-100 group">
+                    <div class="relative w-full rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/[0.06] group">
                         <div id="overview-map" style="height: 500px; width: 100%;" class="rounded-[2.5rem]"></div>
-                        <div class="absolute bottom-5 left-5 p-5 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-white max-w-[260px] z-[1000] scale-95 group-hover:scale-100 transition-transform duration-500">
+                        <div                         class="absolute bottom-5 left-5 p-5 rounded-2xl shadow-xl max-w-[260px] z-[1000] scale-95 group-hover:scale-100 transition-transform duration-500" style="background:rgba(0,0,0,0.85);border: 1px solid rgba(255,255,255,0.06);">
                             <div class="flex items-center gap-3 mb-2">
-                                <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center shrink-0">
-                                    <span class="material-symbols-outlined text-emerald-600 text-sm">explore</span>
+                                <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style="background:#0A0A0A;">
+                                    <span class="material-symbols-outlined text-[#E5E5E5] text-sm">explore</span>
                                 </div>
-                                <h4 class="font-extrabold text-slate-800 text-sm tracking-tight">{{ data.name }}</h4>
+                                <h4 class="font-extrabold text-[#E5E5E5] text-sm tracking-tight">{{ data.name }}</h4>
                             </div>
-                            <p class="text-[11px] text-slate-500 font-bold tracking-widest uppercase mb-1">Global Coordinates</p>
-                            <p class="text-xs text-slate-600 font-medium leading-relaxed">{{ data.coordinates }}</p>
+                            <p class="text-[11px] text-[#999999] font-bold tracking-widest uppercase mb-1">Global Coordinates</p>
+                            <p class="text-xs text-[#999999] font-medium leading-relaxed">{{ data.coordinates }}</p>
                         </div>
                     </div>
                 </section>
@@ -808,36 +923,36 @@
             <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 overflow-x-hidden">
             <div class="max-w-xl mx-auto mb-16 relative">
                 <div class="flex items-center justify-center gap-3 mb-6">
-                    <div class="flex items-center gap-2 px-4 py-2 bg-blue-50/50 border border-blue-100/50 rounded-full animate-pulse shadow-sm">
-                        <span class="material-symbols-outlined text-blue-600 text-sm">route</span>
-                        <span class="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em]">Dijkstra Optimized Pathfinding</span>
+                    <div class="flex items-center gap-2 px-4 py-2 rounded-full animate-pulse shadow-sm" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);">
+                        <span class="material-symbols-outlined text-[#E5E5E5] text-sm">route</span>
+                        <span class="text-[10px] font-black text-[#E5E5E5] uppercase tracking-[0.2em]">Dijkstra Optimized Pathfinding</span>
                     </div>
                 </div>
             </div>
             <div id="attractions-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
                 <!-- Skeleton loading -->
                 <div class="attraction-card animate-pulse">
-                    <div class="h-64 bg-slate-200"></div>
+                    <div class="h-64" style="background:#0A0A0A;"></div>
                     <div class="p-8">
-                        <div class="h-5 bg-slate-200 rounded w-3/4 mb-3"></div>
-                        <div class="h-4 bg-slate-100 rounded w-full mb-2"></div>
-                        <div class="h-4 bg-slate-100 rounded w-2/3"></div>
+                        <div class="h-5 rounded w-3/4 mb-3" style="background:#0A0A0A;"></div>
+                        <div class="h-4 rounded w-full mb-2" style="background:#0A0A0A;"></div>
+                        <div class="h-4 rounded w-2/3" style="background:#0A0A0A;"></div>
                     </div>
                 </div>
                 <div class="attraction-card animate-pulse">
-                    <div class="h-64 bg-slate-200"></div>
+                    <div class="h-64" style="background:#0A0A0A;"></div>
                     <div class="p-8">
-                        <div class="h-5 bg-slate-200 rounded w-3/4 mb-3"></div>
-                        <div class="h-4 bg-slate-100 rounded w-full mb-2"></div>
-                        <div class="h-4 bg-slate-100 rounded w-2/3"></div>
+                        <div class="h-5 rounded w-3/4 mb-3" style="background:#0A0A0A;"></div>
+                        <div class="h-4 rounded w-full mb-2" style="background:#0A0A0A;"></div>
+                        <div class="h-4 rounded w-2/3" style="background:#0A0A0A;"></div>
                     </div>
                 </div>
                 <div class="attraction-card animate-pulse">
-                    <div class="h-64 bg-slate-200"></div>
+                    <div class="h-64" style="background:#0A0A0A;"></div>
                     <div class="p-8">
-                        <div class="h-5 bg-slate-200 rounded w-3/4 mb-3"></div>
-                        <div class="h-4 bg-slate-100 rounded w-full mb-2"></div>
-                        <div class="h-4 bg-slate-100 rounded w-2/3"></div>
+                        <div class="h-5 rounded w-3/4 mb-3" style="background:#0A0A0A;"></div>
+                        <div class="h-4 rounded w-full mb-2" style="background:#0A0A0A;"></div>
+                        <div class="h-4 rounded w-2/3" style="background:#0A0A0A;"></div>
                     </div>
                 </div>
             </div>
@@ -846,20 +961,20 @@
             <section id="attraction-map" class="mb-24" style="display:none;">
                 <div class="flex items-center justify-between mb-8">
                     <div>
-                        <h2 class="text-3xl font-extrabold tracking-tight text-slate-800">Interactive Landmark Map</h2>
-                        <p class="text-slate-500 font-medium">Navigate through the landmarks of {{ data.name }}</p>
+                        <h2 class="text-3xl font-extrabold tracking-tight text-[#E5E5E5]">Interactive Landmark Map</h2>
+                        <p class="text-[#999999] font-medium">Navigate through the landmarks of {{ data.name }}</p>
                     </div>
                 </div>
                 <div
-                    class="relative w-full rounded-custom overflow-hidden shadow-premium border border-slate-100">
+                    class="relative w-full rounded-custom overflow-hidden shadow-premium border border-white/[0.06]">
                     <div id="leaflet-map" class="rounded-custom"></div>
                     <div
-                        class="absolute bottom-8 left-8 p-6 bg-white/90 backdrop-blur rounded-custom shadow-2xl border border-white max-w-xs z-[1000]">
+                        class="absolute bottom-8 left-8 p-6 rounded-custom shadow-2xl max-w-xs z-[1000]" style="background:rgba(0,0,0,0.85);border: 1px solid rgba(255,255,255,0.06);">
                         <div class="flex items-center gap-2 mb-2">
-                            <span class="material-symbols-outlined text-emerald-600 text-lg">info</span>
-                            <h4 class="font-bold text-slate-800">Map Discovery</h4>
+                            <span class="material-symbols-outlined text-[#E5E5E5] text-lg">info</span>
+                            <h4 class="font-bold text-[#E5E5E5]">Map Discovery</h4>
                         </div>
-                        <p class="text-xs text-slate-600 leading-relaxed font-medium">Interact with the map to explore attraction
+                        <p class="text-xs text-[#999999] leading-relaxed font-medium">Interact with the map to explore attraction
                             locations. Markers represent must-visit spots.</p>
                     </div>
                 </div>
@@ -877,30 +992,30 @@
                         <!-- Skeleton loading -->
                         <div class="animate-pulse space-y-8">
                             <div class="flex items-center gap-4 mb-6">
-                                <div class="w-20 h-6 bg-slate-200 rounded-full"></div>
-                                <div class="w-40 h-6 bg-slate-100 rounded-full"></div>
+                                <div class="w-20 h-6 rounded-full" style="background:#0A0A0A;"></div>
+                                <div class="w-40 h-6 rounded-full" style="background:#0A0A0A;"></div>
                             </div>
-                            <div class="h-8 bg-slate-200 rounded w-2/3 mb-4"></div>
+                            <div class="h-8 rounded w-2/3 mb-4" style="background:#0A0A0A;"></div>
                             <div class="space-y-6">
                                 <div class="flex gap-6">
-                                    <div class="w-24 h-24 bg-slate-200 rounded-2xl"></div>
+                                    <div class="w-24 h-24 rounded-2xl" style="background:#0A0A0A;"></div>
                                     <div class="flex-1">
-                                        <div class="h-5 bg-slate-200 rounded w-3/4 mb-2"></div>
-                                        <div class="h-4 bg-slate-100 rounded w-full"></div>
+                                        <div class="h-5 rounded w-3/4 mb-2" style="background:#0A0A0A;"></div>
+                                        <div class="h-4 rounded w-full" style="background:#0A0A0A;"></div>
                                     </div>
                                 </div>
                                 <div class="flex gap-6">
-                                    <div class="w-24 h-24 bg-slate-200 rounded-2xl"></div>
+                                    <div class="w-24 h-24 rounded-2xl" style="background:#0A0A0A;"></div>
                                     <div class="flex-1">
-                                        <div class="h-5 bg-slate-200 rounded w-3/4 mb-2"></div>
-                                        <div class="h-4 bg-slate-100 rounded w-full"></div>
+                                        <div class="h-5 rounded w-3/4 mb-2" style="background:#0A0A0A;"></div>
+                                        <div class="h-4 rounded w-full" style="background:#0A0A0A;"></div>
                                     </div>
                                 </div>
                                 <div class="flex gap-6">
-                                    <div class="w-24 h-24 bg-slate-200 rounded-2xl"></div>
+                                    <div class="w-24 h-24 rounded-2xl" style="background:#0A0A0A;"></div>
                                     <div class="flex-1">
-                                        <div class="h-5 bg-slate-200 rounded w-3/4 mb-2"></div>
-                                        <div class="h-4 bg-slate-100 rounded w-full"></div>
+                                        <div class="h-5 rounded w-3/4 mb-2" style="background:#0A0A0A;"></div>
+                                        <div class="h-4 rounded w-full" style="background:#0A0A0A;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -914,7 +1029,7 @@
                     <section class="info-card" id="itinerary-weather-section">
                         <div class="flex gap-3">
                             <button id="btn-regenerate"
-                                class="flex-1 px-5 py-3 bg-emerald-600 text-white font-bold rounded-2xl hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2 text-sm">
+                                class="flex-1 px-5 py-3 font-bold rounded-2xl transition-colors flex items-center justify-center gap-2 text-sm" style="background:#0A0A0A;color:#FFFFFF;border: 1px solid rgba(255,255,255,0.06);">
                                 <span class="material-symbols-outlined text-lg">refresh</span>
                                 Regenerate Itinerary
                             </button>
@@ -923,23 +1038,23 @@
 
                     <!-- Plan Management -->
                     <section class="info-card">
-                        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-4">Plan
+                        <p class="text-[10px] font-extrabold text-[#777777] uppercase tracking-widest mb-4">Plan
                             Management</p>
                         <div class="space-y-3">
-                            <button id="btn-add-to-calendar" class="w-full flex items-center justify-between px-4 py-3 bg-slate-50 rounded-2xl hover:bg-emerald-50 transition-colors">
+                            <button id="btn-add-to-calendar" class="w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-colors" style="background:#0A0A0A;"
                                 <div class="flex items-center gap-3">
-                                    <span class="material-symbols-outlined text-emerald-600">calendar_add_on</span>
+                                    <span class="material-symbols-outlined text-[#E5E5E5]">calendar_add_on</span>
                                     <span class="font-bold text-sm">Add to My Calendar</span>
                                 </div>
-                                <span class="material-symbols-outlined text-slate-400 text-sm">chevron_right</span>
+                                <span class="material-symbols-outlined text-[#777777] text-sm">chevron_right</span>
                             </button>
                             <button id="btn-download-itinerary-pdf"
-                                class="w-full flex items-center justify-between px-4 py-3 bg-slate-50 rounded-2xl hover:bg-emerald-50 transition-colors">
+                                class="w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-colors" style="background:#0A0A0A;"
                                 <div class="flex items-center gap-3">
-                                    <span class="material-symbols-outlined text-emerald-600">picture_as_pdf</span>
+                                    <span class="material-symbols-outlined text-[#E5E5E5]">picture_as_pdf</span>
                                     <span class="font-bold text-sm">Download PDF Guide</span>
                                 </div>
-                                <span class="material-symbols-outlined text-slate-400 text-sm">chevron_right</span>
+                                <span class="material-symbols-outlined text-[#777777] text-sm">chevron_right</span>
                             </button>
                         </div>
                     </section>
@@ -947,38 +1062,38 @@
                     <section class="info-card">
                         <div class="flex items-center justify-between mb-6">
                             <h3 class="font-extrabold text-xl tracking-tight">Live Weather</h3>
-                            <span class="text-xs font-bold text-emerald-600 flex items-center gap-1"><span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse inline-block"></span> LIVE</span>
+                            <span class="text-xs font-bold text-[#E5E5E5] flex items-center gap-1"><span class="w-2 h-2 bg-[#0A0A0A] rounded-full animate-pulse inline-block"></span> LIVE</span>
                         </div>
                         {% if weather and weather.forecast and weather.forecast.forecastday %}
-                        <div class="flex items-center gap-5 mb-6 p-4 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100/50">
+                        <div class="flex items-center gap-5 mb-6 p-4 rounded-2xl border border-white/[0.06]" style="background:#0A0A0A;">
                             <img src="{{ weather.forecast.forecastday[0].day.condition.icon }}" alt="weather" class="w-16 h-16" />
                             <div>
-                                <div class="text-4xl font-extrabold text-slate-800">{{ weather.forecast.forecastday[0].day.avgtemp_c }}°C</div>
-                                <span class="text-emerald-600 font-bold text-sm">{{ weather.forecast.forecastday[0].day.condition.text }}</span>
+                                <div class="text-4xl font-extrabold text-[#E5E5E5]">{{ weather.forecast.forecastday[0].day.avgtemp_c }}°C</div>
+                                <span class="text-[#E5E5E5] font-bold text-sm">{{ weather.forecast.forecastday[0].day.condition.text }}</span>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-3 mb-6">
-                            <div class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl">
-                                <span class="material-symbols-outlined text-blue-500 text-lg">water_drop</span>
+                            <div class="flex items-center gap-2 p-3 rounded-xl" style="background:#0A0A0A;">
+                                <span class="material-symbols-outlined text-[#E5E5E5] text-lg">water_drop</span>
                                 <div>
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase">Humidity</p>
+                                    <p class="text-[10px] font-bold text-[#777777] uppercase">Humidity</p>
                                     <p class="text-sm font-bold">{{ weather.forecast.forecastday[0].day.humidity }}%</p>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl">
-                                <span class="material-symbols-outlined text-slate-500 text-lg">air</span>
+                            <div class="flex items-center gap-2 p-3 rounded-xl" style="background:#0A0A0A;">
+                                <span class="material-symbols-outlined text-[#999999] text-lg">air</span>
                                 <div>
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase">Wind</p>
+                                    <p class="text-[10px] font-bold text-[#777777] uppercase">Wind</p>
                                     <p class="text-sm font-bold">{{ weather.forecast.forecastday[0].day.wind_kph }} km/h</p>
                                 </div>
                             </div>
                         </div>
                         {% if weather.forecast.forecastday|length > 1 %}
-                        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-3">5-Day Forecast</p>
+                        <p class="text-[10px] font-extrabold text-[#777777] uppercase tracking-widest mb-3">5-Day Forecast</p>
                         <div class="flex justify-between gap-1">
                             {% for fday in weather.forecast.forecastday %}
-                            <div class="flex flex-col items-center gap-1 p-2 {% if loop.first %}bg-emerald-50 border border-emerald-100{% else %}bg-slate-50{% endif %} rounded-xl flex-1">
-                                <span class="text-[10px] font-bold {% if loop.first %}text-emerald-600{% else %}text-slate-400{% endif %} uppercase">{{ fday.date_label }}</span>
+                            <div class="flex flex-col items-center gap-1 p-2 rounded-xl flex-1" style="{% if loop.first %}background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);{% else %}background:#0A0A0A;{% endif %}">
+                                <span class="text-[10px] font-bold uppercase" style="{% if loop.first %}color:#FFFFFF;{% else %}color:#FFFFFF;{% endif %}">{{ fday.date_label }}</span>
                                 <img src="{{ fday.day.condition.icon }}" alt="" class="w-8 h-8" />
                                 <span class="text-xs font-extrabold">{{ fday.day.avgtemp_c }}°</span>
                             </div>
@@ -987,18 +1102,18 @@
                         {% endif %}
                         {% else %}
                         <div class="flex items-center gap-6 mb-4">
-                            <div class="text-4xl font-extrabold text-slate-300">--°C</div>
+                            <div class="text-4xl font-extrabold" style="color:#FFFFFF;">--°C</div>
                             <div class="flex flex-col">
-                                <span class="text-slate-400 font-bold">Weather data unavailable</span>
-                                <span class="text-xs text-slate-300">Check server logs for details</span>
+                                <span class="font-bold" style="color:#FFFFFF;">Weather data unavailable</span>
+                                <span class="text-xs" style="color:#FFFFFF;">Check server logs for details</span>
                             </div>
                         </div>
                         {% endif %}
                     </section>
 
                     <section class="info-card" id="itinerary-route-map" style="display:none;">
-                        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-4">Route Intelligence Map</p>
-                        <div class="relative h-[300px] rounded-2xl overflow-hidden shadow-soft border border-slate-50">
+                        <p class="text-[10px] font-extrabold text-[#777777] uppercase tracking-widest mb-4">Route Intelligence Map</p>
+                            <div class="relative h-[300px] rounded-2xl overflow-hidden shadow-soft" style="border: 1px solid rgba(255,255,255,0.06);">
                             <div id="itinerary-leaflet-map" class="w-full h-full"></div>
                         </div>
                     </section>
@@ -1013,22 +1128,22 @@
 	            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
 	                <div>
 	                    <h2 class="text-3xl font-extrabold tracking-tight">Photo Gallery</h2>
-	                    <p class="text-slate-500 font-medium" id="gallery-count">Curated photos of {{ data.name }}</p>
+	                    <p class="text-[#999999] font-medium" id="gallery-count">Curated photos of {{ data.name }}</p>
 	                </div>
 	                <button id="btn-refresh-gallery" type="button"
-	                    class="px-6 py-3 bg-emerald-600 text-white text-sm font-bold rounded-full hover:bg-emerald-700 transition-colors flex items-center gap-2 w-fit">
+	                    class="px-6 py-3 text-sm font-bold rounded-full transition-colors flex items-center gap-2 w-fit" style="background:#0A0A0A;color:#FFFFFF;border: 1px solid rgba(255,255,255,0.06);"
 	                    <span class="material-symbols-outlined text-lg">refresh</span>
 	                    Refresh
 	                </button>
 	            </div>
 	            <!-- Gallery Grid -->
 	            <div id="gallery-grid" class="masonry-grid">
-                    <div class="text-center py-12 text-slate-400 font-semibold">Photos will appear here.</div>
+                    <div class="text-center py-12 text-[#777777] font-semibold">Photos will appear here.</div>
              </div>
             <!-- Load More -->
 	            <div class="text-center mt-12" id="gallery-load-more" style="display:none;">
 	                <button id="btn-load-more-gallery" type="button"
-	                    class="px-10 py-4 bg-emerald-600 text-white font-bold rounded-full hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-100 flex items-center gap-2 mx-auto">
+	                    class="px-10 py-4 font-bold rounded-full transition-colors flex items-center gap-2 mx-auto" style="background:#0A0A0A;color:#FFFFFF;border: 1px solid rgba(255,255,255,0.06);box-shadow:0 8px 32px #0A0A0A;"
 	                    <span class="material-symbols-outlined">add_photo_alternate</span>
 	                    Load More Photos
 	                </button>
@@ -1044,22 +1159,22 @@
                     <div class="flex items-center gap-4">
                         <div class="relative">
                             <div
-                                class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center border border-emerald-100">
-                                <span class="material-symbols-outlined text-emerald-600 text-2xl">smart_toy</span>
+                                class="w-12 h-12 rounded-2xl flex items-center justify-center border" style="background:#0A0A0A;border-color:#FFFFFF;">
+                                <span class="material-symbols-outlined text-[#E5E5E5] text-2xl">smart_toy</span>
                             </div>
                             <div
-                                class="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 border-[3px] border-white rounded-full">
+                                class="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full" style="background:#0A0A0A;border: 3px solid rgba(255,255,255,0.06);">
                             </div>
                         </div>
                         <div>
-                            <h3 class="font-extrabold text-lg text-slate-800">Skupheon AI</h3>
-                            <p class="text-[10px] font-black text-emerald-600 uppercase tracking-widest">{{ data.name }}
+                            <h3 class="font-extrabold text-lg text-[#E5E5E5]">Skupheon AI</h3>
+                            <p class="text-[10px] font-black text-[#E5E5E5] uppercase tracking-widest">{{ data.name }}
                                 Expert Guide</p>
                         </div>
                     </div>
                     <div class="flex gap-2">
                         <button id="chat-reset"
-                            class="w-9 h-9 flex items-center justify-center hover:bg-slate-50 rounded-full text-slate-400 transition-colors"
+                            class="w-9 h-9 flex items-center justify-center rounded-full transition-colors" style="color:#FFFFFF;" onmouseover="this.style.background='#0A0A0A'" onmouseout="this.style.background='none'"
                             title="Reset Chat">
                             <span class="material-symbols-outlined text-xl">restart_alt</span>
                         </button>
@@ -1070,9 +1185,9 @@
 	                <div id="chat-messages" class="chat-container chat-surface overflow-y-auto p-8 flex flex-col gap-6">
 	                    <!-- Initial AI Message -->
 	                    <div class="chat-row flex gap-4" data-role="assistant" data-msg-id="initial-assistant">
-	                        <div class="w-8 h-8 bg-emerald-50 rounded-lg flex-shrink-0 flex items-center justify-center mt-1">
-	                            <span class="material-symbols-outlined text-emerald-600 text-sm">smart_toy</span>
-	                        </div>
+	                            <div class="w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center mt-1" style="background:#0A0A0A;">
+	                                <span class="material-symbols-outlined text-[#E5E5E5] text-sm">smart_toy</span>
+	                            </div>
 	                        <div class="flex flex-col gap-2 max-w-[85%]">
 	                            <div class="message-bubble ai-bubble">
 	                                <p class="leading-relaxed">Namaste! I'm your Skupheon AI guide for {{ data.name }}. I can help you uncover hidden gems, find the best local food, or plan your perfect day here. What would you like to know?</p>
@@ -1114,14 +1229,14 @@
                 </div>
 
                 <!-- Chat Input Area -->
-                <div class="px-8 py-8 bg-white border-t border-slate-100">
-		                    <form id="chat-form" data-no-loader="true" onsubmit="return false;"
-	                        class="relative bg-slate-50 rounded-2xl p-2 border border-slate-100 flex items-center gap-2 focus-within:border-emerald-400 focus-within:ring-4 focus-within:ring-emerald-50 transition-all">
+                <div class="px-8 py-8 border-t" style="background:#0A0A0A;border-color:#FFFFFF;">
+	                    <form id="chat-form" data-no-loader="true" onsubmit="return false;"
+	                        class="relative rounded-2xl p-2 flex items-center gap-2" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);transition:all 0.35s cubic-bezier(0.22,1,0.36,1);" onfocus="this.style.borderColor = 'rgba(255,255,255,0.06)';this.style.boxShadow='0 0 0 4px #0A0A0A'" onblur="this.style.borderColor = 'rgba(255,255,255,0.06)';this.style.boxShadow='none'">
                         <input id="chat-input" type="text"
-                            class="w-full bg-transparent border-none focus:ring-0 text-slate-700 font-semibold px-4 placeholder:text-slate-300 text-sm"
+                            class="w-full bg-transparent border-none focus:ring-0 text-[#CCCCCC] font-semibold px-4 placeholder:text-[#999999] text-sm"
                             placeholder="Ask anything about {{ data.name }}..." autocomplete="off">
                         <button type="submit"
-                            class="w-12 h-12 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200 flex items-center justify-center group shrink-0">
+                            class="w-12 h-12 rounded-xl transition-all flex items-center justify-center group shrink-0" style="background:#111111;color:#FFFFFF;border: 1px solid rgba(255,255,255,0.06);box-shadow:0 8px 32px #0A0A0A;"
                             <span
                                 class="material-symbols-outlined group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">send</span>
                         </button>
@@ -1165,10 +1280,10 @@
                     // Update button styles
                     tabBtns.forEach(b => {
                         b.classList.remove('active-tab');
-                        b.classList.add('text-slate-400');
+                        b.style.color = '#FFFFFF';
                     });
                     this.classList.add('active-tab');
-                    this.classList.remove('text-slate-400');
+                    this.style.color = '';
                     // Show correct tab content
                     tabContents.forEach(tc => tc.classList.remove('active'));
                     const target = document.getElementById('tab-' + tabId);
@@ -1205,7 +1320,16 @@
             function loadAttractions() {
                 attractionsLoaded = true;
                 fetch(`/api/destination-attractions?name=${encodeURIComponent(DEST_NAME)}`)
-                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.ok) {
+                            if (res.status === 401 || res.status === 403) {
+                                window.location.href = '/login';
+                                return;
+                            }
+                            throw new Error(`Server error (${res.status})`);
+                        }
+                        return res.json();
+                    })
                     .then(data => {
                         if (data.error) {
                             showAttractionError(data.error);
@@ -1235,9 +1359,9 @@
                 if (!attractions.length) {
                     grid.innerHTML = `
 <div class="col-span-full text-center py-16">
-    <span class="material-symbols-outlined text-[64px] text-slate-300 mb-4 block">travel_explore</span>
-    <h3 class="text-xl font-bold text-slate-700 mb-2">No attractions available right now</h3>
-    <p class="text-slate-500">Please try again in a moment.</p>
+    <span class="material-symbols-outlined text-[64px] text-[#999999] mb-4 block">travel_explore</span>
+    <h3 class="text-xl font-bold text-[#CCCCCC] mb-2">No attractions available right now</h3>
+    <p class="text-[#999999]">Please try again in a moment.</p>
 </div>`;
                     return;
                 }
@@ -1246,27 +1370,27 @@
 <div class="attraction-card group" data-attraction-index="${idx}">
     <div class="relative h-64">
         <img alt="${attr.name}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="${attr.image || ''}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80'"/>
-        <div class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-emerald-700">${attr.tag || 'Attraction'}</div>
+        <div class="absolute top-4 right-4  px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider" style="background:rgba(0,0,0,0.85);color:#FFFFFF;border: 1px solid rgba(255,255,255,0.06);">${attr.tag || 'Attraction'}</div>
     </div>
     <div class="p-8">
         <div class="flex justify-between items-start mb-4">
             <div>
-                <h3 class="text-xl font-bold text-slate-800">${attr.name}</h3>
-                <p class="text-slate-500 text-xs flex items-center gap-1 mt-1">
-                    <span class="material-symbols-outlined text-xs text-emerald-600">location_on</span>
+                <h3 class="text-xl font-bold text-[#E5E5E5]">${attr.name}</h3>
+                <p class="text-[#999999] text-xs flex items-center gap-1 mt-1">
+                    <span class="material-symbols-outlined text-xs text-[#E5E5E5]">location_on</span>
                     ${attr.location || DEST_NAME}
                 </p>
             </div>
         </div>
-        <p class="text-slate-600 text-sm leading-relaxed mb-6 line-clamp-2">${attr.description || ''}</p>
+        <p class="text-[#999999] text-sm leading-relaxed mb-6 line-clamp-2">${attr.description || ''}</p>
         <div class="flex flex-col gap-2 mb-6">
-            <div class="flex items-center gap-2 text-xs font-semibold text-slate-500">
-                <span class="material-symbols-outlined text-sm text-emerald-600">schedule</span>
+            <div class="flex items-center gap-2 text-xs font-semibold text-[#999999]">
+                <span class="material-symbols-outlined text-sm text-[#E5E5E5]">schedule</span>
                 ${normalizeTiming(attr)}
             </div>
         </div>
-        <div class="flex items-center justify-between border-t border-slate-50 pt-6">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">${attr.entry_fee || 'Info N/A'}</span>
+        <div class="flex items-center justify-between pt-6" style="border-top: 1px solid rgba(255,255,255,0.06);">
+            <span class="text-xs font-bold text-[#777777] uppercase tracking-widest">${attr.entry_fee || 'Info N/A'}</span>
         </div>
     </div>
 </div>`).join('');
@@ -1301,16 +1425,16 @@
                     return text || 'Check local timing';
                 };
                 if (attractions.length === 0) {
-                    list.innerHTML = '<p class="text-xs text-slate-400">No attraction data available</p>';
+                    list.innerHTML = '<p class="text-xs text-[#777777]">No attraction data available</p>';
                     return;
                 }
                 list.innerHTML = attractions.map((attr, idx) => `
-                    <div class="flex items-center justify-between py-2 px-1 border-b border-slate-50 last:border-0 cursor-pointer hover:bg-slate-50 hover:pl-2 transition-all duration-200 rounded" onclick="clickSidebarAttraction(${idx})">
+                    <div class="flex items-center justify-between py-2 px-1 last:border-0 cursor-pointer transition-all duration-200 rounded" style="border-bottom: 1px solid rgba(255,255,255,0.06);" onmouseover="this.style.background='#0A0A0A';this.style.paddingLeft='8px'" onmouseout="this.style.background='';this.style.paddingLeft='4px'" onclick="clickSidebarAttraction(${idx})">
                         <div class="flex items-center gap-2 min-w-0">
-                            <span class="material-symbols-outlined text-emerald-600 text-sm shrink-0">location_on</span>
-                            <span class="text-xs font-semibold text-slate-700 truncate">${attr.name}</span>
+                            <span class="material-symbols-outlined text-[#E5E5E5] text-sm shrink-0">location_on</span>
+                            <span class="text-xs font-semibold text-[#CCCCCC] truncate">${attr.name}</span>
                         </div>
-                        <span class="text-[11px] font-bold ${normalizeTiming(attr) !== 'Check local timing' ? 'text-emerald-600' : 'text-slate-400'} shrink-0 ml-2 whitespace-nowrap">${normalizeTiming(attr)}</span>
+                        <span class="text-[11px] font-bold ${normalizeTiming(attr) !== 'Check local timing' ? 'text-[#E5E5E5]' : 'text-[#777777]'} shrink-0 ml-2 whitespace-nowrap">${normalizeTiming(attr)}</span>
                     </div>
                 `).join('');
             }
@@ -1472,15 +1596,15 @@
                 const imageUrl = normalizeImage(item, placeName);
 
                 return `
-                    <div style="width:260px;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 12px 28px rgba(15,23,42,0.18);font-family:Plus Jakarta Sans,system-ui,sans-serif;">
+                    <div style="width:260px;border-radius:14px;overflow:hidden;background: #0A0A0A;box-shadow:0 12px 28px rgba(15,23,42,0.18);font-family:Plus Jakarta Sans,system-ui,sans-serif;">
                         <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(placeName)}" style="width:100%;height:120px;object-fit:cover;" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=900&q=80';" />
                         <div style="padding:10px 12px;">
-                            <h4 style="margin:0 0 2px 0;font-size:15px;font-weight:800;color:#0f172a;">${escapeHtml(placeName)}</h4>
-                            <p style="margin:0 0 8px 0;font-size:11px;font-weight:700;color:#2563eb;">Category: ${escapeHtml(category)}</p>
-                            <p style="margin:0 0 9px 0;font-size:11px;line-height:1.45;color:#475569;">${escapeHtml(description)}</p>
+                            <h4 style="margin:0 0 2px 0;font-size:15px;font-weight:800;color:#FFFFFF;">${escapeHtml(placeName)}</h4>
+                            <p style="margin:0 0 8px 0;font-size:11px;font-weight:700;color:#888888;">Category: ${escapeHtml(category)}</p>
+                            <p style="margin:0 0 9px 0;font-size:11px;line-height:1.45;color:#BBBBBB;">${escapeHtml(description)}</p>
                             <div style="display:flex;justify-content:space-between;gap:8px;">
-                                <div style="font-size:10px;color:#334155;"><span style="font-weight:700;">Best time:</span> ${escapeHtml(bestTime)}</div>
-                                <div style="font-size:10px;color:#334155;text-align:right;"><span style="font-weight:700;">⏱</span> ${escapeHtml(duration)}</div>
+                                <div style="font-size:10px;color:#BBBBBB;"><span style="font-weight:700;">Best time:</span> ${escapeHtml(bestTime)}</div>
+                                <div style="font-size:10px;color:#BBBBBB;text-align:right;"><span style="font-weight:700;">⏱</span> ${escapeHtml(duration)}</div>
                             </div>
                         </div>
                     </div>
@@ -1492,7 +1616,7 @@
                 if (!waypoints || waypoints.length < 2) return;
                 if (typeof L.Routing === 'undefined') {
                     // If routing plugin not loaded yet, draw a dashed polyline fallback
-                    L.polyline(waypoints, { color: color || '#10B981', weight: 4, opacity: 0.6, dashArray: '10, 10' }).addTo(map);
+                    L.polyline(waypoints, { color: color || '#0A0A0A', weight: 4, opacity: 0.6, dashArray: '10, 10' }).addTo(map);
                     return;
                 }
                 try {
@@ -1505,7 +1629,7 @@
                         show: false,            // Hide the text directions panel
                         createMarker: () => null, // Don't create default markers (we have custom ones)
                         lineOptions: {
-                            styles: [{ color: color || '#10B981', weight: 5, opacity: 0.7 }]
+                            styles: [{ color: color || '#0A0A0A', weight: 5, opacity: 0.7 }]
                         },
                         router: L.Routing.osrmv1({
                             serviceUrl: 'https://router.project-osrm.org/route/v1'
@@ -1518,7 +1642,7 @@
                     });
                 } catch(e) {
                     console.warn('Routing failed, falling back to polyline:', e);
-                    L.polyline(waypoints, { color: color || '#10B981', weight: 4, opacity: 0.6, dashArray: '10, 10' }).addTo(map);
+                    L.polyline(waypoints, { color: color || '#0A0A0A', weight: 4, opacity: 0.6, dashArray: '10, 10' }).addTo(map);
                 }
             }
 
@@ -1570,7 +1694,7 @@
 
                         // Draw route between attractions using road-following routing
                         if (routeWaypoints.length >= 2) {
-                            addRoute(map, routeWaypoints, '#10B981');
+                            addRoute(map, routeWaypoints, '#0A0A0A');
                         }
 
                         map._markerByKey = markerByKey;
@@ -1638,10 +1762,10 @@
                 const grid = document.getElementById('attractions-grid');
                 grid.innerHTML = `
 <div class="col-span-full text-center py-16">
-    <span class="material-symbols-outlined text-[64px] text-red-300 mb-4 block">error</span>
-    <h3 class="text-xl font-bold text-slate-700 mb-2">Could not load attractions</h3>
-    <p class="text-slate-500">${msg}</p>
-    <button onclick="location.reload()" class="mt-4 px-6 py-2 bg-emerald-600 text-white rounded-full font-bold hover:bg-emerald-700 transition-colors">Try Again</button>
+    <span class="material-symbols-outlined text-[64px] mb-4 block" style="color:#FFFFFF;">error</span>
+    <h3 class="text-xl font-bold text-[#CCCCCC] mb-2">Could not load attractions</h3>
+    <p class="text-[#999999]">${msg}</p>
+    <button onclick="location.reload()" class="mt-4 px-6 py-2 text-white rounded-full font-bold transition-colors" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);">Try Again</button>
 </div>`;
             }
 
@@ -1673,7 +1797,16 @@
                     params.set('regen', String(Date.now()));
                 }
                 fetch(`/api/destination-itinerary?${params.toString()}`, { cache: 'no-store' })
-                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.ok) {
+                            if (res.status === 401 || res.status === 403) {
+                                window.location.href = '/login';
+                                return;
+                            }
+                            throw new Error(`Server error (${res.status})`);
+                        }
+                        return res.json();
+                    })
                     .then(data => {
                         if (data.error) {
                             showItineraryError(data.error);
@@ -1692,20 +1825,20 @@
                 const timeline = document.getElementById('itinerary-timeline');
                 const days = data.days || [];
 
-                let html = '<div class="relative pl-8 border-l-2 border-emerald-200 space-y-16">';
+                let html = '                <div class="relative pl-8 space-y-16" style="border-left:2px solid #0A0A0A;">';
 
                 days.forEach((day, dayIdx) => {
                     html += `
 <div class="relative">
-    <div class="absolute -left-[2.55rem] top-0 w-5 h-5 bg-emerald-600 rounded-full border-4 border-white shadow"></div>
+    <div class="absolute -left-[2.55rem] top-0 w-5 h-5 rounded-full shadow" style="background:#111111;border: 4px solid rgba(255,255,255,0.06);"></div>
     <div class="flex items-center gap-4 mb-6">
         <span class="px-4 py-1 bg-slate-custom text-white text-[10px] font-extrabold uppercase tracking-widest rounded-full">Day ${String(day.day_number).padStart(2, '0')}</span>
-        <span class="flex items-center gap-2 text-xs font-bold text-slate-400">
-            <span class="material-symbols-outlined text-sm">thermostat</span>
+                    <span class="flex items-center gap-2 text-xs font-bold" style="color:#FFFFFF;">
+                            <span class="material-symbols-outlined text-sm">thermostat</span>
             ${day.weather_note || ''}
         </span>
     </div>
-    <h3 class="text-2xl font-extrabold tracking-tight text-slate-800 mb-8">${day.title}</h3>
+    <h3 class="text-2xl font-extrabold tracking-tight text-[#E5E5E5] mb-8">${day.title}</h3>
     <div class="space-y-6">`;
 
                     (day.activities || []).forEach((act, actIdx) => {
@@ -1715,9 +1848,9 @@
             <img alt="${act.name}" class="w-full h-full object-cover transition-transform group-hover:scale-110" src="${act.image || ''}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80'"/>
         </div>
         <div class="flex-1">
-            <span class="text-[10px] font-extrabold text-emerald-600 uppercase tracking-widest">${act.time || ''}</span>
-            <h4 class="text-lg font-bold text-slate-800 mb-1">${act.name}</h4>
-            <p class="text-sm text-slate-500 leading-relaxed">${act.description || ''}</p>
+            <span class="text-[10px] font-extrabold text-[#E5E5E5] uppercase tracking-widest">${act.time || ''}</span>
+            <h4 class="text-lg font-bold text-[#E5E5E5] mb-1">${act.name}</h4>
+            <p class="text-sm text-[#999999] leading-relaxed">${act.description || ''}</p>
         </div>
     </div>`;
                     });
@@ -1753,7 +1886,7 @@
                         const markers = [];
                         const coords = [];
                         const markerByKey = new Map();
-                        const dayColors = ['#10B981', '#3B82F6', '#8B5CF6', '#F59E0B', '#EF4444'];
+                        const dayColors = ['#0A0A0A', '#111111', '#0A0A0A', '#0A0A0A', '#0A0A0A'];
                         let actIndex = 0;
                         
                         const usedCoords = new Map();
@@ -1766,7 +1899,7 @@
                                     const latlng = spreadOverlappingLatLng(parsedLatLng, usedCoords, 0.00035);
                                     const numberIcon = L.divIcon({
                                         className: 'custom-div-icon',
-                                        html: `<div style="background:${dayColors[dayIdx % dayColors.length]};color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3)">${actIndex}</div>`,
+                                        html: `<div style="background:${dayColors[dayIdx % dayColors.length]};color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;border:2px solid white;box-shadow:0 2px 8px #0A0A0A">${actIndex}</div>`,
                                         iconSize: [28, 28],
                                         iconAnchor: [14, 14]
                                     });
@@ -1978,10 +2111,10 @@
                 const timeline = document.getElementById('itinerary-timeline');
                 timeline.innerHTML = `
 <div class="text-center py-16">
-    <span class="material-symbols-outlined text-[64px] text-red-300 mb-4 block">error</span>
-    <h3 class="text-xl font-bold text-slate-700 mb-2">Could not generate itinerary</h3>
-    <p class="text-slate-500">${msg}</p>
-    <button onclick="location.reload()" class="mt-4 px-6 py-2 bg-emerald-600 text-white rounded-full font-bold hover:bg-emerald-700 transition-colors">Try Again</button>
+    <span class="material-symbols-outlined text-[64px] mb-4 block" style="color:#FFFFFF;">error</span>
+    <h3 class="text-xl font-bold text-[#CCCCCC] mb-2">Could not generate itinerary</h3>
+    <p class="text-[#999999]">${msg}</p>
+    <button onclick="location.reload()" class="mt-4 px-6 py-2 text-white rounded-full font-bold transition-colors" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);">Try Again</button>
 </div>`;
             }
 
@@ -1991,7 +2124,7 @@
                 regenBtn.addEventListener('click', function () {
                     itineraryLoaded = false;
                     const timeline = document.getElementById('itinerary-timeline');
-                    timeline.innerHTML = '<div class="animate-pulse space-y-8"><div class="flex items-center gap-4 mb-6"><div class="w-20 h-6 bg-slate-200 rounded-full"></div><div class="w-40 h-6 bg-slate-100 rounded-full"></div></div><div class="h-8 bg-slate-200 rounded w-2/3 mb-4"></div><div class="space-y-6"><div class="flex gap-6"><div class="w-24 h-24 bg-slate-200 rounded-2xl"></div><div class="flex-1"><div class="h-5 bg-slate-200 rounded w-3/4 mb-2"></div><div class="h-4 bg-slate-100 rounded w-full"></div></div></div><div class="flex gap-6"><div class="w-24 h-24 bg-slate-200 rounded-2xl"></div><div class="flex-1"><div class="h-5 bg-slate-200 rounded w-3/4 mb-2"></div><div class="h-4 bg-slate-100 rounded w-full"></div></div></div></div></div>';
+                    timeline.innerHTML = '<div class="animate-pulse space-y-8"><div class="flex items-center gap-4 mb-6"><div class="w-20 h-6 rounded-full" style="background:#0A0A0A"></div><div class="w-40 h-6 rounded-full" style="background:#0A0A0A"></div></div><div class="h-8 rounded w-2/3 mb-4" style="background:#0A0A0A"></div><div class="space-y-6"><div class="flex gap-6"><div class="w-24 h-24 rounded-2xl" style="background:#0A0A0A"></div><div class="flex-1"><div class="h-5 rounded w-3/4 mb-2" style="background:#0A0A0A"></div><div class="h-4 rounded w-full" style="background:#0A0A0A"></div></div></div><div class="flex gap-6"><div class="w-24 h-24 rounded-2xl" style="background:#0A0A0A"></div><div class="flex-1"><div class="h-5 rounded w-3/4 mb-2" style="background:#0A0A0A"></div><div class="h-4 rounded w-full" style="background:#0A0A0A"></div></div></div></div></div>';
                     loadItinerary(true);
                 });
             }
@@ -2009,7 +2142,16 @@
             function loadGallery() {
                 galleryLoaded = true;
                 fetch(`/api/destination-gallery?name=${encodeURIComponent(DEST_NAME)}`)
-                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.ok) {
+                            if (res.status === 401 || res.status === 403) {
+                                window.location.href = '/login';
+                                return;
+                            }
+                            throw new Error(`Server error (${res.status})`);
+                        }
+                        return res.json();
+                    })
                     .then(data => {
                         if (data.error) {
                             showGalleryError(data.error);
@@ -2041,7 +2183,7 @@
         <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300"></div>
         <div class="absolute bottom-0 left-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div class="flex items-center gap-2">
-                <span class="px-3 py-1 bg-white/90 backdrop-blur text-[10px] font-bold text-slate-700 rounded-full">${DEST_NAME}</span>
+                <span class="px-3 py-1  text-[10px] font-bold rounded-full" style="background:rgba(0,0,0,0.85);color:#FFFFFF;">${DEST_NAME}</span>
             </div>
         </div>
     </div>
@@ -2057,10 +2199,10 @@
                 const grid = document.getElementById('gallery-grid');
                 grid.innerHTML = `
 <div class="col-span-full text-center py-16">
-    <span class="material-symbols-outlined text-[64px] text-red-300 mb-4 block">error</span>
-    <h3 class="text-xl font-bold text-slate-700 mb-2">Could not load gallery</h3>
-    <p class="text-slate-500">${msg}</p>
-    <button onclick="location.reload()" class="mt-4 px-6 py-2 bg-emerald-600 text-white rounded-full font-bold hover:bg-emerald-700 transition-colors">Try Again</button>
+    <span class="material-symbols-outlined text-[64px] mb-4 block" style="color:#FFFFFF;">error</span>
+    <h3 class="text-xl font-bold text-[#CCCCCC] mb-2">Could not load gallery</h3>
+    <p class="text-[#999999]">${msg}</p>
+    <button onclick="location.reload()" class="mt-4 px-6 py-2 text-white rounded-full font-bold transition-colors" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);">Try Again</button>
 </div>`;
             }
 
@@ -2071,7 +2213,7 @@
                     galleryLoaded = false;
                     const grid = document.getElementById('gallery-grid');
                     if (grid && !grid.querySelector('.gallery-item')) {
-                        grid.innerHTML = '<div class="text-center py-12 text-slate-400 font-semibold">Refreshing photos...</div>';
+                        grid.innerHTML = '<div class="text-center py-12 text-[#777777] font-semibold">Refreshing photos...</div>';
                     }
                     loadGallery();
                 });
@@ -2083,7 +2225,16 @@
                 loadMoreBtn.addEventListener('click', function () {
                     this.innerHTML = '<span class="material-symbols-outlined animate-spin">refresh</span> Loading...';
                     fetch(`/api/destination-gallery?name=${encodeURIComponent(DEST_NAME)}`)
-                        .then(res => res.json())
+                        .then(res => {
+                            if (!res.ok) {
+                                if (res.status === 401 || res.status === 403) {
+                                    window.location.href = '/login';
+                                    return;
+                                }
+                                throw new Error(`Server error (${res.status})`);
+                            }
+                            return res.json();
+                        })
                         .then(data => {
                             const grid = document.getElementById('gallery-grid');
                             const images = data.images || [];
@@ -2191,7 +2342,16 @@
                             history: chatHistory
                         })
                     })
-                        .then(res => res.json())
+                        .then(res => {
+                            if (!res.ok) {
+                                if (res.status === 401 || res.status === 403) {
+                                    window.location.href = '/login';
+                                    return;
+                                }
+                                throw new Error(`Server error (${res.status})`);
+                            }
+                            return res.json();
+                        })
 	                        .then(data => {
 	                            const reply = data.reply || "I'm sorry, I couldn't process that.";
 	                            addMessage('assistant', reply);
@@ -2319,8 +2479,8 @@
 	                chatReset.addEventListener('click', function () {
 	                    chatMessages.innerHTML = `
 	                <div class="chat-row flex gap-4" data-role="assistant" data-msg-id="initial-assistant-reset">
-	                    <div class="w-8 h-8 bg-emerald-50 rounded-lg flex-shrink-0 flex items-center justify-center mt-1">
-	                        <span class="material-symbols-outlined text-emerald-600 text-sm">smart_toy</span>
+	                    <div class="w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center mt-1" style="background:#0A0A0A;">
+	                        <span class="material-symbols-outlined text-[#E5E5E5] text-sm">smart_toy</span>
 	                    </div>
 	                    <div class="flex flex-col gap-2 max-w-[85%]">
 	                        <div class="message-bubble ai-bubble">
@@ -2367,7 +2527,7 @@
 
 	                let icon = '';
 	                if (role === 'assistant') {
-	                    icon = `<div class="w-8 h-8 bg-emerald-50 rounded-lg flex-shrink-0 flex items-center justify-center mt-1"><span class="material-symbols-outlined text-emerald-600 text-sm">smart_toy</span></div>`;
+	                    icon = `<div class="w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center mt-1" style="background:#0A0A0A;"><span class="material-symbols-outlined text-[#E5E5E5] text-sm">smart_toy</span></div>`;
 	                }
 
 	                const userMenuBtn = isDeletableMessage(role, text) ? `
@@ -2429,9 +2589,9 @@
     </script>
     <!-- Story Modal -->
     <div id="story-modal" class="flex items-center justify-center">
-        <div class="story-modal-panel bg-white rounded-[2rem] md:rounded-[3rem] shadow-2xl animate-pop relative">
+        <div class="story-modal-panel rounded-[2rem] md:rounded-[3rem] shadow-2xl animate-pop relative" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);">
             <button onclick="closeStory()"
-                class="absolute top-4 right-4 md:top-6 md:right-6 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-red-50 hover:text-red-500 transition-all z-[1010]">
+                class="absolute top-4 right-4 md:top-6 md:right-6 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full transition-all z-[1010]" style="background:#0A0A0A;color:#FFFFFF;" onmouseover="this.style.background='rgba(255,100,100,0.15)';this.style.color='rgba(255,120,120,1)'" onmouseout="this.style.background='#0A0A0A';this.style.color='#FFFFFF'">
                 <span class="material-symbols-outlined">close</span>
             </button>
             <div class="story-modal-layout">
@@ -2441,21 +2601,21 @@
                 </div>
                 <div class="story-copy p-5 sm:p-6 md:p-8 lg:p-10 flex flex-col">
                     <div class="mb-3">
-                        <span class="text-[10px] font-black text-emerald-600 uppercase tracking-[0.3em] block">AI Generated Story</span>
+                        <span class="text-[10px] font-black text-[#E5E5E5] uppercase tracking-[0.3em] block">AI Generated Story</span>
                     </div>
-                    <h2 id="story-title" class="text-3xl md:text-4xl font-extrabold text-slate-800 tracking-tight mb-4 md:mb-6"></h2>
+                    <h2 id="story-title" class="text-3xl md:text-4xl font-extrabold text-[#E5E5E5] tracking-tight mb-4 md:mb-6"></h2>
                     <div class="mb-5">
-                        <button id="voice-btn" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-all shadow-sm border border-emerald-100" title="Listen to Story">
+                        <button id="voice-btn" class="inline-flex items-center gap-2 px-4 py-2 rounded-full transition-all shadow-sm" style="background:#0A0A0A;color:#FFFFFF;border: 1px solid rgba(255,255,255,0.06);" title="Listen to Story">
                             <span class="material-symbols-outlined text-[20px]" id="voice-icon">play_arrow</span>
                             <span class="text-xs font-bold uppercase tracking-wider">Listen to Story</span>
                         </button>
                     </div>
                     <div id="story-content"
-                        class="text-slate-600 leading-relaxed text-base md:text-lg space-y-5 mb-6 pr-2 md:pr-4 custom-scrollbar flex-1 min-h-0 overflow-y-auto">
+                        class="text-[#999999] leading-relaxed text-base md:text-lg space-y-5 mb-6 pr-2 md:pr-4 custom-scrollbar flex-1 min-h-0 overflow-y-auto">
                         <!-- Content here -->
                     </div>
                     <div>
-                        <p id="story-quote" class="italic text-slate-400 font-medium text-base md:text-lg leading-relaxed"></p>
+                        <p id="story-quote" class="italic text-[#777777] font-medium text-base md:text-lg leading-relaxed"></p>
                     </div>
                 </div>
             </div>
@@ -2470,24 +2630,43 @@
             const DEST_NAME = "{{ data.name }}";
 
             fetch(`/api/check-saved?name=${encodeURIComponent(DEST_NAME)}`)
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) {
+                        if (res.status === 401 || res.status === 403) {
+                            window.location.href = '/login';
+                            return;
+                        }
+                        throw new Error(`Server error (${res.status})`);
+                    }
+                    return res.json();
+                })
                 .then(data => {
                     if (data.saved) {
                         const icon = saveBtn.querySelector('.material-symbols-outlined');
                         const text = saveBtn.querySelector('.save-text');
-                        saveBtn.classList.add('bg-white/40');
+                        saveBtn.style.background = '#111111';
                         icon.style.fontVariationSettings = "'FILL' 1";
                         text.textContent = 'Saved';
                     }
                 });
 
             fetch(`/api/check-favorite?name=${encodeURIComponent(DEST_NAME)}`)
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) {
+                        if (res.status === 401 || res.status === 403) {
+                            window.location.href = '/login';
+                            return;
+                        }
+                        throw new Error(`Server error (${res.status})`);
+                    }
+                    return res.json();
+                })
                 .then(data => {
                     if (data.favorited) {
                         const icon = favoriteBtn.querySelector('.material-symbols-outlined');
                         const text = favoriteBtn.querySelector('.favorite-text');
-                        favoriteBtn.classList.add('bg-rose-500/35', 'border-rose-300');
+                        favoriteBtn.style.background = '#0A0A0A';
+                        favoriteBtn.style.borderColor = 'rgba(255,255,255,0.06)';
                         icon.style.fontVariationSettings = "'FILL' 1";
                         text.textContent = 'Favorited';
                     }
@@ -2509,15 +2688,24 @@
                         image_url: "{{ data.hero_image }}"
                     })
                 })
-                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.ok) {
+                            if (res.status === 401 || res.status === 403) {
+                                window.location.href = '/login';
+                                return;
+                            }
+                            throw new Error(`Server error (${res.status})`);
+                        }
+                        return res.json();
+                    })
                     .then(data => {
                         if (data.success) {
                             if (data.saved) {
-                                this.classList.add('bg-white/40');
+                                this.style.background = '#111111';
                                 icon.style.fontVariationSettings = "'FILL' 1";
                                 text.textContent = 'Saved';
                             } else {
-                                this.classList.remove('bg-white/40');
+                                this.style.background = '#0A0A0A';
                                 icon.style.fontVariationSettings = "'FILL' 0";
                                 text.textContent = 'Save';
                             }
@@ -2541,15 +2729,26 @@
                         image_url: "{{ data.hero_image }}"
                     })
                 })
-                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.ok) {
+                            if (res.status === 401 || res.status === 403) {
+                                window.location.href = '/login';
+                                return;
+                            }
+                            throw new Error(`Server error (${res.status})`);
+                        }
+                        return res.json();
+                    })
                     .then(data => {
                         if (data.success) {
                             if (data.favorited) {
-                                this.classList.add('bg-rose-500/35', 'border-rose-300');
+                                this.style.background = '#0A0A0A';
+                                this.style.borderColor = 'rgba(255,255,255,0.06)';
                                 icon.style.fontVariationSettings = "'FILL' 1";
                                 text.textContent = 'Favorited';
                             } else {
-                                this.classList.remove('bg-rose-500/35', 'border-rose-300');
+                                this.style.background = '#0A0A0A';
+                                this.style.borderColor = 'rgba(255,255,255,0.06)';
                                 icon.style.fontVariationSettings = "'FILL' 0";
                                 text.textContent = 'Favorite';
                             }
@@ -2585,7 +2784,7 @@
                 const voiceBtn = document.getElementById('voice-btn');
 
                 title.textContent = 'Generating Story...';
-                content.innerHTML = '<div class="flex gap-2"><span class="animate-bounce w-2 h-2 bg-emerald-400 rounded-full"></span><span class="animate-bounce w-2 h-2 bg-emerald-400 rounded-full" style="animation-delay: 0.2s"></span><span class="animate-bounce w-2 h-2 bg-emerald-400 rounded-full" style="animation-delay: 0.4s"></span></div>';
+                content.innerHTML = '<div class="flex gap-2"><span class="animate-bounce w-2 h-2 rounded-full" style="background:#0A0A0A"></span><span class="animate-bounce w-2 h-2 rounded-full" style="background:#0A0A0A;animation-delay: 0.2s"></span><span class="animate-bounce w-2 h-2 rounded-full" style="background:#0A0A0A;animation-delay: 0.4s"></span></div>';
                 quote.textContent = '';
                 
                 voiceBtn.style.display = 'flex';
@@ -2595,7 +2794,16 @@
                 modal.style.display = 'flex';
 
                 fetch(`/api/get-destination-story?name=${encodeURIComponent(DEST_NAME)}`)
-                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.ok) {
+                            if (res.status === 401 || res.status === 403) {
+                                window.location.href = '/login';
+                                return;
+                            }
+                            throw new Error(`Server error (${res.status})`);
+                        }
+                        return res.json();
+                    })
                     .then(data => {
                         title.textContent = data.name;
                         content.innerHTML = data.story.split('\n\n').map(p => `<p>${p}</p>`).join('');
@@ -2632,8 +2840,10 @@
                     isPlaying = true;
                     voiceIcon.textContent = 'stop';
                     voiceBtn.classList.remove('animate-pulse');
-                    voiceBtn.classList.replace('bg-emerald-50', 'bg-red-50');
-                    voiceBtn.classList.replace('text-emerald-600', 'text-red-600');
+                    voiceBtn.classList.replace('bg-[#111111]', 'bg-transparent');
+                    voiceBtn.style.background = 'rgba(255,80,80,0.15)';
+                    voiceBtn.style.borderColor = 'rgba(255,80,80,0.3)';
+                    voiceBtn.style.color = 'rgba(255,100,100,1)';
                 };
                 currentAudio.onended = () => stopAudio();
                 currentAudio.onerror = () => {
@@ -2655,8 +2865,10 @@
                 if (voiceIcon) voiceIcon.textContent = 'play_arrow';
                 if (voiceBtn) {
                     voiceBtn.classList.remove('animate-pulse');
-                    voiceBtn.classList.replace('bg-red-50', 'bg-emerald-50');
-                    voiceBtn.classList.replace('text-red-600', 'text-emerald-600');
+                    voiceBtn.classList.replace('bg-[#2d1a1a]', 'bg-transparent');
+                    voiceBtn.style.background = '#0A0A0A';
+                    voiceBtn.style.borderColor = 'rgba(255,255,255,0.06)';
+                    voiceBtn.style.color = '#FFFFFF';
                 }
             }
 
