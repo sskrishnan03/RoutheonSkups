@@ -15,5 +15,4 @@ wheels/
 # Node.js
 node_modules/
 
-# Tailwind build output (rebuild with: npm run build:css)
-static/css/tailwind-output.css
+
