@@ -783,6 +783,11 @@ def favorites():
     favorite_destinations = FavoriteDestination.query.filter_by(user_id=current_user.id).order_by(FavoriteDestination.created_at.desc()).all()
     return render_template('favorites.html', favorite_destinations=favorite_destinations)
 
+@main_bp.route('/skupheon')
+@login_required
+def skupheon():
+    return render_template('skupheon.html')
+
 @main_bp.route('/destination/<name>')
 @login_required
 def destination_info(name):

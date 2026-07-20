@@ -196,6 +196,7 @@
             <a href="{{ url_for('main.explore') }}" class="ks-nav-link {% if request.endpoint == 'main.explore' %}active{% endif %}">Destinations</a>
             <a href="{{ url_for('main.plan_trip') }}" class="ks-nav-link {% if request.endpoint == 'main.plan_trip' %}active{% endif %}">Plan a Trip</a>
             <a href="{{ url_for('main.favorites') }}" class="ks-nav-link {% if request.endpoint == 'main.favorites' %}active{% endif %}">Favorites</a>
+            <a href="{{ url_for('main.skupheon') }}" class="ks-nav-link {% if request.endpoint == 'main.skupheon' %}active{% endif %}">Skupheon AI</a>
 
             <div class="relative">
                 <button class="ks-more-btn" id="ks-more-btn">
@@ -251,6 +252,7 @@
             <a href="{{ url_for('main.explore') }}" class="{% if request.endpoint == 'main.explore' %}active{% endif %}">Destinations</a>
             <a href="{{ url_for('main.plan_trip') }}" class="{% if request.endpoint == 'main.plan_trip' %}active{% endif %}">Plan a Trip</a>
             <a href="{{ url_for('main.favorites') }}" class="{% if request.endpoint == 'main.favorites' %}active{% endif %}">Favorites</a>
+            <a href="{{ url_for('main.skupheon') }}" class="{% if request.endpoint == 'main.skupheon' %}active{% endif %}">Skupheon AI</a>
             <div style="height:1px;background:rgba(255,255,255,0.06);margin:8px 0;"></div>
             <a href="{{ url_for('main.about') }}">About Us</a>
             <a href="{{ url_for('main.contact') }}">Contact</a>

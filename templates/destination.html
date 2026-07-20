@@ -92,6 +92,28 @@
             height: 2px;
             background: #0A0A0A;
         }
+        .tab-btn {
+            position: relative;
+            color: rgba(255,255,255,0.7);
+            transition: color 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: rgba(255,255,255,0.15);
+            transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .tab-btn:hover::before {
+            width: 80%;
+        }
+        .tab-btn:hover {
+            color: #FFFFFF;
+        }
         .info-card {
             background: #0A0A0A;
             border: 1px solid rgba(255,255,255,0.06);
@@ -104,7 +126,7 @@
         }
         .info-card:hover {
             background: #0A0A0A;
-            border-color: rgba(255,255,255,0.7);
+            border-color: rgba(255,255,255,0.15);
             box-shadow: 0 16px 48px #0A0A0A;
             transform: translateY(-2px);
         }
@@ -120,7 +142,7 @@
         }
         .attraction-card:hover {
             transform: translateY(-4px);
-            border-color: rgba(255,255,255,0.7);
+            border-color: rgba(255,255,255,0.15);
             box-shadow: 0 24px 64px #111111;
         }
         .tab-content { display: none; }
@@ -175,7 +197,7 @@
             overflow: hidden;
         }
         .suggestion-chip:hover {
-            border-color: rgba(255,255,255,0.7);
+            border-color: rgba(255,255,255,0.15);
             background: #0A0A0A;
             color: #FFFFFF;
             box-shadow: 0 4px 16px rgba(0,0,0,0.15);
@@ -634,7 +656,7 @@
                             <h2 class="text-3xl font-extrabold tracking-tight mb-8">Local Flavors</h2>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {% for food in data.local_flavors %}
-                                <div class="flex items-start gap-4 p-4 rounded-2xl border" style="background:#0A0A0A;border-color:#FFFFFF;">
+                                <div class="flex items-start gap-4 p-4 rounded-2xl border" style="background:#0A0A0A;border-color:rgba(255,255,255,0.15);">
                                     <span class="material-symbols-outlined text-[#E5E5E5]">restaurant</span>
                                     <div>
                                         <h4 class="font-bold text-[#E5E5E5]">{{ food.name }}</h4>
@@ -763,7 +785,7 @@
                                 <span class="material-symbols-outlined text-[#E5E5E5]">schedule</span>
                             </div>
                             {% if data.general_timings %}
-                            <div class="flex items-center gap-3 p-4 rounded-2xl border mb-5" style="background:#0A0A0A;border-color:#FFFFFF;">
+                            <div class="flex items-center gap-3 p-4 rounded-2xl border mb-5" style="background:#0A0A0A;border-color:rgba(255,255,255,0.15);">
                                 <span class="material-symbols-outlined text-[#E5E5E5] text-2xl">nest_clock_farsight_analog</span>
                                 <div>
                                     <p class="text-[10px] font-extrabold text-[#777777] uppercase tracking-widest">General Timings</p>
@@ -816,13 +838,8 @@
                             <div class="space-y-3">
                                 <a href="{{ url_for('main.explore') }}"
                                     class="w-full px-6 py-4 text-white font-bold rounded-2xl transition-colors flex items-center justify-center gap-2 no-underline" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);"
-                                    <span class="material-symbols-outlined">smart_toy</span>
+                                    <span class="material-symbols-outlined">explore</span>
                                     Explore More Destinations
-                                </a>
-                                <a href="{{ url_for('main.explore') }}"
-                                    class="w-full px-6 py-4 text-[#CCCCCC] font-bold rounded-2xl transition-colors flex items-center justify-center gap-2 no-underline" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);"
-                                    <span class="material-symbols-outlined">arrow_back</span>
-                                    Back to Explore
                                 </a>
                             </div>
                         </section>
@@ -833,89 +850,88 @@
 
         <!-- How to Reach Tab -->
         <div id="tab-reach" class="tab-content">
-            <div class="max-w-5xl mx-auto space-y-10">
-                <!-- How to Reach -->
-                <section class="info-card">
-                    <div class="flex items-center justify-between gap-4 mb-8">
-                        <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center" style="background:#0A0A0A;">
-                                <span class="material-symbols-outlined text-[#E5E5E5]">navigation</span>
+            <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 overflow-x-hidden">
+            <div class="grid grid-cols-12 gap-10">
+                <!-- Left Content -->
+                <div class="col-span-12 lg:col-span-8 space-y-10">
+                    <!-- Transportation Options -->
+                    <section class="info-card">
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center" style="background:#0A0A0A;">
+                                <span class="material-symbols-outlined text-[#E5E5E5]">directions</span>
                             </div>
-                            <h2 class="text-4xl font-extrabold tracking-tight">How to Reach</h2>
+                            <h2 class="text-3xl font-extrabold tracking-tight">Transportation Options</h2>
                         </div>
-                <div class="flex items-center gap-2 px-4 py-2 rounded-full" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);color:#FFFFFF;">
-                    <span class="px-4 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);">Smart Route Guide</span>
-                    </div>
-
-                    <div class="                    rounded-[2rem] border p-6 md:p-8 shadow-soft" style="background:#0A0A0A;border-color:#FFFFFF;">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                            <div class="p-6 rounded-3xl border flex flex-col items-center text-center group hover:shadow-xl transition-all duration-500" style="background:#0A0A0A;border-color:#FFFFFF;">
-                                <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform" style="background:#0A0A0A;color:#FFFFFF;">
-                                    <span class="material-symbols-outlined text-3xl">flight</span>
+                        <div class="space-y-4">
+                            <!-- By Air -->
+                            <div class="flex items-start gap-4 p-5 rounded-2xl border transition-all duration-300 hover:shadow-lg" style="background:#0A0A0A;border-color:rgba(255,255,255,0.15);">
+                                <div class="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0" style="background:#0A0A0A;">
+                                    <span class="material-symbols-outlined text-3xl text-[#E5E5E5]">flight</span>
                                 </div>
-                                <h4 class="font-extrabold text-lg mb-2">By Air</h4>
-                                <p class="text-sm leading-relaxed" style="color:#FFFFFF;">{{ data.how_to_reach.air }}</p>
+                                <div class="flex-1">
+                                    <h4 class="font-extrabold text-xl mb-2 text-[#E5E5E5]">By Air</h4>
+                                    <p class="text-sm leading-relaxed text-[#999999]">{{ data.how_to_reach.air }}</p>
+                                </div>
                             </div>
-                            <div class="p-6 rounded-3xl border flex flex-col items-center text-center group hover:shadow-xl transition-all duration-500" style="background:#0A0A0A;border-color:#FFFFFF;">
-                                <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform" style="background:#0A0A0A;color:#FFFFFF;">
-                                    <span class="material-symbols-outlined text-3xl">train</span>
+                            <!-- By Rail -->
+                            <div class="flex items-start gap-4 p-5 rounded-2xl border transition-all duration-300 hover:shadow-lg" style="background:#0A0A0A;border-color:rgba(255,255,255,0.15);">
+                                <div class="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0" style="background:#0A0A0A;">
+                                    <span class="material-symbols-outlined text-3xl text-[#E5E5E5]">train</span>
                                 </div>
-                                <h4 class="font-extrabold text-lg mb-2">By Rail</h4>
-                                <p class="text-sm leading-relaxed" style="color:#FFFFFF;">{{ data.how_to_reach.rail }}</p>
+                                <div class="flex-1">
+                                    <h4 class="font-extrabold text-xl mb-2 text-[#E5E5E5]">By Rail</h4>
+                                    <p class="text-sm leading-relaxed text-[#999999]">{{ data.how_to_reach.rail }}</p>
+                                </div>
                             </div>
-                            <div class="p-6 rounded-3xl border flex flex-col items-center text-center group hover:shadow-xl transition-all duration-500" style="background:#0A0A0A;border-color:#FFFFFF;">
-                                <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform" style="background:#0A0A0A;color:#FFFFFF;">
-                                    <span class="material-symbols-outlined text-3xl">directions_bus</span>
+                            <!-- By Road -->
+                            <div class="flex items-start gap-4 p-5 rounded-2xl border transition-all duration-300 hover:shadow-lg" style="background:#0A0A0A;border-color:rgba(255,255,255,0.15);">
+                                <div class="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0" style="background:#0A0A0A;">
+                                    <span class="material-symbols-outlined text-3xl text-[#E5E5E5]">directions_bus</span>
                                 </div>
-                                <h4 class="font-extrabold text-lg mb-2">By Road</h4>
-                                <p class="text-sm leading-relaxed" style="color:#FFFFFF;">{{ data.how_to_reach.road }}</p>
+                                <div class="flex-1">
+                                    <h4 class="font-extrabold text-xl mb-2 text-[#E5E5E5]">By Road</h4>
+                                    <p class="text-sm leading-relaxed text-[#999999]">{{ data.how_to_reach.road }}</p>
+                                </div>
                             </div>
                         </div>
                         {% if data.nearby_cities %}
-                        <div class="mt-6 border-t border-white/[0.06] pt-5">
-                            <p class="text-[11px] font-extrabold text-[#777777] uppercase tracking-widest mb-3">Nearby City Distances</p>
+                        <div class="mt-8 pt-6 border-t border-white/[0.06]">
+                            <p class="text-[11px] font-extrabold text-[#777777] uppercase tracking-widest mb-4">Nearby City Distances</p>
                             <div class="flex flex-wrap gap-2">
                                 {% for city in data.nearby_cities %}
-                                <span class="px-3 py-1.5 rounded-full text-xs font-bold" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);color:#FFFFFF;">{{ city.name }} · {{ city.distance }}</span>
+                                <span class="px-4 py-2 rounded-full text-xs font-bold" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.15);color:#FFFFFF;">{{ city.name }} · {{ city.distance }}</span>
                                 {% endfor %}
                             </div>
                         </div>
                         {% endif %}
-                    </div>
-                </section>
+                    </section>
+                </div>
 
-                <!-- Location & Map -->
-                <section class="info-card">
-                    <div class="flex items-center justify-between mb-8">
-                        <div class="flex items-center gap-3">
-                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center" style="background:#0A0A0A;">
+                <!-- Right Sidebar - Map -->
+                <aside class="col-span-12 lg:col-span-4">
+                    <section class="info-card">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center" style="background:#0A0A0A;">
                                 <span class="material-symbols-outlined text-[#E5E5E5]">map</span>
                             </div>
-                            <h2 class="text-4xl font-extrabold tracking-tight">Location &amp; Map</h2>
+                            <h2 class="text-2xl font-extrabold tracking-tight">Location Map</h2>
                         </div>
-                        {% if data.nearby_cities %}
-                        <div class="hidden md:flex gap-4 text-xs font-bold rounded-full px-6 py-3" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);color:#FFFFFF;">
-                            {% for city in data.nearby_cities %}
-                            {% if not loop.first %}<span style="color:#FFFFFF;">â€¢</span>{% endif %}
-                            <span>{{ city.name }}: {{ city.distance }}</span>
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="relative w-full rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/[0.06] group">
-                        <div id="overview-map" style="height: 500px; width: 100%;" class="rounded-[2.5rem]"></div>
-                        <div                         class="absolute bottom-5 left-5 p-5 rounded-2xl shadow-xl max-w-[260px] z-[1000] scale-95 group-hover:scale-100 transition-transform duration-500" style="background:rgba(0,0,0,0.85);border: 1px solid rgba(255,255,255,0.06);">
-                            <div class="flex items-center gap-3 mb-2">
-                                <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style="background:#0A0A0A;">
-                                    <span class="material-symbols-outlined text-[#E5E5E5] text-sm">explore</span>
+                        <div class="relative w-full rounded-2xl overflow-hidden shadow-2xl border border-white/[0.06]">
+                            <div id="overview-map" style="height: 400px; width: 100%;" class="rounded-2xl"></div>
+                            <div class="absolute bottom-4 left-4 right-4 p-4 rounded-xl shadow-xl z-[1000]" style="background:rgba(0,0,0,0.85);border: 1px solid rgba(255,255,255,0.06);">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style="background:#0A0A0A;">
+                                        <span class="material-symbols-outlined text-[#E5E5E5] text-sm">explore</span>
+                                    </div>
+                                    <h4 class="font-extrabold text-[#E5E5E5] text-sm tracking-tight">{{ data.name }}</h4>
                                 </div>
-                                <h4 class="font-extrabold text-[#E5E5E5] text-sm tracking-tight">{{ data.name }}</h4>
+                                <p class="text-[10px] text-[#999999] font-bold tracking-widest uppercase mb-1">Global Coordinates</p>
+                                <p class="text-xs text-[#999999] font-medium leading-relaxed">{{ data.coordinates }}</p>
                             </div>
-                            <p class="text-[11px] text-[#999999] font-bold tracking-widest uppercase mb-1">Global Coordinates</p>
-                            <p class="text-xs text-[#999999] font-medium leading-relaxed">{{ data.coordinates }}</p>
                         </div>
-                    </div>
-                </section>
+                    </section>
+                </aside>
+            </div>
             </div>
         </div>
         <!-- Attractions Tab -->
@@ -1041,15 +1057,8 @@
                         <p class="text-[10px] font-extrabold text-[#777777] uppercase tracking-widest mb-4">Plan
                             Management</p>
                         <div class="space-y-3">
-                            <button id="btn-add-to-calendar" class="w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-colors" style="background:#0A0A0A;"
-                                <div class="flex items-center gap-3">
-                                    <span class="material-symbols-outlined text-[#E5E5E5]">calendar_add_on</span>
-                                    <span class="font-bold text-sm">Add to My Calendar</span>
-                                </div>
-                                <span class="material-symbols-outlined text-[#777777] text-sm">chevron_right</span>
-                            </button>
                             <button id="btn-download-itinerary-pdf"
-                                class="w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-colors" style="background:#0A0A0A;"
+                                class="w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-colors border border-white/[0.06]" style="background:#0A0A0A;"
                                 <div class="flex items-center gap-3">
                                     <span class="material-symbols-outlined text-[#E5E5E5]">picture_as_pdf</span>
                                     <span class="font-bold text-sm">Download PDF Guide</span>
@@ -1111,7 +1120,7 @@
                         {% endif %}
                     </section>
 
-                    <section class="info-card" id="itinerary-route-map" style="display:none;">
+                    <section class="info-card" id="itinerary-route-map">
                         <p class="text-[10px] font-extrabold text-[#777777] uppercase tracking-widest mb-4">Route Intelligence Map</p>
                             <div class="relative h-[300px] rounded-2xl overflow-hidden shadow-soft" style="border: 1px solid rgba(255,255,255,0.06);">
                             <div id="itinerary-leaflet-map" class="w-full h-full"></div>
@@ -1159,7 +1168,7 @@
                     <div class="flex items-center gap-4">
                         <div class="relative">
                             <div
-                                class="w-12 h-12 rounded-2xl flex items-center justify-center border" style="background:#0A0A0A;border-color:#FFFFFF;">
+                                class="w-12 h-12 rounded-2xl flex items-center justify-center border" style="background:#0A0A0A;border-color:rgba(255,255,255,0.15);">
                                 <span class="material-symbols-outlined text-[#E5E5E5] text-2xl">smart_toy</span>
                             </div>
                             <div
@@ -1229,7 +1238,7 @@
                 </div>
 
                 <!-- Chat Input Area -->
-                <div class="px-8 py-8 border-t" style="background:#0A0A0A;border-color:#FFFFFF;">
+                <div class="px-8 py-8 border-t" style="background:#0A0A0A;border-color:rgba(255,255,255,0.15);">
 	                    <form id="chat-form" data-no-loader="true" onsubmit="return false;"
 	                        class="relative rounded-2xl p-2 flex items-center gap-2" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);transition:all 0.35s cubic-bezier(0.22,1,0.36,1);" onfocus="this.style.borderColor = 'rgba(255,255,255,0.06)';this.style.boxShadow='0 0 0 4px #0A0A0A'" onblur="this.style.borderColor = 'rgba(255,255,255,0.06)';this.style.boxShadow='none'">
                         <input id="chat-input" type="text"

@@ -431,183 +431,19 @@
                 <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
                     <div class="text-center max-w-2xl mx-auto mb-16">
                         <span class="font-bold tracking-[0.2em] text-xs uppercase mb-3 block" style="color:#FFFFFF;">Top Picks</span>
-                        <h2 class="text-3xl md:text-4xl font-bold text-white">Popular Beach Destinations in Tamil Nadu</h2>
+                        <h2 id="popular-heading" class="text-3xl md:text-4xl font-bold text-white">Popular Destinations</h2>
                     </div>
-                    <div id="popular-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        <div class="glass-card group flex flex-col overflow-hidden h-full">
-                            <div class="relative h-60 w-full overflow-hidden">
-                                <img alt="Chennai Marina Beach" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0bMeeOk2dEBtTK_8kVkHoCaP2nu7z9PCx7DGjNSM8yKHDUn6s-Rx3jdd3pP00fVNR2YNEvOgZuV9gqbKq_LpNYKd2-BoOs40bAvWfX4U4ZEjfFGeB4y9b_XmYZJ2TUH1r-Jyfrnqa0HLSqGT40Xt--48Gc2TJ4LlFgi5LdEG5JHE3WLv2RGIPulAT53LRmHe41tEKVDEVXjPgeVXU5hv4SiN1RFeioARwU0snXmhGA_0j6YH2LrcN6quuw1UkmH653jN93wIPMR-1" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80'" />
-                                <div class="absolute top-4 left-4 glass-pill px-3 py-1.5 flex items-center gap-1.5" style="background:#0A0A0A;">
-                                    <span class="material-symbols-outlined text-[16px] text-white">beach_access</span>
-                                    <span class="text-[11px] font-bold text-white uppercase tracking-wide">Coastal</span>
-                                </div>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow">
-                                <h3 class="text-xl font-bold text-white mb-2">Chennai</h3>
-                                <p class="text-sm leading-relaxed mb-6 line-clamp-2" style="color:#FFFFFF;">A vibrant cultural hub blending modern city life with historic temples and the iconic Marina Beach.</p>
-                                <div class="mt-auto">
-                                    <a href="{{ url_for('main.destination_info', name='Chennai') }}" class="text-white font-bold text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all no-underline">
-                                        View Destination <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="glass-card group flex flex-col overflow-hidden h-full">
-                            <div class="relative h-60 w-full overflow-hidden">
-                                <img alt="Mahabalipuram Shore Temple" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGfbtFFED6JKnocylS4IVkPlYf-TclgJvePVfzw-_w43R3yE5KbbXcqUDv51J2JM_f0sgZCFTGNPeficrs38AFrkWPMcWrKpiZYAGgUvB045cdRJBCArIuVtJbeEehSCSOteoV2Wc4mQMYiQyfdTJaINyES-nimLHvcduOl_TYNnHymiosbymE9i36zzLaWKl6i_LiAUMUy72p2OjF6vIyGIIlLLMEPKGuyEkyGtJrxYlz1bhMEZfSeKMbAT1xg0wztwnSb5c73SK1" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80'" />
-                                <div class="absolute top-4 left-4 glass-pill px-3 py-1.5 flex items-center gap-1.5" style="background:#0A0A0A;">
-                                    <span class="material-symbols-outlined text-[16px] text-white">history_edu</span>
-                                    <span class="text-[11px] font-bold text-white uppercase tracking-wide">Heritage Beach</span>
-                                </div>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow">
-                                <h3 class="text-xl font-bold text-white mb-2">Mahabalipuram</h3>
-                                <p class="text-sm leading-relaxed mb-6 line-clamp-2" style="color:#FFFFFF;">A UNESCO World Heritage site known for its ancient rock-cut temples and the famous Shore Temple.</p>
-                                <div class="mt-auto">
-                                    <a href="{{ url_for('main.destination_info', name='Mahabalipuram') }}" class="text-white font-bold text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all no-underline">
-                                        View Destination <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="glass-card group flex flex-col overflow-hidden h-full">
-                            <div class="relative h-60 w-full overflow-hidden">
-                                <img alt="Rameshwaram Temple" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGfbtFFED6JKnocylS4IVkPlYf-TclgJvePVfzw-_w43R3yE5KbbXcqUDv51J2JM_f0sgZCFTGNPeficrs38AFrkWPMcWrKpiZYAGgUvB045cdRJBCArIuVtJbeEehSCSOteoV2Wc4mQMYiQyfdTJaINyES-nimLHvcduOl_TYNnHymiosbymE9i36zzLaWKl6i_LiAUMUy72p2OjF6vIyGIIlLLMEPKGuyEkyGtJrxYlz1bhMEZfSeKMbAT1xg0wztwnSb5c73SK1" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80'" />
-                                <div class="absolute top-4 left-4 glass-pill px-3 py-1.5 flex items-center gap-1.5" style="background:#0A0A0A;">
-                                    <span class="material-symbols-outlined text-[16px] text-white">temple_hindu</span>
-                                    <span class="text-[11px] font-bold text-white uppercase tracking-wide">Island</span>
-                                </div>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow">
-                                <h3 class="text-xl font-bold text-white mb-2">Rameshwaram</h3>
-                                <p class="text-sm leading-relaxed mb-6 line-clamp-2" style="color:#FFFFFF;">A significant pilgrimage center on Pamban Island, known for the Ramanathaswamy Temple and sacred waters.</p>
-                                <div class="mt-auto">
-                                    <a href="{{ url_for('main.destination_info', name='Rameshwaram') }}" class="text-white font-bold text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all no-underline">
-                                        View Destination <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <div id="popular-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
                 </div>
             </section>
             <section class="pb-16 lg:pb-24">
                 <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
                     <div class="flex items-center justify-between mb-10">
-                        <h2 class="text-3xl font-bold text-white tracking-tight">All Beach Destinations in Tamil Nadu
-                            <span class="text-xl font-medium ml-2" style="color:#FFFFFF;">(60 Treasures Found)</span>
+                        <h2 id="all-heading" class="text-3xl font-bold text-white tracking-tight">All Destinations
+                            <span id="count-heading" class="text-xl font-medium ml-2" style="color:#FFFFFF;"></span>
                         </h2>
                     </div>
-                    <div id="all-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-                        <div class="glass-card group flex flex-col overflow-hidden h-full">
-                            <div class="relative h-60 w-full overflow-hidden">
-                                <img alt="Kanyakumari Sunrise" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0DnGzutyBaSRjbwKp9FbwnwboeH-wRBMZvohIJvDRD0mTokQOlPYFbs5xDwfywL3i43VUWMr9H2H7mcWvrHEPewuddYIE4861kkteZqmr_qrdF8As2tKwhMQak1GCOjTAr0zi0oEdzxCQbsiTYHsB2yAQv8gy9z8kJPITfQ9aOHxS8YKFkqtseaAmuVsCwhy96UJo7LH1vgsFZqrXbmYWL07NrvPL4lwAXOq3M-dzbQKYut4Oo59M4WpWwLbhSTKKe3VvYOiT6as4" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80'" />
-                                <div class="absolute top-4 left-4 glass-pill px-3 py-1.5 flex items-center gap-1.5" style="background:#0A0A0A;">
-                                    <span class="material-symbols-outlined text-[16px] text-white">wb_twilight</span>
-                                    <span class="text-[11px] font-bold text-white uppercase tracking-wide">Coastal</span>
-                                </div>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow">
-                                <h3 class="text-xl font-bold text-white mb-2">Kanyakumari</h3>
-                                <p class="text-sm leading-relaxed mb-6 line-clamp-2" style="color:#FFFFFF;">The southernmost tip of India, famous for its sunrise over the ocean and the Vivekananda Rock Memorial.</p>
-                                <div class="mt-auto">
-                                    <a href="{{ url_for('main.destination_info', name='Kanyakumari') }}" class="text-white font-bold text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all no-underline">
-                                        View Destination <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="glass-card group flex flex-col overflow-hidden h-full">
-                            <div class="relative h-60 w-full overflow-hidden">
-                                <img alt="Dhanushkodi" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAV4GDwK_pFBgQCkEdXffVtIUWz5xkr5Z3bozexz3j04dNwIZuqf9v85kV90on2mrVbDhbMC4HBIcZDYECjuPmybgPqmwwkcvPZz4TQILHPlNatZPngr1FMN_mbUi4c2rhzrV79TZ2xx6lxtk2UhUk3Q8cMBV1xtiDNBcIGAsbYaiUGpH6BYAA2Z3EZjwYFKgiHlYbf_GJf6t_Geti3DbKtnc-tyDX17XC6-1FfxvPjak_IJZ358f9DqfhOiMAJVXNLZf1XA2zuGi-7" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80'" />
-                                <div class="absolute top-4 left-4 glass-pill px-3 py-1.5 flex items-center gap-1.5" style="background:#0A0A0A;">
-                                    <span class="material-symbols-outlined text-[16px] text-white">water_drop</span>
-                                    <span class="text-[11px] font-bold text-white uppercase tracking-wide">Ghost Town</span>
-                                </div>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow">
-                                <h3 class="text-xl font-bold text-white mb-2">Dhanushkodi</h3>
-                                <p class="text-sm leading-relaxed mb-6 line-clamp-2" style="color:#FFFFFF;">An abandoned town at the south-eastern tip of Pamban Island, known for its ruins and pristine beaches.</p>
-                                <div class="mt-auto">
-                                    <a href="{{ url_for('main.destination_info', name='Dhanushkodi') }}" class="text-white font-bold text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all no-underline">
-                                        View Destination <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="glass-card group flex flex-col overflow-hidden h-full">
-                            <div class="relative h-60 w-full overflow-hidden">
-                                <img alt="Covelong Beach" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0bMeeOk2dEBtTK_8kVkHoCaP2nu7z9PCx7DGjNSM8yKHDUn6s-Rx3jdd3pP00fVNR2YNEvOgZuV9gqbKq_LpNYKd2-BoOs40bAvWfX4U4ZEjfFGeB4y9b_XmYZJ2TUH1r-Jyfrnqa0HLSqGT40Xt--48Gc2TJ4LlFgi5LdEG5JHE3WLv2RGIPulAT53LRmHe41tEKVDEVXjPgeVXU5hv4SiN1RFeioARwU0snXmhGA_0j6YH2LrcN6quuw1UkmH653jN93wIPMR-1" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80'" />
-                                <div class="absolute top-4 left-4 glass-pill px-3 py-1.5 flex items-center gap-1.5" style="background:#0A0A0A;">
-                                    <span class="material-symbols-outlined text-[16px] text-white">surfing</span>
-                                    <span class="text-[11px] font-bold text-white uppercase tracking-wide">Surfing</span>
-                                </div>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow">
-                                <h3 class="text-xl font-bold text-white mb-2">Covelong</h3>
-                                <p class="text-sm leading-relaxed mb-6 line-clamp-2" style="color:#FFFFFF;">A fishing village that has transformed into a luxury beach resort destination and a premier surfing spot.</p>
-                                <div class="mt-auto">
-                                    <a href="{{ url_for('main.destination_info', name='Covelong') }}" class="text-white font-bold text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all no-underline">
-                                        View Destination <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="glass-card group flex flex-col overflow-hidden h-full">
-                            <div class="relative h-60 w-full overflow-hidden">
-                                <img alt="Poompuhar" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGfbtFFED6JKnocylS4IVkPlYf-TclgJvePVfzw-_w43R3yE5KbbXcqUDv51J2JM_f0sgZCFTGNPeficrs38AFrkWPMcWrKpiZYAGgUvB045cdRJBCArIuVtJbeEehSCSOteoV2Wc4mQMYiQyfdTJaINyES-nimLHvcduOl_TYNnHymiosbymE9i36zzLaWKl6i_LiAUMUy72p2OjF6vIyGIIlLLMEPKGuyEkyGtJrxYlz1bhMEZfSeKMbAT1xg0wztwnSb5c73SK1" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80'" />
-                                <div class="absolute top-4 left-4 glass-pill px-3 py-1.5 flex items-center gap-1.5" style="background:#0A0A0A;">
-                                    <span class="material-symbols-outlined text-[16px] text-white">anchor</span>
-                                    <span class="text-[11px] font-bold text-white uppercase tracking-wide">Ancient Port</span>
-                                </div>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow">
-                                <h3 class="text-xl font-bold text-white mb-2">Poompuhar</h3>
-                                <p class="text-sm leading-relaxed mb-6 line-clamp-2" style="color:#FFFFFF;">Once a flourishing ancient port city known as Kaveripoompattinam, rich in history and coastal beauty.</p>
-                                <div class="mt-auto">
-                                    <a href="{{ url_for('main.destination_info', name='Poompuhar') }}" class="text-white font-bold text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all no-underline">
-                                        View Destination <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="glass-card group flex flex-col overflow-hidden h-full">
-                            <div class="relative h-60 w-full overflow-hidden">
-                                <img alt="Nagapattinam" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0DnGzutyBaSRjbwKp9FbwnwboeH-wRBMZvohIJvDRD0mTokQOlPYFbs5xDwfywL3i43VUWMr9H2H7mcWvrHEPewuddYIE4861kkteZqmr_qrdF8As2tKwhMQak1GCOjTAr0zi0oEdzxCQbsiTYHsB2yAQv8gy9z8kJPITfQ9aOHxS8YKFkqtseaAmuVsCwhy96UJo7LH1vgsFZqrXbmYWL07NrvPL4lwAXOq3M-dzbQKYut4Oo59M4WpWwLbhSTKKe3VvYOiT6as4" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80'" />
-                                <div class="absolute top-4 left-4 glass-pill px-3 py-1.5 flex items-center gap-1.5" style="background:#0A0A0A;">
-                                    <span class="material-symbols-outlined text-[16px] text-white">directions_boat</span>
-                                    <span class="text-[11px] font-bold text-white uppercase tracking-wide">Harbour</span>
-                                </div>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow">
-                                <h3 class="text-xl font-bold text-white mb-2">Nagapattinam</h3>
-                                <p class="text-sm leading-relaxed mb-6 line-clamp-2" style="color:#FFFFFF;">A historic port town with a deep maritime history, serving as a base for pilgrimage to Velankanni and Nagore.</p>
-                                <div class="mt-auto">
-                                    <a href="{{ url_for('main.destination_info', name='Nagapattinam') }}" class="text-white font-bold text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all no-underline">
-                                        View Destination <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="glass-card group flex flex-col overflow-hidden h-full">
-                            <div class="relative h-60 w-full overflow-hidden">
-                                <img alt="Velankanni" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGfbtFFED6JKnocylS4IVkPlYf-TclgJvePVfzw-_w43R3yE5KbbXcqUDv51J2JM_f0sgZCFTGNPeficrs38AFrkWPMcWrKpiZYAGgUvB045cdRJBCArIuVtJbeEehSCSOteoV2Wc4mQMYiQyfdTJaINyES-nimLHvcduOl_TYNnHymiosbymE9i36zzLaWKl6i_LiAUMUy72p2OjF6vIyGIIlLLMEPKGuyEkyGtJrxYlz1bhMEZfSeKMbAT1xg0wztwnSb5c73SK1" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80'" />
-                                <div class="absolute top-4 left-4 glass-pill px-3 py-1.5 flex items-center gap-1.5" style="background:#0A0A0A;">
-                                    <span class="material-symbols-outlined text-[16px] text-white">church</span>
-                                    <span class="text-[11px] font-bold text-white uppercase tracking-wide">Pilgrimage</span>
-                                </div>
-                            </div>
-                            <div class="p-6 flex flex-col flex-grow">
-                                <h3 class="text-xl font-bold text-white mb-2">Velankanni</h3>
-                                <p class="text-sm leading-relaxed mb-6 line-clamp-2" style="color:#FFFFFF;">Famous for the Basilica of Our Lady of Good Health, attracting millions of pilgrims to its shores annually.</p>
-                                <div class="mt-auto">
-                                    <a href="{{ url_for('main.destination_info', name='Velankanni') }}" class="text-white font-bold text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all no-underline">
-                                        View Destination <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <div id="all-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12"></div>
                     <div class="flex justify-center mt-12">
                         <button id="load-more-btn" class="glass-btn px-10 py-4 font-bold text-[15px] flex items-center gap-2">
                             <span class="material-symbols-outlined">refresh</span>
@@ -874,12 +710,14 @@
                 if (!isLoadMore) {
                     const popular = destinations.slice(0, 3);
                     const allDests = destinations.slice(3);
-                    const popularHeading = document.querySelector('#results-container section h2');
+                    const popularHeading = document.getElementById('popular-heading');
                     if (popularHeading) popularHeading.textContent = `Popular ${catLabel}Destinations in ${stateName}`;
                     const popularGrid = document.getElementById('popular-grid');
                     if (popularGrid) popularGrid.innerHTML = popular.map(dest => createCardHTML(dest, true)).join('');
-                    const allSection = document.querySelector('#all-grid')?.closest('section')?.querySelector('h2');
-                    if (allSection) allSection.innerHTML = `All ${catLabel}Destinations in ${stateName} <span class="text-xl font-medium ml-2" style="color:#FFFFFF;">(${totalCount} Treasures Found)</span>`;
+                    const allHeading = document.getElementById('all-heading');
+                    const countHeading = document.getElementById('count-heading');
+                    if (allHeading) allHeading.innerHTML = `All ${catLabel}Destinations in ${stateName}`;
+                    if (countHeading) countHeading.textContent = `(${totalCount} Treasures Found)`;
                     const allGrid = document.getElementById('all-grid');
                     if (allGrid) allGrid.innerHTML = allDests.map(dest => createCardHTML(dest, false)).join('');
                 } else {
@@ -955,9 +793,9 @@ ${indent}View Destination <span class="material-symbols-outlined text-[18px]">ar
                 if (popularGrid) popularGrid.innerHTML = skeletonCard.repeat(3);
                 const allGrid = document.getElementById('all-grid');
                 if (allGrid) allGrid.innerHTML = skeletonCard.repeat(6);
-                const popularHeading = document.querySelector('#results-container section h2');
+                const popularHeading = document.getElementById('popular-heading');
                 if (popularHeading) popularHeading.innerHTML = `<span class="inline-flex items-center gap-3">Loading Destinations<span class="animate-spin material-symbols-outlined text-white">progress_activity</span></span>`;
-                const allHeading = document.querySelector('#all-grid')?.closest('section')?.querySelector('h2');
+                const allHeading = document.getElementById('all-heading');
                 if (allHeading) allHeading.innerHTML = `<span class="inline-flex items-center gap-3">Generating from AI<span class="animate-spin material-symbols-outlined text-white">progress_activity</span></span>`;
             }
 
@@ -966,12 +804,12 @@ ${indent}View Destination <span class="material-symbols-outlined text-[18px]">ar
                 if (popularGrid) popularGrid.innerHTML = `<div class="col-span-full text-center py-16"><span class="material-symbols-outlined text-[64px] mb-4 block" style="color:#FFFFFF;">error</span><h3 class="text-xl font-bold text-white mb-2">Oops! Something went wrong</h3><p style="color:#FFFFFF;">${msg}</p><button onclick="location.reload()" class="mt-4 px-6 py-2 glass-btn text-white font-bold">Try Again</button></div>`;
                 const allGrid = document.getElementById('all-grid');
                 if (allGrid) allGrid.innerHTML = '';
-                const popularHeading = document.querySelector('#results-container section h2');
+                const popularHeading = document.getElementById('popular-heading');
                 if (popularHeading) popularHeading.textContent = 'Destinations';
-                const allHeading = document.querySelector('#all-grid')?.closest('section')?.querySelector('h2');
+                const allHeading = document.getElementById('all-heading');
                 if (allHeading) allHeading.textContent = 'All Destinations';
             }
-
+        });
     </script>
 
     {% include 'components/footer.html' %}

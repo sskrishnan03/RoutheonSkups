@@ -49,7 +49,7 @@
         .attraction-card:hover {
             transform: translateY(-2px);
             background: #0A0A0A;
-            border-color: rgba(255,255,255,0.7);
+            border-color: rgba(255,255,255,0.15);
         }
         .map-pin {
             position: absolute;
@@ -102,6 +102,21 @@
             letter-spacing: 0.1em;
             color: rgba(255,255,255,0.7);
             transition: color 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+        }
+        .tab-nav-item::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: rgba(255,255,255,0.15);
+            transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .tab-nav-item:hover::before {
+            width: 80%;
         }
         .tab-nav-item:hover {
             color: #FFFFFF;
