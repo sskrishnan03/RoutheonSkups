@@ -1022,6 +1022,13 @@ def update_trip(trip_id):
 @main_bp.route('/profile')
 @login_required
 def profile():
+    # Redirect to landing page - profile is only available as popup
+    return redirect(url_for('main.landing'))
+
+@main_bp.route('/profile/embed')
+@login_required
+def profile_embed():
+    # Profile embed mode for popup
     today = datetime.now().date()
     trip_count = len(current_user.trips)
     saved_count = len(current_user.saved_destinations)
@@ -1077,6 +1084,7 @@ def profile():
     ai_assistant_settings = _get_ai_assistant_settings(current_user)
 
     return render_template('profile.html',
+                           today=today,
                            trip_count=trip_count,
                            saved_count=saved_count,
                            saved_destinations=saved_destinations,
@@ -1099,8 +1107,8 @@ def update_profile():
     name = (request.form.get('name') or '').strip()
     phone = (request.form.get('phone') or '').strip()
     city = (request.form.get('city') or '').strip()
-    
-    # Process preferences 
+
+    # Process preferences
     raw_preferences = request.form.getlist('preferences')
     preferences = []
     seen = set()
@@ -1109,20 +1117,24 @@ def update_profile():
         if cleaned and cleaned not in seen:
             seen.add(cleaned)
             preferences.append(cleaned[:50])
-    
+
     current_user.name = name
     current_user.phone = phone or None
     current_user.city = city or None
-    
+
     # Keep existing non-category preferences if any, but replace categories
     existing_prefs = _get_user_preferences(current_user)
     existing_prefs['categories'] = preferences
     current_user.preferences = existing_prefs
-    
+
     db.session.commit()
-    
+
+    # Check if this is an iframe submission (from profile popup)
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.form.get('iframe_submit'):
+        return jsonify({'success': True, 'message': 'Profile updated successfully!'})
+
     flash('Profile updated successfully!', 'success')
-    return redirect(url_for('main.profile') + '#personal')
+    return redirect(url_for('main.landing'))
 
 
 @main_bp.route('/profile/image/upload', methods=['POST'])
@@ -1131,14 +1143,18 @@ def upload_profile_image():
     file = request.files.get('profile_image')
     if not file or not file.filename:
         flash('Please select an image file to upload.', 'error')
-        return redirect(url_for('main.profile') + '#personal')
+        if request.form.get('iframe_submit'):
+            return jsonify({'success': False, 'message': 'Please select an image file to upload.'})
+        return redirect(url_for('main.landing'))
 
     filename = secure_filename(file.filename)
     extension = filename.rsplit('.', 1)[-1].lower() if '.' in filename else ''
     content_type = (file.mimetype or '').lower()
     if extension not in ALLOWED_PROFILE_IMAGE_EXTENSIONS and not content_type.startswith('image/'):
         flash('Unsupported file type. Please upload an image.', 'error')
-        return redirect(url_for('main.profile') + '#personal')
+        if request.form.get('iframe_submit'):
+            return jsonify({'success': False, 'message': 'Unsupported file type. Please upload an image.'})
+        return redirect(url_for('main.landing'))
 
     upload_dir = os.path.join(current_app.static_folder, PROFILE_UPLOAD_DIR)
     os.makedirs(upload_dir, exist_ok=True)
@@ -1151,8 +1167,11 @@ def upload_profile_image():
     db.session.commit()
     _delete_local_profile_image(old_image_url)
 
+    if request.form.get('iframe_submit'):
+        return jsonify({'success': True, 'message': 'Profile image updated successfully.'})
+
     flash('Profile image updated successfully.', 'success')
-    return redirect(url_for('main.profile') + '#personal')
+    return redirect(url_for('main.landing'))
 
 
 @main_bp.route('/profile/image/delete', methods=['POST'])
@@ -1163,20 +1182,24 @@ def delete_profile_image():
         current_user.image_url = None
         db.session.commit()
         _delete_local_profile_image(old_image_url)
+        if request.form.get('iframe_submit'):
+            return jsonify({'success': True, 'message': 'Profile image deleted.'})
         flash('Profile image deleted.', 'success')
     else:
+        if request.form.get('iframe_submit'):
+            return jsonify({'success': False, 'message': 'No profile image found.'})
         flash('No profile image found.', 'info')
-    return redirect(url_for('main.profile') + '#personal')
+    return redirect(url_for('main.landing'))
 
 @main_bp.route('/calendar')
 @login_required
 def calendar():
-    return redirect(url_for('main.profile') + '#calendar')
+    return redirect(url_for('main.landing'))
 
 @main_bp.route('/settings')
 @login_required
 def settings():
-    return redirect(url_for('main.profile') + '#settings')
+    return redirect(url_for('main.landing'))
 
 
 @main_bp.route('/settings/notifications', methods=['POST'])
@@ -1192,8 +1215,13 @@ def update_notification_settings():
     }
     _set_user_notification_settings(current_user, updated)
     db.session.commit()
+
+    # Check if this is an iframe submission (from profile popup)
+    if request.form.get('iframe_submit'):
+        return jsonify({'success': True, 'message': 'Notification settings updated successfully.'})
+
     flash('Notification settings updated successfully.', 'success')
-    return redirect(url_for('main.profile') + '#settings')
+    return redirect(url_for('main.landing'))
 
 
 @main_bp.route('/settings/ai-assistant', methods=['POST'])
@@ -1232,12 +1260,12 @@ def update_ai_assistant_settings():
     else:
         flash('AI assistant settings updated successfully.', 'success')
 
-    return redirect(url_for('main.profile') + '#settings')
+    return redirect(url_for('main.landing'))
 
 @main_bp.route('/profile-ai')
 @login_required
 def profile_ai():
-    return redirect(url_for('main.profile') + '#ai')
+    return redirect(url_for('main.landing'))
 
 @main_bp.route('/api/explore-destinations')
 @login_required

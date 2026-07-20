@@ -143,20 +143,6 @@
         {% set back_fallback = url_for('main.landing') %}
         {% include 'components/back_button.html' %}
 
-        <button id="view-demo-btn"
-            class="fixed top-28 right-4 md:right-8 z-40 flex items-center gap-3.5 px-4 py-3 glass-card group cursor-pointer"
-            style="border-radius:14px;">
-            <div class="w-9 h-9 rounded-full flex items-center justify-center group-hover:scale-110 transition-all duration-300"
-                style="background:#0A0A0A;">
-                <span class="material-symbols-outlined text-[18px] text-white" style="font-variation-settings:'FILL'1">play_arrow</span>
-            </div>
-            <div class="flex flex-col">
-                <span class="text-[14px] font-extrabold text-white leading-none tracking-tight">View Demo</span>
-                <span class="text-[10px] font-semibold leading-none mt-1 tracking-wider uppercase" style="color:#FFFFFF;">Watch Overview</span>
-            </div>
-            <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-all" style="color:#FFFFFF;">arrow_forward</span>
-        </button>
-
         <section class="relative mt-32 pb-8 lg:mt-32 lg:pb-12 px-6 max-w-[1400px] mx-auto text-center">
             <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-white mb-6 leading-tight">
                 Explore Destinations <br class="hidden md:block" />
@@ -986,50 +972,7 @@ ${indent}View Destination <span class="material-symbols-outlined text-[18px]">ar
                 if (allHeading) allHeading.textContent = 'All Destinations';
             }
 
-            const demoBtn = document.getElementById('view-demo-btn');
-            const demoModal = document.getElementById('demo-modal');
-            const demoOverlay = document.getElementById('demo-modal-overlay');
-            const demoClose = document.getElementById('demo-modal-close');
-            const demoFrame = document.getElementById('demo-video-frame');
-            const demoContent = document.getElementById('demo-modal-content');
-            const VIDEO_SRC = 'https://embed.app.guidde.com/playbooks/pe3tjvCvrjFzi6DsDSbR7w?mode=videoOnly';
-
-            function openDemoModal() { demoFrame.src = VIDEO_SRC; demoModal.classList.remove('hidden'); document.body.style.overflow = 'hidden'; requestAnimationFrame(() => { demoContent.classList.remove('opacity-0', 'scale-95'); demoContent.classList.add('opacity-100', 'scale-100'); }); }
-            function closeDemoModal() { demoFrame.src = 'about:blank'; demoContent.classList.remove('opacity-100', 'scale-100'); demoContent.classList.add('opacity-0', 'scale-95'); setTimeout(() => { demoModal.classList.add('hidden'); document.body.style.overflow = ''; }, 250); }
-
-            if (demoBtn && demoModal) {
-                demoBtn.addEventListener('click', openDemoModal);
-                demoClose.addEventListener('click', closeDemoModal);
-                demoOverlay.addEventListener('click', closeDemoModal);
-                document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !demoModal.classList.contains('hidden')) closeDemoModal(); });
-            }
-        });
     </script>
-
-    <div id="demo-modal" class="fixed inset-0 z-[100] hidden" role="dialog" aria-modal="true">
-        <div class="absolute inset-0" style="background:#0A0A0A;" id="demo-modal-overlay"></div>
-        <div class="absolute inset-0 flex items-center justify-center p-4 md:p-8">
-            <div id="demo-modal-content" class="relative w-full max-w-[900px] glass-card overflow-hidden opacity-0 scale-95 transition-all duration-300">
-                <div class="flex items-center justify-between px-6 py-4" style="border-bottom: 1px solid rgba(255,255,255,0.06);">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background:#0A0A0A;">
-                            <span class="material-symbols-outlined text-[16px] text-white">play_arrow</span>
-                        </div>
-                        <div>
-                            <span class="text-[13px] font-extrabold text-white block leading-none">Explore Destinations Demo</span>
-                            <span class="text-[10px] font-semibold block leading-none mt-1" style="color:#FFFFFF;">Quick overview of features</span>
-                        </div>
-                    </div>
-                    <button id="demo-modal-close" class="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105 flex-shrink-0 cursor-pointer" style="background:#0A0A0A;">
-                        <span class="material-symbols-outlined text-[18px]" style="color:#FFFFFF;">close</span>
-                    </button>
-                </div>
-                <div class="relative w-full" style="padding-bottom: 56.25%;">
-                    <iframe id="demo-video-frame" class="absolute inset-0 w-full h-full" src="" frameborder="0" allowfullscreen loading="lazy"></iframe>
-                </div>
-            </div>
-        </div>
-    </div>
 
     {% include 'components/footer.html' %}
 </body>

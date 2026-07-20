@@ -61,7 +61,7 @@
         display: flex; align-items: center; gap: 10px;
         text-decoration: none; flex-shrink: 0;
     }
-    .ks-nav-logo img { width: 28px; height: 28px; border-radius: 8px; object-fit: contain; filter: invert(1); }
+    .ks-nav-logo img { width: 32px; height: 32px; border-radius: 8px; object-fit: contain; }
     .ks-nav-logo span { font-size: 15px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; }
 
     .ks-nav-links { display: flex; align-items: center; gap: 2px; }
@@ -220,22 +220,6 @@
 
         <div class="ks-nav-actions">
             <div class="relative">
-                <button class="ks-nav-icon-btn" id="ks-notif-btn">
-                    <span class="material-symbols-outlined">notifications</span>
-                    <span id="ks-notif-badge" class="ks-notif-badge" style="display:none;"></span>
-                </button>
-                <div class="ks-dropdown" id="ks-notif-dropdown" style="width:320px;right:0;">
-                    <div class="ks-dropdown-header" style="display:flex;justify-content:space-between;align-items:center;">
-                        <span style="font-size:13px;font-weight:700;color:#FFFFFF;">Notifications</span>
-                        <button id="ks-mark-all-read" style="font-size:11px;font-weight:600;color:#FFFFFF;background:none;border:none;cursor:pointer;">Mark all read</button>
-                    </div>
-                    <div id="ks-notif-list" style="max-h:280px;overflow-y:auto;">
-                        <div style="padding:32px 16px;text-align:center;color:#FFFFFF;font-size:13px;">No new notifications</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="relative">
                 <button class="ks-profile-btn" id="ks-profile-btn">
                     {% if current_user.is_authenticated and current_user.image_url %}
                     <img src="{{ current_user.image_url }}" alt="Profile" onerror="this.onerror=null;this.parentElement.innerHTML='<span style=&quot;font-size:14px;font-weight:700;color:#FFFFFF&quot;>{{ current_user.name[0]|upper if current_user.is_authenticated else "" }}</span>'">
@@ -245,27 +229,6 @@
                     <span class="material-symbols-outlined" style="font-size:16px;color:#FFFFFF;">person</span>
                     {% endif %}
                 </button>
-                <div class="ks-dropdown" id="ks-profile-dropdown" style="min-width:220px;">
-                    <div class="ks-dropdown-header">
-                        <p style="font-size:10px;font-weight:700;color:#FFFFFF;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Account</p>
-                        <p style="font-size:13px;font-weight:700;color:#FFFFFF;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ current_user.email if current_user.is_authenticated else 'Guest User' }}</p>
-                    </div>
-                    <div style="padding:6px;">
-                        <a href="{{ url_for('main.profile') }}" class="ks-dropdown-item">
-                            <span class="material-symbols-outlined">person</span> Profile
-                        </a>
-                        <a href="{{ url_for('main.profile') }}#trips" class="ks-dropdown-item">
-                            <span class="material-symbols-outlined">travel_explore</span> My Trips
-                        </a>
-                        <a href="{{ url_for('main.profile') }}#settings" class="ks-dropdown-item">
-                            <span class="material-symbols-outlined">settings</span> Settings
-                        </a>
-                        <div class="ks-dropdown-divider"></div>
-                        <a href="{{ url_for('main.logout') }}" class="ks-dropdown-item" style="color:rgba(255,100,100,0.6);">
-                            <span class="material-symbols-outlined" style="color:rgba(255,100,100,0.4);">logout</span> Logout
-                        </a>
-                    </div>
-                </div>
             </div>
 
             <button class="ks-mobile-btn" id="ks-mobile-btn">
@@ -273,9 +236,6 @@
             </button>
 
             <div class="ks-nav-actions-mobile" style="display:none;">
-                <button class="ks-nav-icon-btn" id="ks-mobile-notif-btn">
-                    <span class="material-symbols-outlined">notifications</span>
-                </button>
                 <button class="ks-profile-btn" id="ks-mobile-profile-btn" style="width:28px;height:28px;">
                     {% if current_user.is_authenticated %}
                     <span style="font-size:12px;font-weight:700;color:#FFFFFF;">{{ current_user.name[0]|upper }}</span>
@@ -285,19 +245,53 @@
         </div>
     </div>
 
-    <!-- Mobile Menu -->
-    <div class="ks-mobile-menu" id="ks-mobile-menu">
-        <a href="{{ url_for('main.landing') }}" class="{% if request.endpoint == 'main.landing' %}active{% endif %}">Home</a>
-        <a href="{{ url_for('main.explore') }}" class="{% if request.endpoint == 'main.explore' %}active{% endif %}">Destinations</a>
-        <a href="{{ url_for('main.plan_trip') }}" class="{% if request.endpoint == 'main.plan_trip' %}active{% endif %}">Plan a Trip</a>
-        <a href="{{ url_for('main.favorites') }}" class="{% if request.endpoint == 'main.favorites' %}active{% endif %}">Favorites</a>
-        <div style="height:1px;background:rgba(255,255,255,0.06);margin:8px 0;"></div>
-        <a href="{{ url_for('main.about') }}">About Us</a>
-        <a href="{{ url_for('main.contact') }}">Contact</a>
-        <a href="{{ url_for('main.faq') }}">FAQs</a>
-        <a href="{{ url_for('main.logout') }}">Logout</a>
+        <!-- Mobile Menu -->
+        <div class="ks-mobile-menu" id="ks-mobile-menu">
+            <a href="{{ url_for('main.landing') }}" class="{% if request.endpoint == 'main.landing' %}active{% endif %}">Home</a>
+            <a href="{{ url_for('main.explore') }}" class="{% if request.endpoint == 'main.explore' %}active{% endif %}">Destinations</a>
+            <a href="{{ url_for('main.plan_trip') }}" class="{% if request.endpoint == 'main.plan_trip' %}active{% endif %}">Plan a Trip</a>
+            <a href="{{ url_for('main.favorites') }}" class="{% if request.endpoint == 'main.favorites' %}active{% endif %}">Favorites</a>
+            <div style="height:1px;background:rgba(255,255,255,0.06);margin:8px 0;"></div>
+            <a href="{{ url_for('main.about') }}">About Us</a>
+            <a href="{{ url_for('main.contact') }}">Contact</a>
+            <a href="{{ url_for('main.faq') }}">FAQs</a>
+            <a href="{{ url_for('main.logout') }}">Logout</a>
+        </div>
+    </nav>
+
+    <!-- Profile Popup (card over blurred background) -->
+    <div id="ks-profile-modal" style="display:none;position:fixed;inset:0;z-index:10000;align-items:center;justify-content:center;padding:0;margin:0;animation:ksProfileIn 0.3s cubic-bezier(0.22,1,0.36,1) both;">
+        <!-- Backdrop (light blur) -->
+        <div id="ks-profile-backdrop" style="position:absolute;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);margin:0;padding:0;"></div>
+        <!-- Card -->
+        <div id="ks-profile-card" style="position:relative;width:min(1100px,92vw);height:min(78vh,720px);border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);box-shadow:0 32px 100px rgba(0,0,0,0.7),0 0 1px rgba(255,255,255,0.1) inset;background:#000;animation:ksCardIn 0.4s cubic-bezier(0.16,1,0.3,1) 0.05s both;margin:0;">
+            <iframe id="ks-profile-iframe" src="" style="width:100%;height:100%;border:none;background:#000;" loading="lazy"></iframe>
+        </div>
+        <!-- Close button outside card, top right -->
+        <button id="ks-profile-modal-close" style="position:absolute;top:16px;right:16px;z-index:10001;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s ease;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);">
+            <span class="material-symbols-outlined" style="font-size:20px;color:#FFFFFF;">close</span>
+        </button>
     </div>
-</nav>
+    <style>
+        @keyframes ksProfileIn { from { opacity:0; } to { opacity:1; } }
+        @keyframes ksCardIn { from { opacity:0; transform:scale(0.95) translateY(16px); } to { opacity:1; transform:scale(1) translateY(0); } }
+        #ks-profile-modal { margin:0 !important; padding:0 !important; top:0 !important; left:0 !important; right:0 !important; bottom:0 !important; }
+        #ks-profile-backdrop { margin:0 !important; padding:0 !important; top:0 !important; left:0 !important; right:0 !important; bottom:0 !important; }
+        #ks-profile-card { margin:0 !important; }
+        
+        /* Ensure body has no margin when modal is open */
+        body.modal-open { margin:0 !important; padding:0 !important; overflow:hidden !important; }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            #ks-profile-card { width:95vw !important; height:85vh !important; }
+            #ks-profile-modal-close { top:12px !important; right:12px !important; }
+        }
+        @media (max-width: 480px) {
+            #ks-profile-card { width:100vw !important; height:100vh !important; border-radius:0 !important; }
+            #ks-profile-modal-close { top:8px !important; right:8px !important; }
+        }
+    </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -321,8 +315,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     setupDropdown('ks-more-btn', 'ks-more-dropdown');
-    setupDropdown('ks-notif-btn', 'ks-notif-dropdown');
-    setupDropdown('ks-profile-btn', 'ks-profile-dropdown');
 
     document.addEventListener('click', function() {
         document.querySelectorAll('.ks-dropdown').forEach(function(d) { d.classList.remove('open'); });
@@ -357,37 +349,42 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.target.closest('[data-loading="true"]')) showLoader();
     });
 
-    // Notifications
-    function formatTime(iso, fallback) {
-        if (!iso) return fallback || '';
-        var parsed = new Date(iso);
-        if (isNaN(parsed.getTime())) return fallback || '';
-        var now = new Date();
-        var diffMin = Math.max(0, Math.floor((now - parsed) / 60000));
-        var rel = 'Just now';
-        if (diffMin >= 1440) { var d = Math.floor(diffMin / 1440); rel = d + 'd ago'; }
-        else if (diffMin >= 60) { var h = Math.floor(diffMin / 60); rel = h + 'h ago'; }
-        else if (diffMin >= 1) rel = diffMin + 'm ago';
-        return rel;
-    }
+    // Profile Card Popup
+    var profileBtn = document.getElementById('ks-profile-btn');
+    var profileModal = document.getElementById('ks-profile-modal');
+    var profileBackdrop = document.getElementById('ks-profile-backdrop');
+    var profileClose = document.getElementById('ks-profile-modal-close');
+    var profileCard = document.getElementById('ks-profile-card');
+    var profileIframe = document.getElementById('ks-profile-iframe');
 
-    var notifBadge = document.getElementById('ks-notif-badge');
-    var notifList = document.getElementById('ks-notif-list');
-
-    function fetchNotifs() {
-        fetch('/api/notifications').then(function(r) { return r.json(); }).then(function(data) {
-            if (data.unread_count > 0) notifBadge.style.display = 'block';
-            else notifBadge.style.display = 'none';
-            if (data.notifications && data.notifications.length > 0) {
-                notifList.innerHTML = data.notifications.map(function(n) {
-                    return '<div style="padding:12px 16px;border-bottom: 1px solid rgba(255,255,255,0.06);' + (n.is_read ? '' : 'background:#0A0A0A;') + '">' +
-                        '<p style="font-size:13px;color:#FFFFFF;margin-bottom:4px;">' + n.message + '</p>' +
-                        '<span style="font-size:11px;color:#FFFFFF;">' + formatTime(n.created_at_iso, n.created_at) + '</span></div>';
-                }).join('');
-            }
+    if (profileBtn && profileModal) {
+        profileBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (profileIframe) profileIframe.src = '/profile/embed';
+            profileModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            document.body.classList.add('modal-open');
         });
+        function closeProfileModal() {
+            profileModal.style.display = 'none';
+            document.body.style.overflow = '';
+            document.body.classList.remove('modal-open');
+            if (profileIframe) { profileIframe.src = 'about:blank'; }
+        }
+        if (profileClose) profileClose.addEventListener('click', closeProfileModal);
+        if (profileBackdrop) profileBackdrop.addEventListener('click', closeProfileModal);
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && profileModal.style.display === 'flex') closeProfileModal(); });
+
+        var mobileProfileBtn = document.getElementById('ks-mobile-profile-btn');
+        if (mobileProfileBtn) {
+            mobileProfileBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (profileIframe) profileIframe.src = '/profile/embed';
+                profileModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+                document.body.classList.add('modal-open');
+            });
+        }
     }
-    fetchNotifs();
-    setInterval(fetchNotifs, 60000);
 });
 </script>

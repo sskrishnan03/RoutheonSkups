@@ -126,17 +126,6 @@
         {% set back_fallback = url_for('main.landing') %}
         {% include 'components/back_button.html' %}
 
-        <button id="view-demo-btn" class="demo-btn-glass fixed top-28 right-4 md:right-8 z-40 flex items-center gap-3 px-4 py-3 cursor-pointer">
-            <div style="width:36px;height:36px;border-radius:50%;background:#0A0A0A;display:flex;align-items:center;justify-content:center">
-                <span class="material-symbols-outlined" style="font-size:18px" data-variation="fill">play_arrow</span>
-            </div>
-            <div class="flex flex-col">
-                <span style="font-size:13px;font-weight:800;color:#FFFFFF;line-height:1">View Demo</span>
-                <span style="font-size:10px;font-weight:600;color:#FFFFFF;margin-top:2px;line-height:1;letter-spacing:0.08em;text-transform:uppercase">Watch Overview</span>
-            </div>
-            <span class="material-symbols-outlined" style="font-size:16px;color:#FFFFFF">arrow_forward</span>
-        </button>
-
         <div class="w-full max-w-2xl mx-auto">
             <div class="text-center mb-12">
                 <h1 style="font-size:clamp(2rem,5vw,3.5rem);font-weight:900;color:#FFFFFF;letter-spacing:-0.03em;line-height:1.1">
@@ -196,76 +185,6 @@
             </div>
         </div>
     </main>
-
-    <!-- Demo Video Modal -->
-    <div id="demo-modal" class="fixed inset-0 z-[100] hidden" role="dialog" aria-modal="true">
-        <div class="absolute inset-0" style="background:#0A0A0A" id="demo-modal-overlay"></div>
-        <div class="absolute inset-0 flex items-center justify-center p-4 md:p-8">
-            <div id="demo-modal-content" class="relative w-full max-w-[900px] overflow-hidden opacity-0 scale-95 transition-all duration-300" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);border-radius:24px">
-                <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom: 1px solid rgba(255,255,255,0.06)">
-                    <div style="display:flex;align-items:center;gap:12px">
-                        <div style="width:32px;height:32px;border-radius:50%;background:#0A0A0A;display:flex;align-items:center;justify-content:center">
-                            <span class="material-symbols-outlined" style="font-size:16px;color:#FFFFFF">play_arrow</span>
-                        </div>
-                        <div>
-                            <span style="font-size:13px;font-weight:800;color:#FFFFFF;display:block;line-height:1">Plan a Trip Demo</span>
-                            <span style="font-size:10px;font-weight:600;color:#FFFFFF;display:block;margin-top:3px;line-height:1">Quick overview of features</span>
-                        </div>
-                    </div>
-                    <button id="demo-modal-close" class="cursor-pointer" style="width:36px;height:36px;border-radius:50%;background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;transition:all 0.2s ease;flex-shrink:0">
-                        <span class="material-symbols-outlined" style="font-size:18px;color:#FFFFFF">close</span>
-                    </button>
-                </div>
-                <div class="relative w-full" style="padding-bottom:56.25%">
-                    <iframe id="demo-video-frame" class="absolute inset-0 w-full h-full" src="" frameborder="0" allowfullscreen loading="lazy"></iframe>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const demoBtn = document.getElementById('view-demo-btn');
-            const demoModal = document.getElementById('demo-modal');
-            const demoOverlay = document.getElementById('demo-modal-overlay');
-            const demoClose = document.getElementById('demo-modal-close');
-            const demoFrame = document.getElementById('demo-video-frame');
-            const demoContent = document.getElementById('demo-modal-content');
-
-            const VIDEO_SRC = 'https://embed.app.guidde.com/playbooks/gUetnNGKQ3drUaY5uagMEg?mode=videoOnly';
-
-            function openDemoModal() {
-                demoFrame.src = VIDEO_SRC;
-                demoModal.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
-                requestAnimationFrame(() => {
-                    demoContent.classList.remove('opacity-0', 'scale-95');
-                    demoContent.classList.add('opacity-100', 'scale-100');
-                });
-            }
-
-            function closeDemoModal() {
-                demoFrame.src = 'about:blank';
-                demoContent.classList.remove('opacity-100', 'scale-100');
-                demoContent.classList.add('opacity-0', 'scale-95');
-                setTimeout(() => {
-                    demoModal.classList.add('hidden');
-                    document.body.style.overflow = '';
-                }, 250);
-            }
-
-            if (demoBtn && demoModal) {
-                demoBtn.addEventListener('click', openDemoModal);
-                demoClose.addEventListener('click', closeDemoModal);
-                demoOverlay.addEventListener('click', closeDemoModal);
-                document.addEventListener('keydown', function (e) {
-                    if (e.key === 'Escape' && !demoModal.classList.contains('hidden')) {
-                        closeDemoModal();
-                    }
-                });
-            }
-        });
-    </script>
 
     {% include 'components/footer.html' %}
     <script src="/static/js/background.js"></script>
