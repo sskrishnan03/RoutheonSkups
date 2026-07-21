@@ -78,24 +78,6 @@
             color: #FFFFFF;
             background: #0A0A0A;
         }
-        .floating-back-btn {
-            position: absolute;
-            top: 8px;
-            left: 16px;
-            z-index: 20;
-            color: rgba(255,255,255,0.7);
-            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
-            cursor: pointer;
-            background: none;
-            border: none;
-        }
-        .floating-back-btn:hover {
-            transform: translateY(-1px) scale(1.1);
-            color: #FFFFFF;
-        }
-        @media (min-width: 768px) {
-            .floating-back-btn { left: 24px; }
-        }
     </style>
 </head>
 
@@ -107,8 +89,13 @@
 
     {% include 'components/navbar.html' %}
 
-    <button type="button" class="floating-back-btn" aria-label="Go back" onclick="goBackOrPlan()">
-        <span class="material-symbols-outlined" style="font-size:40px">arrow_back</span>
+    <button type="button" onclick="goBackOrPlan()"
+        class="fixed top-20 left-4 md:left-6 z-40 inline-flex items-center justify-center w-9 h-9 rounded-full transition-all duration-300"
+        style="background:#0A0A0A;border:1px solid rgba(255,255,255,0.06);color:#FFFFFF;"
+        onmouseover="this.style.background='#111111';this.style.color='#FFFFFF';"
+        onmouseout="this.style.background='#0A0A0A';this.style.color='#FFFFFF';"
+        aria-label="Go back">
+        <span class="material-symbols-outlined" style="font-size:18px">arrow_back</span>
     </button>
 
     <main style="position:relative;z-index:1;flex-grow:relative;padding:128px 16px 96px;overflow:hidden">

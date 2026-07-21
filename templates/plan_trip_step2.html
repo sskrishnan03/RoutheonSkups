@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -24,17 +24,13 @@
             -moz-osx-font-smoothing: grayscale;
         }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
         .glass-card {
             background: #0A0A0A;
             border: 1px solid rgba(255,255,255,0.06);
             border-radius: 24px;
             position: relative;
             overflow: hidden;
-        }
-        .glass-inner {
-            background: #0A0A0A;
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 16px;
         }
         .btn-glass {
             background: #0A0A0A;
@@ -44,11 +40,14 @@
             font-weight: 700;
             cursor: pointer;
             transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
-            position: relative;
-            overflow: hidden;
         }
         .btn-glass:hover {
-            background: #0A0A0A;
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(255,255,255,0.12);
+        }
+        .btn-glass:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
         }
         .btn-primary {
             background: #111111;
@@ -58,13 +57,17 @@
             font-weight: 700;
             cursor: pointer;
             transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
-            position: relative;
-            overflow: hidden;
         }
         .btn-primary:hover {
-            background: #0A0A0A;
+            background: rgba(255,255,255,0.08);
             transform: translateY(-1px);
-            box-shadow: 0 10px 40px #0A0A0A;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        .btn-primary:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
         .step-num {
             width: 32px; height: 32px; border-radius: 50%;
@@ -72,53 +75,220 @@
             font-size: 13px; font-weight: 700;
             transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
         }
+        .step-done .step-num {
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.7);
+        }
         .step-active .step-num {
             background: #111111;
             border: 1px solid rgba(255,255,255,0.06);
             color: #FFFFFF;
         }
-        .step-done .step-num {
-            background: #0A0A0A;
-            border: 1px solid #111111;
-            color: rgba(255,255,255,0.7);
-        }
         .step-inactive .step-num {
             background: #0A0A0A;
             border: 1px solid rgba(255,255,255,0.06);
-            color: rgba(255,255,255,0.7);
+            color: rgba(255,255,255,0.4);
         }
-        .calendar-grid {
+
+        .date-card {
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            padding: 20px 24px;
+            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+            cursor: default;
+        }
+        .date-card.has-date {
+            border-color: rgba(255,255,255,0.12);
+        }
+        .date-card-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .date-card-label-icon {
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.04);
+        }
+        .date-card-weekday {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.4);
+        }
+        .date-card-value {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            line-height: 1.2;
+        }
+        .date-card-sub {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+            margin-top: 4px;
+        }
+        .date-card-placeholder {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.25);
+        }
+
+        .cal-wrapper { user-select: none; }
+        .cal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 0 2px;
+        }
+        .cal-title {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #FFFFFF;
+            letter-spacing: -0.01em;
+        }
+        .cal-nav-btn {
+            width: 40px; height: 40px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.7);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .cal-nav-btn:hover {
+            background: rgba(255,255,255,0.07);
+            color: #FFFFFF;
+            border-color: rgba(255,255,255,0.12);
+        }
+        .cal-nav-btn:disabled {
+            opacity: 0.25;
+            cursor: not-allowed;
+        }
+        .cal-nav-btn .material-icons-round { pointer-events: none; font-size: 22px; }
+
+        .cal-weekdays {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
+            margin-bottom: 8px;
         }
-        .date-selected {
-            background-color: #111111;
+        .cal-weekday {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255,255,255,0.35);
+            padding: 8px 0;
+        }
+
+        .cal-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+        }
+        .cal-day {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 44px;
+            font-size: 14px;
+            font-weight: 600;
             color: #FFFFFF;
-            border-radius: 9999px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
-        .glass-input {
-            background: #000000;
+        .cal-day:hover:not(.cal-day-disabled):not(.cal-day-empty) {
+            background: rgba(255,255,255,0.06);
+        }
+        .cal-day-empty {
+            cursor: default;
+        }
+        .cal-day-disabled {
+            color: rgba(255,255,255,0.15);
+            cursor: not-allowed;
+        }
+        .cal-day-past {
+            color: rgba(255,255,255,0.12);
+            cursor: not-allowed;
+        }
+        .cal-day-today {
+            color: #FFFFFF;
+            font-weight: 800;
+        }
+        .cal-day-today::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+        }
+        .cal-day-range {
+            background: rgba(255,255,255,0.04);
+            border-radius: 4px;
+        }
+        .cal-day-start, .cal-day-end {
+            background: #FFFFFF;
+            color: #000000 !important;
+            font-weight: 800;
+            border-radius: 12px;
+            position: relative;
+            z-index: 2;
+        }
+        .cal-day-start { border-radius: 12px 4px 4px 12px; }
+        .cal-day-end { border-radius: 4px 12px 12px 4px; }
+        .cal-day-start.cal-day-end { border-radius: 12px; }
+
+        .toggle-track {
+            position: relative;
+            width: 52px;
+            height: 28px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.08);
             border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 16px;
-            color: #FFFFFF;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
-            outline: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.22,1,0.36,1);
+            flex-shrink: 0;
         }
-        .glass-input:focus {
-            border-color: #111111;
-            box-shadow: 0 0 0 4px #000000;
+        .toggle-track.active {
+            background: #FFFFFF;
+            border-color: #FFFFFF;
         }
-        .glass-input::placeholder { color: rgba(255,255,255,0.4); }
-        .date-range-bg {
-            background-color: #111111;
+        .toggle-thumb {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.8);
+            transition: all 0.3s cubic-bezier(0.22,1,0.36,1);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         }
-        .toggle-checkbox:checked {
-            right: 0;
-            background-color: #111111;
+        .toggle-track.active .toggle-thumb {
+            left: 27px;
+            background: #000000;
         }
-        .toggle-checkbox:checked + .toggle-label {
-            background-color: #111111;
+        .toggle-track input { display: none; }
+
+        .cal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+        @media (max-width: 768px) {
+            .cal-grid { grid-template-columns: 1fr; gap: 24px; }
         }
     </style>
 </head>
@@ -133,7 +303,6 @@
 
     <main style="position:relative;z-index:1;display:flex;align-items:center;justify-content:center;padding:160px 16px 48px;min-height:100vh;flex-direction:column">
         <div class="w-full max-w-4xl">
-            <!-- Step Wizard -->
             <div style="display:flex;justify-content:center;margin-bottom:48px">
                 <div class="glass-card" style="display:flex;align-items:center;gap:16px;padding:10px 24px">
                     <div class="step-done" style="display:flex;align-items:center;gap:8px">
@@ -142,13 +311,13 @@
                         </div>
                         <span style="font-size:13px;font-weight:700;color:#FFFFFF">Destinations</span>
                     </div>
-                    <div style="width:32px;height:2px;background:#111111"></div>
+                    <div style="width:32px;height:2px;background:rgba(255,255,255,0.06)"></div>
                     <div class="step-active" style="display:flex;align-items:center;gap:8px">
                         <div class="step-num">2</div>
                         <span style="font-size:13px;font-weight:700;color:#FFFFFF">Dates</span>
                     </div>
-                    <div style="width:32px;height:2px;background:#111111"></div>
-                    <div class="step-inactive" style="display:flex;align-items:center;gap:8px;opacity:0.4">
+                    <div style="width:32px;height:2px;background:rgba(255,255,255,0.06)"></div>
+                    <div class="step-inactive" style="display:flex;align-items:center;gap:8px">
                         <div class="step-num">3</div>
                         <span style="font-size:13px;font-weight:700;color:#FFFFFF">Preferences</span>
                     </div>
@@ -166,373 +335,412 @@
 
             <div class="glass-card" style="overflow:hidden">
                 <div style="padding:32px">
-                    <div class="grid md:grid-cols-2 gap-6 mb-10">
-                        <div>
-                            <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#FFFFFF;margin-bottom:8px;margin-left:4px">Start Date</label>
-                            <div class="relative group">
-                                <span class="material-symbols-outlined" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#FFFFFF;transition:color 0.3s">calendar_month</span>
-                                <input id="start-date-input"
-                                    class="glass-input w-full"
-                                    style="padding:16px 16px 16px 48px;font-weight:600"
-                                    readonly="" type="text" value="" placeholder="Select Date" />
+                    <div class="grid md:grid-cols-2 gap-5 mb-10">
+                        <div class="date-card" id="start-date-card">
+                            <div class="date-card-label">
+                                <div class="date-card-label-icon">
+                                    <span class="material-symbols-outlined" style="font-size:18px;color:#FFFFFF">flight_takeoff</span>
+                                </div>
+                                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.5)">Start Date</span>
+                            </div>
+                            <div id="start-date-display">
+                                <div class="date-card-placeholder">Select Start Date</div>
                             </div>
                         </div>
-                        <div>
-                            <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#FFFFFF;margin-bottom:8px;margin-left:4px">End Date</label>
-                            <div class="relative group">
-                                <span class="material-symbols-outlined" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#FFFFFF;transition:color 0.3s">calendar_today</span>
-                                <input id="end-date-input"
-                                    class="glass-input w-full"
-                                    style="padding:16px 16px 16px 48px;font-weight:600"
-                                    readonly="" type="text" value="" placeholder="Select Date" />
+                        <div class="date-card" id="end-date-card">
+                            <div class="date-card-label">
+                                <div class="date-card-label-icon">
+                                    <span class="material-symbols-outlined" style="font-size:18px;color:#FFFFFF">flight_land</span>
+                                </div>
+                                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.5)">End Date</span>
+                            </div>
+                            <div id="end-date-display">
+                                <div class="date-card-placeholder">Select End Date</div>
                             </div>
                         </div>
                     </div>
-                    <div class="grid lg:grid-cols-2 gap-12" id="calendar-container">
-                        <div id="month1-container"></div>
-                        <div id="month2-container" class="hidden lg:block"></div>
+
+                    <div class="cal-grid" id="calendar-container">
+                        <div id="month1-container" class="cal-wrapper"></div>
+                        <div id="month2-container" class="cal-wrapper"></div>
                     </div>
+
                     <div id="flexible-card"
-                        class="mt-12 flex items-center justify-between"
-                        style="padding:24px;border-radius:16px;background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06)">
+                        class="mt-8 flex items-center justify-between"
+                        style="padding:20px 24px;border-radius:16px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06)">
                         <div class="flex items-center gap-4">
-                            <div style="width:48px;height:48px;border-radius:50%;background:#0A0A0A;display:flex;align-items:center;justify-content:center">
-                                <span class="material-symbols-outlined" style="color:#FFFFFF">event_repeat</span>
+                            <div style="width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center">
+                                <span class="material-symbols-outlined" style="font-size:22px;color:#FFFFFF">event_repeat</span>
                             </div>
                             <div>
-                                <h4 style="font-weight:700;color:#FFFFFF">I am flexible with dates</h4>
-                                <p style="font-size:13px;color:rgba(255,255,255,0.5)">Show me the best prices within +/- 3 days of my selection.</p>
-                                <p id="flexible-status"
-                                    style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.7);margin-top:4px">Flexible: On</p>
+                                <h4 style="font-weight:700;color:#FFFFFF;font-size:15px">Flexible Dates</h4>
+                                <p style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:2px">Show best prices within +/- 3 days</p>
                             </div>
                         </div>
-                        <div style="position:relative;display:inline-block;width:56px;height:32px;align-middle;user-select:none;transition:duration 200">
-                            <input checked=""
-                                class="toggle-checkbox absolute block w-8 h-8 rounded-full appearance-none cursor-pointer transition-all"
-                                style="top:0;right:16px;border: 4px solid rgba(255,255,255,0.06);background:#0A0A0A"
-                                id="toggle" name="toggle" type="checkbox" />
-                            <label class="toggle-label block overflow-hidden h-8 rounded-full cursor-pointer transition-all"
-                                style="background:#0A0A0A"
-                                for="toggle"></label>
+                        <div class="toggle-track" id="toggle" role="switch" aria-checked="true" tabindex="0">
+                            <div class="toggle-thumb"></div>
+                            <input type="checkbox" id="toggle-input" checked style="display:none" />
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex items-center justify-between"
+                        style="padding:20px 24px;border-radius:16px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06)">
+                        <div>
+                            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.4);margin-bottom:6px">Trip Duration</div>
+                            <div style="display:flex;align-items:baseline;gap:6px">
+                                <span id="duration-nights" style="font-size:1.5rem;font-weight:800;color:#FFFFFF">5</span>
+                                <span id="duration-nights-label" style="font-size:14px;font-weight:600;color:rgba(255,255,255,0.5)">Nights</span>
+                                <span style="margin:0 4px;color:rgba(255,255,255,0.15)">/</span>
+                                <span id="duration-days" style="font-size:1.5rem;font-weight:800;color:#FFFFFF">6</span>
+                                <span id="duration-days-label" style="font-size:14px;font-weight:600;color:rgba(255,255,255,0.5)">Days</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button id="duration-minus-btn" type="button" class="btn-glass"
+                                style="width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;padding:0">
+                                <span class="material-icons-round" style="font-size:20px">remove</span>
+                            </button>
+                            <button id="duration-plus-btn" type="button" class="btn-glass"
+                                style="width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;padding:0">
+                                <span class="material-icons-round" style="font-size:20px">add</span>
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div style="padding:24px 32px;border-top: 1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between">
+
+                <div style="padding:24px 32px;border-top:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between">
                     <button id="back-step-btn" onclick="history.back()"
                         class="btn-glass flex items-center gap-2"
-                        style="padding:12px 24px;font-weight:700">
-                        <span class="material-icons-round">arrow_back</span>
+                        style="padding:12px 24px;font-size:14px">
+                        <span class="material-icons-round" style="font-size:20px">arrow_back</span>
                         Back
                     </button>
-                    <div class="flex items-center gap-6">
-                        <div style="text-align:right">
-                            <span style="display:block;font-size:11px;font-weight:700;color:#FFFFFF;text-transform:uppercase;letter-spacing:0.12em">Total Duration</span>
-                            <div style="margin-top:4px;display:flex;align-items:center;justify-content:flex-end;gap:8px">
-                                <button id="duration-minus-btn" type="button"
-                                    class="btn-glass"
-                                    style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;padding:0">
-                                    -
-                                </button>
-                                <span id="total-duration" style="font-size:1.1rem;font-weight:800;color:#FFFFFF;min-width:90px;text-align:center">-</span>
-                                <button id="duration-plus-btn" type="button"
-                                    class="btn-glass"
-                                    style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;padding:0">
-                                    +
-                                </button>
-                            </div>
-                        </div>
-                        <button id="next-step-btn"
-                            class="btn-primary flex items-center gap-3"
-                            style="padding:16px 40px;font-weight:700;box-shadow:0 10px 40px #0A0A0A">
-                            Next Step
-                            <span class="material-icons-round">arrow_forward</span>
-                        </button>
-                    </div>
+                    <button id="next-step-btn"
+                        class="btn-primary flex items-center gap-3"
+                        style="padding:14px 36px;font-size:15px;box-shadow:0 8px 30px rgba(0,0,0,0.4)">
+                        Next Step
+                        <span class="material-icons-round" style="font-size:20px">arrow_forward</span>
+                    </button>
                 </div>
             </div>
 
-            <p style="margin-top:32px;text-align:center;font-size:14px;color:rgba(255,255,255,0.5);display:flex;align-items:center;justify-content:center;gap:8px">
-                <span class="material-icons-round" style="font-size:18px">lightbulb</span>
-                Pro tip: Travelling on Tuesdays or Wednesdays often yields better accommodation rates.
+            <p style="margin-top:24px;text-align:center;font-size:13px;color:rgba(255,255,255,0.35);display:flex;align-items:center;justify-content:center;gap:8px">
+                <span class="material-icons-round" style="font-size:16px">lightbulb</span>
+                Pro tip: Travelling on Tuesdays or Wednesdays often yields better rates.
             </p>
         </div>
     </main>
 
-    <footer style="padding:40px 0;border-top: 1px solid rgba(255,255,255,0.06);margin-top:auto">
+    <footer style="padding:40px 0;border-top:1px solid rgba(255,255,255,0.06);margin-top:auto">
         <div class="max-w-7xl mx-auto px-4 text-center">
-            <p style="font-size:12px;color:rgba(255,255,255,0.45)">
+            <p style="font-size:12px;color:rgba(255,255,255,0.35)">
                 @2026 RoutheonSkups. All rights reserved. Made with &#10084;&#65039; for India.
             </p>
         </div>
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const destination = urlParams.get('destination');
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const destination = urlParams.get('destination');
 
-            let currentDate = new Date();
-            currentDate.setDate(1);
+        let viewDate = new Date();
+        viewDate.setDate(1);
 
-            let startDate = null;
-            let endDate = null;
+        let startDate = null;
+        let endDate = null;
 
-            const startDateInput = document.getElementById('start-date-input');
-            const endDateInput = document.getElementById('end-date-input');
-            const totalDurationDisplay = document.getElementById('total-duration');
-            const nextBtn = document.getElementById('next-step-btn');
-            const flexibleToggle = document.getElementById('toggle');
-            const flexibleStatus = document.getElementById('flexible-status');
-            const flexibleCard = document.getElementById('flexible-card');
-            const durationMinusBtn = document.getElementById('duration-minus-btn');
-            const durationPlusBtn = document.getElementById('duration-plus-btn');
+        const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+        const dayNamesFull = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
-            function normalizeDate(date) {
-                const normalized = new Date(date);
-                normalized.setHours(0, 0, 0, 0);
-                return normalized;
-            }
+        const startDisplay = document.getElementById('start-date-display');
+        const endDisplay = document.getElementById('end-date-display');
+        const startCard = document.getElementById('start-date-card');
+        const endCard = document.getElementById('end-date-card');
+        const nextBtn = document.getElementById('next-step-btn');
+        const toggleEl = document.getElementById('toggle');
+        const toggleInput = document.getElementById('toggle-input');
 
-            function addDays(date, days) {
-                const result = new Date(date);
-                result.setDate(result.getDate() + days);
-                return normalizeDate(result);
-            }
+        function normalizeDate(d) {
+            const n = new Date(d);
+            n.setHours(0,0,0,0);
+            return n;
+        }
 
-            function toYMD(date) {
-                const y = date.getFullYear();
-                const m = String(date.getMonth() + 1).padStart(2, '0');
-                const d = String(date.getDate()).padStart(2, '0');
-                return `${y}-${m}-${d}`;
-            }
+        function addDays(d, days) {
+            const r = new Date(d);
+            r.setDate(r.getDate() + days);
+            return normalizeDate(r);
+        }
 
-            function getTripDays() {
-                if (!startDate || !endDate) return 0;
-                const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
-                return Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
-            }
+        function toYMD(d) {
+            const y = d.getFullYear();
+            const m = String(d.getMonth()+1).padStart(2,'0');
+            const dd = String(d.getDate()).padStart(2,'0');
+            return `${y}-${m}-${dd}`;
+        }
 
-            function formatDate(date) {
-                if (!date) return '';
-                const options = { month: 'short', day: 'numeric', year: 'numeric' };
-                return date.toLocaleDateString('en-US', options);
-            }
+        function formatDateLong(d) {
+            if (!d) return '';
+            return `${d.getDate()} ${monthNames[d.getMonth()]} ${d.getFullYear()}`;
+        }
 
-            function renderCalendar() {
-                const c1 = document.getElementById('month1-container');
-                const c2 = document.getElementById('month2-container');
+        function getWeekday(d) {
+            return dayNamesFull[d.getDay()];
+        }
 
-                let month1 = new Date(currentDate);
-                let month2 = new Date(currentDate);
-                month2.setMonth(month2.getMonth() + 1);
+        function isSameDay(a, b) {
+            return a && b && a.getTime() === b.getTime();
+        }
 
-                if (c1) c1.innerHTML = generateMonthHTML(month1, true, false);
-                if (c2) c2.innerHTML = generateMonthHTML(month2, false, true);
+        function isInRange(d) {
+            if (!startDate || !endDate) return false;
+            return d > startDate && d < endDate;
+        }
 
-                attachEventListeners();
-                updateInputs();
-            }
+        function isToday(d) {
+            const t = normalizeDate(new Date());
+            return isSameDay(d, t);
+        }
 
-            function generateMonthHTML(date, hasPrevBtn, hasNextBtn) {
-                const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        function isPast(d) {
+            const t = normalizeDate(new Date());
+            t.setHours(0,0,0,0);
+            return d < t;
+        }
 
-                let prevBtnHTML = hasPrevBtn ? `<button class="prev-month-btn" style="padding:8px;border-radius:50%;background:transparent;border:none;color:#fff;cursor:pointer;transition:background 0.2s"><span class="material-icons-round" style="pointer-events:none">chevron_left</span></button>` : `<div style="width:36px;height:36px;flex-shrink:0" class="hidden lg:block"></div><button class="prev-month-btn" style="padding:8px;border-radius:50%;background:transparent;border:none;color:#fff;cursor:pointer;transition:background 0.2s"><span class="material-icons-round" style="pointer-events:none">chevron_left</span></button>`;
-                let nextBtnHTML = hasNextBtn ? `<button class="next-month-btn" style="padding:8px;border-radius:50%;background:transparent;border:none;color:#fff;cursor:pointer;transition:background 0.2s"><span class="material-icons-round" style="pointer-events:none">chevron_right</span></button>` : `<div style="width:36px;height:36px;flex-shrink:0" class="hidden lg:block"></div><button class="next-month-btn" style="padding:8px;border-radius:50%;background:transparent;border:none;color:#fff;cursor:pointer;transition:background 0.2s"><span class="material-icons-round" style="pointer-events:none">chevron_right</span></button>`;
-
-                let header = `
-                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
-                        ${prevBtnHTML}
-                        <h3 style="font-weight:800;font-size:1.1rem;color:#FFFFFF">${monthNames[date.getMonth()]} ${date.getFullYear()}</h3>
-                        ${nextBtnHTML}
-                    </div>
-                    <div class="calendar-grid text-center" style="font-size:11px;font-weight:700;color:#FFFFFF;margin-bottom:16px;text-transform:uppercase;letter-spacing:0.1em">
-                        <div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div><div>Su</div>
-                    </div>
+        function updateDateCards() {
+            if (startDate) {
+                startCard.classList.add('has-date');
+                startDisplay.innerHTML = `
+                    <div class="date-card-weekday">${getWeekday(startDate)}</div>
+                    <div class="date-card-value">${startDate.getDate()} ${monthNames[startDate.getMonth()].slice(0,3)} ${startDate.getFullYear()}</div>
                 `;
-
-                let days = `<div class="calendar-grid" style="font-size:14px;font-weight:600;gap:4px 0">`;
-
-                const year = date.getFullYear();
-                const month = date.getMonth();
-
-                const firstDay = new Date(year, month, 1);
-                const lastDay = new Date(year, month + 1, 0);
-
-                let firstDayOfWeek = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1;
-
-                const prevMonthLastDay = new Date(year, month, 0).getDate();
-                for (let i = 0; i < firstDayOfWeek; i++) {
-                    days += `<div style="padding:12px;color:#FFFFFF;text-align:center">${prevMonthLastDay - firstDayOfWeek + i + 1}</div>`;
-                }
-
-                let today = new Date();
-                today.setHours(0, 0, 0, 0);
-
-                for (let i = 1; i <= lastDay.getDate(); i++) {
-                    let currentDayDate = new Date(year, month, i);
-                    currentDayDate.setHours(0, 0, 0, 0);
-
-                    let classes = "day-cell";
-                    let styles = "padding:12px;transition:all 0.2s;cursor:pointer;text-align:center;border-radius:50%;";
-
-                    if (currentDayDate < today) {
-                        styles += "color:#FFFFFF;cursor:not-allowed;";
-                        days += `<div class="${classes}" style="${styles}">${i}</div>`;
-                        continue;
-                    }
-
-                    let isStart = startDate && currentDayDate.getTime() === startDate.getTime();
-                    let isEnd = endDate && currentDayDate.getTime() === endDate.getTime();
-                    let inRange = startDate && endDate && currentDayDate > startDate && currentDayDate < endDate;
-
-                    if (isStart || isEnd) {
-                        styles += "background:#111111;color:#FFFFFF;box-shadow:0 0 20px #0A0A0A;position:relative;z-index:10;";
-                    } else if (inRange) {
-                        styles += "background:#0A0A0A;";
-                    } else {
-                        styles += "border-radius:50%;";
-                    }
-
-                    days += `<div class="${classes}" style="${styles}" data-date="${currentDayDate.getTime()}" data-day="${i}">${i}</div>`;
-                }
-
-                let lastDayOfWeek = lastDay.getDay() === 0 ? 6 : lastDay.getDay() - 1;
-                let nextMonthDays = 6 - lastDayOfWeek;
-                for (let i = 1; i <= nextMonthDays; i++) {
-                    days += `<div style="padding:12px;color:#FFFFFF;text-align:center">${i}</div>`;
-                }
-
-                days += `</div>`;
-
-                return header + days;
+            } else {
+                startCard.classList.remove('has-date');
+                startDisplay.innerHTML = '<div class="date-card-placeholder">Select Start Date</div>';
             }
 
-            function attachEventListeners() {
-                document.querySelectorAll('.prev-month-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        currentDate.setMonth(currentDate.getMonth() - 1);
-                        renderCalendar();
-                    });
-                });
-
-                document.querySelectorAll('.next-month-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        currentDate.setMonth(currentDate.getMonth() + 1);
-                        renderCalendar();
-                    });
-                });
-
-                document.querySelectorAll('.day-cell').forEach(cell => {
-                    cell.addEventListener('click', (e) => {
-                        const cellTarget = e.currentTarget;
-                        const clickedDate = normalizeDate(new Date(parseInt(cellTarget.dataset.date, 10)));
-
-                        if (!startDate || (startDate && endDate && startDate.getTime() !== endDate.getTime())) {
-                            startDate = clickedDate;
-                            endDate = clickedDate;
-                        } else if (startDate && endDate && startDate.getTime() === endDate.getTime()) {
-                            if (clickedDate < startDate) {
-                                endDate = startDate;
-                                startDate = clickedDate;
-                            } else {
-                                endDate = clickedDate;
-                            }
-                        }
-
-                        renderCalendar();
-                    });
-                });
+            if (endDate) {
+                endCard.classList.add('has-date');
+                endDisplay.innerHTML = `
+                    <div class="date-card-weekday">${getWeekday(endDate)}</div>
+                    <div class="date-card-value">${endDate.getDate()} ${monthNames[endDate.getMonth()].slice(0,3)} ${endDate.getFullYear()}</div>
+                `;
+            } else {
+                endCard.classList.remove('has-date');
+                endDisplay.innerHTML = '<div class="date-card-placeholder">Select End Date</div>';
             }
+        }
 
-            function updateInputs() {
-                if (startDateInput) startDateInput.value = startDate ? formatDate(startDate) : '';
-                if (endDateInput) endDateInput.value = endDate ? formatDate(endDate) : '';
+        function updateAll() {
+            updateDateCards();
+            updateDuration();
+        }
 
-                if (startDate && endDate && totalDurationDisplay) {
-                    const days = getTripDays();
-                    totalDurationDisplay.innerText = days === 1 ? '1 Day' : `${days} Days`;
-                } else if (totalDurationDisplay) {
-                    totalDurationDisplay.innerText = '-';
-                }
+        function updateDuration() {
+            const nightsEl = document.getElementById('duration-nights');
+            const daysEl = document.getElementById('duration-days');
+            const nightsLabel = document.getElementById('duration-nights-label');
+            const daysLabel = document.getElementById('duration-days-label');
+            if (!nightsEl || !daysEl) return;
+            if (startDate && endDate) {
+                const diffMs = Math.abs(endDate.getTime() - startDate.getTime());
+                const days = Math.floor(diffMs / (1000*60*60*24)) + 1;
+                const nights = Math.max(0, days - 1);
+                nightsEl.textContent = nights;
+                daysEl.textContent = days;
+                nightsLabel.textContent = nights === 1 ? 'Night' : 'Nights';
+                daysLabel.textContent = days === 1 ? 'Day' : 'Days';
+            } else {
+                nightsEl.textContent = '-';
+                daysEl.textContent = '-';
+                nightsLabel.textContent = 'Nights';
+                daysLabel.textContent = 'Days';
             }
+        }
 
-            function updateFlexibleUI() {
-                const isFlexible = flexibleToggle ? flexibleToggle.checked : false;
-                if (flexibleStatus) {
-                    flexibleStatus.innerText = isFlexible ? 'Flexible: On' : 'Flexible: Off';
-                }
-                if (flexibleCard) {
-                    flexibleCard.style.boxShadow = isFlexible ? '0 0 0 2px #0A0A0A' : 'none';
-                }
-            }
+        function generateMonthHTML(date) {
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            let firstDayOfWeek = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1;
 
-            function adjustDuration(deltaDays) {
-                const today = normalizeDate(new Date());
-                if (!startDate) {
-                    startDate = today;
-                }
-                if (!endDate || endDate < startDate) {
-                    endDate = startDate;
-                }
-
-                const currentDuration = getTripDays();
-                const nextDuration = Math.min(30, Math.max(1, currentDuration + deltaDays));
-                endDate = addDays(startDate, nextDuration - 1);
-                renderCalendar();
-            }
-
+            let canGoPrev = true;
             const today = normalizeDate(new Date());
-            startDate = today;
-            endDate = addDays(today, 4);
-            currentDate = new Date(today.getFullYear(), today.getMonth(), 1);
+            const currentMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+            if (firstDay.getTime() <= currentMonthStart.getTime()) {
+                canGoPrev = false;
+            }
 
-            renderCalendar();
+            let html = `<div class="cal-header">
+                <button class="cal-nav-btn cal-prev-btn" ${canGoPrev ? '' : 'disabled'}>
+                    <span class="material-icons-round">chevron_left</span>
+                </button>
+                <div class="cal-title">${monthNames[month]} ${year}</div>
+                <button class="cal-nav-btn cal-next-btn">
+                    <span class="material-icons-round">chevron_right</span>
+                </button>
+            </div>`;
+
+            html += `<div class="cal-weekdays">
+                <div class="cal-weekday">Mo</div><div class="cal-weekday">Tu</div><div class="cal-weekday">We</div>
+                <div class="cal-weekday">Th</div><div class="cal-weekday">Fr</div><div class="cal-weekday">Sa</div><div class="cal-weekday">Su</div>
+            </div>`;
+
+            html += '<div class="cal-days">';
+
+            const prevMonthLastDay = new Date(year, month, 0).getDate();
+            for (let i = 0; i < firstDayOfWeek; i++) {
+                html += `<div class="cal-day cal-day-empty"></div>`;
+            }
+
+            for (let i = 1; i <= lastDay.getDate(); i++) {
+                const cellDate = normalizeDate(new Date(year, month, i));
+                const past = isPast(cellDate);
+                const todayClass = isToday(cellDate);
+                const startClass = isSameDay(cellDate, startDate);
+                const endClass = isSameDay(cellDate, endDate);
+                const rangeClass = isInRange(cellDate);
+
+                let classes = 'cal-day';
+                if (past) classes += ' cal-day-past';
+                if (todayClass && !past) classes += ' cal-day-today';
+                if (startClass) classes += ' cal-day-start';
+                if (endClass) classes += ' cal-day-end';
+                if (rangeClass) classes += ' cal-day-range';
+
+                const clickAttr = past ? '' : `data-date="${cellDate.getTime()}"`;
+
+                html += `<div class="${classes}" ${clickAttr}>${i}</div>`;
+            }
+
+            const lastDayOfWeek = lastDay.getDay() === 0 ? 6 : lastDay.getDay() - 1;
+            const remaining = 6 - lastDayOfWeek;
+            for (let i = 1; i <= remaining; i++) {
+                html += `<div class="cal-day cal-day-empty"></div>`;
+            }
+
+            html += '</div>';
+            return html;
+        }
+
+        function renderCalendar() {
+            const c1 = document.getElementById('month1-container');
+            const c2 = document.getElementById('month2-container');
+
+            let month1 = new Date(viewDate);
+            let month2 = new Date(viewDate);
+            month2.setMonth(month2.getMonth() + 1);
+
+            if (c1) c1.innerHTML = generateMonthHTML(month1);
+            if (c2) c2.innerHTML = generateMonthHTML(month2);
+
+            attachListeners();
+            updateAll();
+        }
+
+        function attachListeners() {
+            document.querySelectorAll('.cal-prev-btn').forEach(btn => {
+                btn.onclick = () => {
+                    if (btn.disabled) return;
+                    viewDate.setMonth(viewDate.getMonth() - 1);
+                    renderCalendar();
+                };
+            });
+
+            document.querySelectorAll('.cal-next-btn').forEach(btn => {
+                btn.onclick = () => {
+                    viewDate.setMonth(viewDate.getMonth() + 1);
+                    renderCalendar();
+                };
+            });
+
+            document.querySelectorAll('.cal-day[data-date]').forEach(cell => {
+                cell.onclick = () => {
+                    const clickedDate = normalizeDate(new Date(parseInt(cell.dataset.date, 10)));
+
+                    if (!startDate || (startDate && endDate && !isSameDay(startDate, endDate))) {
+                        startDate = clickedDate;
+                        endDate = clickedDate;
+                    } else if (startDate && endDate && isSameDay(startDate, endDate)) {
+                        if (clickedDate < startDate) {
+                            endDate = startDate;
+                            startDate = clickedDate;
+                        } else {
+                            endDate = clickedDate;
+                        }
+                    }
+
+                    renderCalendar();
+                };
+            });
+        }
+
+        function updateFlexibleUI() {
+            const active = toggleInput.checked;
+            toggleEl.classList.toggle('active', active);
+            toggleEl.setAttribute('aria-checked', active);
+        }
+
+        toggleEl.addEventListener('click', () => {
+            toggleInput.checked = !toggleInput.checked;
             updateFlexibleUI();
+        });
 
-            if (durationMinusBtn) {
-                durationMinusBtn.addEventListener('click', () => adjustDuration(-1));
-            }
-
-            if (durationPlusBtn) {
-                durationPlusBtn.addEventListener('click', () => adjustDuration(1));
-            }
-
-            if (flexibleToggle) {
-                flexibleToggle.addEventListener('change', updateFlexibleUI);
-            }
-
-            if (flexibleCard && flexibleToggle) {
-                flexibleCard.addEventListener('click', (e) => {
-                    if (e.target.closest('#toggle') || e.target.closest('label[for="toggle"]')) {
-                        return;
-                    }
-                    flexibleToggle.checked = !flexibleToggle.checked;
-                    updateFlexibleUI();
-                });
-            }
-
-            if (nextBtn) {
-                nextBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    if (!startDate || !endDate) {
-                        alert('Please select a start and end date.');
-                        return;
-                    }
-
-                    const isFlexible = flexibleToggle ? flexibleToggle.checked : false;
-
-                    const queryParams = new URLSearchParams();
-                    if (destination) queryParams.set('destination', destination);
-                    queryParams.set('start_date', toYMD(startDate));
-                    queryParams.set('end_date', toYMD(endDate));
-                    queryParams.set('flexible', isFlexible);
-
-                    window.location.href = "{{ url_for('main.plan_trip_step2_0') }}?" + queryParams.toString();
-                });
+        toggleEl.addEventListener('keydown', (e) => {
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                toggleInput.checked = !toggleInput.checked;
+                updateFlexibleUI();
             }
         });
+
+        if (nextBtn) {
+            nextBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (!startDate || !endDate) {
+                    return;
+                }
+
+                const isFlexible = toggleInput.checked;
+                const qp = new URLSearchParams();
+                if (destination) qp.set('destination', destination);
+                qp.set('start_date', toYMD(startDate));
+                qp.set('end_date', toYMD(endDate));
+                qp.set('flexible', isFlexible);
+
+                window.location.href = "{{ url_for('main.plan_trip_step2_0') }}?" + qp.toString();
+            });
+        }
+
+        function adjustDuration(deltaDays) {
+            if (!startDate) {
+                startDate = normalizeDate(new Date());
+            }
+            if (!endDate || endDate <= startDate) {
+                endDate = addDays(startDate, 4);
+            }
+            const currentDiff = Math.round((endDate.getTime() - startDate.getTime()) / (1000*60*60*24));
+            const nextDiff = Math.min(30, Math.max(1, currentDiff + deltaDays));
+            endDate = addDays(startDate, nextDiff);
+            renderCalendar();
+        }
+
+        const durationMinusBtn = document.getElementById('duration-minus-btn');
+        const durationPlusBtn = document.getElementById('duration-plus-btn');
+        if (durationMinusBtn) durationMinusBtn.addEventListener('click', () => adjustDuration(-1));
+        if (durationPlusBtn) durationPlusBtn.addEventListener('click', () => adjustDuration(1));
+
+        const today = normalizeDate(new Date());
+        startDate = today;
+        endDate = addDays(today, 4);
+        viewDate = new Date(today.getFullYear(), today.getMonth(), 1);
+
+        renderCalendar();
+        updateFlexibleUI();
+    });
     </script>
 
     <script src="/static/js/background.js"></script>

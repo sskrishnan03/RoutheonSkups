@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -24,53 +24,58 @@
             -moz-osx-font-smoothing: grayscale;
         }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24; }
+
         .glass-card {
             background: #0A0A0A;
             border: 1px solid rgba(255,255,255,0.06);
             border-radius: 24px;
             position: relative;
             overflow: hidden;
-            transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s cubic-bezier(0.22,1,0.36,1), border-color 0.35s cubic-bezier(0.22,1,0.36,1);
-        }
-        .glass-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 20px 60px -10px #111111;
         }
         .category-card {
             background: #0A0A0A;
             border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 24px;
+            border-radius: 20px;
             position: relative;
             overflow: hidden;
             transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
         }
         .category-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 20px 60px -10px #111111;
-            border-color: #111111;
+            box-shadow: 0 16px 48px -8px rgba(0,0,0,0.6);
+            border-color: rgba(255,255,255,0.12);
         }
         .category-card.selected {
-            border-color: #111111;
-            background: #0A0A0A;
-            box-shadow: 0 0 0 2px #0A0A0A;
+            border-color: #FFFFFF;
+            background: rgba(255,255,255,0.04);
+            box-shadow: 0 0 0 1px #FFFFFF;
+        }
+        .category-card.selected:hover {
+            border-color: #FFFFFF;
+            box-shadow: 0 0 0 1px #FFFFFF, 0 16px 48px -8px rgba(0,0,0,0.6);
+        }
+        .category-card .check-mark {
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.3s cubic-bezier(0.22,1,0.36,1);
         }
         .category-card.selected .check-mark {
             opacity: 1;
             transform: scale(1);
         }
+
         .btn-glass {
             background: #0A0A0A;
             color: #FFFFFF;
             border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 9999px;
+            border-radius: 14px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
-            position: relative;
-            overflow: hidden;
         }
         .btn-glass:hover {
-            background: #0A0A0A;
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(255,255,255,0.12);
         }
         .btn-primary {
             background: #111111;
@@ -80,42 +85,66 @@
             font-weight: 700;
             cursor: pointer;
             transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
-            position: relative;
-            overflow: hidden;
         }
         .btn-primary:hover {
-            background: #0A0A0A;
+            background: rgba(255,255,255,0.08);
             transform: translateY(-1px);
-            box-shadow: 0 10px 40px #0A0A0A;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
+
         .step-num {
             width: 32px; height: 32px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             font-size: 13px; font-weight: 700;
             transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
         }
+        .step-done .step-num {
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.7);
+        }
         .step-active .step-num {
             background: #111111;
             border: 1px solid rgba(255,255,255,0.06);
             color: #FFFFFF;
         }
-        .step-active-lg .step-num {
-            width: 40px; height: 40px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 14px; font-weight: 700;
-            background: #111111;
-            border: 1px solid rgba(255,255,255,0.06);
-            color: #FFFFFF;
-        }
-        .step-done .step-num {
-            background: #0A0A0A;
-            border: 1px solid #111111;
-            color: rgba(255,255,255,0.7);
-        }
         .step-inactive .step-num {
             background: #0A0A0A;
             border: 1px solid rgba(255,255,255,0.06);
-            color: rgba(255,255,255,0.7);
+            color: rgba(255,255,255,0.4);
+        }
+
+        .bottom-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 32px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .selection-badge {
+            font-size: 13px;
+            font-weight: 700;
+            color: #FFFFFF;
+            padding: 8px 18px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 9999px;
+            transition: all 0.3s ease;
+        }
+
+        .pagination-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .page-indicator {
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.4);
         }
     </style>
 </head>
@@ -131,69 +160,81 @@
     <main style="position:relative;z-index:1;min-height:100vh;padding:160px 16px 96px;overflow:hidden">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col items-center mb-12">
-                <!-- Step Wizard -->
                 <div class="glass-card" style="display:flex;align-items:center;gap:16px;padding:10px 24px;margin-bottom:32px">
                     <div class="step-done" style="display:flex;align-items:center;gap:8px">
-                        <div class="step-num" style="width:28px;height:28px;font-size:12px">1</div>
+                        <div class="step-num" style="width:28px;height:28px;font-size:12px">
+                            <span class="material-icons-round" style="font-size:16px">check</span>
+                        </div>
                         <span style="font-size:12px;font-weight:700;color:#FFFFFF" class="hidden sm:inline">Destination</span>
                     </div>
-                    <div style="width:24px;height:1px;background:#0A0A0A"></div>
+                    <div style="width:24px;height:1px;background:rgba(255,255,255,0.06)"></div>
                     <div class="step-done" style="display:flex;align-items:center;gap:8px">
-                        <div class="step-num" style="width:28px;height:28px;font-size:12px">2</div>
+                        <div class="step-num" style="width:28px;height:28px;font-size:12px">
+                            <span class="material-icons-round" style="font-size:16px">check</span>
+                        </div>
                         <span style="font-size:12px;font-weight:700;color:#FFFFFF" class="hidden sm:inline">Dates</span>
                     </div>
-                    <div style="width:24px;height:1px;background:#0A0A0A"></div>
+                    <div style="width:24px;height:1px;background:rgba(255,255,255,0.06)"></div>
                     <div class="step-active" style="display:flex;align-items:center;gap:8px">
-                        <div class="step-active-lg"><div class="step-num">3</div></div>
+                        <div class="step-num" style="width:36px;height:36px;font-size:14px">3</div>
                         <span style="font-size:13px;font-weight:700;color:#FFFFFF">Style</span>
                     </div>
-                    <div style="width:24px;height:1px;background:#0A0A0A"></div>
+                    <div style="width:24px;height:1px;background:rgba(255,255,255,0.06)"></div>
                     <div class="step-inactive" style="display:flex;align-items:center;gap:8px">
                         <div class="step-num" style="width:28px;height:28px;font-size:12px">4</div>
-                        <span style="font-size:12px;font-weight:700;color:#FFFFFF" class="hidden sm:inline">Review</span>
+                        <span style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.4)" class="hidden sm:inline">Review</span>
                     </div>
                 </div>
 
                 <h1 style="font-size:clamp(2rem,4vw,3rem);font-weight:900;text-align:center;letter-spacing:-0.03em;margin-bottom:16px;color:#FFFFFF">
                     What is your travel style?
                 </h1>
-                <p style="text-align:center;font-size:1.1rem;color:#FFFFFF;max-width:640px">
+                <p style="text-align:center;font-size:1.1rem;color:rgba(255,255,255,0.5);max-width:640px">
                     Pick categories to personalize your itinerary, or skip for recommendations based on your destination.
                 </p>
             </div>
 
-            <div id="category-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 mb-6"></div>
+            <div id="category-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8"></div>
 
-            <div class="flex items-center justify-center mb-16 gap-3 flex-wrap">
-                <button id="more-options-btn" class="btn-glass" style="padding:12px 40px">More Options</button>
-                <button id="go-first-btn" class="btn-glass" style="padding:12px 32px">Go To First</button>
-                <span id="page-indicator" style="font-size:13px;font-weight:600;color:#FFFFFF"></span>
+            <div class="pagination-row mb-10">
+                <button id="go-first-btn" class="btn-glass" style="padding:10px 24px;font-size:13px">
+                    <span class="material-icons-round" style="font-size:18px;vertical-align:middle">first_page</span>
+                    Start
+                </button>
+                <button id="more-options-btn" class="btn-glass" style="padding:10px 28px;font-size:13px">
+                    More Options
+                    <span class="material-icons-round" style="font-size:18px;vertical-align:middle">expand_more</span>
+                </button>
+                <span id="page-indicator" class="page-indicator"></span>
             </div>
 
-            <div style="display:flex;flex-direction:column;align-items:center;gap:16px;padding-top:32px;border-top: 1px solid rgba(255,255,255,0.06)">
-                <button onclick="history.back()"
-                    class="btn-glass w-full sm:w-auto flex items-center justify-center gap-2"
-                    style="padding:16px 32px;font-weight:700">
-                    <span class="material-icons-round" style="font-size:20px">arrow_back</span>
-                    Back
-                </button>
-                <div id="selection-count"
-                    style="font-size:13px;font-weight:700;color:#FFFFFF;padding:8px 16px;background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);border-radius:9999px">
-                    0 Categories Selected
+            <div class="glass-card" style="overflow:hidden">
+                <div class="bottom-bar">
+                    <button onclick="history.back()"
+                        class="btn-glass flex items-center gap-2"
+                        style="padding:12px 24px;font-size:14px">
+                        <span class="material-icons-round" style="font-size:20px">arrow_back</span>
+                        Back
+                    </button>
+                    <div class="flex items-center gap-5">
+                        <div id="selection-count" class="selection-badge">
+                            0 Selected
+                        </div>
+                        <button id="next-step-btn"
+                            class="btn-primary flex items-center gap-3"
+                            style="padding:14px 36px;font-size:15px;box-shadow:0 8px 30px rgba(0,0,0,0.4)">
+                            Next Step
+                            <span class="material-icons-round" style="font-size:20px">arrow_forward</span>
+                        </button>
+                    </div>
                 </div>
-                <button id="next-step-btn"
-                    class="btn-primary w-full sm:w-auto flex items-center justify-center gap-2"
-                    style="padding:16px 48px;font-weight:700;box-shadow:0 10px 40px #0A0A0A">
-                    Next Step
-                    <span class="material-icons-round" style="font-size:20px">arrow_forward</span>
-                </button>
             </div>
         </div>
     </main>
 
-    <footer style="padding:64px 0 32px;border-top: 1px solid rgba(255,255,255,0.06)">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p style="font-size:12px;color:#FFFFFF">
+    <footer style="padding:40px 0;border-top:1px solid rgba(255,255,255,0.06);margin-top:auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p style="font-size:12px;color:rgba(255,255,255,0.35)">
                 @2026 RoutheonSkups. All rights reserved. Made with &#10084;&#65039; for India.
             </p>
         </div>
@@ -264,39 +305,35 @@
             }
 
             function updateSelectionCount() {
-                const selectedCount = selectedCategories.size;
-                if (selectedCount === 1) {
-                    selectionCountEl.innerText = '1 Category Selected';
-                } else {
-                    selectionCountEl.innerText = `${selectedCount} Categories Selected`;
-                }
+                const c = selectedCategories.size;
+                selectionCountEl.textContent = c === 1 ? '1 Selected' : `${c} Selected`;
             }
 
             function renderCategories() {
                 const visibleItems = categories.slice(0, visibleCount);
 
                 categoryGrid.innerHTML = visibleItems.map((item) => {
-                    const isSelected = selectedCategories.has(item.name);
+                    const sel = selectedCategories.has(item.name);
                     return `
                         <button type="button" data-category="${item.name}"
-                            class="category-card ${isSelected ? 'selected' : ''} group relative p-6 text-center cursor-pointer min-h-[150px]"
+                            class="category-card ${sel ? 'selected' : ''} group relative p-6 text-center cursor-pointer min-h-[140px]"
                             style="display:flex;flex-direction:column;align-items:center;justify-content:center">
-                            <div class="check-mark" style="position:absolute;top:12px;right:12px;opacity:0;transform:scale(0.5);transition:all 0.3s ease">
-                                <div style="width:20px;height:20px;border-radius:50%;background:#111111;display:flex;align-items:center;justify-content:center">
-                                    <span class="material-icons-round" style="font-size:11px;color:#FFFFFF">check</span>
+                            <div class="check-mark" style="position:absolute;top:12px;right:12px">
+                                <div style="width:24px;height:24px;border-radius:50%;background:#FFFFFF;display:flex;align-items:center;justify-content:center">
+                                    <span class="material-icons-round" style="font-size:14px;color:#000000">check</span>
                                 </div>
                             </div>
-                            <div style="width:44px;height:44px;margin-bottom:16px;border-radius:50%;background:#0A0A0A;display:flex;align-items:center;justify-content:center">
-                                <span style="font-size:22px;line-height:1">${item.icon}</span>
+                            <div style="width:48px;height:48px;margin-bottom:14px;border-radius:50%;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;transition:background 0.3s ease">
+                                <span style="font-size:24px;line-height:1">${item.icon}</span>
                             </div>
-                            <h3 style="font-size:1rem;font-weight:700;color:#FFFFFF;line-height:1.2">${item.name}</h3>
+                            <h3 style="font-size:0.95rem;font-weight:700;color:#FFFFFF;line-height:1.2">${item.name}</h3>
                         </button>
                     `;
                 }).join('');
 
-                pageIndicator.innerText = `Showing ${Math.min(visibleCount, categories.length)} of ${categories.length}`;
+                pageIndicator.textContent = `${Math.min(visibleCount, categories.length)} of ${categories.length}`;
                 moreOptionsBtn.disabled = visibleCount >= categories.length;
-                moreOptionsBtn.style.opacity = moreOptionsBtn.disabled ? '0.5' : '1';
+                moreOptionsBtn.style.opacity = moreOptionsBtn.disabled ? '0.35' : '1';
                 moreOptionsBtn.style.cursor = moreOptionsBtn.disabled ? 'not-allowed' : 'pointer';
             }
 
@@ -316,12 +353,12 @@
             });
 
             moreOptionsBtn.addEventListener('click', () => {
-                const previousCount = visibleCount;
+                const prev = visibleCount;
                 visibleCount = Math.min(visibleCount + pageSize, categories.length);
                 renderCategories();
-                if (visibleCount > previousCount) {
+                if (visibleCount > prev) {
                     setTimeout(() => {
-                        window.scrollBy({ top: 280, behavior: 'smooth' });
+                        window.scrollBy({ top: 200, behavior: 'smooth' });
                     }, 50);
                 }
             });
