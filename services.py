@@ -1,3 +1,4 @@
+import os
 import heapq
 import json
 import requests
@@ -1029,7 +1030,10 @@ class AIService:
         except Exception as e:
             print(f"Error getting destination detail: {e}")
             import traceback
-            traceback.print_exc()
+            try:
+                traceback.print_exc()
+            except OSError:
+                traceback.print_exc(file=open(os.devnull, 'w'))
             return {
                 "name": name,
                 "state": "India",

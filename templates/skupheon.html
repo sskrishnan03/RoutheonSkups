@@ -1,25 +1,204 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skupheon AI - RoutheonSkups</title>
-    <link rel="stylesheet" href="/static/css/tailwind-output.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/charcoal.css') }}">
-    <style>
-        body { font-family: 'Inter', -apple-system, sans-serif; }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skupheon AI — RoutheonSkups</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind-output.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/charcoal.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/skupheon-workspace.css') }}">
+  <style>
+    body { margin: 0; padding: 0; background: #000; overflow: hidden; }
+    *:focus, *:focus-visible, *:focus-within {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+    input, textarea { caret-color: rgba(255,255,255,0.45); -webkit-tap-highlight-color: transparent; }
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined'; font-weight: normal; font-style: normal;
+      font-size: 24px; line-height: 1; letter-spacing: normal; text-transform: none;
+      display: inline-block; white-space: nowrap; word-wrap: normal; direction: ltr;
+      -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+      font-feature-settings: 'liga' 1; font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .ks-cinema-bg, .ks-grain, .ks-vignette, #ks-particles-canvas { display: none !important; }
+  </style>
 </head>
 <body>
-    <div class="ks-cinema-bg"></div>
-    <div class="ks-grain"></div>
-    <div class="ks-vignette"></div>
-    <canvas id="ks-particles-canvas"></canvas>
+  <div class="saw-page">
 
-    {% include 'components/navbar.html' %}
-    
-    <main class="ks-content pt-40 relative z-10">
-    </main>
+    <!-- HEADER -->
+    <header class="saw-header">
+      <a href="{{ url_for('main.landing') }}" class="saw-header-brand" title="Back to Home">
+        <span class="material-symbols-outlined">arrow_back</span>
+        <div class="saw-brand-icon">
+          <span class="material-symbols-outlined">auto_awesome</span>
+        </div>
+        <span class="saw-brand-name">Skupheon AI</span>
+      </a>
+    </header>
+
+    <!-- BODY -->
+    <div class="saw-body">
+
+      <!-- Sidebar -->
+      <aside class="saw-sidebar" id="saw-sidebar">
+        <div class="saw-sidebar-top">
+          <button class="saw-new-chat-btn" id="saw-new-chat">
+            <span class="material-symbols-outlined">add</span>
+            New Conversation
+          </button>
+          <div class="saw-sidebar-search">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" placeholder="Search..." id="saw-sidebar-search">
+          </div>
+        </div>
+        <div class="saw-sidebar-list" id="saw-sidebar-list"></div>
+        <div class="saw-sidebar-footer">
+          <button class="saw-clear-btn" id="saw-clear-all">
+            <span class="material-symbols-outlined">delete_sweep</span>
+            Clear all
+          </button>
+        </div>
+      </aside>
+
+      <!-- Chat Area -->
+      <main class="saw-chat" id="saw-chat">
+        <div class="saw-drop-overlay" id="saw-drop-overlay">
+          <div class="saw-drop-card">
+            <span class="material-symbols-outlined">upload_file</span>
+            <p>Drop your file here</p>
+          </div>
+        </div>
+
+        <div class="saw-messages" id="saw-messages">
+          <div class="saw-messages-inner" id="saw-messages-inner">
+
+            <!-- Welcome -->
+            <div class="saw-welcome" id="saw-welcome">
+              <div class="saw-welcome-glow"></div>
+              <div class="saw-welcome-logo">
+                <span class="material-symbols-outlined">auto_awesome</span>
+              </div>
+              <h1 class="saw-welcome-title">Hi {{ current_user.name.split()[0] if current_user.is_authenticated and current_user.name else 'there' }}!</h1>
+              <p class="saw-welcome-sub">I'm Skupheon AI — your intelligent travel assistant. Plan trips, discover destinations, create itineraries, and more.</p>
+
+              <div class="saw-suggestions" id="saw-suggestions"></div>
+
+              <div class="saw-chips"></div>
+
+              <div class="saw-quick-guides">
+                <div class="saw-quick-label">Quick Guides</div>
+                <div class="saw-quick-grid"></div>
+              </div>
+            </div>
+
+            <div id="saw-msg-container"></div>
+
+            <div class="saw-typing" id="saw-typing">
+              <div class="saw-typing-avatar">
+                <span class="material-symbols-outlined">auto_awesome</span>
+              </div>
+              <div class="saw-typing-bubble">
+                <div class="saw-typing-dots"><span></span><span></span><span></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Composer -->
+        <div class="saw-composer">
+          <div class="saw-composer-inner">
+            <div class="saw-composer-attachments" id="saw-attachments"></div>
+            <div class="saw-composer-box" id="saw-composer-box">
+              <button class="saw-composer-btn" id="saw-attach-btn" title="Attach file">
+                <span class="material-symbols-outlined">attach_file</span>
+              </button>
+              <textarea class="saw-input" id="saw-input" rows="1" placeholder="Plan a trip, compare destinations, or ask anything..."></textarea>
+              <button class="saw-composer-btn" id="saw-voice-btn" title="Voice input">
+                <span class="material-symbols-outlined">mic</span>
+              </button>
+              <button class="saw-send-btn" id="saw-send-btn" title="Send message">
+                <span class="material-symbols-outlined">arrow_upward</span>
+              </button>
+              <div class="saw-edit-actions" id="saw-edit-actions">
+                <button class="saw-edit-cancel" id="saw-edit-cancel">Cancel</button>
+                <button class="saw-edit-resend" id="saw-edit-resend">
+                  <span class="material-symbols-outlined">send</span>
+                  Resend
+                </button>
+              </div>
+            </div>
+            <div class="saw-composer-hint">
+              Press <kbd>Enter</kbd> to send, <kbd>Shift+Enter</kbd> for new line
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- SIDEBAR ITEM MENU (three-dot dropdown) -->
+  <div class="saw-item-menu" id="saw-item-menu">
+    <button class="saw-item-menu-item" data-action="rename">
+      <span class="material-symbols-outlined">edit</span> Rename
+    </button>
+    <button class="saw-item-menu-item" data-action="pin">
+      <span class="material-symbols-outlined">push_pin</span> Pin
+    </button>
+    <button class="saw-item-menu-item" data-action="share">
+      <span class="material-symbols-outlined">share</span> Share Chat
+    </button>
+    <div class="saw-item-menu-divider"></div>
+    <button class="saw-item-menu-item saw-danger" data-action="delete">
+      <span class="material-symbols-outlined">delete</span> Delete
+    </button>
+  </div>
+
+  <!-- MESSAGE CONTEXT MENU (AI more dropdown) -->
+  <div class="saw-context-menu" id="saw-context-menu">
+    <button class="saw-context-item" data-action="read-aloud" id="saw-read-aloud-btn">
+      <span class="material-symbols-outlined">volume_up</span> Read Aloud
+    </button>
+    <div class="saw-context-divider"></div>
+    <button class="saw-context-item saw-danger" data-action="delete">
+      <span class="material-symbols-outlined">delete</span> Delete Message
+    </button>
+  </div>
+
+  <!-- MODAL -->
+  <div class="saw-modal-overlay" id="saw-modal-overlay">
+    <div class="saw-modal">
+      <div class="saw-modal-header">
+        <h3 class="saw-modal-title" id="saw-modal-title"></h3>
+        <button class="saw-modal-close" id="saw-modal-close">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="saw-modal-body" id="saw-modal-body"></div>
+      <div class="saw-modal-input-wrap" id="saw-modal-input-wrap">
+        <input type="text" class="saw-modal-input" id="saw-modal-input" autocomplete="off">
+      </div>
+      <div class="saw-modal-actions">
+        <button class="saw-modal-btn saw-modal-cancel" id="saw-modal-cancel">Cancel</button>
+        <button class="saw-modal-btn saw-modal-confirm" id="saw-modal-confirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="saw-toast" id="saw-toast">
+    <span class="material-symbols-outlined">check_circle</span>
+    <span id="saw-toast-text">Copied to clipboard</span>
+  </div>
+
+  <!-- FILE INPUT -->
+  <input type="file" id="saw-file-input" multiple accept="image/*,.pdf,.doc,.docx,.txt,.json" style="display:none;">
+
+  <script src="{{ url_for('static', filename='js/skupheon-workspace.js') }}"></script>
 </body>
 </html>

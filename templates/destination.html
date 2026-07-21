@@ -121,29 +121,193 @@
             padding: 2rem;
             position: relative;
             overflow: hidden;
-            transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: border-color 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
             box-shadow: 0 8px 30px #0A0A0A;
         }
         .info-card:hover {
-            background: #0A0A0A;
             border-color: rgba(255,255,255,0.15);
             box-shadow: 0 16px 48px #0A0A0A;
-            transform: translateY(-2px);
         }
+        /* ── Premium Attraction Card ── */
         .attraction-card {
-            background: #0A0A0A;
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 2rem;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
             overflow: hidden;
             position: relative;
-            transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: all 0.5s var(--ease-spring);
             cursor: pointer;
-            box-shadow: 0 10px 30px -10px #0A0A0A;
+            box-shadow: var(--shadow-sm);
+        }
+        .attraction-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(135deg, rgba(255,255,255,0.02) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.5s var(--ease-spring);
         }
         .attraction-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(255,255,255,0.15);
-            box-shadow: 0 24px 64px #111111;
+            transform: translateY(-6px) scale(1.01);
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-xl), 0 0 0 1px rgba(255,255,255,0.04);
+        }
+        .attraction-card:hover::before {
+            opacity: 1;
+        }
+        .attraction-card:hover .attraction-card__image img {
+            transform: scale(1.08);
+        }
+        .attraction-card:hover .attraction-card__image::after {
+            opacity: 1;
+        }
+        .attraction-card:hover .attraction-card__explore {
+            opacity: 1;
+            transform: translateX(0);
+            letter-spacing: 0.08em;
+        }
+
+        .attraction-card__image {
+            position: relative;
+            height: 280px;
+            overflow: hidden;
+        }
+        .attraction-card__image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s var(--ease-out-expo);
+        }
+        .attraction-card__image::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(0deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 40%, transparent 60%);
+            opacity: 0.6;
+            transition: opacity 0.5s var(--ease-spring);
+            pointer-events: none;
+        }
+        .attraction-card__image .attraction-card__tag {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            padding: 5px 14px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--radius-full);
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            z-index: 2;
+        }
+        .attraction-card__image .attraction-card__index {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--text-secondary);
+            z-index: 2;
+        }
+        .attraction-card__image .attraction-card__explore {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: rgba(255,255,255,0.95);
+            border-radius: var(--radius-full);
+            font-size: 10px;
+            font-weight: 800;
+            color: #000;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            z-index: 2;
+            opacity: 0;
+            transform: translateX(8px);
+            transition: all 0.4s var(--ease-spring);
+        }
+        .attraction-card__image .attraction-card__explore .material-symbols-outlined {
+            font-size: 13px;
+        }
+
+        .attraction-card__body {
+            padding: 24px 24px 20px;
+        }
+        .attraction-card__title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1.3;
+            margin-bottom: 6px;
+            letter-spacing: -0.02em;
+        }
+        .attraction-card__location {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+        }
+        .attraction-card__location .material-symbols-outlined {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .attraction-card__desc {
+            font-size: 13px;
+            line-height: 1.65;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .attraction-card__meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .attraction-card__meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .attraction-card__meta-item .material-symbols-outlined {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+        .attraction-card__fee {
+            margin-left: auto;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
         }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
@@ -303,7 +467,7 @@
             color: rgba(255,120,120,1);
         }
         #leaflet-map {
-            height: 500px;
+            height: 560px;
             width: 100%;
             z-index: 10;
         }
@@ -315,22 +479,23 @@
             border: none;
         }
         .marker-pin {
-            width: 30px;
-            height: 30px;
+            width: 32px;
+            height: 32px;
             border-radius: 50% 50% 50% 0;
             background: #111111;
             position: absolute;
             transform: rotate(-45deg);
             left: 50%;
             top: 50%;
-            margin: -15px 0 0 -15px;
-            border: 2px solid rgba(255,255,255,0.06);
-            box-shadow: 0 4px 12px #0A0A0A;
+            margin: -16px 0 0 -16px;
+            border: 2px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.6), 0 0 0 4px rgba(0,0,0,0.15);
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
         }
         .marker-pin::after {
             content: '';
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             margin: 1px 0 0 1px;
             background: #0A0A0A;
             position: absolute;
@@ -338,7 +503,7 @@
         }
         .marker-pin i {
             position: absolute;
-            width: 22px;
+            width: 24px;
             font-size: 14px;
             top: 5px;
             left: 5px;
@@ -346,6 +511,36 @@
             transform: rotate(45deg);
             color: #FFFFFF;
             z-index: 100;
+        }
+        .leaflet-popup-content-wrapper {
+            background: transparent !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+        }
+        .leaflet-popup-content {
+            margin: 0 !important;
+            line-height: normal !important;
+        }
+        .leaflet-popup-tip {
+            background: #0A0A0A !important;
+            box-shadow: none !important;
+            border: 1px solid rgba(255,255,255,0.06) !important;
+        }
+        .leaflet-popup-close-button {
+            color: #FFFFFF !important;
+            font-size: 18px !important;
+            width: 24px !important;
+            height: 24px !important;
+            top: 8px !important;
+            right: 8px !important;
+            z-index: 10;
+            background: rgba(0,0,0,0.5) !important;
+            border-radius: 50% !important;
+            backdrop-filter: blur(4px) !important;
+            padding: 0 !important;
+            text-align: center !important;
+            line-height: 24px !important;
         }
         .floating-back-btn {
             position: absolute;
@@ -438,6 +633,14 @@
         .custom-scrollbar::-webkit-scrollbar-thumb {
             background: #0A0A0A;
             border-radius: 10px;
+        }
+        @media (max-width: 1024px) {
+            #tab-itinerary > div > div {
+                grid-template-columns: 1fr !important;
+            }
+            #tab-itinerary aside {
+                position: static !important;
+            }
         }
         @media print {
             body.print-itinerary-only {
@@ -725,58 +928,58 @@
 
                     <!-- Sidebar -->
                     <aside class="col-span-12 lg:col-span-4 space-y-8">
-                        <!-- Live Weather -->
-                        <section class="info-card">
-                            <div class="flex items-center justify-between mb-6">
-                                <h3 class="font-extrabold text-xl tracking-tight">Live Weather</h3>
-                                <span class="text-xs font-bold text-[#E5E5E5] flex items-center gap-1"><span class="w-2 h-2 bg-[#0A0A0A] rounded-full animate-pulse inline-block"></span> LIVE</span>
+                    <!-- Live Weather -->
+                    <section class="info-card" style="padding: 1.5rem;">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-extrabold text-lg tracking-tight">Live Weather</h3>
+                            <span class="text-[10px] font-bold text-[#E5E5E5] flex items-center gap-1"><span class="w-1.5 h-1.5 bg-[#0A0A0A] rounded-full animate-pulse inline-block"></span> LIVE</span>
+                        </div>
+                        {% if weather and weather.forecast and weather.forecast.forecastday %}
+                        <div class="flex items-center gap-4 mb-4 p-3 rounded-2xl border border-white/[0.06]" style="background:#0A0A0A;">
+                            <img src="{{ weather.forecast.forecastday[0].day.condition.icon }}" alt="weather" class="w-12 h-12" />
+                            <div>
+                                <div class="text-2xl font-extrabold text-[#E5E5E5]">{{ weather.forecast.forecastday[0].day.avgtemp_c }}°C</div>
+                                <span class="text-[#E5E5E5] font-bold text-xs">{{ weather.forecast.forecastday[0].day.condition.text }}</span>
                             </div>
-                            {% if weather and weather.forecast and weather.forecast.forecastday %}
-                            <div class="flex items-center gap-5 mb-6 p-4 rounded-2xl border border-white/[0.06]" style="background:#0A0A0A;">
-                                <img src="{{ weather.forecast.forecastday[0].day.condition.icon }}" alt="weather" class="w-16 h-16" />
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mb-4">
+                            <div class="flex items-center gap-2 p-2 rounded-xl" style="background:#0A0A0A;">
+                                <span class="material-symbols-outlined text-[#E5E5E5] text-sm">water_drop</span>
                                 <div>
-                                    <div class="text-4xl font-extrabold text-[#E5E5E5]">{{ weather.forecast.forecastday[0].day.avgtemp_c }}°C</div>
-                                    <span class="text-[#E5E5E5] font-bold text-sm">{{ weather.forecast.forecastday[0].day.condition.text }}</span>
+                                    <p class="text-[9px] font-bold text-[#777777] uppercase">Humidity</p>
+                                    <p class="text-xs font-bold">{{ weather.forecast.forecastday[0].day.humidity }}%</p>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-2 gap-3 mb-6">
-                                <div class="flex items-center gap-2 p-3 rounded-xl" style="background:#0A0A0A;">
-                                    <span class="material-symbols-outlined text-[#E5E5E5] text-lg">water_drop</span>
-                                    <div>
-                                        <p class="text-[10px] font-bold text-[#777777] uppercase">Humidity</p>
-                                        <p class="text-sm font-bold">{{ weather.forecast.forecastday[0].day.humidity }}%</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-2 p-3 rounded-xl" style="background:#0A0A0A;">
-                                    <span class="material-symbols-outlined text-[#999999] text-lg">air</span>
-                                    <div>
-                                        <p class="text-[10px] font-bold text-[#777777] uppercase">Wind</p>
-                                        <p class="text-sm font-bold">{{ weather.forecast.forecastday[0].day.wind_kph }} km/h</p>
-                                    </div>
+                            <div class="flex items-center gap-2 p-2 rounded-xl" style="background:#0A0A0A;">
+                                <span class="material-symbols-outlined text-[#999999] text-sm">air</span>
+                                <div>
+                                    <p class="text-[9px] font-bold text-[#777777] uppercase">Wind</p>
+                                    <p class="text-xs font-bold">{{ weather.forecast.forecastday[0].day.wind_kph }} km/h</p>
                                 </div>
                             </div>
-                            {% if weather.forecast.forecastday|length > 1 %}
-                            <p class="text-[10px] font-extrabold text-[#777777] uppercase tracking-widest mb-3">5-Day Forecast</p>
-                            <div class="flex justify-between gap-1">
-                                {% for fday in weather.forecast.forecastday %}
-                                <div class="flex flex-col items-center gap-1 p-2 rounded-xl flex-1" style="{% if loop.first %}background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);{% else %}background:#0A0A0A;{% endif %}">
-                                    <span class="text-[10px] font-bold uppercase" style="{% if loop.first %}color:#FFFFFF;{% else %}color:#FFFFFF;{% endif %}">{{ fday.date_label }}</span>
-                                    <img src="{{ fday.day.condition.icon }}" alt="" class="w-8 h-8" />
-                                    <span class="text-xs font-extrabold">{{ fday.day.avgtemp_c }}°</span>
-                                </div>
-                                {% endfor %}
+                        </div>
+                        {% if weather.forecast.forecastday|length > 1 %}
+                        <p class="text-[10px] font-extrabold text-[#777777] uppercase tracking-widest mb-2">5-Day Forecast</p>
+                        <div class="flex justify-between gap-1">
+                            {% for fday in weather.forecast.forecastday %}
+                            <div class="flex flex-col items-center gap-1 p-1.5 rounded-xl flex-1" style="{% if loop.first %}background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);{% else %}background:#0A0A0A;{% endif %}">
+                                <span class="text-[9px] font-bold uppercase" style="color:#FFFFFF;">{{ fday.date_label }}</span>
+                                <img src="{{ fday.day.condition.icon }}" alt="" class="w-6 h-6" />
+                                <span class="text-[11px] font-extrabold">{{ fday.day.avgtemp_c }}°</span>
                             </div>
-                            {% endif %}
-                            {% else %}
-                            <div class="flex items-center gap-6 mb-4">
-                                <div class="text-4xl font-extrabold" style="color:#FFFFFF;">--°C</div>
-                                <div class="flex flex-col">
-                                    <span class="font-bold" style="color:#FFFFFF;">Weather data unavailable</span>
-                                    <span class="text-xs" style="color:#FFFFFF;">Check server logs for details</span>
-                                </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        {% else %}
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="text-3xl font-extrabold" style="color:#FFFFFF;">--°C</div>
+                            <div class="flex flex-col">
+                                <span class="font-bold text-sm" style="color:#FFFFFF;">Weather data unavailable</span>
+                                <span class="text-xs" style="color:#FFFFFF;">Check server logs for details</span>
                             </div>
-                            {% endif %}
-                        </section>
+                        </div>
+                        {% endif %}
+                    </section>
 
                         <!-- Opening & Closing Times -->
                         <section class="info-card">
@@ -838,7 +1041,7 @@
                             <div class="space-y-3">
                                 <a href="{{ url_for('main.explore') }}"
                                     class="w-full px-6 py-4 text-white font-bold rounded-2xl transition-colors flex items-center justify-center gap-2 no-underline" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);"
-                                    <span class="material-symbols-outlined">explore</span>
+                                    <span class="material-symbols-outlined"></span>
                                     Explore More Destinations
                                 </a>
                             </div>
@@ -852,9 +1055,8 @@
         <div id="tab-reach" class="tab-content">
             <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 overflow-x-hidden">
             <div class="grid grid-cols-12 gap-10">
-                <!-- Left Content -->
+                <!-- Left Content - Transportation -->
                 <div class="col-span-12 lg:col-span-8 space-y-10">
-                    <!-- Transportation Options -->
                     <section class="info-card">
                         <div class="flex items-center gap-3 mb-8">
                             <div class="w-12 h-12 rounded-2xl flex items-center justify-center" style="background:#0A0A0A;">
@@ -864,8 +1066,8 @@
                         </div>
                         <div class="space-y-4">
                             <!-- By Air -->
-                            <div class="flex items-start gap-4 p-5 rounded-2xl border transition-all duration-300 hover:shadow-lg" style="background:#0A0A0A;border-color:rgba(255,255,255,0.15);">
-                                <div class="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0" style="background:#0A0A0A;">
+                            <div class="flex items-start gap-4 p-5 rounded-2xl border transition-all duration-300" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.08);" onmouseover="this.style.borderColor='rgba(255,255,255,0.2)';this.style.boxShadow='0 8px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)';this.style.boxShadow='none'">
+                                <div class="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0" style="background:#111111;">
                                     <span class="material-symbols-outlined text-3xl text-[#E5E5E5]">flight</span>
                                 </div>
                                 <div class="flex-1">
@@ -874,8 +1076,8 @@
                                 </div>
                             </div>
                             <!-- By Rail -->
-                            <div class="flex items-start gap-4 p-5 rounded-2xl border transition-all duration-300 hover:shadow-lg" style="background:#0A0A0A;border-color:rgba(255,255,255,0.15);">
-                                <div class="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0" style="background:#0A0A0A;">
+                            <div class="flex items-start gap-4 p-5 rounded-2xl border transition-all duration-300" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.08);" onmouseover="this.style.borderColor='rgba(255,255,255,0.2)';this.style.boxShadow='0 8px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)';this.style.boxShadow='none'">
+                                <div class="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0" style="background:#111111;">
                                     <span class="material-symbols-outlined text-3xl text-[#E5E5E5]">train</span>
                                 </div>
                                 <div class="flex-1">
@@ -884,8 +1086,8 @@
                                 </div>
                             </div>
                             <!-- By Road -->
-                            <div class="flex items-start gap-4 p-5 rounded-2xl border transition-all duration-300 hover:shadow-lg" style="background:#0A0A0A;border-color:rgba(255,255,255,0.15);">
-                                <div class="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0" style="background:#0A0A0A;">
+                            <div class="flex items-start gap-4 p-5 rounded-2xl border transition-all duration-300" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.08);" onmouseover="this.style.borderColor='rgba(255,255,255,0.2)';this.style.boxShadow='0 8px 32px rgba(0,0,0,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)';this.style.boxShadow='none'">
+                                <div class="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0" style="background:#111111;">
                                     <span class="material-symbols-outlined text-3xl text-[#E5E5E5]">directions_bus</span>
                                 </div>
                                 <div class="flex-1">
@@ -909,18 +1111,18 @@
 
                 <!-- Right Sidebar - Map -->
                 <aside class="col-span-12 lg:col-span-4">
-                    <section class="info-card">
-                        <div class="flex items-center gap-3 mb-6">
+                    <section class="info-card" style="padding: 0; overflow: hidden;">
+                        <div class="flex items-center gap-3 p-6 pb-3">
                             <div class="w-12 h-12 rounded-2xl flex items-center justify-center" style="background:#0A0A0A;">
                                 <span class="material-symbols-outlined text-[#E5E5E5]">map</span>
                             </div>
                             <h2 class="text-2xl font-extrabold tracking-tight">Location Map</h2>
                         </div>
-                        <div class="relative w-full rounded-2xl overflow-hidden shadow-2xl border border-white/[0.06]">
-                            <div id="overview-map" style="height: 400px; width: 100%;" class="rounded-2xl"></div>
-                            <div class="absolute bottom-4 left-4 right-4 p-4 rounded-xl shadow-xl z-[1000]" style="background:rgba(0,0,0,0.85);border: 1px solid rgba(255,255,255,0.06);">
+                        <div class="relative w-full overflow-hidden">
+                            <div id="overview-map" style="height: 480px; width: 100%;"></div>
+                            <div class="absolute bottom-4 left-4 right-4 p-4 rounded-2xl shadow-2xl z-[1000]" style="background:rgba(0,0,0,0.88);border: 1px solid rgba(255,255,255,0.08);backdrop-filter:blur(12px);">
                                 <div class="flex items-center gap-3 mb-2">
-                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style="background:#0A0A0A;">
+                                    <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);">
                                         <span class="material-symbols-outlined text-[#E5E5E5] text-sm">explore</span>
                                     </div>
                                     <h4 class="font-extrabold text-[#E5E5E5] text-sm tracking-tight">{{ data.name }}</h4>
@@ -948,27 +1150,42 @@
             <div id="attractions-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24">
                 <!-- Skeleton loading -->
                 <div class="attraction-card animate-pulse">
-                    <div class="h-64" style="background:#0A0A0A;"></div>
-                    <div class="p-8">
-                        <div class="h-5 rounded w-3/4 mb-3" style="background:#0A0A0A;"></div>
-                        <div class="h-4 rounded w-full mb-2" style="background:#0A0A0A;"></div>
-                        <div class="h-4 rounded w-2/3" style="background:#0A0A0A;"></div>
+                    <div class="attraction-card__image" style="background:#0A0A0A;">
+                        <div style="position:absolute;top:16px;left:16px;width:60px;height:20px;border-radius:9999px;background:rgba(255,255,255,0.04);"></div>
+                    </div>
+                    <div class="attraction-card__body">
+                        <div style="height:16px;border-radius:8px;width:70%;margin-bottom:10px;background:rgba(255,255,255,0.04);"></div>
+                        <div style="height:12px;border-radius:6px;width:40%;margin-bottom:18px;background:rgba(255,255,255,0.03);"></div>
+                        <div style="height:12px;border-radius:6px;width:100%;margin-bottom:8px;background:rgba(255,255,255,0.03);"></div>
+                        <div style="height:12px;border-radius:6px;width:80%;margin-bottom:20px;background:rgba(255,255,255,0.03);"></div>
+                        <div style="height:1px;width:100%;margin-bottom:14px;background:rgba(255,255,255,0.04);"></div>
+                        <div style="height:12px;border-radius:6px;width:35%;background:rgba(255,255,255,0.03);"></div>
                     </div>
                 </div>
                 <div class="attraction-card animate-pulse">
-                    <div class="h-64" style="background:#0A0A0A;"></div>
-                    <div class="p-8">
-                        <div class="h-5 rounded w-3/4 mb-3" style="background:#0A0A0A;"></div>
-                        <div class="h-4 rounded w-full mb-2" style="background:#0A0A0A;"></div>
-                        <div class="h-4 rounded w-2/3" style="background:#0A0A0A;"></div>
+                    <div class="attraction-card__image" style="background:#0A0A0A;">
+                        <div style="position:absolute;top:16px;left:16px;width:50px;height:20px;border-radius:9999px;background:rgba(255,255,255,0.04);"></div>
+                    </div>
+                    <div class="attraction-card__body">
+                        <div style="height:16px;border-radius:8px;width:60%;margin-bottom:10px;background:rgba(255,255,255,0.04);"></div>
+                        <div style="height:12px;border-radius:6px;width:45%;margin-bottom:18px;background:rgba(255,255,255,0.03);"></div>
+                        <div style="height:12px;border-radius:6px;width:100%;margin-bottom:8px;background:rgba(255,255,255,0.03);"></div>
+                        <div style="height:12px;border-radius:6px;width:70%;margin-bottom:20px;background:rgba(255,255,255,0.03);"></div>
+                        <div style="height:1px;width:100%;margin-bottom:14px;background:rgba(255,255,255,0.04);"></div>
+                        <div style="height:12px;border-radius:6px;width:30%;background:rgba(255,255,255,0.03);"></div>
                     </div>
                 </div>
                 <div class="attraction-card animate-pulse">
-                    <div class="h-64" style="background:#0A0A0A;"></div>
-                    <div class="p-8">
-                        <div class="h-5 rounded w-3/4 mb-3" style="background:#0A0A0A;"></div>
-                        <div class="h-4 rounded w-full mb-2" style="background:#0A0A0A;"></div>
-                        <div class="h-4 rounded w-2/3" style="background:#0A0A0A;"></div>
+                    <div class="attraction-card__image" style="background:#0A0A0A;">
+                        <div style="position:absolute;top:16px;left:16px;width:70px;height:20px;border-radius:9999px;background:rgba(255,255,255,0.04);"></div>
+                    </div>
+                    <div class="attraction-card__body">
+                        <div style="height:16px;border-radius:8px;width:80%;margin-bottom:10px;background:rgba(255,255,255,0.04);"></div>
+                        <div style="height:12px;border-radius:6px;width:35%;margin-bottom:18px;background:rgba(255,255,255,0.03);"></div>
+                        <div style="height:12px;border-radius:6px;width:95%;margin-bottom:8px;background:rgba(255,255,255,0.03);"></div>
+                        <div style="height:12px;border-radius:6px;width:75%;margin-bottom:20px;background:rgba(255,255,255,0.03);"></div>
+                        <div style="height:1px;width:100%;margin-bottom:14px;background:rgba(255,255,255,0.04);"></div>
+                        <div style="height:12px;border-radius:6px;width:40%;background:rgba(255,255,255,0.03);"></div>
                     </div>
                 </div>
             </div>
@@ -978,20 +1195,23 @@
                 <div class="flex items-center justify-between mb-8">
                     <div>
                         <h2 class="text-3xl font-extrabold tracking-tight text-[#E5E5E5]">Interactive Landmark Map</h2>
-                        <p class="text-[#999999] font-medium">Navigate through the landmarks of {{ data.name }}</p>
+                        <p class="text-[#999999] font-medium mt-1">Navigate through the landmarks of {{ data.name }}</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-full" style="background:#0A0A0A;border:1px solid rgba(255,255,255,0.06);">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span class="text-[10px] font-bold text-[#999999] uppercase tracking-wider">Live</span>
+                        </div>
                     </div>
                 </div>
-                <div
-                    class="relative w-full rounded-custom overflow-hidden shadow-premium border border-white/[0.06]">
-                    <div id="leaflet-map" class="rounded-custom"></div>
-                    <div
-                        class="absolute bottom-8 left-8 p-6 rounded-custom shadow-2xl max-w-xs z-[1000]" style="background:rgba(0,0,0,0.85);border: 1px solid rgba(255,255,255,0.06);">
+                <div class="relative w-full overflow-hidden" style="border-radius:var(--radius-xl);border:1px solid var(--border-subtle);box-shadow:var(--shadow-lg);">
+                    <div id="leaflet-map" style="height:560px;width:100%;"></div>
+                    <div class="absolute bottom-6 left-6 p-5 max-w-xs z-[1000]" style="background:rgba(0,0,0,0.88);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-md);">
                         <div class="flex items-center gap-2 mb-2">
-                            <span class="material-symbols-outlined text-[#E5E5E5] text-lg">info</span>
-                            <h4 class="font-bold text-[#E5E5E5]">Map Discovery</h4>
+                            <span class="material-symbols-outlined text-white text-base">explore</span>
+                            <h4 class="font-bold text-white text-sm">Map Discovery</h4>
                         </div>
-                        <p class="text-xs text-[#999999] leading-relaxed font-medium">Interact with the map to explore attraction
-                            locations. Markers represent must-visit spots.</p>
+                        <p class="text-[11px] text-[#999999] leading-relaxed font-medium">Tap any marker to explore details. Click a card to fly to its location on the map.</p>
                     </div>
                 </div>
             </section>
@@ -1000,10 +1220,10 @@
 
         <!-- Itinerary Tab -->
         <div id="tab-itinerary" class="tab-content">
-            <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 overflow-x-hidden">
-            <div class="grid grid-cols-12 gap-10">
+            <div style="max-width:1400px;margin:0 auto;padding:0 1.5rem;">
+            <div style="display:grid;grid-template-columns:1fr 420px;gap:24px;align-items:start;">
                 <!-- Timeline (left side) -->
-                <div class="col-span-12 lg:col-span-8">
+                <div style="min-width:0;">
                     <div id="itinerary-timeline" class="relative">
                         <!-- Skeleton loading -->
                         <div class="animate-pulse space-y-8">
@@ -1039,93 +1259,87 @@
                     </div>
                 </div>
 
-                <!-- Sidebar (right side) -->
-                <aside class="col-span-12 lg:col-span-4 space-y-8">
-                    <!-- Regenerate -->
-                    <section class="info-card" id="itinerary-weather-section">
-                        <div class="flex gap-3">
-                            <button id="btn-regenerate"
-                                class="flex-1 px-5 py-3 font-bold rounded-2xl transition-colors flex items-center justify-center gap-2 text-sm" style="background:#0A0A0A;color:#FFFFFF;border: 1px solid rgba(255,255,255,0.06);">
-                                <span class="material-symbols-outlined text-lg">refresh</span>
-                                Regenerate Itinerary
-                            </button>
-                        </div>
-                    </section>
+                <!-- Right Sidebar -->
+                <aside style="display:flex;flex-direction:column;gap:24px;position:sticky;top:120px;height:fit-content;">
+                    <!-- 1. Regenerate -->
+                    <div class="info-card" style="padding:1.5rem;">
+                        <button id="btn-regenerate"
+                            class="w-full px-4 py-3 font-bold rounded-xl transition-colors flex items-center justify-center gap-2 text-base" style="background:#111111;color:#FFFFFF;border:1px solid rgba(255,255,255,0.06);">
+                            <span class="material-symbols-outlined text-lg">refresh</span>
+                            Regenerate Itinerary
+                        </button>
+                    </div>
 
-                    <!-- Plan Management -->
-                    <section class="info-card">
-                        <p class="text-[10px] font-extrabold text-[#777777] uppercase tracking-widest mb-4">Plan
-                            Management</p>
-                        <div class="space-y-3">
-                            <button id="btn-download-itinerary-pdf"
-                                class="w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-colors border border-white/[0.06]" style="background:#0A0A0A;"
-                                <div class="flex items-center gap-3">
-                                    <span class="material-symbols-outlined text-[#E5E5E5]">picture_as_pdf</span>
-                                    <span class="font-bold text-sm">Download PDF Guide</span>
-                                </div>
-                                <span class="material-symbols-outlined text-[#777777] text-sm">chevron_right</span>
-                            </button>
-                        </div>
-                    </section>
-                    <!-- Live Weather -->
-                    <section class="info-card">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="font-extrabold text-xl tracking-tight">Live Weather</h3>
-                            <span class="text-xs font-bold text-[#E5E5E5] flex items-center gap-1"><span class="w-2 h-2 bg-[#0A0A0A] rounded-full animate-pulse inline-block"></span> LIVE</span>
+                    <!-- 2. Plan Management -->
+                    <div class="info-card" style="padding:1.5rem;">
+                        <p class="text-[11px] font-extrabold text-[#777777] uppercase tracking-widest mb-3">Plan Management</p>
+                        <button id="btn-download-itinerary-pdf"
+                            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors" style="background:#111111;border:1px solid rgba(255,255,255,0.06);">
+                            <span class="material-symbols-outlined text-[#E5E5E5] text-xl">picture_as_pdf</span>
+                            <span class="font-bold text-base">Download PDF Guide</span>
+                        </button>
+                    </div>
+
+                    <!-- 3. Live Weather -->
+                    <section class="info-card" style="padding: 1.5rem;">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-extrabold text-lg tracking-tight">Live Weather</h3>
+                            <span class="text-[10px] font-bold text-[#E5E5E5] flex items-center gap-1"><span class="w-1.5 h-1.5 bg-[#0A0A0A] rounded-full animate-pulse inline-block"></span> LIVE</span>
                         </div>
                         {% if weather and weather.forecast and weather.forecast.forecastday %}
-                        <div class="flex items-center gap-5 mb-6 p-4 rounded-2xl border border-white/[0.06]" style="background:#0A0A0A;">
-                            <img src="{{ weather.forecast.forecastday[0].day.condition.icon }}" alt="weather" class="w-16 h-16" />
+                        <div class="flex items-center gap-4 mb-4 p-3 rounded-2xl border border-white/[0.06]" style="background:#0A0A0A;">
+                            <img src="{{ weather.forecast.forecastday[0].day.condition.icon }}" alt="weather" class="w-12 h-12" />
                             <div>
-                                <div class="text-4xl font-extrabold text-[#E5E5E5]">{{ weather.forecast.forecastday[0].day.avgtemp_c }}°C</div>
-                                <span class="text-[#E5E5E5] font-bold text-sm">{{ weather.forecast.forecastday[0].day.condition.text }}</span>
+                                <div class="text-2xl font-extrabold text-[#E5E5E5]">{{ weather.forecast.forecastday[0].day.avgtemp_c }}°C</div>
+                                <span class="text-[#E5E5E5] font-bold text-xs">{{ weather.forecast.forecastday[0].day.condition.text }}</span>
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-3 mb-6">
-                            <div class="flex items-center gap-2 p-3 rounded-xl" style="background:#0A0A0A;">
-                                <span class="material-symbols-outlined text-[#E5E5E5] text-lg">water_drop</span>
+                        <div class="grid grid-cols-2 gap-2 mb-4">
+                            <div class="flex items-center gap-2 p-2 rounded-xl" style="background:#0A0A0A;">
+                                <span class="material-symbols-outlined text-[#E5E5E5] text-sm">water_drop</span>
                                 <div>
-                                    <p class="text-[10px] font-bold text-[#777777] uppercase">Humidity</p>
-                                    <p class="text-sm font-bold">{{ weather.forecast.forecastday[0].day.humidity }}%</p>
+                                    <p class="text-[9px] font-bold text-[#777777] uppercase">Humidity</p>
+                                    <p class="text-xs font-bold">{{ weather.forecast.forecastday[0].day.humidity }}%</p>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-2 p-3 rounded-xl" style="background:#0A0A0A;">
-                                <span class="material-symbols-outlined text-[#999999] text-lg">air</span>
+                            <div class="flex items-center gap-2 p-2 rounded-xl" style="background:#0A0A0A;">
+                                <span class="material-symbols-outlined text-[#999999] text-sm">air</span>
                                 <div>
-                                    <p class="text-[10px] font-bold text-[#777777] uppercase">Wind</p>
-                                    <p class="text-sm font-bold">{{ weather.forecast.forecastday[0].day.wind_kph }} km/h</p>
+                                    <p class="text-[9px] font-bold text-[#777777] uppercase">Wind</p>
+                                    <p class="text-xs font-bold">{{ weather.forecast.forecastday[0].day.wind_kph }} km/h</p>
                                 </div>
                             </div>
                         </div>
                         {% if weather.forecast.forecastday|length > 1 %}
-                        <p class="text-[10px] font-extrabold text-[#777777] uppercase tracking-widest mb-3">5-Day Forecast</p>
+                        <p class="text-[10px] font-extrabold text-[#777777] uppercase tracking-widest mb-2">5-Day Forecast</p>
                         <div class="flex justify-between gap-1">
                             {% for fday in weather.forecast.forecastday %}
-                            <div class="flex flex-col items-center gap-1 p-2 rounded-xl flex-1" style="{% if loop.first %}background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);{% else %}background:#0A0A0A;{% endif %}">
-                                <span class="text-[10px] font-bold uppercase" style="{% if loop.first %}color:#FFFFFF;{% else %}color:#FFFFFF;{% endif %}">{{ fday.date_label }}</span>
-                                <img src="{{ fday.day.condition.icon }}" alt="" class="w-8 h-8" />
-                                <span class="text-xs font-extrabold">{{ fday.day.avgtemp_c }}°</span>
+                            <div class="flex flex-col items-center gap-1 p-1.5 rounded-xl flex-1" style="{% if loop.first %}background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);{% else %}background:#0A0A0A;{% endif %}">
+                                <span class="text-[9px] font-bold uppercase" style="color:#FFFFFF;">{{ fday.date_label }}</span>
+                                <img src="{{ fday.day.condition.icon }}" alt="" class="w-6 h-6" />
+                                <span class="text-[11px] font-extrabold">{{ fday.day.avgtemp_c }}°</span>
                             </div>
                             {% endfor %}
                         </div>
                         {% endif %}
                         {% else %}
-                        <div class="flex items-center gap-6 mb-4">
-                            <div class="text-4xl font-extrabold" style="color:#FFFFFF;">--°C</div>
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="text-3xl font-extrabold" style="color:#FFFFFF;">--°C</div>
                             <div class="flex flex-col">
-                                <span class="font-bold" style="color:#FFFFFF;">Weather data unavailable</span>
+                                <span class="font-bold text-sm" style="color:#FFFFFF;">Weather data unavailable</span>
                                 <span class="text-xs" style="color:#FFFFFF;">Check server logs for details</span>
                             </div>
                         </div>
                         {% endif %}
                     </section>
 
-                    <section class="info-card" id="itinerary-route-map">
-                        <p class="text-[10px] font-extrabold text-[#777777] uppercase tracking-widest mb-4">Route Intelligence Map</p>
-                            <div class="relative h-[300px] rounded-2xl overflow-hidden shadow-soft" style="border: 1px solid rgba(255,255,255,0.06);">
+                    <!-- 4. Route Intelligence Map -->
+                    <div class="info-card" id="itinerary-route-map" style="padding:1.5rem;">
+                        <p class="text-[11px] font-extrabold text-[#777777] uppercase tracking-widest mb-2">Route Intelligence Map</p>
+                        <div class="relative rounded-xl overflow-hidden" style="height:380px;border:1px solid rgba(255,255,255,0.06);">
                             <div id="itinerary-leaflet-map" class="w-full h-full"></div>
                         </div>
-                    </section>
+                    </div>
                 </aside>
             </div>
             </div>
@@ -1238,16 +1452,16 @@
                 </div>
 
                 <!-- Chat Input Area -->
-                <div class="px-8 py-8 border-t" style="background:#0A0A0A;border-color:rgba(255,255,255,0.15);">
+                <div class="px-8 py-8" style="background:#0A0A0A;border-top: 1px solid #1A1A1A;">
 	                    <form id="chat-form" data-no-loader="true" onsubmit="return false;"
-	                        class="relative rounded-2xl p-2 flex items-center gap-2" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);transition:all 0.35s cubic-bezier(0.22,1,0.36,1);" onfocus="this.style.borderColor = 'rgba(255,255,255,0.06)';this.style.boxShadow='0 0 0 4px #0A0A0A'" onblur="this.style.borderColor = 'rgba(255,255,255,0.06)';this.style.boxShadow='none'">
+	                        class="relative rounded-2xl p-2 flex items-center gap-2" style="background:#0A0A0A;border: 1px solid #1A1A1A;transition:all 0.35s cubic-bezier(0.22,1,0.36,1);" onfocus="this.style.borderColor = '#2A2A2A';this.style.boxShadow='0 0 0 4px rgba(0,0,0,0.4)'" onblur="this.style.borderColor = '#1A1A1A';this.style.boxShadow='none'">
                         <input id="chat-input" type="text"
-                            class="w-full bg-transparent border-none focus:ring-0 text-[#CCCCCC] font-semibold px-4 placeholder:text-[#999999] text-sm"
+                            class="w-full bg-transparent border-none focus:ring-0 text-[#CCCCCC] font-semibold px-4 placeholder:text-[#666666] text-sm"
                             placeholder="Ask anything about {{ data.name }}..." autocomplete="off">
                         <button type="submit"
-                            class="w-12 h-12 rounded-xl transition-all flex items-center justify-center group shrink-0" style="background:#111111;color:#FFFFFF;border: 1px solid rgba(255,255,255,0.06);box-shadow:0 8px 32px #0A0A0A;"
-                            <span
-                                class="material-symbols-outlined group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">send</span>
+                            class="w-12 h-12 rounded-xl transition-all flex items-center justify-center group shrink-0" style="background:#111111;color:#FFFFFF;border: 1px solid #1A1A1A;box-shadow:0 4px 16px rgba(0,0,0,0.3);"
+                            aria-label="Send message">
+                            <span class="material-symbols-outlined text-xl group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">arrow_upward</span>
                         </button>
                     </form>
                 </div>
@@ -1367,39 +1581,40 @@
 
                 if (!attractions.length) {
                     grid.innerHTML = `
-<div class="col-span-full text-center py-16">
-    <span class="material-symbols-outlined text-[64px] text-[#999999] mb-4 block">travel_explore</span>
-    <h3 class="text-xl font-bold text-[#CCCCCC] mb-2">No attractions available right now</h3>
-    <p class="text-[#999999]">Please try again in a moment.</p>
+<div class="col-span-full text-center py-20">
+    <div style="width:72px;height:72px;margin:0 auto 20px;border-radius:var(--radius-full);background:rgba(255,255,255,0.03);border:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:center;">
+        <span class="material-symbols-outlined text-3xl" style="color:var(--text-muted);">travel_explore</span>
+    </div>
+    <h3 class="text-lg font-bold mb-2" style="color:var(--text-secondary);">No attractions available right now</h3>
+    <p class="text-sm" style="color:var(--text-muted);">Please try again in a moment.</p>
 </div>`;
                     return;
                 }
 
                 let html = attractions.map((attr, idx) => `
 <div class="attraction-card group" data-attraction-index="${idx}">
-    <div class="relative h-64">
-        <img alt="${attr.name}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="${attr.image || ''}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80'"/>
-        <div class="absolute top-4 right-4  px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider" style="background:rgba(0,0,0,0.85);color:#FFFFFF;border: 1px solid rgba(255,255,255,0.06);">${attr.tag || 'Attraction'}</div>
-    </div>
-    <div class="p-8">
-        <div class="flex justify-between items-start mb-4">
-            <div>
-                <h3 class="text-xl font-bold text-[#E5E5E5]">${attr.name}</h3>
-                <p class="text-[#999999] text-xs flex items-center gap-1 mt-1">
-                    <span class="material-symbols-outlined text-xs text-[#E5E5E5]">location_on</span>
-                    ${attr.location || DEST_NAME}
-                </p>
-            </div>
+    <div class="attraction-card__image">
+        <img alt="${attr.name}" src="${attr.image || ''}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=600&q=80'"/>
+        <div class="attraction-card__tag">${attr.tag || 'Attraction'}</div>
+        <div class="attraction-card__index">${String(idx + 1).padStart(2, '0')}</div>
+        <div class="attraction-card__explore">
+            View on map
+            <span class="material-symbols-outlined">arrow_forward</span>
         </div>
-        <p class="text-[#999999] text-sm leading-relaxed mb-6 line-clamp-2">${attr.description || ''}</p>
-        <div class="flex flex-col gap-2 mb-6">
-            <div class="flex items-center gap-2 text-xs font-semibold text-[#999999]">
-                <span class="material-symbols-outlined text-sm text-[#E5E5E5]">schedule</span>
+    </div>
+    <div class="attraction-card__body">
+        <h3 class="attraction-card__title">${attr.name}</h3>
+        <div class="attraction-card__location">
+            <span class="material-symbols-outlined">location_on</span>
+            ${attr.location || DEST_NAME}
+        </div>
+        <p class="attraction-card__desc">${attr.description || ''}</p>
+        <div class="attraction-card__meta">
+            <div class="attraction-card__meta-item">
+                <span class="material-symbols-outlined">schedule</span>
                 ${normalizeTiming(attr)}
             </div>
-        </div>
-        <div class="flex items-center justify-between pt-6" style="border-top: 1px solid rgba(255,255,255,0.06);">
-            <span class="text-xs font-bold text-[#777777] uppercase tracking-widest">${attr.entry_fee || 'Info N/A'}</span>
+            <span class="attraction-card__fee">${attr.entry_fee || 'Info N/A'}</span>
         </div>
     </div>
 </div>`).join('');
@@ -1605,15 +1820,22 @@
                 const imageUrl = normalizeImage(item, placeName);
 
                 return `
-                    <div style="width:260px;border-radius:14px;overflow:hidden;background: #0A0A0A;box-shadow:0 12px 28px rgba(15,23,42,0.18);font-family:Plus Jakarta Sans,system-ui,sans-serif;">
-                        <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(placeName)}" style="width:100%;height:120px;object-fit:cover;" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=900&q=80';" />
-                        <div style="padding:10px 12px;">
-                            <h4 style="margin:0 0 2px 0;font-size:15px;font-weight:800;color:#FFFFFF;">${escapeHtml(placeName)}</h4>
-                            <p style="margin:0 0 8px 0;font-size:11px;font-weight:700;color:#888888;">Category: ${escapeHtml(category)}</p>
-                            <p style="margin:0 0 9px 0;font-size:11px;line-height:1.45;color:#BBBBBB;">${escapeHtml(description)}</p>
-                            <div style="display:flex;justify-content:space-between;gap:8px;">
-                                <div style="font-size:10px;color:#BBBBBB;"><span style="font-weight:700;">Best time:</span> ${escapeHtml(bestTime)}</div>
-                                <div style="font-size:10px;color:#BBBBBB;text-align:right;"><span style="font-weight:700;">⏱</span> ${escapeHtml(duration)}</div>
+                    <div style="width:280px;border-radius:16px;overflow:hidden;background:#0A0A0A;border:1px solid rgba(255,255,255,0.08);box-shadow:0 16px 48px rgba(0,0,0,0.5);font-family:'Inter','Plus Jakarta Sans',system-ui,sans-serif;">
+                        <div style="position:relative;height:130px;overflow:hidden;">
+                            <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(placeName)}" style="width:100%;height:100%;object-fit:cover;" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=900&q=80';" />
+                            <div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,0.65) 0%,transparent 50%);pointer-events:none;"></div>
+                            <div style="position:absolute;top:10px;left:10px;padding:4px 10px;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.1);border-radius:9999px;font-size:9px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.1em;">${escapeHtml(category)}</div>
+                        </div>
+                        <div style="padding:14px 16px 16px;">
+                            <h4 style="margin:0 0 4px 0;font-size:15px;font-weight:800;color:#FFFFFF;line-height:1.3;">${escapeHtml(placeName)}</h4>
+                            <p style="margin:0 0 10px 0;font-size:11px;line-height:1.55;color:rgba(255,255,255,0.5);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${escapeHtml(description)}</p>
+                            <div style="display:flex;align-items:center;gap:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06);">
+                                <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:rgba(255,255,255,0.45);font-weight:600;">
+                                    <span style="font-size:12px;">&#128336;</span> ${escapeHtml(bestTime)}
+                                </div>
+                                <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:rgba(255,255,255,0.45);font-weight:600;">
+                                    <span style="font-size:12px;">&#8987;</span> ${escapeHtml(duration)}
+                                </div>
                             </div>
                         </div>
                     </div>
