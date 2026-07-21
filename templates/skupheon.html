@@ -59,6 +59,11 @@
         </div>
         <div class="saw-sidebar-list" id="saw-sidebar-list"></div>
         <div class="saw-sidebar-footer">
+          <button class="saw-mytrip-btn" id="saw-mytrip-btn" title="Connect your saved trips and destinations to the AI assistant">
+            <span class="material-symbols-outlined">trip_origin</span>
+            <span class="saw-mytrip-btn-label">Connect My Trip</span>
+          </button>
+          <div class="saw-mytrip-status" id="saw-mytrip-status"></div>
           <button class="saw-clear-btn" id="saw-clear-all">
             <span class="material-symbols-outlined">delete_sweep</span>
             Clear all
@@ -113,6 +118,24 @@
         <!-- Composer -->
         <div class="saw-composer">
           <div class="saw-composer-inner">
+            <!-- My Trip Scope Buttons (persistent when connected) -->
+            <div class="saw-scope-bar" id="saw-scope-bar">
+              <span class="saw-scope-label">
+                <span class="material-symbols-outlined">trip_origin</span>
+                My Trip Connected
+              </span>
+              <div class="saw-scope-pills">
+                <button class="saw-scope-pill" id="saw-scope-trips" data-scope="trips">
+                  <span class="material-symbols-outlined">luggage</span>
+                  Plan a Trip
+                </button>
+                <button class="saw-scope-pill" id="saw-scope-destinations" data-scope="destinations">
+                  <span class="material-symbols-outlined">explore</span>
+                  Explore Destination
+                </button>
+              </div>
+            </div>
+
             <div class="saw-composer-attachments" id="saw-attachments"></div>
             <div class="saw-composer-box" id="saw-composer-box">
               <button class="saw-composer-btn" id="saw-attach-btn" title="Attach file">

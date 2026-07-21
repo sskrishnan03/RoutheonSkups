@@ -44,6 +44,11 @@
     editCancel: $('#saw-edit-cancel'),
     editResend: $('#saw-edit-resend'),
     readAloudBtn: $('#saw-read-aloud-btn'),
+    mytripBtn: $('#saw-mytrip-btn'),
+    mytripStatus: $('#saw-mytrip-status'),
+    scopeBar: $('#saw-scope-bar'),
+    scopeTrips: $('#saw-scope-trips'),
+    scopeDestinations: $('#saw-scope-destinations'),
   };
 
   let state = {
@@ -57,6 +62,8 @@
     itemMenuTarget: null,
     isSpeaking: false,
     speakingMsgEl: null,
+    myTripConnected: false,
+    myTripScope: null, // 'trips' | 'destinations' | null
   };
 
   /* ── Daily Content Pool ──────────────────────── */
@@ -360,7 +367,7 @@
 
   /* ── API Calls ───────────────────────────── */
   async function apiSend(message, sessionId, files) {
-    const body = { message, session_id: sessionId };
+    const body = { message, session_id: sessionId, my_trip_connected: state.myTripConnected, my_trip_scope: state.myTripScope };
     if (files && files.length > 0) {
       const file = files[0];
       const b64 = await fileToBase64(file);
@@ -417,6 +424,149 @@
 
   async function apiClearAll() {
     await fetch('/api/chat/sessions/clear', { method: 'POST' });
+  }
+
+  /* ── My Trip Connection ──────────────────── */
+  function loadMyTripState() {
+    try {
+      const saved = localStorage.getItem('saw_mytrip_connected');
+      state.myTripConnected = saved === 'true';
+    } catch (e) {
+      state.myTripConnected = false;
+    }
+    loadScopeState();
+    renderMyTripUI();
+  }
+
+  function saveMyTripState() {
+    try {
+      localStorage.setItem('saw_mytrip_connected', String(state.myTripConnected));
+    } catch (e) {}
+  }
+
+  function renderMyTripUI() {
+    if (!DOM.mytripBtn || !DOM.mytripStatus) return;
+    if (state.myTripConnected) {
+      DOM.mytripBtn.classList.add('connected');
+      DOM.mytripBtn.querySelector('.saw-mytrip-btn-label').textContent = 'Disconnect My Trip';
+      DOM.mytripBtn.querySelector('.material-symbols-outlined').textContent = 'link_off';
+      DOM.mytripBtn.title = 'Disconnect your trips and destinations from the AI assistant';
+      DOM.mytripStatus.className = 'saw-mytrip-status visible connected';
+      DOM.mytripStatus.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Connected to My Trip';
+    } else {
+      DOM.mytripBtn.classList.remove('connected');
+      DOM.mytripBtn.querySelector('.saw-mytrip-btn-label').textContent = 'Connect My Trip';
+      DOM.mytripBtn.querySelector('.material-symbols-outlined').textContent = 'trip_origin';
+      DOM.mytripBtn.title = 'Connect your saved trips and destinations to the AI assistant';
+      DOM.mytripStatus.className = 'saw-mytrip-status';
+      DOM.mytripStatus.innerHTML = '';
+      state.myTripScope = null;
+      saveScopeState();
+    }
+    renderScopeBar();
+  }
+
+  function loadScopeState() {
+    try {
+      const saved = localStorage.getItem('saw_mytrip_scope');
+      if (saved === 'trips' || saved === 'destinations') {
+        state.myTripScope = saved;
+      } else {
+        state.myTripScope = null;
+      }
+    } catch (e) {
+      state.myTripScope = null;
+    }
+  }
+
+  function saveScopeState() {
+    try {
+      if (state.myTripScope) {
+        localStorage.setItem('saw_mytrip_scope', state.myTripScope);
+      } else {
+        localStorage.removeItem('saw_mytrip_scope');
+      }
+    } catch (e) {}
+  }
+
+  function renderScopeBar() {
+    if (!DOM.scopeBar) return;
+    if (state.myTripConnected) {
+      DOM.scopeBar.classList.add('visible');
+      updateScopePills();
+    } else {
+      DOM.scopeBar.classList.remove('visible');
+    }
+  }
+
+  function updateScopePills() {
+    if (DOM.scopeTrips) {
+      DOM.scopeTrips.classList.toggle('active', state.myTripScope === 'trips');
+    }
+    if (DOM.scopeDestinations) {
+      DOM.scopeDestinations.classList.toggle('active', state.myTripScope === 'destinations');
+    }
+    // Update placeholder
+    if (DOM.input) {
+      if (state.myTripScope === 'trips') {
+        DOM.input.placeholder = 'Ask about your trips... (Plan a Trip)';
+      } else if (state.myTripScope === 'destinations') {
+        DOM.input.placeholder = 'Ask about your destinations... (Explore Destination)';
+      } else {
+        DOM.input.placeholder = 'Plan a trip, compare destinations, or ask anything...';
+      }
+    }
+  }
+
+  function setScope(scope) {
+    if (state.myTripScope === scope) {
+      // Toggle off
+      state.myTripScope = null;
+    } else {
+      state.myTripScope = scope;
+    }
+    saveScopeState();
+    updateScopePills();
+  }
+
+  async function toggleMyTripConnection() {
+    if (state.myTripConnected) {
+      state.myTripConnected = false;
+      saveMyTripState();
+      renderMyTripUI();
+      showToast('My Trip disconnected from AI assistant');
+    } else {
+      DOM.mytripBtn.disabled = true;
+      DOM.mytripBtn.querySelector('.saw-mytrip-btn-label').textContent = 'Connecting...';
+      try {
+        const res = await fetch('/api/my-trip-context');
+        if (res.ok) {
+          const data = await res.json();
+          const hasData = (data.trips && data.trips.length > 0) ||
+                          (data.saved_destinations && data.saved_destinations.length > 0) ||
+                          (data.favorite_destinations && data.favorite_destinations.length > 0);
+          state.myTripConnected = true;
+          saveMyTripState();
+          renderMyTripUI();
+          if (hasData) {
+            const parts = [];
+            if (data.trips && data.trips.length > 0) parts.push(data.trips.length + ' trip' + (data.trips.length > 1 ? 's' : ''));
+            if (data.saved_destinations && data.saved_destinations.length > 0) parts.push(data.saved_destinations.length + ' saved destination' + (data.saved_destinations.length > 1 ? 's' : ''));
+            if (data.favorite_destinations && data.favorite_destinations.length > 0) parts.push(data.favorite_destinations.length + ' favorite' + (data.favorite_destinations.length > 1 ? 's' : ''));
+            showToast('My Trip connected! (' + parts.join(', ') + ')');
+          } else {
+            showToast('My Trip connected! No saved trips or destinations found yet.');
+          }
+        } else {
+          showToast('Failed to connect My Trip. Please try again.');
+        }
+      } catch (err) {
+        console.error('My Trip connect error:', err);
+        showToast('Failed to connect My Trip. Please try again.');
+      } finally {
+        DOM.mytripBtn.disabled = false;
+      }
+    }
   }
 
   function fileToBase64(file) {
@@ -1096,6 +1246,17 @@
 
     loadSessions();
     renderDailyWelcome();
+
+    loadMyTripState();
+    if (DOM.mytripBtn) {
+      DOM.mytripBtn.addEventListener('click', toggleMyTripConnection);
+    }
+    if (DOM.scopeTrips) {
+      DOM.scopeTrips.addEventListener('click', () => setScope('trips'));
+    }
+    if (DOM.scopeDestinations) {
+      DOM.scopeDestinations.addEventListener('click', () => setScope('destinations'));
+    }
 
     if (window.innerWidth <= 860) DOM.sidebar.classList.add('collapsed');
   }

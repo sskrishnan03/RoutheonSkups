@@ -1974,6 +1974,74 @@ def toggle_pin_chat_session(session_id):
     db.session.commit()
     return jsonify({"success": True, "pinned": should_pin})
 
+@main_bp.route('/api/my-trip-context', methods=['GET'])
+@login_required
+def get_my_trip_context():
+    """Fetch the user's saved trips and saved destinations for AI assistant context."""
+    today = datetime.now().date()
+
+    # Fetch all trips for the user
+    all_trips = Trip.query.filter_by(user_id=current_user.id).order_by(Trip.start_date.desc()).all()
+    trips_data = []
+    for t in all_trips:
+        trip_info = {
+            'id': t.id,
+            'destination': t.destination,
+            'start_date': t.start_date.isoformat() if t.start_date else None,
+            'end_date': t.end_date.isoformat() if t.end_date else None,
+            'budget': t.budget,
+            'interests': t.interests,
+            'status': 'upcoming' if t.start_date and t.start_date > today else ('ongoing' if t.start_date and t.end_date and t.start_date <= today <= t.end_date else 'completed'),
+        }
+        # Parse itinerary for summary
+        try:
+            parsed = json.loads(t.itinerary_text) if t.itinerary_text else {}
+            if isinstance(parsed, dict):
+                trip_info['adults'] = parsed.get('adults')
+                trip_info['children'] = parsed.get('children')
+                itinerary_days = parsed.get('itinerary', [])
+                if isinstance(itinerary_days, list) and itinerary_days:
+                    trip_info['day_count'] = len(itinerary_days)
+                    # Extract a brief summary of activities
+                    activities_summary = []
+                    for day in itinerary_days[:3]:
+                        if isinstance(day, dict):
+                            day_title = day.get('title', day.get('day_title', ''))
+                            if day_title:
+                                activities_summary.append(day_title)
+                    if activities_summary:
+                        trip_info['highlights'] = activities_summary
+        except Exception:
+            pass
+        trips_data.append(trip_info)
+
+    # Fetch saved destinations
+    saved = SavedDestination.query.filter_by(user_id=current_user.id).order_by(SavedDestination.created_at.desc()).all()
+    saved_data = []
+    for s in saved:
+        saved_data.append({
+            'name': s.name,
+            'description': s.description,
+            'tag': s.tag,
+        })
+
+    # Fetch favorite destinations
+    favs = FavoriteDestination.query.filter_by(user_id=current_user.id).order_by(FavoriteDestination.created_at.desc()).all()
+    favs_data = []
+    for f in favs:
+        favs_data.append({
+            'name': f.name,
+            'description': f.description,
+            'tag': f.tag,
+        })
+
+    return jsonify({
+        'trips': trips_data,
+        'saved_destinations': saved_data,
+        'favorite_destinations': favs_data,
+    })
+
+
 @main_bp.route('/api/chat/send', methods=['POST'])
 @login_required
 def send_chat_message():
@@ -1986,9 +2054,16 @@ def send_chat_message():
     image_base64 = data.get('image_base64')
     image_mime = data.get('image_mime') or 'image/jpeg'
     image_name = (data.get('image_name') or 'image').strip()
+    my_trip_connected = data.get('my_trip_connected', False)
+    my_trip_scope = data.get('my_trip_scope')  # 'trips' | 'destinations' | None
     
     if not message_text and not image_base64:
         return jsonify({"error": "Message or image required"}), 400
+    
+    # Build My Trip context string if connected
+    my_trip_context_str = ""
+    if my_trip_connected:
+        my_trip_context_str = _build_my_trip_context_for_ai(current_user, scope=my_trip_scope)
     
     if not chat_history_enabled:
         if image_base64:
@@ -1998,7 +2073,7 @@ def send_chat_message():
                 return jsonify({"error": "Invalid image payload"}), 400
             ai_response_text = AIService.analyze_image_for_travel(image_bytes, image_mime, message_text)
         else:
-            ai_response_text = AIService.general_chat(message_text, history=[])
+            ai_response_text = AIService.general_chat(message_text, history=[], my_trip_context=my_trip_context_str)
         return jsonify({
             'session_id': None,
             'response': ai_response_text,
@@ -2027,7 +2102,6 @@ def send_chat_message():
     
     # Prepare history for AI
     history = []
-    # We take the last 5-10 messages for context
     past_messages = ChatMessage.query.filter_by(session_id=session.id).order_by(ChatMessage.created_at.asc()).all()
     for m in past_messages:
         history.append({'role': m.role, 'content': m.content})
@@ -2040,7 +2114,7 @@ def send_chat_message():
             return jsonify({"error": "Invalid image payload"}), 400
         ai_response_text = AIService.analyze_image_for_travel(image_bytes, image_mime, message_text)
     else:
-        ai_response_text = AIService.general_chat(message_text, history=history[:-1]) # history[:-1] because history already includes user_msg
+        ai_response_text = AIService.general_chat(message_text, history=history[:-1], my_trip_context=my_trip_context_str)
     
     # Save AI message
     ai_msg = ChatMessage(session_id=session.id, role='ai', content=ai_response_text)
@@ -2055,6 +2129,67 @@ def send_chat_message():
         'response': ai_response_text,
         'created_at': ai_msg.created_at.strftime('%H:%M')
     })
+
+
+def _build_my_trip_context_for_ai(user, scope=None):
+    """Build a context string from the user's trips and saved destinations for the AI system prompt.
+    scope: 'trips' | 'destinations' | None (None = all data)
+    """
+    today = datetime.now().date()
+    lines = []
+
+    # Trips (Plan a Trip)
+    if scope is None or scope == 'trips':
+        trips = Trip.query.filter_by(user_id=user.id).order_by(Trip.start_date.desc()).limit(15).all()
+        if trips:
+            lines.append("=== USER'S SAVED TRIPS (Plan a Trip) ===")
+            for t in trips:
+                status = 'upcoming' if t.start_date and t.start_date > today else ('ongoing' if t.start_date and t.end_date and t.start_date <= today <= t.end_date else 'completed')
+                trip_line = f"- {t.destination} | {t.start_date.isoformat() if t.start_date else 'N/A'} to {t.end_date.isoformat() if t.end_date else 'N/A'} | Budget: {t.budget or 'N/A'} | Status: {status}"
+                if t.interests:
+                    trip_line += f" | Interests: {t.interests}"
+                try:
+                    parsed = json.loads(t.itinerary_text) if t.itinerary_text else {}
+                    if isinstance(parsed, dict):
+                        adults = parsed.get('adults')
+                        children = parsed.get('children')
+                        if adults or children:
+                            trip_line += f" | Travelers: {adults or 'N/A'} adults, {children or 0} children"
+                except Exception:
+                    pass
+                lines.append(trip_line)
+
+    # Saved destinations (Explore Destination)
+    if scope is None or scope == 'destinations':
+        saved = SavedDestination.query.filter_by(user_id=user.id).order_by(SavedDestination.created_at.desc()).limit(20).all()
+        if saved:
+            lines.append("\n=== USER'S SAVED DESTINATIONS (Explore Destination) ===")
+            for s in saved:
+                dest_line = f"- {s.name}"
+                if s.tag:
+                    dest_line += f" | Tag: {s.tag}"
+                if s.description:
+                    desc_short = s.description[:120] + "..." if len(s.description or '') > 120 else s.description
+                    dest_line += f" | {desc_short}"
+                lines.append(dest_line)
+
+        favs = FavoriteDestination.query.filter_by(user_id=user.id).order_by(FavoriteDestination.created_at.desc()).limit(15).all()
+        if favs:
+            lines.append("\n=== USER'S FAVORITE DESTINATIONS ===")
+            for f in favs:
+                fav_line = f"- {f.name}"
+                if f.tag:
+                    fav_line += f" | Tag: {f.tag}"
+                lines.append(fav_line)
+
+    if not lines:
+        if scope == 'trips':
+            return "The user has no saved trips (Plan a Trip) yet."
+        elif scope == 'destinations':
+            return "The user has no saved or favorite destinations (Explore Destination) yet."
+        return ""
+
+    return "\n".join(lines)
 
 @main_bp.route('/about')
 @login_required

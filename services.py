@@ -412,10 +412,11 @@ class AIService:
             return "I received your image, but image analysis is temporarily unavailable. Please try again in a moment."
 
     @staticmethod
-    def general_chat(message, history=None):
+    def general_chat(message, history=None, my_trip_context=None):
         """
         Generic chat for the Profile AI Assistant with history support.
         history: list of dicts like [{"role": "user", "content": "..."}, {"role": "ai", "content": "..."}]
+        my_trip_context: optional string with the user's trips/saved destinations data for context-aware answers.
         """
         try:
             client = Groq(api_key=Config.GROQ_API_KEY)
@@ -426,6 +427,45 @@ class AIService:
             Your goal is to assist the user with their travel queries, provide destination insights, help with budgets, or just chat about their upcoming trips.
             Keep your responses concise but insightful. 
             """
+            
+            if my_trip_context:
+                # Detect scope from context
+                is_trips_only = "USER'S SAVED TRIPS" in my_trip_context and "SAVED DESTINATIONS" not in my_trip_context
+                is_destinations_only = "SAVED DESTINATIONS" in my_trip_context and "USER'S SAVED TRIPS" not in my_trip_context
+                
+                if is_trips_only:
+                    scope_rule = """
+SCOPE: Plan a Trip — The user selected "Plan a Trip" scope. You have ONLY their saved trip data.
+- Answer questions about their saved trips, itineraries, budgets, dates, travelers, etc.
+- If asked about destinations/saved places that are NOT in their trips, tell them: "This destination is not in your saved trips. Switch to 'Explore Destination' scope or connect My Trip to see all your data."
+- Focus exclusively on trip planning, trip details, budget breakdowns, itinerary reviews, and travel advice related to their saved trips.
+"""
+                elif is_destinations_only:
+                    scope_rule = """
+SCOPE: Explore Destination — The user selected "Explore Destination" scope. You have ONLY their saved/favorite destination data.
+- Answer questions about their saved destinations, favorites, tags, descriptions, etc.
+- If asked about trips/itineraries that are NOT in their saved destinations, tell them: "This is trip data. Switch to 'Plan a Trip' scope to ask about your saved trips."
+- Focus exclusively on destination information, travel tips for their saved places, and exploration advice.
+"""
+                else:
+                    scope_rule = """
+SCOPE: All My Trip Data — The user has access to all their trip and destination data.
+- Answer using both their saved trips and saved destinations.
+"""
+
+                system_msg += f"""
+
+IMPORTANT: The user has connected their "My Trip" data to this conversation.
+{scope_rule}
+Rules:
+1. You MUST use this data to answer questions about the user's trips and saved destinations.
+2. When the user asks about a specific destination, check if it exists in their data FIRST.
+3. If the destination IS in their data: provide detailed answers using the info you have.
+4. If the destination is NOT in their data: clearly tell them the destination is not found in their current scope.
+5. Never make up or fabricate trip data. Only use what is provided in the context below.
+
+Here is the user's data:
+""" + my_trip_context
             
             messages = [{"role": "system", "content": system_msg}]
             
