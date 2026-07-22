@@ -679,6 +679,10 @@
 
   /* ── Conversation Management ─────────────── */
   function newChat() {
+    if (state.sessionId === null && !DOM.welcome.classList.contains('hidden') && DOM.msgContainer.children.length === 0) {
+      DOM.input.focus();
+      return;
+    }
     state.sessionId = null;
     DOM.msgContainer.innerHTML = '';
     DOM.welcome.classList.remove('hidden');

@@ -1256,7 +1256,10 @@ def update_ai_assistant_settings():
 
     chat_history_cleared = False
     if old_settings.get('chat_history', True) and not updated['chat_history']:
-        ChatSession.query.filter_by(user_id=current_user.id).delete()
+        sessions = ChatSession.query.filter_by(user_id=current_user.id).all()
+        for session in sessions:
+            ChatMessage.query.filter_by(session_id=session.id).delete()
+            db.session.delete(session)
         chat_history_cleared = True
         message = 'AI assistant settings updated. Existing chat history has been cleared.'
     else:
@@ -1865,8 +1868,6 @@ def mark_all_read():
 @main_bp.route('/api/chat/sessions', methods=['GET'])
 @login_required
 def get_chat_sessions():
-    if not _get_ai_assistant_settings(current_user).get('chat_history', True):
-        return jsonify([])
     from models import ChatSession
     sessions = ChatSession.query.filter_by(user_id=current_user.id).order_by(ChatSession.updated_at.desc()).all()
     pinned_ids = set(_get_pinned_chat_session_ids(current_user))
@@ -1892,8 +1893,6 @@ def get_chat_sessions():
 @main_bp.route('/api/chat/session/<int:session_id>', methods=['GET'])
 @login_required
 def get_chat_messages(session_id):
-    if not _get_ai_assistant_settings(current_user).get('chat_history', True):
-        return jsonify([])
     from models import ChatSession
     session = ChatSession.query.get_or_404(session_id)
     if session.user_id != current_user.id:
@@ -1911,10 +1910,7 @@ def get_chat_messages(session_id):
 @main_bp.route('/api/chat/session/<int:session_id>', methods=['DELETE'])
 @login_required
 def delete_chat_session(session_id):
-    from models import ChatSession
-    if not _get_ai_assistant_settings(current_user).get('chat_history', True):
-        return jsonify({"error": "Chat history is disabled"}), 400
-
+    from models import ChatSession, ChatMessage
     session = ChatSession.query.get_or_404(session_id)
     if session.user_id != current_user.id:
         return jsonify({"error": "Unauthorized"}), 403
@@ -1924,6 +1920,7 @@ def delete_chat_session(session_id):
         pinned_ids.remove(session.id)
         _set_pinned_chat_session_ids(current_user, list(pinned_ids))
 
+    ChatMessage.query.filter_by(session_id=session.id).delete()
     db.session.delete(session)
     db.session.commit()
     return jsonify({"success": True})
@@ -1932,10 +1929,10 @@ def delete_chat_session(session_id):
 @login_required
 def clear_chat_sessions():
     from models import ChatSession
-    if not _get_ai_assistant_settings(current_user).get('chat_history', True):
-        return jsonify({"error": "Chat history is disabled"}), 400
-
-    ChatSession.query.filter_by(user_id=current_user.id).delete()
+    sessions = ChatSession.query.filter_by(user_id=current_user.id).all()
+    for session in sessions:
+        ChatMessage.query.filter_by(session_id=session.id).delete()
+        db.session.delete(session)
     _set_pinned_chat_session_ids(current_user, [])
     db.session.commit()
     return jsonify({"success": True})
@@ -2060,8 +2057,6 @@ def get_my_trip_context():
 @login_required
 def send_chat_message():
     from models import ChatSession, ChatMessage
-    ai_settings = _get_ai_assistant_settings(current_user)
-    chat_history_enabled = ai_settings.get('chat_history', True)
     data = request.json
     message_text = data.get('message')
     session_id = data.get('session_id')
@@ -2079,21 +2074,6 @@ def send_chat_message():
     if my_trip_connected:
         my_trip_context_str = _build_my_trip_context_for_ai(current_user, scope=my_trip_scope)
     
-    if not chat_history_enabled:
-        if image_base64:
-            try:
-                image_bytes = base64.b64decode(image_base64)
-            except Exception:
-                return jsonify({"error": "Invalid image payload"}), 400
-            ai_response_text = AIService.analyze_image_for_travel(image_bytes, image_mime, message_text)
-        else:
-            ai_response_text = AIService.general_chat(message_text, history=[], my_trip_context=my_trip_context_str)
-        return jsonify({
-            'session_id': None,
-            'response': ai_response_text,
-            'created_at': datetime.utcnow().strftime('%H:%M')
-        })
-
     # Get or create session
     if session_id:
         session = ChatSession.query.get(session_id)

@@ -21,8 +21,7 @@
         .about-timeline-item:last-child { padding-bottom: 0; }
         .feature-highlight { background: #0A0A0A; border: 1px solid rgba(255,255,255,0.06); border-radius: 24px; padding: 32px; transition: all 0.35s cubic-bezier(0.22,1,0.36,1); }
         .feature-highlight:hover { background: #111111; border-color: rgba(255,255,255,0.12); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
-        .tech-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: #0A0A0A; border: 1px solid rgba(255,255,255,0.06); border-radius: 9999px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7); transition: all 0.25s ease; }
-        .tech-badge:hover { background: #111111; border-color: rgba(255,255,255,0.12); color: #fff; }
+
     </style>
 </head>
 <body>
@@ -54,7 +53,7 @@
                         <span class="ks-badge mb-4">What is RoutheonSkups?</span>
                         <h2 class="ks-heading-lg mb-6">Your Smart Travel Companion</h2>
                         <p class="ks-body mb-5">RoutheonSkups is a comprehensive, web-based travel planning application built to transform the way you explore the world. It brings together artificial intelligence, destination databases, weather intelligence, and route optimization into one seamless platform.</p>
-                        <p class="ks-body mb-5">At its core, RoutheonSkups uses the Groq AI API powered by Llama 3.3 70B to deliver intelligent, personalized responses. Whether you're asking for travel advice, destination recommendations, or detailed itinerary suggestions, the AI understands your preferences and provides tailored guidance.</p>
+                        <p class="ks-body mb-5">At its core, RoutheonSkups uses advanced AI to deliver intelligent, personalized responses. Whether you're asking for travel advice, destination recommendations, or detailed itinerary suggestions, the AI understands your preferences and provides tailored guidance.</p>
                         <p class="ks-body mb-5">The platform covers <strong class="text-white">40+ countries</strong> across every continent, with detailed information on <strong class="text-white">800+ popular destinations</strong>, including attractions, local tips, weather data, and curated travel content. From the streets of Paris to the temples of Kyoto, from the beaches of Bali to the mountains of Switzerland — RoutheonSkups has you covered.</p>
                         <p class="ks-body">Built with a modern dark-themed interface, the platform is designed to be visually stunning, fast, and intuitive — whether you're planning from your desktop or on the go from your phone.</p>
                     </div>
@@ -140,7 +139,7 @@
                             <span class="material-icons-round text-white text-2xl">smart_toy</span>
                         </div>
                         <h3 class="ks-heading-sm mb-3">Skupheon AI Assistant</h3>
-                        <p class="ks-body-sm">Your personal AI travel companion powered by Groq's Llama 3.3 70B model. Ask anything about destinations, get personalized recommendations, plan trips through conversation, analyze travel images, and get real-time travel advice — all in a sleek ChatGPT-style workspace with session management.</p>
+                        <p class="ks-body-sm">Your personal AI travel companion. Ask anything about destinations, get personalized recommendations, plan trips through conversation, analyze travel images, and get real-time travel advice — all in a sleek chat workspace with session management.</p>
                     </div>
                     <!-- Atlas Console -->
                     <div class="feature-highlight ks-animate-in ks-animate-in-delay-2">
@@ -205,39 +204,6 @@
                         </div>
                         <h3 class="ks-heading-sm mb-3">Voice Input & TTS</h3>
                         <p class="ks-body-sm">Speak to Skupheon using your microphone for hands-free interaction. The AI can also read responses aloud using text-to-speech with multiple voice options, making the platform accessible and convenient while you're on the move.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Technology Stack -->
-        <section class="py-16">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-16">
-                    <span class="ks-badge mb-4">Built With</span>
-                    <h2 class="ks-heading-lg">Powered by Modern Technology</h2>
-                </div>
-                <div class="grid lg:grid-cols-2 gap-12 items-start">
-                    <div>
-                        <p class="ks-body mb-6">RoutheonSkups is built on a robust, scalable architecture that combines a Python Flask backend with AI services, real-time data APIs, and a sleek frontend powered by Tailwind CSS. Every component is designed for performance, reliability, and a premium user experience.</p>
-                        <h3 class="ks-heading-md mb-4">AI & Intelligence</h3>
-                        <p class="ks-body mb-6">The brain behind RoutheonSkups is the Groq API, utilizing Meta's Llama 3.3 70B Versatile model for chat, planning, and recommendations. For image analysis, we use the Llama 3.2 11B Vision Preview model. The AI doesn't just answer questions — it understands context, remembers your preferences within conversations, and provides personalized travel advice.</p>
-                        <h3 class="ks-heading-md mb-4">Smart Route Optimization</h3>
-                        <p class="ks-body">Our built-in graph service uses Dijkstra's algorithm and Traveling Salesman Problem (TSP) optimization to calculate the most efficient travel routes between destinations. This means your itineraries aren't just fun — they're optimized for time and distance.</p>
-                    </div>
-                    <div class="space-y-3">
-                        <div class="tech-badge"><span class="material-icons-round" style="font-size:18px">code</span> Python Flask — Backend Framework</div>
-                        <div class="tech-badge"><span class="material-icons-round" style="font-size:18px">smart_toy</span> Groq API — Llama 3.3 70B AI Engine</div>
-                        <div class="tech-badge"><span class="material-icons-round" style="font-size:18px">visibility</span> Llama 3.2 11B Vision — Image Analysis</div>
-                        <div class="tech-badge"><span class="material-icons-round" style="font-size:18px">security</span> Flask-Login + Google OAuth — Auth</div>
-                        <div class="tech-badge"><span class="material-icons-round" style="font-size:18px">storage</span> SQLAlchemy + SQLite — Database</div>
-                        <div class="tech-badge"><span class="material-icons-round" style="font-size:18px">cloud</span> Open-Meteo — Weather API</div>
-                        <div class="tech-badge"><span class="material-icons-round" style="font-size:18px">search</span> Serper API — Image & Web Search</div>
-                        <div class="tech-badge"><span class="material-icons-round" style="font-size:18px">route</span> Dijkstra + TSP — Route Optimization</div>
-                        <div class="tech-badge"><span class="material-icons-round" style="font-size:18px">graphic_eq</span> edge_tts + gTTS — Text to Speech</div>
-                        <div class="tech-badge"><span class="material-icons-round" style="font-size:18px">palette</span> Tailwind CSS — UI Framework</div>
-                        <div class="tech-badge"><span class="material-icons-round" style="font-size:18px">mail</span> Flask-Mail — Email Notifications</div>
-                        <div class="tech-badge"><span class="material-icons-round" style="font-size:18px">lock</span> Flask-Bcrypt — Password Security</div>
                     </div>
                 </div>
             </div>
@@ -316,15 +282,15 @@
                             </div>
                             <div class="about-timeline-item">
                                 <h4 class="ks-heading-sm mb-1">Core Platform Build</h4>
-                                <p class="ks-body-sm">Developed the Flask backend, integrated Groq AI API, built the destination database with 40+ countries, and created the distinctive dark-themed UI with Tailwind CSS.</p>
+                                <p class="ks-body-sm">Developed the backend, integrated the AI engine, built the destination database with 40+ countries, and created the distinctive dark-themed UI.</p>
                             </div>
                             <div class="about-timeline-item">
                                 <h4 class="ks-heading-sm mb-1">AI Integration</h4>
-                                <p class="ks-body-sm">Integrated Skupheon AI assistant with Llama 3.3 70B, added destination chat, AI trip planning, image analysis with Vision model, and voice input/TTS capabilities.</p>
+                                <p class="ks-body-sm">Integrated Skupheon AI assistant with advanced language understanding, added destination chat, AI trip planning, image analysis, and voice input/text-to-speech capabilities.</p>
                             </div>
                             <div class="about-timeline-item">
                                 <h4 class="ks-heading-sm mb-1">Smart Features</h4>
-                                <p class="ks-body-sm">Added the Atlas Console for destination exploration, route optimization with Dijkstra/TSP algorithms, weather integration, smart notifications, and favorites system.</p>
+                                <p class="ks-body-sm">Added the Atlas Console for destination exploration, smart route optimization, weather integration, smart notifications, and favorites system.</p>
                             </div>
                             <div class="about-timeline-item">
                                 <h4 class="ks-heading-sm mb-1">Launch & Beyond</h4>
@@ -390,7 +356,7 @@
                     <div class="feature-highlight text-center">
                         <span class="material-icons-round text-white text-4xl mb-4">lock</span>
                         <h3 class="ks-heading-sm mb-3">Secure Authentication</h3>
-                        <p class="ks-body-sm">Passwords are encrypted with Flask-Bcrypt. Google OAuth provides a secure, password-free sign-in option. Session management with Flask-Login keeps your account safe.</p>
+                        <p class="ks-body-sm">Passwords are securely encrypted. OAuth provides a secure, password-free sign-in option. Session management keeps your account safe.</p>
                     </div>
                     <div class="feature-highlight text-center">
                         <span class="material-icons-round text-white text-4xl mb-4">shield</span>
@@ -427,16 +393,8 @@
                         <p class="ks-body-sm">Travel Categories</p>
                     </div>
                     <div class="about-stat">
-                        <div class="text-3xl md:text-4xl font-extrabold mb-2">14+</div>
-                        <p class="ks-body-sm">AI Service Methods</p>
-                    </div>
-                    <div class="about-stat">
-                        <div class="text-3xl md:text-4xl font-extrabold mb-2">60+</div>
-                        <p class="ks-body-sm">API Endpoints</p>
-                    </div>
-                    <div class="about-stat">
                         <div class="text-3xl md:text-4xl font-extrabold mb-2">4</div>
-                        <p class="ks-body-sm">Trip Planning Steps</p>
+                        <p class="ks-body-sm">Step Trip Planning</p>
                     </div>
                     <div class="about-stat">
                         <div class="text-3xl md:text-4xl font-extrabold mb-2">24/7</div>
@@ -445,6 +403,14 @@
                     <div class="about-stat">
                         <div class="text-3xl md:text-4xl font-extrabold mb-2">100%</div>
                         <p class="ks-body-sm">Free to Use</p>
+                    </div>
+                    <div class="about-stat">
+                        <div class="text-3xl md:text-4xl font-extrabold mb-2">Real</div>
+                        <p class="ks-body-sm">Time Weather</p>
+                    </div>
+                    <div class="about-stat">
+                        <div class="text-3xl md:text-4xl font-extrabold mb-2">Smart</div>
+                        <p class="ks-body-sm">Route Planning</p>
                     </div>
                 </div>
             </div>
