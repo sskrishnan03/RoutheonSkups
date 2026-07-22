@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -12,8 +12,10 @@
     <style>
         body { font-family: 'Inter', -apple-system, sans-serif; }
         .faq-content { max-height: 0; overflow: hidden; transition: max-height 0.35s cubic-bezier(0.22,1,0.36,1); }
-        .faq-content.open { max-height: 500px; }
+        .faq-content.open { max-height: 600px; }
         .material-symbols-outlined { font-family: 'Material Symbols Outlined'; font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .faq-category-pill { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: #0A0A0A; border: 1px solid rgba(255,255,255,0.06); border-radius: 9999px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.5); cursor: pointer; transition: all 0.25s ease; white-space: nowrap; }
+        .faq-category-pill:hover, .faq-category-pill.active { color: #fff; background: #111111; border-color: rgba(255,255,255,0.12); }
     </style>
 </head>
 <body>
@@ -68,12 +70,12 @@
             <div class="text-center max-w-3xl mx-auto">
                 <span class="ks-badge mb-6 ks-animate-in">Help Center</span>
                 <h1 class="ks-heading-xl mb-6 ks-animate-in ks-animate-in-delay-1">Frequently Asked <span class="text-white">Questions</span></h1>
-                <p class="ks-body-lg ks-animate-in ks-animate-in-delay-2" style="color:var(--text-secondary);">Find quick answers to common questions about RoutheonSkups. Can't find what you're looking for? <a href="{{ url_for('main.contact') }}" class="text-white hover:underline">Contact our support team</a>.</p>
+                <p class="ks-body-lg ks-animate-in ks-animate-in-delay-2" style="color:var(--text-secondary);">Find quick answers to common questions about RoutheonSkups. Browse by category or use the search bar below. Can't find what you need? <a href="{{ url_for('main.contact') }}" class="text-white hover:underline">Contact our support team</a>.</p>
             </div>
         </section>
 
         <!-- Search Bar -->
-        <section class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+        <section class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
             <div class="relative">
                 <input type="text" id="faq-search" placeholder="Search for answers..."
                     class="ks-input pl-4 pr-12 h-14 text-lg shadow-sm">
@@ -88,10 +90,28 @@
             </div>
         </section>
 
+        <!-- Category Filter Pills -->
+        <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+            <div class="flex flex-wrap gap-2 justify-center">
+                <button class="faq-category-pill active" onclick="filterByCategory('all', this)">All Questions</button>
+                <button class="faq-category-pill" onclick="filterByCategory('getting-started', this)">Getting Started</button>
+                <button class="faq-category-pill" onclick="filterByCategory('account', this)">Account & Profile</button>
+                <button class="faq-category-pill" onclick="filterByCategory('trip-planning', this)">Trip Planning</button>
+                <button class="faq-category-pill" onclick="filterByCategory('ai-assistant', this)">AI Assistant</button>
+                <button class="faq-category-pill" onclick="filterByCategory('destinations', this)">Destinations</button>
+                <button class="faq-category-pill" onclick="filterByCategory('favorites', this)">Favorites</button>
+                <button class="faq-category-pill" onclick="filterByCategory('notifications', this)">Notifications</button>
+                <button class="faq-category-pill" onclick="filterByCategory('security', this)">Privacy & Security</button>
+                <button class="faq-category-pill" onclick="filterByCategory('technical', this)">Technical Support</button>
+                <button class="faq-category-pill" onclick="filterByCategory('billing', this)">Pricing</button>
+            </div>
+        </section>
+
         <!-- FAQ Categories -->
         <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
             <!-- Getting Started -->
-            <div class="mb-12">
+            <div class="mb-12 faq-category-section" data-category="getting-started">
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-12 h-12 rounded-xl bg-[#0A0A0A] border border-white/[0.06] flex items-center justify-center">
                         <span class="material-icons-round text-white text-2xl">play_circle</span>
@@ -101,11 +121,29 @@
                 <div class="space-y-4">
                     <div class="faq-item ks-glass-static overflow-hidden">
                         <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
-                            <span class="font-semibold text-white">How do I create an account on RoutheonSkups?</span>
+                            <span class="font-semibold text-white">What is RoutheonSkups?</span>
                             <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
                         </button>
                         <div class="faq-content px-6 pb-5">
-                            <p class="ks-body-sm leading-relaxed">Go to the Register page and sign up using your name, email, and password. You can also use Google Sign-In from the login flow if you prefer a faster sign-in method.</p>
+                            <p class="ks-body-sm leading-relaxed">RoutheonSkups is an AI-powered travel planning platform that helps you discover destinations, create personalized itineraries, and plan perfect trips. It combines Groq AI technology with a database of 800+ destinations across 40+ countries, along with weather data, route optimization, and smart notifications — all in one sleek, dark-themed interface.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">How do I create an account?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">Click the Register button and sign up using your name, email, and password. You can also use Google Sign-In from the login page for a faster, one-click sign-up experience. Once registered, you'll have full access to all platform features including trip planning, AI chat, favorites, and more.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">Is RoutheonSkups free to use?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">Yes! RoutheonSkups is completely free to use. All core features — including AI-powered trip planning, destination exploration, Skupheon AI chat, favorites, notifications, and weather updates — are available at no cost. There are no hidden fees, subscription plans, or premium tiers.</p>
                         </div>
                     </div>
                     <div class="faq-item ks-glass-static overflow-hidden">
@@ -114,23 +152,23 @@
                             <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
                         </button>
                         <div class="faq-content px-6 pb-5">
-                            <p class="ks-body-sm leading-relaxed">You can view public pages like the landing page, but features such as FAQ access, trip planning, saved destinations, profile updates, and AI chat tools require login.</p>
+                            <p class="ks-body-sm leading-relaxed">You can view public pages like the landing page without logging in, but to access the full experience — including FAQ, trip planning, saved destinations, Skupheon AI, profile management, notifications, and favorites — you'll need to create an account and log in. This ensures your data and plans are saved securely.</p>
                         </div>
                     </div>
                     <div class="faq-item ks-glass-static overflow-hidden">
                         <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
-                            <span class="font-semibold text-white">How does trip planning work in this project?</span>
+                            <span class="font-semibold text-white">What devices and browsers are supported?</span>
                             <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
                         </button>
                         <div class="faq-content px-6 pb-5">
-                            <p class="ks-body-sm leading-relaxed">Start from Plan Trip, choose destination and trip details, then continue through the step pages to generate and view itinerary details. You can open trip pages again later from My Trips.</p>
+                            <p class="ks-body-sm leading-relaxed">RoutheonSkups works on any modern web browser — Chrome, Firefox, Safari, Edge, and more. The platform is fully responsive and works beautifully on desktop, tablet, and mobile devices. No app download is required; just visit the website and start planning.</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Account & Profile -->
-            <div class="mb-12">
+            <div class="mb-12 faq-category-section" data-category="account">
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-12 h-12 rounded-xl bg-[#0A0A0A] border border-white/[0.06] flex items-center justify-center">
                         <span class="material-icons-round text-white text-2xl">person</span>
@@ -153,7 +191,16 @@
                             <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
                         </button>
                         <div class="faq-content px-6 pb-5">
-                            <p class="ks-body-sm leading-relaxed">Yes. In Profile, you can update your name, phone number, city, and travel preferences. You can also upload or delete your profile image.</p>
+                            <p class="ks-body-sm leading-relaxed">Yes! Open your Profile from the navbar and you can update your name, phone number, city, and travel preferences. You can also upload a profile photo or delete your current image. Changes are saved instantly and reflected across the platform.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">How does Google Sign-In work?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">On the login page, click the Google sign-in button. You'll be redirected to Google's secure authentication page to authorize access. Once confirmed, RoutheonSkups creates your account automatically using your Google profile information. No separate password is needed for Google-linked accounts.</p>
                         </div>
                     </div>
                     <div class="faq-item ks-glass-static overflow-hidden">
@@ -162,14 +209,23 @@
                             <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
                         </button>
                         <div class="faq-content px-6 pb-5">
-                            <p class="ks-body-sm leading-relaxed">Yes. Use the Logout option to securely end your session on the current device.</p>
+                            <p class="ks-body-sm leading-relaxed">Yes. Use the Logout option in the mobile menu or profile dropdown to securely end your session. Your data remains saved in your account and will be available the next time you log in.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">What travel preferences can I set?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">In your Profile settings, you can set travel preferences like preferred travel style (adventure, leisure, cultural, etc.), budget range, and interests. These preferences help the AI provide more personalized trip recommendations and suggestions tailored to your tastes.</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Trip Planning -->
-            <div class="mb-12">
+            <div class="mb-12 faq-category-section" data-category="trip-planning">
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-12 h-12 rounded-xl bg-[#0A0A0A] border border-white/[0.06] flex items-center justify-center">
                         <span class="material-icons-round text-white text-2xl">map</span>
@@ -179,45 +235,366 @@
                 <div class="space-y-4">
                     <div class="faq-item ks-glass-static overflow-hidden">
                         <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">How does the trip planner work?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">The trip planner is a guided 4-step wizard. Step 1: Choose your destination. Step 2: Select travel dates, group size, and budget. Step 3: Pick your interests and preferences. Step 4: AI generates a personalized day-by-day itinerary with activities, restaurants, and hidden gems. You can review and save your plan to access anytime from My Trips.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">Can I plan a trip using AI prompts?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">Yes! The AI Prompt Trip Planner lets you describe your dream trip in natural language — for example, "Plan a 7-day budget trip to Japan with my partner in spring" — and the AI will create a detailed itinerary based on your description. It's a faster, more conversational alternative to the step-by-step wizard.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
                             <span class="font-semibold text-white">Can I save trips and view them later?</span>
                             <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
                         </button>
                         <div class="faq-content px-6 pb-5">
-                            <p class="ks-body-sm leading-relaxed">Yes. Created trips are stored in your account and visible in My Trips. You can open a saved trip and continue viewing itinerary details from the View Trip page.</p>
+                            <p class="ks-body-sm leading-relaxed">Absolutely. All created trips are stored in your account and visible in My Trips. You can open any saved trip to view the full itinerary, check details, and reference it whenever you need. Trips are organized in a calendar view so you can see upcoming and past adventures at a glance.</p>
                         </div>
                     </div>
                     <div class="faq-item ks-glass-static overflow-hidden">
                         <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
-                            <span class="font-semibold text-white">Can I save destinations from Explore?</span>
+                            <span class="font-semibold text-white">How does the route optimization work?</span>
                             <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
                         </button>
                         <div class="faq-content px-6 pb-5">
-                            <p class="ks-body-sm leading-relaxed">Yes. The Explore section supports saving destinations to your account, and you can check whether a destination is already saved.</p>
+                            <p class="ks-body-sm leading-relaxed">RoutheonSkups uses Dijkstra's algorithm and Traveling Salesman Problem (TSP) optimization to calculate the most efficient routes between destinations in your itinerary. This means your daily plans are optimized for minimal travel time and distance, so you spend more time exploring and less time commuting.</p>
                         </div>
                     </div>
                     <div class="faq-item ks-glass-static overflow-hidden">
                         <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
-                            <span class="font-semibold text-white">What destination details are available?</span>
+                            <span class="font-semibold text-white">Can I create multiple trip plans?</span>
                             <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
                         </button>
                         <div class="faq-content px-6 pb-5">
-                            <p class="ks-body-sm leading-relaxed">Destination pages and APIs provide attractions, itinerary content, gallery images, hero details, weather, and AI destination chat support.</p>
+                            <p class="ks-body-sm leading-relaxed">Yes, you can create as many trips as you want. Plan a weekend getaway, a month-long adventure, or multiple trips for different seasons — there's no limit. All your trips are saved in your My Trips dashboard for easy access.</p>
                         </div>
                     </div>
                     <div class="faq-item ks-glass-static overflow-hidden">
                         <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
-                            <span class="font-semibold text-white">Can I get AI help inside the app?</span>
+                            <span class="font-semibold text-white">What information does a trip itinerary include?</span>
                             <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
                         </button>
                         <div class="faq-content px-6 pb-5">
-                            <p class="ks-body-sm leading-relaxed">Yes. The app includes AI endpoints for trip planning, destination chat, FAQ chat, and general assistant chat.</p>
+                            <p class="ks-body-sm leading-relaxed">Each itinerary includes day-by-day activity plans, recommended restaurants and dining options, must-see attractions, hidden gems, estimated travel times between locations, local tips, and suggestions tailored to your interests and budget. You can view everything on the View Trip page.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">Can I modify a saved trip after creating it?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">Currently, you can view your complete saved itinerary from My Trips. To make changes, you can create a new trip with updated preferences and let the AI generate a fresh itinerary based on your revised plans.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Assistant - Skupheon -->
+            <div class="mb-12 faq-category-section" data-category="ai-assistant">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-12 h-12 rounded-xl bg-[#0A0A0A] border border-white/[0.06] flex items-center justify-center">
+                        <span class="material-icons-round text-white text-2xl">smart_toy</span>
+                    </div>
+                    <h2 class="ks-heading-md">AI Assistant — Skupheon</h2>
+                </div>
+                <div class="space-y-4">
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">What is Skupheon?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">Skupheon is RoutheonSkups' AI travel assistant, powered by Groq's Llama 3.3 70B Versatile model. It's a ChatGPT-style workspace where you can have natural conversations about travel. Ask for destination recommendations, trip advice, local tips, or general travel questions — Skupheon provides intelligent, contextual responses.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">What can I ask Skupheon?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">You can ask Skupheon almost anything travel-related: "What are the best beaches in Thailand?", "Plan a 5-day trip to Paris on a budget", "What should I pack for Iceland in winter?", "Compare Bali vs Phuket for a family vacation", and much more. It can also analyze travel images you share and provide information about landmarks or places.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">How does the Skupheon workspace work?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">The workspace features session management (create, switch between, and delete chat sessions), pinned conversations, file and image attachments, voice input, text-to-speech output, and a My Trip context selector that lets Skupheon reference your saved trips for more relevant advice. It's a complete AI travel companion.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">Does the AI chat remember my previous messages?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">Yes! Within a chat session, Skupheon maintains conversation context and remembers your previous messages. This means you can have back-and-forth conversations where the AI builds on what you discussed earlier — just like talking to a real travel agent who remembers your preferences.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">Can I use voice input with Skupheon?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">Yes! The Skupheon workspace supports voice input through your browser's microphone. You can speak your travel questions instead of typing them. Skupheon also has text-to-speech capability, so it can read its responses aloud with multiple voice options — perfect for hands-free use while multitasking.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">Can I share images with the AI for analysis?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">Yes! Skupheon uses the Llama 3.2 11B Vision model to analyze images. Upload a photo of a landmark, restaurant, scenic view, or any travel-related image and the AI can identify it, provide information, and give travel tips related to what you've shared.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">What is the My Trip context selector?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">In the Skupheon workspace, you can select one of your saved trips as context. This allows the AI to reference your specific trip details — destination, dates, itinerary — when answering questions. For example, if you ask "What should I do on day 3?", Skupheon will know exactly which trip and itinerary you're referring to.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">Is there an AI chatbot on destination pages?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">Yes! Each destination page has its own AI chat assistant that specializes in that specific location. Ask about the best time to visit, local cuisine, must-see spots, transportation tips, or any destination-specific questions and get instant, relevant answers.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Destinations & Explore -->
+            <div class="mb-12 faq-category-section" data-category="destinations">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-12 h-12 rounded-xl bg-[#0A0A0A] border border-white/[0.06] flex items-center justify-center">
+                        <span class="material-icons-round text-white text-2xl">explore</span>
+                    </div>
+                    <h2 class="ks-heading-md">Destinations & Explore</h2>
+                </div>
+                <div class="space-y-4">
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">How many destinations are available?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">RoutheonSkups covers 800+ popular destinations across 40+ countries spanning Asia, Europe, the Americas, Africa, and Oceania. Each destination includes detailed information about attractions, local tips, curated itineraries, image galleries, and real-time weather data.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">How does the Atlas Console work?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">The Atlas Console is an interactive exploration interface. It features cascading Country → Region → City dropdowns, 42 category tiles (Beaches, Mountains, Historical Sites, Nightlife, Food & Dining, Adventure, and many more), and AI-powered destination discovery with smart pagination. Simply select a country and region to browse all available destinations.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">What information is shown on a destination page?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">Each destination page includes a hero banner, curated attractions with descriptions, image galleries, detailed travel itineraries, real-time weather data, AI-powered destination chat support, save-to-favorites functionality, and local travel tips. It's a complete guide for that location.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">What travel categories can I browse?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">The platform offers 42 curated travel categories including: Beaches, Mountains, Historical Sites, Religious Places, Nightlife, Food & Dining, Adventure, Wildlife, Photography, Shopping, Museums, Art & Culture, Hot Springs, Lakes, Islands, Waterfalls, Caves, National Parks, Temples, Castles, and many more. You can filter destinations by any of these categories.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">How do I find weather information for a destination?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">Weather data is available on destination pages and in your trip details. The platform uses the Open-Meteo API to provide real-time weather conditions and forecasts. You can check temperature, humidity, wind, and conditions before you travel so you know exactly what to pack and expect.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">Can I search for specific destinations?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">Yes! The Explore page has a search bar that lets you search destinations by name. You can also use the cascading dropdowns to filter by country, region, and city. Additionally, the category tiles let you discover destinations by travel interest.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Favorites & Saved Items -->
+            <div class="mb-12 faq-category-section" data-category="favorites">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-12 h-12 rounded-xl bg-[#0A0A0A] border border-white/[0.06] flex items-center justify-center">
+                        <span class="material-icons-round text-white text-2xl">bookmark</span>
+                    </div>
+                    <h2 class="ks-heading-md">Favorites & Saved Items</h2>
+                </div>
+                <div class="space-y-4">
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">How do I save a destination to my favorites?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">On any destination page, click the save/bookmark icon to add it to your favorites. You can also save destinations directly from the Explore page. Saved destinations are stored in your personal collection and accessible anytime from the Favorites page in the navigation bar.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">Where can I see my saved favorites?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">Click "Favorites" in the navigation bar to view all your saved destinations. From there, you can browse your collection, check weather conditions for each destination, and use any favorite as a starting point for a new trip plan.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">Can I remove a destination from my favorites?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">Yes. Simply click the saved bookmark icon again on the destination page or use the remove option in your Favorites page to unsave a destination. Your favorites list updates instantly.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">Is there a limit to how many destinations I can save?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">No, there's no limit. You can save as many destinations as you want to your favorites. Build your ultimate travel bucket list and access it anytime.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications -->
+            <div class="mb-12 faq-category-section" data-category="notifications">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-12 h-12 rounded-xl bg-[#0A0A0A] border border-white/[0.06] flex items-center justify-center">
+                        <span class="material-icons-round text-white text-2xl">notifications</span>
+                    </div>
+                    <h2 class="ks-heading-md">Notifications & Alerts</h2>
+                </div>
+                <div class="space-y-4">
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">What kind of notifications does RoutheonSkups send?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">The platform sends several types of notifications: trip countdown alerts as your departure date approaches, AI-powered travel suggestions based on your preferences, seasonal destination recommendations (e.g., "Winter is perfect for visiting Thailand!"), and system updates about new features or improvements.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">Can I receive notifications via email?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">Yes. RoutheonSkups has an integrated email notification system powered by Flask-Mail. You can opt to receive notifications via email for trip reminders, AI suggestions, and updates — so you stay informed even when you're not actively using the platform.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">How do I manage my notification preferences?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">You can manage your notification preferences in the notifications panel accessible from the navbar bell icon. Toggle different notification types on or off, and choose whether to receive email delivery for each category.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Privacy & Security -->
+            <div class="mb-12 faq-category-section" data-category="security">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-12 h-12 rounded-xl bg-[#0A0A0A] border border-white/[0.06] flex items-center justify-center">
+                        <span class="material-icons-round text-white text-2xl">shield</span>
+                    </div>
+                    <h2 class="ks-heading-md">Privacy & Security</h2>
+                </div>
+                <div class="space-y-4">
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">How is my data protected?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">Your data is protected using industry-standard security measures. Passwords are encrypted with Flask-Bcrypt before storage. The platform uses Flask-Login for secure session management, CSRF protection on forms, and input validation to prevent common vulnerabilities. Your data is never shared with third parties.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">Does RoutheonSkups share my data with third parties?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">No. RoutheonSkups does not sell, share, or distribute your personal data to third parties. Your profile information, trip plans, favorites, and chat history are stored securely in your personal account and are only accessible by you.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">Is Google Sign-In secure?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">Yes. Google OAuth uses industry-standard OAuth 2.0 protocol. When you sign in with Google, your password is never shared with RoutheonSkups. Google handles the authentication, and we receive only the minimal profile information needed to create your account.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">How secure is the password reset process?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">Password reset uses time-limited, unique tokens sent to your registered email. The reset link expires after 30 minutes to prevent unauthorized access. If you didn't request a reset, simply ignore the email — no changes will be made to your account.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">What happens to my data if I delete my account?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">If you choose to delete your account, all your personal data including profile information, trip plans, favorites, chat sessions, and notifications are permanently removed from our servers. This action is irreversible.</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Technical Support -->
-            <div class="mb-12">
+            <div class="mb-12 faq-category-section" data-category="technical">
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-12 h-12 rounded-xl bg-[#0A0A0A] border border-white/[0.06] flex items-center justify-center">
                         <span class="material-icons-round text-white text-2xl">build</span>
@@ -231,7 +608,16 @@
                             <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
                         </button>
                         <div class="faq-content px-6 pb-5">
-                            <p class="ks-body-sm leading-relaxed">Try these troubleshooting steps: 1) Clear your browser cache and cookies, 2) Disable browser extensions temporarily, 3) Try a different browser or incognito mode, 4) Check your internet connection, 5) Update your browser to the latest version. If issues persist, contact our technical support.</p>
+                            <p class="ks-body-sm leading-relaxed">Try these troubleshooting steps: 1) Clear your browser cache and cookies, 2) Disable browser extensions temporarily, 3) Try a different browser or incognito mode, 4) Check your internet connection, 5) Update your browser to the latest version. If issues persist, contact our technical support with details about your browser and device.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">The AI is not responding. What should I do?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">If Skupheon isn't responding, try: 1) Refresh the page, 2) Check your internet connection, 3) Try sending a shorter or different message, 4) Clear your browser cache. The AI service is generally very reliable, but occasional delays may occur due to high demand. If the problem persists, contact support.</p>
                         </div>
                     </div>
                     <div class="faq-item ks-glass-static overflow-hidden">
@@ -240,7 +626,73 @@
                             <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
                         </button>
                         <div class="faq-content px-6 pb-5">
-                            <p class="ks-body-sm leading-relaxed">Use the Contact page form. Your request is sent to the team, and the system also sends a confirmation email to your registered email address.</p>
+                            <p class="ks-body-sm leading-relaxed">Use the Contact page to send us a message. Include details about your issue, your browser/device info, and any error messages you've seen. The system also sends a confirmation email to your registered address so you know we've received your request.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">Voice input is not working. What should I check?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">Voice input requires browser microphone permission. Make sure: 1) Your browser supports the Web Speech API (Chrome works best), 2) You've granted microphone permission to the site, 3) Your microphone hardware is working, 4) You're not in a tab that's been backgrounded. Try refreshing the page and re-granting microphone access.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">My profile image is not uploading. What should I do?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">Make sure your image is in a supported format (JPG, PNG, or WebP) and is a reasonable file size. A slow internet connection may cause upload delays. Try compressing the image or using a different format. If the issue persists, try refreshing the page and uploading again.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">Can I use RoutheonSkups on my mobile phone?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">Absolutely! RoutheonSkups is fully responsive and works great on mobile devices. Simply open the website in your mobile browser. The interface automatically adapts to your screen size with a mobile-friendly navigation menu, touch-optimized buttons, and layouts designed for smaller screens.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pricing -->
+            <div class="mb-12 faq-category-section" data-category="billing">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-12 h-12 rounded-xl bg-[#0A0A0A] border border-white/[0.06] flex items-center justify-center">
+                        <span class="material-icons-round text-white text-2xl">payments</span>
+                    </div>
+                    <h2 class="ks-heading-md">Pricing</h2>
+                </div>
+                <div class="space-y-4">
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">Is there a free plan?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">RoutheonSkups is entirely free. There are no plans, tiers, or subscriptions. Every feature — AI trip planning, Skupheon chat, destination exploration, favorites, weather updates, notifications, and more — is available to all users at no cost.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">Are there any hidden fees or in-app purchases?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">No. RoutheonSkups has zero hidden fees, no in-app purchases, no premium tiers, and no paywalls. The platform is completely free to use with all features unlocked from the moment you create an account.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item ks-glass-static overflow-hidden">
+                        <button class="faq-btn w-full px-6 py-5 text-left flex items-center justify-between hover:bg-[#111111] transition-colors">
+                            <span class="font-semibold text-white">Will RoutheonSkups stay free?</span>
+                            <span class="material-icons-round text-white/70 faq-icon transition-transform">expand_more</span>
+                        </button>
+                        <div class="faq-content px-6 pb-5">
+                            <p class="ks-body-sm leading-relaxed">Our mission is to make AI-powered travel planning accessible to everyone. While we may introduce optional premium features in the future to support development, the core platform will always remain free. Any changes will be communicated well in advance.</p>
                         </div>
                     </div>
                 </div>
@@ -252,9 +704,10 @@
             <div class="ks-glass-static p-8 md:p-12 text-center">
                 <span class="material-icons-round text-white text-5xl mb-4">support_agent</span>
                 <h2 class="ks-heading-md md:text-3xl mb-4">Still Have Questions?</h2>
-                <p class="ks-body mb-8 max-w-xl mx-auto">Use the Contact page for help with account access, trip planning flow, or technical issues while using the platform.</p>
+                <p class="ks-body mb-8 max-w-xl mx-auto">Can't find the answer you're looking for? Our support team is ready to help with account access, trip planning, technical issues, or anything else about the platform.</p>
                 <div class="flex flex-wrap justify-center gap-4">
                     <a href="{{ url_for('main.contact') }}" class="ks-btn ks-btn-solid">Contact Support</a>
+                    <a href="{{ url_for('main.about') }}" class="ks-btn ks-btn-ghost">Learn About Us</a>
                 </div>
             </div>
         </section>
@@ -296,16 +749,20 @@
 
         function resetFaqView() {
             faqItems.forEach(item => item.style.display = 'block');
+            document.querySelectorAll('.faq-category-section').forEach(s => s.style.display = 'block');
             closeAllFaqs();
             faqSuggestions.classList.add('hidden');
             faqSearchActions.classList.add('hidden');
             faqSearch.value = '';
+            document.querySelectorAll('.faq-category-pill').forEach(p => p.classList.remove('active'));
+            document.querySelector('.faq-category-pill').classList.add('active');
         }
 
         function filterFaqs(query) {
             const searchTerm = query.trim().toLowerCase();
             if (!searchTerm) {
                 faqItems.forEach(item => item.style.display = 'block');
+                document.querySelectorAll('.faq-category-section').forEach(s => s.style.display = 'block');
                 faqSearchActions.classList.add('hidden');
                 return [];
             }
@@ -315,14 +772,37 @@
                 faq.category.toLowerCase().includes(searchTerm)
             );
             faqItems.forEach(item => item.style.display = 'none');
+            document.querySelectorAll('.faq-category-section').forEach(s => s.style.display = 'none');
             matches.forEach(match => match.item.style.display = 'block');
             faqSearchActions.classList.remove('hidden');
             return matches;
         }
 
+        function filterByCategory(category, btn) {
+            document.querySelectorAll('.faq-category-pill').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            faqSearch.value = '';
+            faqSuggestions.classList.add('hidden');
+            faqSearchActions.classList.add('hidden');
+            closeAllFaqs();
+
+            if (category === 'all') {
+                faqItems.forEach(item => item.style.display = 'block');
+                document.querySelectorAll('.faq-category-section').forEach(s => s.style.display = 'block');
+            } else {
+                document.querySelectorAll('.faq-category-section').forEach(s => {
+                    s.style.display = s.dataset.category === category ? 'block' : 'none';
+                });
+                faqItems.forEach(item => item.style.display = 'block');
+            }
+
+            const target = category === 'all' ? document.querySelector('.faq-category-section') : document.querySelector(`.faq-category-section[data-category="${category}"]`);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
         function renderSuggestions(matches) {
             if (!matches.length) {
-                faqSuggestions.innerHTML = '<div class="px-4 py-3 text-sm" style="color:var(--text-muted)">No matching questions found.</div>';
+                faqSuggestions.innerHTML = '<div class="px-4 py-3 text-sm" style="color:var(--text-muted)">No matching questions found. Try a different search term.</div>';
                 faqSuggestions.classList.remove('hidden');
                 return;
             }
@@ -340,6 +820,7 @@
             if (!match) return;
             faqSearch.value = match.title;
             faqItems.forEach(item => item.style.display = 'none');
+            document.querySelectorAll('.faq-category-section').forEach(s => s.style.display = 'none');
             openFaqItem(match.item);
             faqSuggestions.classList.add('hidden');
             faqSearchActions.classList.remove('hidden');
@@ -436,7 +917,7 @@
             const typingDiv = document.createElement('div');
             typingDiv.className = 'flex justify-start';
             typingDiv.id = 'faq-typing';
-            typingDiv.innerHTML = `<div class="bg-[#0A0A0A] border border-white/[0.06] rounded-2xl rounded-bl-none px-4 py-2 text-sm" style="color:var(--text-muted)"><span class="inline-flex gap-1"><span class="w-2 h-2 rounded-full animate-bounce" style="background:#0A0A0A"></span><span class="w-2 h-2 rounded-full animate-bounce" style="background:#0A0A0A;animation-delay:0.1s"></span><span class="w-2 h-2 rounded-full animate-bounce" style="background:#0A0A0A;animation-delay:0.2s"></span></span></div>`;
+            typingDiv.innerHTML = `<div class="bg-[#0A0A0A] border border-white/[0.06] rounded-2xl rounded-bl-none px-4 py-2 text-sm" style="color:var(--text-muted)"><span class="inline-flex gap-1"><span class="w-2 h-2 rounded-full animate-bounce" style="background:rgba(255,255,255,0.3)"></span><span class="w-2 h-2 rounded-full animate-bounce" style="background:rgba(255,255,255,0.3);animation-delay:0.1s"></span><span class="w-2 h-2 rounded-full animate-bounce" style="background:rgba(255,255,255,0.3);animation-delay:0.2s"></span></span></div>`;
             container.appendChild(typingDiv);
             container.scrollTop = container.scrollHeight;
             
