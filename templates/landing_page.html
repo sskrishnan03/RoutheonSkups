@@ -160,6 +160,13 @@
         .animate-scroll { animation: scroll 20s linear infinite; }
         .animate-scroll:hover { animation-play-state: paused; }
 
+        .popular-dest-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            width: 100%;
+            padding: 0 24px 34px;
+        }
         .popular-rainbow-row {
             display: flex;
             gap: 24px;
@@ -168,7 +175,7 @@
             flex-wrap: nowrap;
             overflow: visible;
             width: 100%;
-            padding: 18px 24px 34px;
+            padding: 18px 0 34px;
             scrollbar-width: none;
             -ms-overflow-style: none;
         }
@@ -464,142 +471,168 @@
                     Popular Destinations</h2>
                 <p class="relative z-10 mt-3 text-sm md:text-base text-white/70 font-medium">Curated escapes with stunning visuals and unforgettable experiences</p>
             </div>
-            <div class="popular-rainbow-row">
-                <a href="{{ url_for('main.destination_info', name='Srinagar') }}"
-                    class="rainbow-card group relative cursor-pointer">
-                    <div class="img-wrap">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80"></div>
-                        <img alt="Srinagar Dal Lake"
-                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                            src="{{ url_for('static', filename='popular destination/Srinagar.jpg') }}" />
-                        <div class="top-ui absolute top-4 right-4 z-20">
-                            <button
-                                class="w-8 h-8 rounded-full bg-black/30 flex items-center justify-center text-white hover:bg-black/50 transition-colors">
-                                <span class="material-icons-round text-lg">favorite_border</span>
-                            </button>
-                        </div>
-                        <div class="top-ui absolute top-4 left-4 z-20">
-                            <span
-                                class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-black/30 border border-white/10 text-white text-xs font-semibold shadow-sm">
-                                <span class="material-icons-round text-[14px]">landscape</span> Scenic
-                            </span>
-                        </div>
-                        <div class="meta-bottom">
-                            <h3 class="text-xl font-bold text-white mb-1">Srinagar</h3>
-                            <div class="flex items-center gap-1 text-xs font-medium">
-                                <span class="loc">Jammu &amp; Kashmir</span>
+            <div class="popular-dest-grid">
+                <!-- Row 1: Rome, Kyoto, Paris, Barcelona, New York City -->
+                <div class="popular-rainbow-row">
+                    <a href="{{ url_for('main.destination_info', name='Rome') }}" class="rainbow-card group relative cursor-pointer">
+                        <div class="img-wrap">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80"></div>
+                            <img alt="Rome Colosseum" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="{{ url_for('static', filename='popular destination/rome.jpg') }}" />
+                            <div class="meta-bottom">
+                                <h3 class="text-xl font-bold text-white mb-1">Rome</h3>
+                                <div class="flex items-center gap-1 text-xs font-medium"><span class="loc">Italy</span></div>
                             </div>
                         </div>
-                    </div>
-                </a>
-                <a href="{{ url_for('main.destination_info', name='Manali') }}"
-                    class="rainbow-card group relative cursor-pointer">
-                    <div class="img-wrap">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80"></div>
-                        <img alt="Manali Mountains"
-                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                            src="{{ url_for('static', filename='popular destination/manali.jpg') }}" />
-                        <div class="top-ui absolute top-4 right-4 z-20">
-                            <button
-                                class="w-8 h-8 rounded-full bg-black/30 flex items-center justify-center text-white hover:bg-black/50 transition-colors">
-                                <span class="material-icons-round text-lg">favorite_border</span>
-                            </button>
-                        </div>
-                        <div class="top-ui absolute top-4 left-4 z-20">
-                            <span
-                                class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-black/30 border border-white/10 text-white text-xs font-semibold shadow-sm">
-                                <span class="material-icons-round text-[14px]">landscape</span> Scenic
-                            </span>
-                        </div>
-                        <div class="meta-bottom">
-                            <h3 class="text-xl font-bold text-white mb-1">Manali</h3>
-                            <div class="flex items-center gap-1 text-xs font-medium">
-                                <span class="loc">Himachal Pradesh</span>
+                    </a>
+                    <a href="{{ url_for('main.destination_info', name='Kyoto') }}" class="rainbow-card group relative cursor-pointer">
+                        <div class="img-wrap">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80"></div>
+                            <img alt="Kyoto Temple" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="{{ url_for('static', filename='popular destination/kyoto.jpg') }}" />
+                            <div class="meta-bottom">
+                                <h3 class="text-xl font-bold text-white mb-1">Kyoto</h3>
+                                <div class="flex items-center gap-1 text-xs font-medium"><span class="loc">Japan</span></div>
                             </div>
                         </div>
-                    </div>
-                </a>
-                <a href="{{ url_for('main.destination_info', name='Rishikesh') }}"
-                    class="rainbow-card group relative cursor-pointer">
-                    <div class="img-wrap">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80"></div>
-                        <img alt="Rishikesh River Rafting"
-                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                            src="{{ url_for('static', filename='popular destination/Rishikesh.webp') }}" />
-                        <div class="top-ui absolute top-4 right-4 z-20">
-                            <button
-                                class="w-8 h-8 rounded-full bg-black/30 flex items-center justify-center text-white hover:bg-black/50 transition-colors">
-                                <span class="material-icons-round text-lg">favorite_border</span>
-                            </button>
-                        </div>
-                        <div class="top-ui absolute top-4 left-4 z-20">
-                            <span
-                                class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-black/30 border border-white/10 text-white text-xs font-semibold shadow-sm">
-                                <span class="material-icons-round text-[14px]">landscape</span> Scenic
-                            </span>
-                        </div>
-                        <div class="meta-bottom">
-                            <h3 class="text-xl font-bold text-white mb-1">Rishikesh</h3>
-                            <div class="flex items-center gap-1 text-xs font-medium">
-                                <span class="loc">Uttarakhand</span>
+                    </a>
+                    <a href="{{ url_for('main.destination_info', name='Paris') }}" class="rainbow-card group relative cursor-pointer">
+                        <div class="img-wrap">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80"></div>
+                            <img alt="Paris Eiffel Tower" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="{{ url_for('static', filename='popular destination/paris.jpg') }}" />
+                            <div class="meta-bottom">
+                                <h3 class="text-xl font-bold text-white mb-1">Paris</h3>
+                                <div class="flex items-center gap-1 text-xs font-medium"><span class="loc">France</span></div>
                             </div>
                         </div>
-                    </div>
-                </a>
-                <a href="{{ url_for('main.destination_info', name='Jaipur') }}"
-                    class="rainbow-card group relative cursor-pointer">
-                    <div class="img-wrap">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80"></div>
-                        <img alt="Jaipur Palace"
-                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                            src="{{ url_for('static', filename='popular destination/jaipur.jpg') }}" />
-                        <div class="top-ui absolute top-4 right-4 z-20">
-                            <button
-                                class="w-8 h-8 rounded-full bg-black/30 flex items-center justify-center text-white hover:bg-black/50 transition-colors">
-                                <span class="material-icons-round text-lg">favorite_border</span>
-                            </button>
-                        </div>
-                        <div class="top-ui absolute top-4 left-4 z-20">
-                            <span
-                                class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-black/30 border border-white/10 text-white text-xs font-semibold shadow-sm">
-                                <span class="material-icons-round text-[14px]">landscape</span> Scenic
-                            </span>
-                        </div>
-                        <div class="meta-bottom">
-                            <h3 class="text-xl font-bold text-white mb-1">Jaipur</h3>
-                            <div class="flex items-center gap-1 text-xs font-medium">
-                                <span class="loc">Rajasthan</span>
+                    </a>
+                    <a href="{{ url_for('main.destination_info', name='Barcelona') }}" class="rainbow-card group relative cursor-pointer">
+                        <div class="img-wrap">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80"></div>
+                            <img alt="Barcelona Sagrada Familia" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="{{ url_for('static', filename='popular destination/barcelona.jpg') }}" />
+                            <div class="meta-bottom">
+                                <h3 class="text-xl font-bold text-white mb-1">Barcelona</h3>
+                                <div class="flex items-center gap-1 text-xs font-medium"><span class="loc">Spain</span></div>
                             </div>
                         </div>
-                    </div>
-                </a>
-                <a href="{{ url_for('main.destination_info', name='North Goa') }}"
-                    class="rainbow-card group relative cursor-pointer">
-                    <div class="img-wrap">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80"></div>
-                        <img alt="Goa Beach"
-                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                            src="{{ url_for('static', filename='popular destination/North Goa.webp') }}" />
-                        <div class="top-ui absolute top-4 right-4 z-20">
-                            <button
-                                class="w-8 h-8 rounded-full bg-black/30 flex items-center justify-center text-white hover:bg-black/50 transition-colors">
-                                <span class="material-icons-round text-lg">favorite_border</span>
-                            </button>
-                        </div>
-                        <div class="top-ui absolute top-4 left-4 z-20">
-                            <span
-                                class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-black/30 border border-white/10 text-white text-xs font-semibold shadow-sm">
-                                <span class="material-icons-round text-[14px]">landscape</span> Scenic
-                            </span>
-                        </div>
-                        <div class="meta-bottom">
-                            <h3 class="text-xl font-bold text-white mb-1">North Goa</h3>
-                            <div class="flex items-center gap-1 text-xs font-medium">
-                                <span class="loc">Goa</span>
+                    </a>
+                    <a href="{{ url_for('main.destination_info', name='New York City') }}" class="rainbow-card group relative cursor-pointer">
+                        <div class="img-wrap">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80"></div>
+                            <img alt="New York City Skyline" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="{{ url_for('static', filename='popular destination/new_york.jpg') }}" />
+                            <div class="meta-bottom">
+                                <h3 class="text-xl font-bold text-white mb-1">New York City</h3>
+                                <div class="flex items-center gap-1 text-xs font-medium"><span class="loc">United States</span></div>
                             </div>
                         </div>
-                    </div>
-                </a>
+                    </a>
+                </div>
+
+                <!-- Row 2: Queenstown, Santorini, Interlaken, Sydney, Bangkok -->
+                <div class="popular-rainbow-row">
+                    <a href="{{ url_for('main.destination_info', name='Queenstown') }}" class="rainbow-card group relative cursor-pointer">
+                        <div class="img-wrap">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80"></div>
+                            <img alt="Queenstown Mountains" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="{{ url_for('static', filename='popular destination/queenstown.jpg') }}" />
+                            <div class="meta-bottom">
+                                <h3 class="text-xl font-bold text-white mb-1">Queenstown</h3>
+                                <div class="flex items-center gap-1 text-xs font-medium"><span class="loc">New Zealand</span></div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="{{ url_for('main.destination_info', name='Santorini') }}" class="rainbow-card group relative cursor-pointer">
+                        <div class="img-wrap">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80"></div>
+                            <img alt="Santorini Blue Domes" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="{{ url_for('static', filename='popular destination/santorini.jpg') }}" />
+                            <div class="meta-bottom">
+                                <h3 class="text-xl font-bold text-white mb-1">Santorini</h3>
+                                <div class="flex items-center gap-1 text-xs font-medium"><span class="loc">Greece</span></div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="{{ url_for('main.destination_info', name='Interlaken') }}" class="rainbow-card group relative cursor-pointer">
+                        <div class="img-wrap">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80"></div>
+                            <img alt="Interlaken Alps" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="{{ url_for('static', filename='popular destination/interlaken.jpg') }}" />
+                            <div class="meta-bottom">
+                                <h3 class="text-xl font-bold text-white mb-1">Interlaken</h3>
+                                <div class="flex items-center gap-1 text-xs font-medium"><span class="loc">Switzerland</span></div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="{{ url_for('main.destination_info', name='Sydney') }}" class="rainbow-card group relative cursor-pointer">
+                        <div class="img-wrap">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80"></div>
+                            <img alt="Sydney Opera House" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="{{ url_for('static', filename='popular destination/sydney.jpg') }}" />
+                            <div class="meta-bottom">
+                                <h3 class="text-xl font-bold text-white mb-1">Sydney</h3>
+                                <div class="flex items-center gap-1 text-xs font-medium"><span class="loc">Australia</span></div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="{{ url_for('main.destination_info', name='Bangkok') }}" class="rainbow-card group relative cursor-pointer">
+                        <div class="img-wrap">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80"></div>
+                            <img alt="Bangkok Temples" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="{{ url_for('static', filename='popular destination/bangkok.jpg') }}" />
+                            <div class="meta-bottom">
+                                <h3 class="text-xl font-bold text-white mb-1">Bangkok</h3>
+                                <div class="flex items-center gap-1 text-xs font-medium"><span class="loc">Thailand</span></div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Row 3: London, The Golden Circle, Lisbon, Arenal, Banff -->
+                <div class="popular-rainbow-row">
+                    <a href="{{ url_for('main.destination_info', name='London') }}" class="rainbow-card group relative cursor-pointer">
+                        <div class="img-wrap">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80"></div>
+                            <img alt="London Big Ben" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="{{ url_for('static', filename='popular destination/london.jpg') }}" />
+                            <div class="meta-bottom">
+                                <h3 class="text-xl font-bold text-white mb-1">London</h3>
+                                <div class="flex items-center gap-1 text-xs font-medium"><span class="loc">United Kingdom</span></div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="{{ url_for('main.destination_info', name='The Golden Circle') }}" class="rainbow-card group relative cursor-pointer">
+                        <div class="img-wrap">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80"></div>
+                            <img alt="Iceland Golden Circle" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="{{ url_for('static', filename='popular destination/golden_circle.jpg') }}" />
+                            <div class="meta-bottom">
+                                <h3 class="text-xl font-bold text-white mb-1">The Golden Circle</h3>
+                                <div class="flex items-center gap-1 text-xs font-medium"><span class="loc">Iceland</span></div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="{{ url_for('main.destination_info', name='Lisbon') }}" class="rainbow-card group relative cursor-pointer">
+                        <div class="img-wrap">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80"></div>
+                            <img alt="Lisbon Tram" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="{{ url_for('static', filename='popular destination/lisbon.jpg') }}" />
+                            <div class="meta-bottom">
+                                <h3 class="text-xl font-bold text-white mb-1">Lisbon</h3>
+                                <div class="flex items-center gap-1 text-xs font-medium"><span class="loc">Portugal</span></div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="{{ url_for('main.destination_info', name='Arenal Volcano') }}" class="rainbow-card group relative cursor-pointer">
+                        <div class="img-wrap">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80"></div>
+                            <img alt="Arenal Volcano Costa Rica" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="{{ url_for('static', filename='popular destination/arenal.jpg') }}" />
+                            <div class="meta-bottom">
+                                <h3 class="text-xl font-bold text-white mb-1">Arenal Volcano</h3>
+                                <div class="flex items-center gap-1 text-xs font-medium"><span class="loc">Costa Rica</span></div>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="{{ url_for('main.destination_info', name='Banff National Park') }}" class="rainbow-card group relative cursor-pointer">
+                        <div class="img-wrap">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10 opacity-80"></div>
+                            <img alt="Banff National Park" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="{{ url_for('static', filename='popular destination/banff.jpg') }}" />
+                            <div class="meta-bottom">
+                                <h3 class="text-xl font-bold text-white mb-1">Banff National Park</h3>
+                                <div class="flex items-center gap-1 text-xs font-medium"><span class="loc">Canada</span></div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
             </div>
         </div>
     </section>
