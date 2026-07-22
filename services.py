@@ -7,6 +7,11 @@ import base64
 import time
 from groq import Groq
 from config import Config
+from global_countries import (
+    get_country_info, get_currency, get_currency_symbol, get_tts_voice,
+    get_serper_gl_code, get_country_center_coords, search_destinations,
+    get_tts_fallback_lang, ALL_COUNTRY_NAMES
+)
 
 class GraphService:
     @staticmethod
@@ -202,9 +207,23 @@ def _get_fallback_image(query):
 
 class SerperService:
     @staticmethod
+    def _get_gl_code_for_query(query):
+        """Determine the best gl code for a Serper query based on destination context."""
+        try:
+            from global_countries import search_destinations as _search_dests
+            results = _search_dests(query)
+            if results:
+                country = results[0].get('country')
+                if country:
+                    return get_serper_gl_code(country)
+        except Exception:
+            pass
+        return "us"
+
+    @staticmethod
     def _tokenize_query(text):
         stop = {
-            'india', 'tourism', 'tourist', 'travel', 'sightseeing', 'landmark', 'landmarks',
+            'tourism', 'tourist', 'travel', 'sightseeing', 'landmark', 'landmarks',
             'destination', 'destinations', 'high', 'quality', 'city', 'view', 'best', 'places',
             'place', 'famous', 'attraction', 'attractions', 'route', 'map', 'trail', 'photo',
             'photos', 'image', 'images', 'cinematic', '4k'
@@ -293,11 +312,12 @@ class SerperService:
         if not api_key:
             return []
             
+        gl_code = SerperService._get_gl_code_for_query(query)
         api_url = "https://google.serper.dev/images"
         payload = json.dumps({
             "q": query,
             "num": 30,
-            "gl": "in",
+            "gl": gl_code,
             "hl": "en"
         })
         headers = {
@@ -352,11 +372,12 @@ class SerperService:
         if not api_key:
             return {}
             
+        gl_code = SerperService._get_gl_code_for_query(query)
         url = "https://google.serper.dev/search"
         payload = json.dumps({
             "q": query,
             "num": 5,
-            "gl": "in",
+            "gl": gl_code,
             "hl": "en"
         })
         headers = {
@@ -374,6 +395,48 @@ class SerperService:
             return {}
 
 class AIService:
+    @staticmethod
+    def _resolve_destination_country(destination):
+        """Resolve a destination name to its country info dict. Returns (country_name, country_info) or (None, None)."""
+        if not destination:
+            return None, None
+        results = search_destinations(destination)
+        if results:
+            country_name = results[0].get('country')
+            if country_name:
+                return country_name, get_country_info(country_name)
+        return None, None
+
+    @staticmethod
+    def _get_country_context(destination):
+        """Return a context dict for a destination with currency, timezone, coords, etc."""
+        country_name, country_info = AIService._resolve_destination_country(destination)
+        if country_info:
+            return {
+                'country': country_name,
+                'currency': country_info.get('currency', 'USD'),
+                'currency_symbol': country_info.get('currency_symbol', '$'),
+                'timezone': country_info.get('timezone', 'UTC'),
+                'center_coords': get_country_center_coords(country_name),
+            }
+        return {
+            'country': None,
+            'currency': 'USD',
+            'currency_symbol': '$',
+            'timezone': 'UTC',
+            'center_coords': {"lat": 20.0, "lng": 0.0},
+        }
+
+    @staticmethod
+    def _build_search_query(destination, suffix=""):
+        """Build a search query for a destination without hardcoding 'India'."""
+        if not destination:
+            return suffix or "travel destination"
+        country_name, _ = AIService._resolve_destination_country(destination)
+        if country_name:
+            return f"{destination} {country_name} {suffix}".strip()
+        return f"{destination} {suffix}".strip()
+
     @staticmethod
     def analyze_image_for_travel(image_bytes, mime_type, user_prompt=None):
         """
@@ -560,7 +623,7 @@ Here is the user's data:
             
             if destination:
                 print(f"Fetching images for chatbot destination: {destination}")
-                images = SerperService.get_images(f"{destination} India tourist attractions sightseeing high quality")
+                images = SerperService.get_images(f"{destination} tourist attractions sightseeing high quality")
                 print(f"Found {len(images)} images for {destination}")
             
             return {
@@ -580,9 +643,11 @@ Here is the user's data:
     def generate_itinerary(destination, days, preferences):
         try:
             client = Groq(api_key=Config.GROQ_API_KEY)
+            ctx = AIService._get_country_context(destination)
+            country_suffix = f", {ctx['country']}" if ctx['country'] else ""
             
             prompt = f"""
-            Create a highly detailed cinematic {days}-day itinerary for a trip to {destination}, India.
+            Create a highly detailed cinematic {days}-day itinerary for a trip to {destination}{country_suffix}.
             Preferences: {preferences}.
             
             Format the output strictly as a JSON object with the following structure:
@@ -615,7 +680,7 @@ Here is the user's data:
                     "accommodation_average_per_day": 100,
                     "food_average_per_day": 50,
                     "transport_average_per_day": 30,
-                    "currency": "USD"
+                    "currency": "{ctx['currency']}"
                 }}
             }}
             Do not include any markdown formatting, just raw JSON.
@@ -636,13 +701,14 @@ Here is the user's data:
             
             # Enrich with real images and robust coordinates
             dest_name = itinerary.get('destination', destination)
+            ctx = AIService._get_country_context(dest_name)
             if not itinerary.get('center_coords'):
-                itinerary['center_coords'] = {"lat": 20.5937, "lng": 78.9629} # Center of India fallback
+                itinerary['center_coords'] = ctx['center_coords']
                 
             for day in itinerary.get('days', []):
                 for act in day.get('activities', []):
                     # Fetch real image for the activity
-                    query = f"{act.get('title')} {dest_name} India sightseeing"
+                    query = f"{act.get('title')} {dest_name} sightseeing"
                     images = SerperService.get_images(query)
                     if images:
                         act['image_url'] = images[0]
@@ -715,10 +781,10 @@ Here is the user's data:
                 data = json.loads(text_clean)
             
             # Add images using Serper
-            place_images = SerperService.get_images(f"{place} India travel destination tourism high resolution")
+            place_images = SerperService.get_images(f"{place} travel destination tourism high resolution")
             data['images'] = place_images if place_images else [_get_fallback_image(f"{place} landscape")]
             for attr in data['attractions']:
-                attr_images = SerperService.get_images(f"{attr['name']} {place} India tourist attraction")
+                attr_images = SerperService.get_images(f"{attr['name']} {place} tourist attraction")
                 attr['images'] = attr_images if attr_images else [_get_fallback_image(f"{attr['name']} {place}")]
             
             # Calculate shortest path between first and last attraction as a showcase
@@ -791,7 +857,7 @@ Here is the user's data:
             
             # Add images for each place
             for stop in data['route']:
-                stop['images'] = SerperService.get_images(f"{stop['place']} sightseeing India travel")
+                stop['images'] = SerperService.get_images(f"{stop['place']} sightseeing travel")
                 
             return data
         except Exception as e:
@@ -822,7 +888,7 @@ Here is the user's data:
                 "bot_profile": {{
                     "name": "Skupheon",
                     "subtitle": "AI Travel Specialist",
-                    "greeting": "Namaste! I am Skupheon, your personal guide to {place}. I can help you plan your entry, suggest the best photography angles, or explain the history of this wonder. What's on your mind today?"
+                    "greeting": "Hello! I am Skupheon, your personal guide to {place}. I can help you plan your entry, suggest the best photography angles, or explain the history of this place. What's on your mind today?"
                 }}
             }}
             Do not include any markdown formatting. Just raw JSON.
@@ -908,7 +974,7 @@ Here is the user's data:
             
             # Build the prompt based on filters.
             # Supports: state-only, category-only, search-only, and all combinations.
-            location_scope = f'in the Indian state of "{state}"' if state else "across India"
+            location_scope = f'in the region of "{state}"' if state else "across the world"
             category_filter = f' belonging to any of these categories: "{category}"' if category else ''
             search_filter = f' strongly matching this destination name/keyword query: "{search_query}"' if search_query else ''
             page_context = f" This is page {page} of results, so ensure you provide 9 unique destinations that haven't been listed on previous pages." if page > 1 else ""
@@ -919,7 +985,7 @@ Here is the user's data:
              
             Format the output strictly as a JSON object:
             {{
-                "state": "{state or 'India'}",
+                "state": "{state or 'Global'}",
                 "category": "{category or 'All'}",
                 "total_count": <estimated total number of such destinations in this state>,
                 "destinations": [
@@ -961,7 +1027,7 @@ Here is the user's data:
             
             # Enrich each destination with an image from Serper (with Unsplash fallback)
             for dest in data.get('destinations', []):
-                geo_context = state if state else "India"
+                geo_context = state if state else "world"
                 images = SerperService.get_images(f"{dest['name']} {geo_context} tourist sightseeing iconic")
                 dest['image'] = images[0] if images else _get_fallback_image(f"{dest['name']} {geo_context}")
              
@@ -977,14 +1043,18 @@ Here is the user's data:
         """Generate comprehensive destination detail using Groq + Serper."""
         try:
             client = Groq(api_key=Config.GROQ_API_KEY)
+            ctx = AIService._get_country_context(name)
+            center_lat = ctx['center_coords']['lat']
+            center_lng = ctx['center_coords']['lng']
             
             prompt = f"""
-            Provide a comprehensive travel overview for the destination "{name}" in India.
+            Provide a comprehensive travel overview for the destination "{name}".
+
             
             Format the output strictly as a JSON object:
             {{
                 "name": "{name}",
-                "state": "The Indian state this destination is in",
+                "state": "The region/state/province this destination is in",
                 "tagline": "A poetic one-line tagline describing this place",
                 "tag": "Category tag (e.g. Hill Station, Beach, Heritage, Spiritual, etc.)",
                 "coordinates": "Latitude° N/S, Longitude° E/W",
@@ -1006,7 +1076,7 @@ Here is the user's data:
                     {{"name": "City1", "distance": "distance in km"}},
                     {{"name": "City2", "distance": "distance in km"}}
                 ],
-                "center_coords": {{"lat": 28.6139, "lng": 77.2090}},
+                "center_coords": {{"lat": {center_lat}, "lng": {center_lng}}},
                 "guide": {{
                     "packing": "What to pack advice (2 sentences)",
                     "safety": "Safety and wellness tips (2 sentences)",
@@ -1054,16 +1124,16 @@ Here is the user's data:
                 data = json.loads(text_clean)
             
             # Fetch hero image
-            hero_images = SerperService.get_images(f"{name} {data.get('state', 'India')} tourism landscape cinematic 4K")
+            hero_images = SerperService.get_images(f"{name} {data.get('state', '')} tourism landscape cinematic 4K")
             data['hero_image'] = hero_images[0] if hero_images else _get_fallback_image(f"{name} landscape")
             
             # Fetch images for highlights
             for h in data.get('highlights', []):
-                imgs = SerperService.get_images(f"{h.get('keyword', h['name'])} {name} India")
+                imgs = SerperService.get_images(f"{h.get('keyword', h['name'])} {name}")
                 h['image'] = imgs[0] if imgs else _get_fallback_image(f"{h.get('keyword', h['name'])} {name}")
             
             # Fetch map image
-            map_images = SerperService.get_images(f"{name} India terrain satellite aerial view")
+            map_images = SerperService.get_images(f"{name} terrain satellite aerial view")
             data['map_image'] = map_images[0] if map_images else _get_fallback_image(f"{name} aerial")
             
             return data
@@ -1076,13 +1146,13 @@ Here is the user's data:
                 traceback.print_exc(file=open(os.devnull, 'w'))
             return {
                 "name": name,
-                "state": "India",
+                "state": "",
                 "tagline": f"Discover the beauty of {name}",
                 "tag": "Destination",
                 "coordinates": "",
-                "overview_p1": f"{name} is a beautiful destination in India worth exploring.",
+                "overview_p1": f"{name} is a beautiful destination worth exploring.",
                 "overview_p2": "",
-                "center_coords": {"lat": 28.6139, "lng": 77.2090},
+                "center_coords": {"lat": 20.0, "lng": 0.0},
                 "highlights": [],
                 "best_time": {"peak": "Oct - Mar", "summer": {"months": "Mar-Jun", "temp": "", "description": ""}, "monsoon": {"months": "Jul-Sep", "temp": "", "description": ""}, "winter": {"months": "Oct-Feb", "temp": "", "description": ""}},
                 "nearby_cities": [],
@@ -1101,21 +1171,24 @@ Here is the user's data:
         """Generate attractions list for a destination using Groq + Serper."""
         try:
             client = Groq(api_key=Config.GROQ_API_KEY)
+            ctx = AIService._get_country_context(name)
+            center_lat = ctx['center_coords']['lat']
+            center_lng = ctx['center_coords']['lng']
             
             prompt = f"""
-            List 6 must-visit attractions/landmarks in "{name}", India.
+            List 6 must-visit attractions/landmarks in "{name}".
             
             Format the output strictly as a JSON object:
             {{
                 "destination": "{name}",
-                "center_coords": {{"lat": 28.6139, "lng": 77.2090}},
+                "center_coords": {{"lat": {center_lat}, "lng": {center_lng}}},
                 "attractions": [
                     {{
                         "name": "Attraction Name",
                         "location": "Specific area/neighborhood within {name}",
                         "description": "A compelling 1-2 sentence description of this attraction for travelers.",
                         "tag": "Category (e.g. National Park, Temple, Beach, Museum, Viewpoint, Fort, Dam & Lake, Waterfall, Garden, etc.)",
-                        "entry_fee": "Entry fee (e.g. ₹125+, Free, ₹50, etc.)",
+                        "entry_fee": "Entry fee (e.g. $10+, Free, €5, etc.)",
                         "icon": "A Google Material Symbol icon name (e.g. park, temple_hindu, water_drop, museum, visibility, castle, waves, forest, etc.)",
                         "lat": 12.3456, // VERY IMPORTANT: Use the REAL geographic latitude of this specific attraction. Do not copy the center coords.
                         "lng": 78.9012 // VERY IMPORTANT: Use the REAL geographic longitude of this specific attraction. Do not copy the center coords.
@@ -1156,11 +1229,11 @@ Here is the user's data:
                         attr['name'] = attr_name
 
                     # Fetch image
-                    images = SerperService.get_images(f"{attr_name} {name} {data.get('state', 'India')} tourism landmark sightseeing")
+                    images = SerperService.get_images(f"{attr_name} {name} {data.get('state', '')} tourism landmark sightseeing")
                     attr['image'] = images[0] if images else _get_fallback_image(f"{attr_name} {name}")
 
                     # Fetch timing using Serper Search
-                    search_query = f"{attr_name} {name} India opening closing hours timings"
+                    search_query = f"{attr_name} {name} opening closing hours timings"
                     search_results = SerperService.get_search_results(search_query)
 
                     timing = attr.get('timings') or attr.get('opening_hours') or attr.get('hours')
@@ -1221,7 +1294,7 @@ Here is the user's data:
                     if not attr.get('image'):
                         attr['image'] = _get_fallback_image(f"{attr.get('name', name)} {name}")
             # Get map image
-            map_images = SerperService.get_images(f"{name} India aerial satellite terrain view")
+            map_images = SerperService.get_images(f"{name} aerial satellite terrain view")
             data['map_image'] = map_images[0] if map_images else _get_fallback_image(f"{name} aerial")
             
             return data
@@ -1237,14 +1310,16 @@ Here is the user's data:
         """Generate a multi-day itinerary for a destination using Groq + Serper."""
         try:
             client = Groq(api_key=Config.GROQ_API_KEY)
+            ctx = AIService._get_country_context(name)
+            country_suffix = f" in {ctx['country']}" if ctx['country'] else ""
             
             prompt = f"""
-            Create a detailed {days}-day travel itinerary for "{name}" in India.
+            Create a detailed {days}-day travel itinerary for "{name}"{country_suffix}.
             
             Format the output strictly as a JSON object:
             {{
                 "destination": "{name}",
-                "center_coords": {{"lat": 28.6139, "lng": 77.2090}},
+                "center_coords": {{"lat": {ctx['center_coords']['lat']}, "lng": {ctx['center_coords']['lng']}}},
                 "total_days": {days},
                 "days": [
                     {{
@@ -1257,18 +1332,18 @@ Here is the user's data:
                                 "name": "Activity Name",
                                 "description": "Description...",
                                 "keyword": "search keyword",
-                                "lat": 12.3456, // VERY IMPORTANT: Use REAL geographic latitude for this specific place, do NOT repeat center coords.
-                                "lng": 78.9012, // VERY IMPORTANT: Use REAL geographic longitude for this specific place, do NOT repeat center coords.
-                                "estimated_cost_inr": 500
+                                "lat": 12.3456,
+                                "lng": 78.9012,
+                                "estimated_cost_usd": 25
                             }}
                         ]
                     }}
                 ],
                 "budget_summary": {{
-                    "accommodation_avg_per_day": 3000,
-                    "food_avg_per_day": 1500,
-                    "transport_avg_per_day": 1000,
-                    "currency": "INR"
+                    "accommodation_avg_per_day": 100,
+                    "food_avg_per_day": 50,
+                    "transport_avg_per_day": 30,
+                    "currency": "{ctx['currency']}"
                 }}
             }}
             
@@ -1300,11 +1375,11 @@ Here is the user's data:
             for day in data.get('days', []):
                 for act in day.get('activities', []):
                     keyword = act.get('keyword', act['name'])
-                    images = SerperService.get_images(f"{keyword} {name} India")
+                    images = SerperService.get_images(f"{keyword} {name}")
                     act['image'] = images[0] if images else _get_fallback_image(f"{keyword} {name}")
             
             # Fetch route map image
-            map_images = SerperService.get_images(f"{name} India map route tourist trail")
+            map_images = SerperService.get_images(f"{name} map route tourist trail")
             data['route_map'] = map_images[0] if map_images else _get_fallback_image(f"{name} panorama")
             
             return data
@@ -1319,11 +1394,11 @@ Here is the user's data:
         """Fetch a gallery of images for a destination using Serper."""
         try:
             queries = [
-                f"\"{name}\" India tourism landmarks travel photography",
-                f"\"{name}\" India famous tourist attractions photography",
-                f"\"{name}\" India scenic viewpoint travel photo",
-                f"\"{name}\" India culture heritage travel image",
-                f"\"{name}\" India destination gallery",
+                f"\"{name}\" tourism landmarks travel photography",
+                f"\"{name}\" famous tourist attractions photography",
+                f"\"{name}\" scenic viewpoint travel photo",
+                f"\"{name}\" culture heritage travel image",
+                f"\"{name}\" destination gallery",
             ]
             all_images = []
             seen = set()
@@ -1341,9 +1416,9 @@ Here is the user's data:
             # Ensure at least 4 destination-focused images whenever possible
             if len(all_images) < 4:
                 booster_queries = [
-                    f"\"{name}\" India lake mountain landscape",
-                    f"\"{name}\" India temple fort architecture",
-                    f"\"{name}\" India aerial destination photo",
+                    f"\"{name}\" lake mountain landscape",
+                    f"\"{name}\" temple fort architecture",
+                    f"\"{name}\" aerial destination photo",
                 ]
                 for q in booster_queries:
                     for img in SerperService.get_images(q):
@@ -1376,10 +1451,10 @@ Here is the user's data:
         try:
             # Targeted queries for "Hero-like" images (landscape, high-res, iconic)
             queries = [
-                f"{name} India tourism landscape 4K",
-                f"{name} India sunset skyline",
-                f"{name} India landmark aerial",
-                f"{name} India desert landscape" if any(x in name.lower() for x in ['jaisalmer', 'jodhpur', 'rajasthan']) else f"{name} India tourism"
+                f"{name} tourism landscape 4K",
+                f"{name} sunset skyline",
+                f"{name} landmark aerial",
+                f"{name} tourism"
             ]
             
             for q in queries:
@@ -1400,8 +1475,8 @@ Here is the user's data:
             return plan
 
         center = plan.get('center_coords') or {}
-        base_lat = float(center.get('lat', 28.6139))
-        base_lng = float(center.get('lng', 77.2090))
+        base_lat = float(center.get('lat', 20.0))
+        base_lng = float(center.get('lng', 0.0))
 
         for day_idx, day in enumerate(itinerary):
             activities = day.get('activities')
@@ -1418,10 +1493,10 @@ Here is the user's data:
                     "name": f"{day.get('theme', 'Local')} Discovery {slot + 1}",
                     "description": "Recommended local experience aligned to your trip preferences.",
                     "icon": "place",
-                    "image_query": f"{plan.get('destination', 'India')} travel destination",
+                    "image_query": f"{plan.get('destination', '')} travel destination",
                     "lat": base_lat + offset,
                     "lng": base_lng + offset,
-                    "estimated_cost_inr": 400
+                    "estimated_cost_usd": 25
                 })
 
             for act_idx, act in enumerate(activities):
@@ -1448,9 +1523,10 @@ Based on the user's prompt, generate a structured trip itinerary.
 The output MUST be a JSON object with the following structure:
 {
   "destination": "Main destination name",
+  "country": "Full country name (e.g. 'Japan', 'Italy', 'Thailand')",
   "tagline": "A catchy tagline for the trip",
   "duration": "Duration in days",
-  "center_coords": {"lat": 28.6139, "lng": 77.2090},
+  "center_coords": {"lat": 35.6762, "lng": 139.6503},
   "itinerary": [
     {
       "day": 1,
@@ -1461,20 +1537,21 @@ The output MUST be a JSON object with the following structure:
           "name": "Activity name",
           "description": "Short description",
           "icon": "A material design icon name suitable for the activity",
-          "image_query": "Specific visual search query for this activity (e.g. 'Golden Temple Amritsar morning view')",
-          "lat": 12.3456, // VERY IMPORTANT: Use the REAL geographic latitude of this specific activity. Do NOT just copy the center coords.
-          "lng": 78.9012, // VERY IMPORTANT: Use the REAL geographic longitude of this specific activity. Do NOT just copy the center coords.
-          "estimated_cost_inr": 500
+          "image_query": "Specific visual search query for this activity (e.g. 'Fushimi Inari shrine torii gates')",
+          "lat": 35.6762,
+          "lng": 139.6503
         }
       ]
     }
   ],
   "budget_summary": {
-    "total_estimated_expenditure_inr": 25000,
-    "accommodation_avg_per_day": 3000,
-    "food_avg_per_day": 1500,
-    "transport_avg_per_day": 1000,
-    "activities_total": 5000
+    "currency": "USD",
+    "currency_symbol": "$",
+    "total_estimated_expenditure": 2500,
+    "accommodation_avg_per_day": 150,
+    "food_avg_per_day": 50,
+    "transport_avg_per_day": 30,
+    "activities_total": 200
   },
   "travel_tips": ["Tip 1", "Tip 2", "Tip 3"]
 }
@@ -1482,7 +1559,7 @@ Maintain a high-quality, professional, and inspiring tone.
 Allocate time properly to time-consuming activities and plan realistically. Do NOT just hardcode 3 activities in a day. The number of activities per day should vary based on what makes sense for the destination and duration.
 Be specific to the prompt provided. If the user asks for a long trip (e.g. 15-30 days), ensure you provide activities for EVERY day, keeping the JSON well-formed and complete. Do NOT truncate or skip days. For long trips, keep activity descriptions concise to stay within token limits. 
 Always include a "hero_image_query" field which is a specific search term to find a stunning background image for this trip (e.g. 'Santorini sunset caldera' or 'Kyoto cherry blossoms in spring').
-Finally, add a "is_international" boolean field: true if the destination is outside India, false otherwise.
+You MUST detect the country the user is asking about and use that country's currency in the budget. For example: Japan uses JPY, Italy uses EUR, Thailand uses THB, United States uses USD. Use realistic prices for the local currency.
 """
 
             completion = client.chat.completions.create(
@@ -1498,20 +1575,16 @@ Finally, add a "is_international" boolean field: true if the destination is outs
             
             plan = json.loads(completion.choices[0].message.content)
             
-            # Enrich with real images and robust coordinates
-            dest_name = plan.get('destination', 'India')
+            dest_name = plan.get('destination', '')
+            dest_country = plan.get('country', '')
             
-            # Fallback center coords if missing
             if not plan.get('center_coords'):
-                plan['center_coords'] = {"lat": 28.6139, "lng": 77.2090}
-            
-            is_intl = plan.get('is_international', False)
-            location_suffix = "" if is_intl else " India"
+                ctx = AIService._get_country_context(dest_name)
+                plan['center_coords'] = ctx['center_coords']
             
             for day in plan.get('itinerary', []):
                 for act in day.get('activities', []):
-                    # Fetch real image for the activity using AI generated query
-                    query = act.get('image_query') or f"{act.get('name')} {dest_name}{location_suffix} tourist attraction"
+                    query = act.get('image_query') or f"{act.get('name')} {dest_name} {dest_country} tourist attraction"
                     
                     images = SerperService.get_images(query)
                     if images:
@@ -1520,8 +1593,8 @@ Finally, add a "is_international" boolean field: true if the destination is outs
                         act['image_url'] = _get_fallback_image(f"{act.get('name', '')} {dest_name}")
                     
                     if 'lat' not in act or 'lng' not in act:
-                        act['lat'] = plan.get('center_coords', {}).get('lat', 28.6139)
-                        act['lng'] = plan.get('center_coords', {}).get('lng', 77.2090)
+                        act['lat'] = plan.get('center_coords', {}).get('lat', 20.0)
+                        act['lng'] = plan.get('center_coords', {}).get('lng', 0.0)
             
             # Fetch hero image
             hero_query = plan.get('hero_image_query') or f"{dest_name} travel background"
@@ -1617,7 +1690,7 @@ class WeatherService:
         )
         if data and isinstance(data.get("results"), list) and data["results"]:
             r = data["results"][0]
-            return r.get("latitude"), r.get("longitude"), r.get("name", clean), r.get("country_code", "IN")
+            return r.get("latitude"), r.get("longitude"), r.get("name", clean), r.get("country_code")
         return None, None, None, None
 
     @staticmethod
@@ -1640,11 +1713,9 @@ class WeatherService:
             if lat is not None and lon is not None:
                 resolved_lat, resolved_lon = float(lat), float(lon)
                 resolved_name = clean_city
-                resolved_country = "IN"
                 print(f"[Weather] Using provided coords ({lat}, {lon}) for {clean_city}")
             else:
-                # Geocode city name
-                candidates = [f"{clean_city},IN", clean_city, city.strip()]
+                candidates = [clean_city, city.strip()]
                 for q in candidates:
                     resolved_lat, resolved_lon, resolved_name, resolved_country = WeatherService._geocode_city(q)
                     if resolved_lat is not None:
@@ -1724,7 +1795,7 @@ class WeatherService:
             payload = {
                 "location": {
                     "name": resolved_name or clean_city,
-                    "country": resolved_country or "IN",
+                    "country": resolved_country or "",
                     "lat": resolved_lat,
                     "lon": resolved_lon,
                 },

@@ -712,14 +712,14 @@
                         <div
                             class="inline-flex items-center gap-3 px-5 py-3 rounded-full text-white text-sm md:text-base font-medium" style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);">
                             <span class="material-symbols-outlined text-[20px]">location_on</span>
-                            <span>{{ data.country|default('India') }}</span>
+                            <span>{{ data.country|default('') }}</span>
                             <span class="text-white/55">›</span>
                             <span>{{ data.name }}</span>
                         </div>
                     </div>
 
                     <div class="max-w-3xl">
-                    <h1 class="text-5xl md:text-5xl lg:text-6xl font-extrabold text-white mb-3 leading-tight">{{ data.name }},{{ data.country|default('India') }}</h1>
+                    <h1 class="text-5xl md:text-5xl lg:text-6xl font-extrabold text-white mb-3 leading-tight">{{ data.name }},{{ data.country|default('') }}</h1>
                         <div class="w-40 h-[2px] mb-4" style="background:#111111;"></div>
                     <p class="text-xl md:text-1xl font-medium text-white mb-3">{{ data.tagline }}</p>
                     <p class="text-sm md:text-base text-white/70 max-w-xl leading-relaxed hero-desc-clamp min-h-[4.8em]">{{ data.overview_p1 }}</p>
@@ -1413,7 +1413,7 @@
 	                            </div>
 	                        <div class="flex flex-col gap-2 max-w-[85%]">
 	                            <div class="message-bubble ai-bubble">
-	                                <p class="leading-relaxed">Namaste! I'm your Skupheon AI guide for {{ data.name }}. I can help you uncover hidden gems, find the best local food, or plan your perfect day here. What would you like to know?</p>
+	                                <p class="leading-relaxed"> Hello! I'm your Skupheon AI guide for {{ data.name }}. I can help you uncover hidden gems, find the best local food, or plan your perfect day here. What would you like to know?</p>
 	                            </div>
 	                            <div class="message-actions assistant-actions">
 	                                <button type="button" class="msg-action-btn" data-action="copy" title="Copy">
@@ -1675,7 +1675,7 @@
                 } else if (attractions.length > 0 && attractions[0].lat && attractions[0].lng) {
                     return [attractions[0].lat, attractions[0].lng];
                 }
-                return [28.6139, 77.2090];
+                return [20.0, 0.0];
             }
 
             function escapeHtml(value) {
@@ -2107,7 +2107,7 @@
                     }
                     
                     try {
-                        const center = [data.center_coords?.lat || 20.5937, data.center_coords?.lng || 78.9629];
+                        const center = [data.center_coords?.lat || 20.0, data.center_coords?.lng || 0.0];
                         window.itineraryMap = L.map('itinerary-leaflet-map', {
                             scrollWheelZoom: false
                         }).setView(center, 12);
@@ -2715,7 +2715,7 @@
 	                    </div>
 	                    <div class="flex flex-col gap-2 max-w-[85%]">
 	                        <div class="message-bubble ai-bubble">
-	                            <p class="leading-relaxed">Namaste! I'm your Skupheon AI guide for ${DEST_NAME}. I can help you uncover hidden gems, find the best local food, or plan your perfect day here. What would you like to know?</p>
+	                            <p class="leading-relaxed"> Hello! I'm your Skupheon AI guide for ${DEST_NAME}. I can help you uncover hidden gems, find the best local food, or plan your perfect day here. What would you like to know?</p>
 	                        </div>
 	                        <div class="message-actions assistant-actions">
 	                            <button type="button" class="msg-action-btn" data-action="copy" title="Copy">

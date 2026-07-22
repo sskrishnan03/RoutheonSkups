@@ -13,8 +13,8 @@
     <style>
         body {
             font-family: 'Inter', -apple-system, sans-serif;
-            background: #000000;
-            color: #FFFFFF;
+            background: var(--bg-base, #000000);
+            color: var(--text-primary, #FFFFFF);
         }
 
         .material-symbols-outlined {
@@ -24,110 +24,754 @@
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
-        select {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-position: right 1rem center;
-            background-repeat: no-repeat;
-            background-size: 1.2em 1.2em;
-            padding-right: 2.5rem;
-            -webkit-appearance: none;
-            appearance: none;
-        }
+        select { -webkit-appearance: none; appearance: none; }
+        *, *::before, *::after { box-sizing: border-box; }
+        *:focus { outline: none !important; box-shadow: none !important; }
 
-        #state-select {
-            background-color: #0A0A0A;
-            color: #FFFFFF;
-        }
+        /* ── Hero text ── */
+        .hero-text-gradient { color: #FFFFFF; opacity: 0.9; }
 
-        #state-select option {
-            background-color: #0A0A0A;
-            color: #FFFFFF;
-            padding: 10px 16px;
-            font-weight: 600;
-        }
+        /* ═══════════════════════════════════════════════════════
+           THE ATLAS CONSOLE — Premium Destination Discovery
+           Two-tier architecture • Custom dropdowns • Journey flow
+           ═══════════════════════════════════════════════════════ */
 
-        #state-select option:hover {
-            background-color: #111111;
-        }
-
-        #state-select option:checked {
-            background-color: #0A0A0A;
-            color: #FFFFFF;
-        }
-
-        #state-select:focus {
-            outline: none;
-            border-color: rgba(255,255,255,0.12);
-        }
-
-        .glass-pill {
-            background: #0A0A0A;
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 9999px;
-        }
-
-        .glass-card {
-            background: #0A0A0A;
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 24px;
+        .atlas-console {
+            max-width: 1020px;
+            margin: 0 auto;
             position: relative;
-            transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s cubic-bezier(0.22,1,0.36,1);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            z-index: 20;
         }
 
-        .glass-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px #0A0A0A;
-        }
-
-        .glass-btn {
+        /* ── Tier 1: Journey Selectors ── */
+        .atlas-journey {
             background: #0A0A0A;
-            color: #FFFFFF;
-            border-radius: 14px;
-            border: 1px solid rgba(255,255,255,0.06);
-            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 20px 20px 0 0;
+            padding: 24px 24px 0;
+            position: relative;
+        }
+        .atlas-journey::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 24px;
+            right: 24px;
+            height: 1px;
+            background: rgba(255,255,255,0.05);
         }
 
-        .glass-btn:hover {
-            background: #111111;
+        .atlas-journey-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+        .atlas-journey-label {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.35);
+        }
+
+        /* Journey flow indicator */
+        .atlas-flow {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+        .atlas-flow-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.12);
+            transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            flex-shrink: 0;
+        }
+        .atlas-flow-dot.active {
+            background: rgba(255,255,255,0.6);
+            box-shadow: 0 0 12px rgba(255,255,255,0.1);
+        }
+        .atlas-flow-line {
+            width: 36px;
+            height: 1px;
+            background: rgba(255,255,255,0.06);
+            position: relative;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .atlas-flow-line::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.3);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .atlas-flow-line.filled::after {
+            transform: scaleX(1);
+        }
+
+        /* Selector cards row */
+        .atlas-selectors {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Individual selector card */
+        .atlas-card {
+            flex: 1;
+            position: relative;
+            background: #000000;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            padding: 0;
+            overflow: visible;
+        }
+        .atlas-card:hover {
             border-color: rgba(255,255,255,0.12);
+            background: #050505;
+        }
+        .atlas-card.open {
+            border-color: rgba(255,255,255,0.15);
+            z-index: 50;
+            background: #050505;
+        }
+        .atlas-card.disabled {
+            pointer-events: none;
         }
 
-        .glass-input {
+        .atlas-card-top {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 18px 20px;
+        }
+        .atlas-card-icon {
+            font-size: 22px;
+            color: rgba(255,255,255,0.25);
+            transition: color 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            flex-shrink: 0;
+        }
+        .atlas-card:hover .atlas-card-icon {
+            color: rgba(255,255,255,0.5);
+        }
+        .atlas-card.open .atlas-card-icon {
+            color: rgba(255,255,255,0.6);
+        }
+        .atlas-card-text {
+            flex: 1;
+            min-width: 0;
+        }
+        .atlas-card-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.35);
+            margin-bottom: 4px;
+            line-height: 1;
+            transition: color 0.3s;
+        }
+        .atlas-card:hover .atlas-card-label {
+            color: rgba(255,255,255,0.5);
+        }
+        .atlas-card-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.9);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.4;
+            transition: color 0.3s;
+        }
+        .atlas-card-value.is-placeholder {
+            color: rgba(255,255,255,0.35);
+            font-weight: 500;
+        }
+
+        .atlas-card-chevron {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+        }
+        .atlas-card-chevron svg {
+            width: 12px;
+            height: 12px;
+            fill: none;
+            stroke: rgba(255,255,255,0.2);
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: stroke 0.3s, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .atlas-card:hover .atlas-card-chevron svg {
+            stroke: rgba(255,255,255,0.45);
+        }
+        .atlas-card.open .atlas-card-chevron svg {
+            stroke: rgba(255,255,255,0.55);
+            transform: rotate(180deg);
+        }
+
+        /* ── Custom Dropdown Menu ── */
+        .atlas-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
             background: #0A0A0A;
-            border: 1px solid rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
             border-radius: 14px;
-            color: #FFFFFF;
-            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.03);
+            z-index: 200;
+            opacity: 0;
+            transform: translateY(-6px) scale(0.97);
+            pointer-events: none;
+            transition: opacity 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                        transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            overflow: hidden;
         }
-
-        .glass-input:focus {
+        .atlas-dropdown.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+        .atlas-dropdown-search {
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .atlas-dropdown-search input {
+            width: 100%;
+            background: #000000;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            color: #FFFFFF;
             outline: none;
+            transition: border-color 0.3s;
+        }
+        .atlas-dropdown-search input::placeholder {
+            color: rgba(255,255,255,0.25);
+        }
+        .atlas-dropdown-search input:focus {
+            border-color: rgba(255,255,255,0.15);
+        }
+        .atlas-dropdown-list {
+            max-height: 260px;
+            overflow-y: auto;
+            padding: 6px;
+        }
+        .atlas-dropdown-list::-webkit-scrollbar { width: 4px; }
+        .atlas-dropdown-list::-webkit-scrollbar-track { background: transparent; }
+        .atlas-dropdown-list::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+        .atlas-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.15s;
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.7);
+        }
+        .atlas-dropdown-item:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        .atlas-dropdown-item.selected {
+            color: #FFFFFF;
+            font-weight: 600;
+            background: rgba(255,255,255,0.04);
+        }
+        .atlas-dropdown-item.selected::after {
+            content: '';
+            margin-left: auto;
+            width: 6px;
+            height: 10px;
+            border: solid rgba(255,255,255,0.5);
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+            flex-shrink: 0;
+        }
+        .atlas-dropdown-item .item-icon {
+            font-size: 15px;
+            color: rgba(255,255,255,0.2);
+            flex-shrink: 0;
+            transition: color 0.2s;
+        }
+        .atlas-dropdown-item:hover .item-icon,
+        .atlas-dropdown-item.selected .item-icon {
+            color: rgba(255,255,255,0.4);
+        }
+        .atlas-dropdown-empty {
+            padding: 24px 16px;
+            text-align: center;
+            font-size: 13px;
+            color: rgba(255,255,255,0.2);
+            font-weight: 500;
+        }
+
+        /* Hidden select for JS compatibility */
+        .atlas-hidden-select {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        /* ── Tier 2: Discovery Search ── */
+        .atlas-discovery {
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.07);
+            border-top: none;
+            border-radius: 0 0 20px 20px;
+            padding: 0 24px 24px;
+        }
+
+        .atlas-search-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #000000;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+            overflow: hidden;
+            transition: border-color 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .atlas-search-row:focus-within {
             border-color: rgba(255,255,255,0.12);
         }
 
-        .category-btn {
-            background: #0A0A0A;
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 9999px;
-            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+        .atlas-search-field {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            padding: 10px 16px 10px 16px;
+            min-width: 0;
+            gap: 0;
+        }
+        .atlas-search-icon {
+            font-size: 20px;
+            color: rgba(255,255,255,0.2);
+            flex-shrink: 0;
+            margin-right: 12px;
+            transition: color 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .atlas-search-row:focus-within .atlas-search-icon {
+            color: rgba(255,255,255,0.5);
         }
 
+        .atlas-search-tags {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px 6px;
+            flex-shrink: 1;
+            min-width: 0;
+        }
+
+        .atlas-search-divider {
+            width: 1px;
+            height: 24px;
+            background: rgba(255,255,255,0.08);
+            flex-shrink: 0;
+            margin: 0 14px;
+            display: none;
+        }
+        .atlas-search-divider.visible {
+            display: block;
+        }
+
+        .atlas-search-input {
+            flex: 1 1 0;
+            min-width: 160px;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            color: #FFFFFF;
+            padding: 4px 0;
+            text-align: left;
+        }
+        .atlas-search-input::placeholder {
+            color: rgba(255,255,255,0.25);
+            font-weight: 400;
+        }
+
+        /* Search tags */
+        .search-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 6px;
+            padding: 4px 8px 4px 10px;
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.6);
+            white-space: nowrap;
+            max-width: 140px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            animation: atlasTagIn 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: all 0.2s;
+        }
+        .search-tag:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.12);
+            max-width: 200px;
+        }
+        .search-tag .remove-tag {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+            cursor: pointer;
+            opacity: 0.35;
+            transition: all 0.2s;
+            font-size: 13px;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+        .search-tag .remove-tag:hover {
+            opacity: 1;
+            background: rgba(255,255,255,0.1);
+        }
+        @keyframes atlasTagIn {
+            from { opacity: 0; transform: translateY(3px) scale(0.92); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* ── Discover Button ── */
+        .atlas-discover-wrap {
+            flex-shrink: 0;
+            padding: 8px;
+        }
+        .atlas-discover-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 44px;
+            padding: 0 28px;
+            background: #FFFFFF;
+            color: #000000;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            flex-shrink: 0;
+        }
+        .atlas-discover-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.18) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        .atlas-discover-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255,255,255,0.1);
+        }
+        .atlas-discover-btn:hover::before {
+            opacity: 1;
+        }
+        .atlas-discover-btn:active {
+            transform: translateY(0) scale(0.97);
+            transition-duration: 0.1s;
+        }
+        .atlas-discover-btn .material-symbols-outlined {
+            font-size: 18px;
+            transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .atlas-discover-btn:hover .material-symbols-outlined {
+            transform: translateX(3px);
+        }
+
+        /* Loading state on button */
+        .atlas-discover-btn.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        .atlas-discover-btn.loading .material-symbols-outlined {
+            animation: atlasSpin 0.8s linear infinite;
+        }
+        @keyframes atlasSpin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ── Focus ring for the whole console ── */
+        .atlas-console:focus-within .atlas-journey,
+        .atlas-console:focus-within .atlas-discovery {
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           EXPLORE BY CATEGORY — Premium Tile Grid
+           ═══════════════════════════════════════════════════════ */
+
+        .categories-section {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Heading */
+        .categories-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 36px;
+        }
+        .categories-header-line {
+            flex: 1;
+            max-width: 80px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+        }
+        .categories-title {
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.4);
+            white-space: nowrap;
+        }
+
+        /* Grid */
+        .categories-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* Category Tile */
+        .category-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px 8px 16px;
+            width: 110px;
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .category-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+            transition: height 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            pointer-events: none;
+        }
         .category-btn:hover {
             background: #111111;
-            border-color: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+        .category-btn:hover::before {
+            height: 100%;
+        }
+        .category-btn:active {
+            transform: translateY(-1px) scale(0.97);
+            transition-duration: 0.1s;
+        }
+
+        /* Icon inside tile */
+        .category-btn .material-symbols-outlined {
+            font-size: 26px;
+            color: rgba(255,255,255,0.55);
+            transition: color 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                        transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+            z-index: 1;
+        }
+        .category-btn:hover .material-symbols-outlined {
+            color: rgba(255,255,255,0.85);
             transform: translateY(-2px);
         }
 
-        .category-btn.active {
-            background: #111111;
-            border-color: rgba(255,255,255,0.12);
-            box-shadow: 0 4px 20px #0A0A0A;
+        /* Label inside tile */
+        .category-btn span:last-child {
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.75);
+            letter-spacing: 0.02em;
+            transition: color 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            line-height: 1.2;
+        }
+        .category-btn:hover span:last-child {
+            color: rgba(255,255,255,0.95);
         }
 
-        .hero-text-gradient {
+        /* Active / Selected state */
+        .category-btn.active {
+            background: #151515;
+            border-color: rgba(255,255,255,0.14);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.04);
+        }
+        .category-btn.active .material-symbols-outlined {
+            color: rgba(255,255,255,0.85);
+        }
+        .category-btn.active span:last-child {
+            color: rgba(255,255,255,0.95);
+            font-weight: 700;
+        }
+        .category-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20%;
+            right: 20%;
+            height: 2px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 2px 2px 0 0;
+        }
+
+        /* Focus state for keyboard nav */
+        .category-btn:focus-visible {
+            outline: 2px solid rgba(255,255,255,0.15);
+            outline-offset: 2px;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .atlas-console { max-width: 100%; }
+            .atlas-journey { padding: 20px 16px 0; border-radius: 16px 16px 0 0; }
+            .atlas-journey::after { left: 16px; right: 16px; }
+            .atlas-selectors { flex-direction: column; gap: 6px; }
+            .atlas-card { border-radius: 12px !important; }
+            .atlas-discovery { padding: 0 16px 16px; border-radius: 0 0 16px 16px; }
+            .atlas-search-row { flex-direction: column; border-radius: 12px; align-items: stretch; }
+            .atlas-search-field { padding: 10px 14px; gap: 6px; }
+            .atlas-search-icon { margin-right: 0; }
+            .atlas-discover-wrap { padding: 0 8px 8px; }
+            .atlas-discover-btn { width: 100%; min-height: 44px; }
+            .atlas-flow { display: none; }
+            .atlas-journey-header { margin-bottom: 14px; }
+            .atlas-card-top { padding: 16px 18px; gap: 12px; }
+            .atlas-card-icon { font-size: 20px; }
+            .atlas-card-value { font-size: 14px; }
+            .atlas-card-label { font-size: 10px; }
+            .categories-grid { gap: 6px; }
+            .category-btn { padding: 16px 6px 13px; border-radius: 12px; width: 90px; }
+            .category-btn .material-symbols-outlined { font-size: 22px; }
+            .category-btn span:last-child { font-size: 11px; }
+            .categories-header { margin-bottom: 24px; }
+            .categories-title { font-size: 11px; letter-spacing: 0.16em; }
+        }
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .atlas-console { max-width: 90%; }
+            .category-btn { width: 100px; }
+        }
+        @media (min-width: 1400px) {
+            .category-btn { width: 115px; }
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           RESULT CARDS — Rounded Premium Style
+           ═══════════════════════════════════════════════════════ */
+        #popular-grid .glass-card,
+        #ai-grid .glass-card,
+        .glass-card.result-card {
+            border-radius: 20px;
+            overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                        box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        #popular-grid .glass-card:hover,
+        #ai-grid .glass-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        #popular-grid .glass-card .relative,
+        #ai-grid .glass-card .relative {
+            border-radius: 20px 20px 0 0;
+            overflow: hidden;
+        }
+        #popular-grid .glass-card img,
+        #ai-grid .glass-card img {
+            border-radius: 0;
+        }
+
+        /* Category tag pill inside cards */
+        .card-tag-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 100px;
+            padding: 6px 14px 6px 10px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .card-tag-pill:hover {
+            background: #151515;
+            border-color: rgba(255,255,255,0.14);
+            transform: scale(1.04);
+        }
+        .card-tag-pill .material-symbols-outlined {
+            font-size: 15px;
             color: #FFFFFF;
-            opacity: 0.9;
+        }
+        .card-tag-pill span {
+            font-size: 11px;
+            font-weight: 700;
+            color: #FFFFFF;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
         }
     </style>
 </head>
@@ -146,260 +790,294 @@
         <section class="relative mt-32 pb-8 lg:mt-32 lg:pb-12 px-6 max-w-[1400px] mx-auto text-center">
             <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-white mb-6 leading-tight">
                 Explore Destinations <br class="hidden md:block" />
-                <span class="hero-text-gradient">Across India</span>
+                <span class="hero-text-gradient">Across the World</span>
             </h1>
             <p class="text-lg max-w-2xl mx-auto mb-12 font-medium leading-relaxed" style="color:#FFFFFF;">
-                Uncover spiritual sanctuaries, breathtaking landscapes, and vibrant cultures. Curated journeys designed just for you.
+                Uncover spiritual sanctuaries, breathtaking landscapes, and vibrant cultures across 40 countries. Curated journeys designed just for you.
             </p>
-            <div class="max-w-4xl mx-auto relative z-20">
-                <div class="flex flex-col md:flex-row items-center gap-4">
-                    <div class="relative w-full md:w-[32%] flex-shrink-0 group">
-                        <div class="absolute inset-y-0 left-6 flex items-center pointer-events-none">
-                            <span class="material-symbols-outlined group-focus-within:text-white transition-colors text-2xl" style="color:#FFFFFF;">map</span>
+            <div class="atlas-console" id="atlas-console">
+                <div class="atlas-journey">
+                    <div class="atlas-journey-header">
+                        <span class="atlas-journey-label">Begin Your Journey</span>
+                        <div class="atlas-flow" id="atlas-flow">
+                            <div class="atlas-flow-dot" id="flow-dot-0"></div>
+                            <div class="atlas-flow-line" id="flow-line-0"></div>
+                            <div class="atlas-flow-dot" id="flow-dot-1"></div>
+                            <div class="atlas-flow-line" id="flow-line-1"></div>
+                            <div class="atlas-flow-dot" id="flow-dot-2"></div>
                         </div>
-                        <select id="state-select"
-                            class="block w-full pl-[4.5rem] pr-10 py-5 glass-input text-white font-bold text-lg focus:ring-4 focus:ring-white/10 cursor-pointer hover:bg-[#111111] transition-all"
-                            style="border-radius:14px;">
-                            <option selected="" value="Select State">Select State</option>
-                            <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
-                            <option value="Andhra Pradesh">Andhra Pradesh</option>
-                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                            <option value="Assam">Assam</option>
-                            <option value="Bihar">Bihar</option>
-                            <option value="Chandigarh">Chandigarh</option>
-                            <option value="Chhattisgarh">Chhattisgarh</option>
-                            <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
-                            <option value="Delhi">Delhi</option>
-                            <option value="Goa">Goa</option>
-                            <option value="Gujarat">Gujarat</option>
-                            <option value="Haryana">Haryana</option>
-                            <option value="Himachal Pradesh">Himachal Pradesh</option>
-                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-                            <option value="Jharkhand">Jharkhand</option>
-                            <option value="Karnataka">Karnataka</option>
-                            <option value="Kerala">Kerala</option>
-                            <option value="Ladakh">Ladakh</option>
-                            <option value="Lakshadweep">Lakshadweep</option>
-                            <option value="Madhya Pradesh">Madhya Pradesh</option>
-                            <option value="Maharashtra">Maharashtra</option>
-                            <option value="Manipur">Manipur</option>
-                            <option value="Meghalaya">Meghalaya</option>
-                            <option value="Mizoram">Mizoram</option>
-                            <option value="Nagaland">Nagaland</option>
-                            <option value="Odisha">Odisha</option>
-                            <option value="Puducherry">Puducherry</option>
-                            <option value="Punjab">Punjab</option>
-                            <option value="Rajasthan">Rajasthan</option>
-                            <option value="Sikkim">Sikkim</option>
-                            <option value="Tamil Nadu">Tamil Nadu</option>
-                            <option value="Telangana">Telangana</option>
-                            <option value="Tripura">Tripura</option>
-                            <option value="Uttar Pradesh">Uttar Pradesh</option>
-                            <option value="Uttarakhand">Uttarakhand</option>
-                            <option value="West Bengal">West Bengal</option>
-                        </select>
                     </div>
-                    <div class="flex-grow min-w-0 w-full glass-input flex items-center px-4 min-h-[4.25rem] py-1 focus-within:ring-4 focus-within:ring-white/10 transition-all group overflow-hidden" style="border-radius:14px;">
-                        <span class="material-symbols-outlined group-focus-within:text-white transition-colors text-2xl mr-2 flex-shrink-0" style="color:#FFFFFF;">place</span>
-                        <div class="flex flex-wrap items-center gap-1.5 flex-grow min-w-0 py-1">
-                            <div id="active-tags-container" class="flex flex-wrap items-center gap-1.5"></div>
+
+                    <div class="atlas-selectors">
+                        <!-- Country Card -->
+                        <div class="atlas-card" id="country-card" data-dropdown="country">
+                            <div class="atlas-card-top">
+                                <span class="material-symbols-outlined atlas-card-icon">public</span>
+                                <div class="atlas-card-text">
+                                    <div class="atlas-card-label">Country</div>
+                                    <div class="atlas-card-value is-placeholder" id="country-display">All Countries</div>
+                                </div>
+                                <div class="atlas-card-chevron">
+                                    <svg viewBox="0 0 16 16"><polyline points="4 6 8 10 12 6"/></svg>
+                                </div>
+                            </div>
+                            <select id="country-select" class="atlas-hidden-select">
+                                <option selected value="">All Countries</option>
+                            </select>
+                            <div class="atlas-dropdown" id="country-dropdown">
+                                <div class="atlas-dropdown-search">
+                                    <input type="text" placeholder="Search countries..." id="country-search" />
+                                </div>
+                                <div class="atlas-dropdown-list" id="country-list"></div>
+                            </div>
+                        </div>
+
+                        <!-- Region Card -->
+                        <div class="atlas-card disabled" id="region-card" data-dropdown="region">
+                            <div class="atlas-card-top">
+                                <span class="material-symbols-outlined atlas-card-icon">map</span>
+                                <div class="atlas-card-text">
+                                    <div class="atlas-card-label">Region</div>
+                                    <div class="atlas-card-value is-placeholder" id="region-display">Select Region</div>
+                                </div>
+                                <div class="atlas-card-chevron">
+                                    <svg viewBox="0 0 16 16"><polyline points="4 6 8 10 12 6"/></svg>
+                                </div>
+                            </div>
+                            <select id="region-select" class="atlas-hidden-select" disabled>
+                                <option selected value="">Select Region</option>
+                            </select>
+                            <div class="atlas-dropdown" id="region-dropdown">
+                                <div class="atlas-dropdown-search">
+                                    <input type="text" placeholder="Search regions..." id="region-search" />
+                                </div>
+                                <div class="atlas-dropdown-list" id="region-list"></div>
+                            </div>
+                        </div>
+
+                        <!-- City Card -->
+                        <div class="atlas-card disabled" id="city-card" data-dropdown="city">
+                            <div class="atlas-card-top">
+                                <span class="material-symbols-outlined atlas-card-icon">location_on</span>
+                                <div class="atlas-card-text">
+                                    <div class="atlas-card-label">City</div>
+                                    <div class="atlas-card-value is-placeholder" id="city-display">Select City</div>
+                                </div>
+                                <div class="atlas-card-chevron">
+                                    <svg viewBox="0 0 16 16"><polyline points="4 6 8 10 12 6"/></svg>
+                                </div>
+                            </div>
+                            <select id="city-select" class="atlas-hidden-select" disabled>
+                                <option selected value="">Select City</option>
+                            </select>
+                            <div class="atlas-dropdown" id="city-dropdown">
+                                <div class="atlas-dropdown-search">
+                                    <input type="text" placeholder="Search cities..." id="city-search" />
+                                </div>
+                                <div class="atlas-dropdown-list" id="city-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="atlas-discovery">
+                    <div class="atlas-search-row">
+                        <div class="atlas-search-field">
+                            <span class="material-symbols-outlined atlas-search-icon">search</span>
+                            <div class="atlas-search-tags">
+                                <div id="active-tags-container"></div>
+                            </div>
+                            <div class="atlas-search-divider" id="search-divider"></div>
                             <input id="destination-search"
-                                class="flex-grow min-w-[120px] bg-transparent border-none text-lg text-white font-medium focus:ring-0 px-2 py-2"
-                                style="color:#FFFFFF;"
-                                placeholder="Search specific destinations or cities..." type="text" />
+                                class="atlas-search-input"
+                                placeholder="Search destinations, cities, or attractions..."
+                                type="text" />
+                        </div>
+                        <div class="atlas-discover-wrap">
+                            <button id="main-search-btn" class="atlas-discover-btn">
+                                <span>Discover</span>
+                                <span class="material-symbols-outlined">arrow_forward</span>
+                            </button>
                         </div>
                     </div>
-                    <button id="main-search-btn"
-                        class="w-full md:w-auto glass-btn px-10 py-5 font-bold text-lg flex-shrink-0 flex items-center justify-center gap-2"
-                        style="border-radius:14px;">
-                        <span>Search</span>
-                        <span class="material-symbols-outlined text-[20px]">search</span>
-                    </button>
                 </div>
             </div>
         </section>
 
-        <section class="max-w-[1400px] mx-auto px-6 lg:px-12 mb-16">
-            <div class="flex flex-wrap justify-center gap-3 w-full mb-4">
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">location_city</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">City</span>
-                </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">holiday_village</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Town</span>
-                </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">cottage</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Village</span>
-                </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">beach_access</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Beach</span>
-                </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">travel</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Island</span>
-                </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">landscape</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Hill</span>
-                </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">filter_hdr</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Mountain</span>
-                </button>
+        <section class="categories-section max-w-[1400px] mx-auto px-6 lg:px-12 mb-16">
+            <div class="categories-header">
+                <div class="categories-header-line"></div>
+                <h2 class="categories-title">Explore by Category</h2>
+                <div class="categories-header-line"></div>
             </div>
-            <div class="flex flex-wrap justify-center gap-3 w-full mb-4">
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">terrain</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Valley</span>
+            <div class="categories-grid">
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">location_city</span>
+                    <span>City</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">water_drop</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Lake</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">holiday_village</span>
+                    <span>Town</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">kayaking</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">River</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">cottage</span>
+                    <span>Village</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">stairs</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Ghat</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">beach_access</span>
+                    <span>Beach</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">forest</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Forest</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">travel</span>
+                    <span>Island</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">pets</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Wildlife</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">landscape</span>
+                    <span>Hill</span>
                 </button>
-            </div>
-            <div class="flex flex-wrap justify-center gap-3 w-full mb-4">
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">park</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Park</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">filter_hdr</span>
+                    <span>Mountain</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">local_florist</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Garden</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">terrain</span>
+                    <span>Valley</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">fort</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Fort</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">water_drop</span>
+                    <span>Lake</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">castle</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Palace</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">kayaking</span>
+                    <span>River</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">account_balance</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Monument</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">stairs</span>
+                    <span>Ghat</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">domain</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Heritage</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">forest</span>
+                    <span>Forest</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">temple_hindu</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Temple</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">pets</span>
+                    <span>Wildlife</span>
                 </button>
-            </div>
-            <div class="flex flex-wrap justify-center gap-3 w-full mb-4">
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">church</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Church</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">park</span>
+                    <span>Park</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">mosque</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Mosque</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">local_florist</span>
+                    <span>Garden</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">star</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Gurudwara</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">fort</span>
+                    <span>Fort</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">temple_buddhist</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Monastery</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">castle</span>
+                    <span>Palace</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">museum</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Museum</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">account_balance</span>
+                    <span>Monument</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">history_edu</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Archaeology</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">domain</span>
+                    <span>Heritage</span>
                 </button>
-            </div>
-            <div class="flex flex-wrap justify-center gap-3 w-full mb-4">
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">flight</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Sanctuary</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">temple_hindu</span>
+                    <span>Temple</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">nature</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">National Park</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">church</span>
+                    <span>Church</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">paragliding</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Adventure</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">mosque</span>
+                    <span>Mosque</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">hiking</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Trek</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">star</span>
+                    <span>Gurudwara</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">photo_camera</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Viewpoint</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">temple_buddhist</span>
+                    <span>Monastery</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">waves</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Waterfall</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">museum</span>
+                    <span>Museum</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">storefront</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Market</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">history_edu</span>
+                    <span>Archaeology</span>
                 </button>
-            </div>
-            <div class="flex flex-wrap justify-center gap-3 w-full mb-4">
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">restaurant_menu</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Food</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">flight</span>
+                    <span>Sanctuary</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">theater_comedy</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Culture</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">nature</span>
+                    <span>National Park</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">celebration</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Festival</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">paragliding</span>
+                    <span>Adventure</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">directions_bus</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Transport</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">hiking</span>
+                    <span>Trek</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">anchor</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Harbour</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">photo_camera</span>
+                    <span>Viewpoint</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">pool</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Resort</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">waves</span>
+                    <span>Waterfall</span>
                 </button>
-            </div>
-            <div class="flex flex-wrap justify-center gap-3 w-full">
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">home</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Homestay</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">storefront</span>
+                    <span>Market</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">lightbulb</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Experience</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">restaurant_menu</span>
+                    <span>Food</span>
                 </button>
-                <button class="category-btn group flex items-center gap-3 px-6 py-3">
-                    <span class="material-symbols-outlined text-[20px] group-hover:text-white transition-colors" style="color:#FFFFFF;">directions_run</span>
-                    <span class="text-[15px] font-semibold group-hover:text-white transition-colors whitespace-nowrap" style="color:#FFFFFF;">Activity</span>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">theater_comedy</span>
+                    <span>Culture</span>
+                </button>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">celebration</span>
+                    <span>Festival</span>
+                </button>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">directions_bus</span>
+                    <span>Transport</span>
+                </button>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">anchor</span>
+                    <span>Harbour</span>
+                </button>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">pool</span>
+                    <span>Resort</span>
+                </button>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">home</span>
+                    <span>Homestay</span>
+                </button>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">lightbulb</span>
+                    <span>Experience</span>
+                </button>
+                <button class="category-btn">
+                    <span class="material-symbols-outlined">directions_run</span>
+                    <span>Activity</span>
                 </button>
             </div>
         </section>
@@ -409,9 +1087,9 @@
                 <div class="w-32 h-32 glass-card flex items-center justify-center mx-auto mb-10" style="border-radius:2rem;">
                     <span class="material-symbols-outlined text-6xl" style="color:#FFFFFF;">travel_explore</span>
                 </div>
-                <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">Ready to Explore India?</h2>
+                <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">Ready to Explore the World?</h2>
                 <p class="text-xl font-medium leading-relaxed max-w-2xl mx-auto mb-12" style="color:#FFFFFF;">
-                    Select a state and your favorite travel categories above to discover hidden gems and popular destinations curated by AI.
+                    Select a country and your favorite travel categories above to discover hidden gems and popular destinations curated by AI.
                 </p>
                 <div class="flex flex-wrap justify-center gap-6 opacity-40 grayscale pointer-events-none">
                     <div class="flex items-center gap-2 glass-pill px-6 py-3">
@@ -419,8 +1097,8 @@
                         <span class="text-sm font-bold uppercase tracking-wider">AI Curated</span>
                     </div>
                     <div class="flex items-center gap-2 glass-pill px-6 py-3">
-                        <span class="material-symbols-outlined text-sm">map</span>
-                        <span class="text-sm font-bold uppercase tracking-wider">Across India</span>
+                        <span class="material-symbols-outlined text-sm">public</span>
+                        <span class="text-sm font-bold uppercase tracking-wider">40 Countries</span>
                     </div>
                 </div>
             </div>
@@ -457,7 +1135,9 @@
     <script src="/static/js/background.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const stateSelect = document.getElementById('state-select');
+            const countrySelect = document.getElementById('country-select');
+            const regionSelect = document.getElementById('region-select');
+            const citySelect = document.getElementById('city-select');
             const searchInput = document.getElementById('destination-search');
             const searchBtn = document.getElementById('main-search-btn');
             const categoryBtns = document.querySelectorAll('section.max-w-\\[1400px\\] .category-btn');
@@ -466,33 +1146,107 @@
             const resultsContainer = document.getElementById('results-container');
             const initialState = document.getElementById('initial-state');
 
-            let currentExploreState = stateSelect ? stateSelect.value : 'Select State';
+            let selectedCountry = '';
+            let selectedRegion = '';
+            let selectedCity = '';
             let selectedCategories = new Set();
             let currentSearch = '';
             let currentPage = 1;
             let isLoading = false;
             let hasMore = true;
 
+            async function loadCountries() {
+                try {
+                    const res = await fetch('/api/countries');
+                    const countries = await res.json();
+                    countries.sort((a, b) => a.name.localeCompare(b.name));
+                    countries.forEach(c => {
+                        const opt = document.createElement('option');
+                        opt.value = c.name;
+                        opt.textContent = c.name;
+                        countrySelect.appendChild(opt);
+                    });
+                    if (selectedCountry) {
+                        countrySelect.value = selectedCountry;
+                    }
+                } catch (e) { console.error('Failed to load countries', e); }
+            }
+
+            async function loadRegions(country) {
+                regionSelect.innerHTML = '<option selected="" value="">Select Region</option>';
+                citySelect.innerHTML = '<option selected="" value="">Select City</option>';
+                regionSelect.disabled = true;
+                citySelect.disabled = true;
+                if (!country) return;
+                try {
+                    const res = await fetch(`/api/regions/${encodeURIComponent(country)}`);
+                    const data = await res.json();
+                    if (data.regions) {
+                        data.regions.sort((a, b) => a.localeCompare(b));
+                        data.regions.forEach(r => {
+                            const opt = document.createElement('option');
+                            opt.value = r;
+                            opt.textContent = r;
+                            regionSelect.appendChild(opt);
+                        });
+                        regionSelect.disabled = false;
+                    }
+                } catch (e) { console.error('Failed to load regions', e); }
+            }
+
+            async function loadCities(country, region) {
+                citySelect.innerHTML = '<option selected="" value="">Select City</option>';
+                citySelect.disabled = true;
+                if (!country || !region) return;
+                try {
+                    const res = await fetch(`/api/cities/${encodeURIComponent(country)}/${encodeURIComponent(region)}`);
+                    const data = await res.json();
+                    if (data.cities) {
+                        data.cities.sort((a, b) => a.localeCompare(b));
+                        data.cities.forEach(c => {
+                            const opt = document.createElement('option');
+                            opt.value = c;
+                            opt.textContent = c;
+                            citySelect.appendChild(opt);
+                        });
+                        citySelect.disabled = false;
+                    }
+                } catch (e) { console.error('Failed to load cities', e); }
+            }
+
+            loadCountries();
+
+            countrySelect.addEventListener('change', function () {
+                selectedCountry = this.value;
+                selectedRegion = '';
+                selectedCity = '';
+                loadRegions(selectedCountry);
+                currentPage = 1;
+                hasMore = true;
+            });
+
+            regionSelect.addEventListener('change', function () {
+                selectedRegion = this.value;
+                selectedCity = '';
+                loadCities(selectedCountry, selectedRegion);
+                currentPage = 1;
+                hasMore = true;
+            });
+
+            citySelect.addEventListener('change', function () {
+                selectedCity = this.value;
+                currentPage = 1;
+                hasMore = true;
+            });
+
             const urlParams = new URLSearchParams(window.location.search);
             const queryParam = urlParams.get('q');
-            const stateParam = urlParams.get('state');
+            const countryParam = urlParams.get('country');
             const categoryParam = urlParams.get('category');
 
-            if (stateParam && stateSelect) {
-                const options = Array.from(stateSelect.options).map(o => o.value);
-                if (options.includes(stateParam)) {
-                    stateSelect.value = stateParam;
-                    currentExploreState = stateParam;
-                }
-            } else if (queryParam && stateSelect) {
-                const options = Array.from(stateSelect.options).map(o => o.value);
-                if (options.includes(queryParam)) {
-                    stateSelect.value = queryParam;
-                    currentExploreState = queryParam;
-                } else {
-                    searchInput.value = queryParam;
-                    currentSearch = queryParam;
-                }
+            if (queryParam) {
+                searchInput.value = queryParam;
+                currentSearch = queryParam;
             }
 
             if (categoryParam) {
@@ -503,13 +1257,15 @@
                 renderActiveTags();
             }
 
-            if (currentSearch || selectedCategories.size > 0 || currentExploreState !== 'Select State' || stateParam) {
+            const restoredFromSession = restoreExploreState();
+
+            if (!restoredFromSession && (currentSearch || selectedCategories.size > 0)) {
                 if (resultsContainer) resultsContainer.style.display = 'block';
                 if (initialState) initialState.style.display = 'none';
                 fetchDestinations();
             }
 
-            console.info('Explore Page JS Initialized', { loadMoreBtn: !!loadMoreBtn, currentExploreState });
+            console.info('Explore Page JS Initialized', { loadMoreBtn: !!loadMoreBtn, selectedCountry });
 
             categoryBtns.forEach(btn => {
                 const label = btn.querySelector('span:last-child');
@@ -548,16 +1304,81 @@
                 hasMore = true;
             };
 
+            function saveExploreState() {
+                const state = {
+                    country: selectedCountry,
+                    region: selectedRegion,
+                    city: selectedCity,
+                    categories: Array.from(selectedCategories),
+                    search: currentSearch,
+                    page: currentPage,
+                    hasMore: hasMore,
+                    popularHTML: document.getElementById('popular-grid')?.innerHTML || '',
+                    allHTML: document.getElementById('all-grid')?.innerHTML || '',
+                    popularHeading: document.getElementById('popular-heading')?.textContent || '',
+                    allHeading: document.getElementById('all-heading')?.textContent || '',
+                    scrollY: window.scrollY,
+                    resultsVisible: resultsContainer?.style.display !== 'none'
+                };
+                sessionStorage.setItem('exploreState', JSON.stringify(state));
+            }
+            window.saveExploreState = saveExploreState;
+
+            function restoreExploreState() {
+                const raw = sessionStorage.getItem('exploreState');
+                if (!raw) return false;
+                try {
+                    const state = JSON.parse(raw);
+                    sessionStorage.removeItem('exploreState');
+
+                    selectedCountry = state.country || '';
+                    selectedRegion = state.region || '';
+                    selectedCity = state.city || '';
+                    selectedCategories = new Set(state.categories || []);
+                    currentSearch = state.search || '';
+                    currentPage = state.page || 1;
+                    hasMore = state.hasMore !== undefined ? state.hasMore : true;
+
+                    if (searchInput && currentSearch) searchInput.value = currentSearch;
+
+                    if (state.popularHTML && resultsContainer && initialState) {
+                        resultsContainer.style.display = 'block';
+                        initialState.style.display = 'none';
+                        const popularGrid = document.getElementById('popular-grid');
+                        const allGrid = document.getElementById('all-grid');
+                        const popularHeading = document.getElementById('popular-heading');
+                        const allHeading = document.getElementById('all-heading');
+                        if (popularGrid) popularGrid.innerHTML = state.popularHTML;
+                        if (allGrid) allGrid.innerHTML = state.allHTML;
+                        if (popularHeading && state.popularHeading) popularHeading.textContent = state.popularHeading;
+                        if (allHeading && state.allHeading) allHeading.textContent = state.allHeading;
+                    }
+
+                    updateCategoryButtonStyles();
+                    renderActiveTags();
+
+                    if (state.scrollY) {
+                        setTimeout(() => window.scrollTo(0, state.scrollY), 50);
+                    }
+                    return true;
+                } catch (e) {
+                    sessionStorage.removeItem('exploreState');
+                    return false;
+                }
+            }
+
             function renderActiveTags() {
                 if (!activeTagsContainer) return;
+                const divider = document.getElementById('search-divider');
                 activeTagsContainer.innerHTML = Array.from(selectedCategories).map(cat => `
-                    <div class="flex items-center gap-1.5 glass-pill text-white px-3 py-1.5 animate-in fade-in zoom-in duration-200">
-                        <span class="text-[13px] font-bold">${cat}</span>
-                        <button class="hover:bg-white/10 rounded-full p-0.5 transition-colors flex items-center justify-center" onclick="removeCategory('${cat}')">
-                            <span class="material-symbols-outlined text-[14px]">close</span>
-                        </button>
-                    </div>
+                    <span class="search-tag">
+                        ${cat}
+                        <span class="remove-tag" onclick="removeCategory('${cat}')">&times;</span>
+                    </span>
                 `).join('');
+                if (divider) {
+                    divider.classList.toggle('visible', selectedCategories.size > 0);
+                }
             }
 
             window.removeCategory = function (cat) {
@@ -590,34 +1411,12 @@
                 });
             }
 
-            if (stateSelect) {
-                stateSelect.addEventListener('change', function () {
-                    currentExploreState = this.value;
-                    currentPage = 1;
-                    hasMore = true;
-                });
-            }
-
-            const stateClearBtn = document.querySelector('.absolute.inset-y-0.right-8');
-            if (stateClearBtn) {
-                stateClearBtn.addEventListener('click', function () {
-                    if (stateSelect) {
-                        stateSelect.value = stateSelect.options[0].value;
-                        currentExploreState = stateSelect.value;
-                        currentPage = 1;
-                        hasMore = true;
-                        if (resultsContainer) resultsContainer.style.display = 'none';
-                        if (initialState) initialState.style.display = 'block';
-                    }
-                });
-            }
-
             if (searchBtn) {
                 searchBtn.addEventListener('click', function (e) {
                     e.preventDefault();
                     currentSearch = searchInput ? searchInput.value.trim() : '';
-                    if (currentExploreState === 'Select State' && selectedCategories.size === 0 && !currentSearch) {
-                        alert('Please choose at least one filter: destination text, state, or category.');
+                    if (!selectedCountry && selectedCategories.size === 0 && !currentSearch) {
+                        alert('Please choose at least one filter: destination text, country, or category.');
                         return;
                     }
                     currentPage = 1;
@@ -633,8 +1432,8 @@
                     if (e.key === 'Enter') {
                         e.preventDefault();
                         currentSearch = this.value.trim();
-                        if (currentExploreState === 'Select State' && selectedCategories.size === 0 && !currentSearch) {
-                            alert('Please choose at least one filter: destination text, state, or category.');
+                        if (!selectedCountry && selectedCategories.size === 0 && !currentSearch) {
+                            alert('Please choose at least one filter: destination text, country, or category.');
                             return;
                         }
                         currentPage = 1;
@@ -668,7 +1467,9 @@
                     showLoadingState();
                 }
                 const params = new URLSearchParams();
-                if (currentExploreState && currentExploreState !== 'Select State') params.set('state', currentExploreState);
+                if (selectedCountry) params.set('country', selectedCountry);
+                if (selectedRegion) params.set('state', selectedRegion);
+                if (selectedCity) params.set('city', selectedCity);
                 if (selectedCategories.size > 0) params.set('category', Array.from(selectedCategories).join(','));
                 if (currentSearch) params.set('q', currentSearch);
                 params.set('page', currentPage);
@@ -706,17 +1507,17 @@
                 const destinations = data.destinations || [];
                 const totalCount = data.total_count || destinations.length;
                 const catLabel = data.category && data.category !== 'All' ? data.category + ' ' : '';
-                const stateName = data.state || currentExploreState;
+                const locationLabel = data.state || selectedRegion || selectedCountry || '';
                 if (!isLoadMore) {
                     const popular = destinations.slice(0, 3);
                     const allDests = destinations.slice(3);
                     const popularHeading = document.getElementById('popular-heading');
-                    if (popularHeading) popularHeading.textContent = `Popular ${catLabel}Destinations in ${stateName}`;
+                    if (popularHeading) popularHeading.textContent = `Popular ${catLabel}Destinations ${locationLabel ? 'in ' + locationLabel : ''}`;
                     const popularGrid = document.getElementById('popular-grid');
                     if (popularGrid) popularGrid.innerHTML = popular.map(dest => createCardHTML(dest, true)).join('');
                     const allHeading = document.getElementById('all-heading');
                     const countHeading = document.getElementById('count-heading');
-                    if (allHeading) allHeading.innerHTML = `All ${catLabel}Destinations in ${stateName}`;
+                    if (allHeading) allHeading.innerHTML = `All ${catLabel}Destinations ${locationLabel ? 'in ' + locationLabel : ''}`;
                     if (countHeading) countHeading.textContent = `(${totalCount} Treasures Found)`;
                     const allGrid = document.getElementById('all-grid');
                     if (allGrid) allGrid.innerHTML = allDests.map(dest => createCardHTML(dest, false)).join('');
@@ -739,26 +1540,26 @@
 <div class="glass-card group flex flex-col overflow-hidden h-full">
     <div class="relative h-60 w-full overflow-hidden">
         <img alt="${imgAlt}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="${imgSrc}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&q=80&w=800'"/>
-        <div class="absolute top-4 left-4 glass-pill px-3 py-1.5 flex items-center gap-1.5 cursor-pointer hover:bg-white/10 transition-colors" style="background:#0A0A0A;" onclick="toggleFilter('${tag}')">
-            <span class="material-symbols-outlined text-[16px] text-white">${icon}</span>
-            <span class="text-[11px] font-bold text-white uppercase tracking-wide">${tag}</span>
+        <div class="card-tag-pill absolute top-4 left-4" onclick="toggleFilter('${tag}')">
+            <span class="material-symbols-outlined">${icon}</span>
+            <span>${tag}</span>
         </div>
     </div>
     <div class="p-6 flex flex-col flex-grow">
         <h3 class="text-xl font-bold text-white mb-2">${name}</h3>
-        <p class="text-sm leading-relaxed mb-4 line-clamp-2" style="color:#FFFFFF;">${desc}</p>
+        <p class="text-sm leading-relaxed mb-4 line-clamp-2" style="color:rgba(255,255,255,0.7);">${desc}</p>
         <div class="flex flex-wrap items-center gap-4 mb-6">
             <div class="flex items-center gap-1.5">
-                <span class="material-symbols-outlined text-[16px]" style="color:#FFFFFF;">calendar_month</span>
-                <span class="text-[12px] font-semibold" style="color:#FFFFFF;">Season: <span class="text-white">${dest.best_season || 'All Year'}</span></span>
+                <span class="material-symbols-outlined text-[16px]" style="color:rgba(255,255,255,0.5);">calendar_month</span>
+                <span class="text-[12px] font-semibold" style="color:rgba(255,255,255,0.6);">Season: <span class="text-white">${dest.best_season || 'All Year'}</span></span>
             </div>
             <div class="flex items-center gap-1.5">
-                <span class="material-symbols-outlined text-[16px] text-white">groups</span>
-                <span class="text-[12px] font-semibold" style="color:#FFFFFF;">Ideal For: <span class="text-white">${dest.age_suitability || 'All Ages'}</span></span>
+                <span class="material-symbols-outlined text-[16px]" style="color:rgba(255,255,255,0.5);">groups</span>
+                <span class="text-[12px] font-semibold" style="color:rgba(255,255,255,0.6);">Ideal For: <span class="text-white">${dest.age_suitability || 'All Ages'}</span></span>
             </div>
         </div>
         <div class="mt-auto">
-            <a href="${destUrl}" class="text-white font-bold text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all no-underline">
+            <a href="${destUrl}" onclick="saveExploreState()" class="text-white font-bold text-sm inline-flex items-center gap-1 group-hover:gap-2 transition-all no-underline">
 ${indent}View Destination <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
             </a>
         </div>
@@ -810,6 +1611,181 @@ ${indent}View Destination <span class="material-symbols-outlined text-[18px]">ar
                 if (allHeading) allHeading.textContent = 'All Destinations';
             }
         });
+    </script>
+
+    <script>
+    (function() {
+        var countrySelect = document.getElementById('country-select');
+        var regionSelect = document.getElementById('region-select');
+        var citySelect = document.getElementById('city-select');
+        var countryCard = document.getElementById('country-card');
+        var regionCard = document.getElementById('region-card');
+        var cityCard = document.getElementById('city-card');
+        var countryDropdown = document.getElementById('country-dropdown');
+        var regionDropdown = document.getElementById('region-dropdown');
+        var cityDropdown = document.getElementById('city-dropdown');
+        var countryList = document.getElementById('country-list');
+        var regionList = document.getElementById('region-list');
+        var cityList = document.getElementById('city-list');
+        var countrySearch = document.getElementById('country-search');
+        var regionSearch = document.getElementById('region-search');
+        var citySearch = document.getElementById('city-search');
+        var countryDisplay = document.getElementById('country-display');
+        var regionDisplay = document.getElementById('region-display');
+        var cityDisplay = document.getElementById('city-display');
+        var flowDots = [
+            document.getElementById('flow-dot-0'),
+            document.getElementById('flow-dot-1'),
+            document.getElementById('flow-dot-2')
+        ];
+        var flowLines = [
+            document.getElementById('flow-line-0'),
+            document.getElementById('flow-line-1')
+        ];
+        var openDropdown = null;
+
+        function closeAll() {
+            [countryDropdown, regionDropdown, cityDropdown].forEach(function(d) { d.classList.remove('visible'); });
+            [countryCard, regionCard, cityCard].forEach(function(c) { c.classList.remove('open'); });
+            openDropdown = null;
+        }
+
+        function openType(type) {
+            closeAll();
+            var map = {
+                country: [countryDropdown, countryCard],
+                region: [regionDropdown, regionCard],
+                city: [cityDropdown, cityCard]
+            };
+            map[type][0].classList.add('visible');
+            map[type][1].classList.add('open');
+            openDropdown = type;
+            var searchEl = document.getElementById(type + '-search');
+            if (searchEl) setTimeout(function() { searchEl.focus(); }, 120);
+        }
+
+        function populateList(listEl, selectEl, searchTerm) {
+            var opts = Array.prototype.slice.call(selectEl.options).filter(function(o) { return o.value !== ''; });
+            if (searchTerm) {
+                var term = searchTerm.toLowerCase();
+                opts = opts.filter(function(o) { return o.textContent.toLowerCase().indexOf(term) !== -1; });
+            }
+            listEl.innerHTML = '';
+            if (opts.length === 0) {
+                listEl.innerHTML = '<div class="atlas-dropdown-empty">No results found</div>';
+                return;
+            }
+            opts.forEach(function(opt) {
+                var item = document.createElement('div');
+                item.className = 'atlas-dropdown-item';
+                if (opt.selected) item.className += ' selected';
+                item.textContent = opt.textContent;
+                item.setAttribute('data-value', opt.value);
+                item.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    selectEl.value = opt.value;
+                    selectEl.dispatchEvent(new Event('change'));
+                    closeAll();
+                });
+                listEl.appendChild(item);
+            });
+        }
+
+        function syncDisplay(selectEl, displayEl, defaultText) {
+            var val = selectEl.value;
+            if (val) {
+                var opt = selectEl.querySelector('option[value="' + val + '"]');
+                displayEl.textContent = opt ? opt.textContent : val;
+                displayEl.classList.remove('is-placeholder');
+            } else {
+                displayEl.textContent = defaultText;
+                displayEl.classList.add('is-placeholder');
+            }
+        }
+
+        function updateFlow() {
+            var hasCountry = !!countrySelect.value;
+            var hasRegion = !!regionSelect.value;
+            var hasCity = !!citySelect.value;
+            if (flowDots[0]) flowDots[0].classList.toggle('active', hasCountry);
+            if (flowDots[1]) flowDots[1].classList.toggle('active', hasRegion);
+            if (flowDots[2]) flowDots[2].classList.toggle('active', hasCity);
+            if (flowLines[0]) flowLines[0].classList.toggle('filled', hasCountry);
+            if (flowLines[1]) flowLines[1].classList.toggle('filled', hasRegion);
+        }
+
+        function updateCardState() {
+            regionCard.classList.toggle('disabled', regionSelect.disabled);
+            cityCard.classList.toggle('disabled', citySelect.disabled);
+        }
+
+        function observeSelect(selectEl, listEl, searchId, defaultText, displayEl, cardEl) {
+            var obs = new MutationObserver(function() {
+                var searchEl = document.getElementById(searchId);
+                populateList(listEl, selectEl, searchEl ? searchEl.value : '');
+                syncDisplay(selectEl, displayEl, defaultText);
+                updateCardState();
+            });
+            obs.observe(selectEl, { childList: true });
+            var attrObs = new MutationObserver(function() {
+                updateCardState();
+            });
+            attrObs.observe(selectEl, { attributes: true, attributeFilter: ['disabled'] });
+        }
+
+        observeSelect(countrySelect, countryList, 'country-search', 'All Countries', countryDisplay, countryCard);
+        observeSelect(regionSelect, regionList, 'region-search', 'Select Region', regionDisplay, regionCard);
+        observeSelect(citySelect, cityList, 'city-search', 'Select City', cityDisplay, cityCard);
+
+        countrySelect.addEventListener('change', function() {
+            syncDisplay(countrySelect, countryDisplay, 'All Countries');
+            updateFlow();
+        });
+        regionSelect.addEventListener('change', function() {
+            syncDisplay(regionSelect, regionDisplay, 'Select Region');
+            updateFlow();
+        });
+        citySelect.addEventListener('change', function() {
+            syncDisplay(citySelect, cityDisplay, 'Select City');
+            updateFlow();
+        });
+
+        countryCard.querySelector('.atlas-card-top').addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (openDropdown === 'country') { closeAll(); return; }
+            populateList(countryList, countrySelect, countrySearch.value);
+            openType('country');
+        });
+        regionCard.querySelector('.atlas-card-top').addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (regionCard.classList.contains('disabled')) return;
+            if (openDropdown === 'region') { closeAll(); return; }
+            populateList(regionList, regionSelect, regionSearch.value);
+            openType('region');
+        });
+        cityCard.querySelector('.atlas-card-top').addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (cityCard.classList.contains('disabled')) return;
+            if (openDropdown === 'city') { closeAll(); return; }
+            populateList(cityList, citySelect, citySearch.value);
+            openType('city');
+        });
+
+        countrySearch.addEventListener('input', function() { populateList(countryList, countrySelect, countrySearch.value); });
+        regionSearch.addEventListener('input', function() { populateList(regionList, regionSelect, regionSearch.value); });
+        citySearch.addEventListener('input', function() { populateList(cityList, citySelect, citySearch.value); });
+
+        [countrySearch, regionSearch, citySearch].forEach(function(s) {
+            s.addEventListener('click', function(e) { e.stopPropagation(); });
+        });
+
+        document.addEventListener('click', closeAll);
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeAll(); });
+
+        updateFlow();
+        updateCardState();
+        syncDisplay(countrySelect, countryDisplay, 'All Countries');
+    })();
     </script>
 
     {% include 'components/footer.html' %}

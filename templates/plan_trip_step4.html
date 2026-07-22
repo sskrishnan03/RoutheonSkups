@@ -433,15 +433,15 @@
                             <div style="padding-top:24px;border-top: 1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;gap:12px">
                                 <div class="flex justify-between" style="font-size:11px;font-weight:700;color:#FFFFFF;text-transform:uppercase;letter-spacing:0.1em">
                                     <span>Activities</span>
-                                    <span id="preview-activities">₹0</span>
+                                    <span id="preview-activities">$0</span>
                                 </div>
                                 <div class="flex justify-between" style="font-size:11px;font-weight:700;color:#FFFFFF;text-transform:uppercase;letter-spacing:0.1em">
                                     <span>Stay & Food</span>
-                                    <span id="preview-stay-food">₹0</span>
+                                    <span id="preview-stay-food">$0</span>
                                 </div>
                                 <div style="padding-top:12px;border-top: 1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between;align-items:flex-end">
                                     <span style="font-size:11px;color:#FFFFFF;font-weight:700;text-transform:uppercase;letter-spacing:0.1em">Total Est.</span>
-                                    <span style="font-size:1.8rem;font-weight:900;color:#FFFFFF" id="preview-total">₹0</span>
+                                    <span style="font-size:1.8rem;font-weight:900;color:#FFFFFF" id="preview-total">$0</span>
                                 </div>
                             </div>
                         </div>
@@ -1094,7 +1094,7 @@
 
                     const existing = JSON.parse(dataStr);
                     const prompt = [
-                        `Plan a ${existing.duration || ''}-day trip to ${existing.destination || 'India'}.`,
+                        `Plan a ${existing.duration || ''}-day trip to ${existing.destination || 'the world'}.`,
                         existing.budget ? `Budget: ${existing.budget}.` : '',
                         existing.interests ? `Travel style/preferences: ${existing.interests}.` : '',
                         (existing.start_date && existing.end_date) ? `Dates: ${existing.start_date} to ${existing.end_date}.` : '',

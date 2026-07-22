@@ -234,7 +234,7 @@
             <div
                 class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-surface mb-8">
                 <div class="w-2 h-2 rounded-full bg-white/40 animate-pulse"></div>
-                <span class="text-[11px] font-bold text-white/70 tracking-widest uppercase">Discover India's
+                <span class="text-[11px] font-bold text-white/70 tracking-widest uppercase">Discover the World's
                     Treasures</span>
             </div>
             <h1
@@ -244,7 +244,7 @@
             </h1>
             <p
                 class="text-lg md:text-xl text-white/70 mb-10 max-w-2xl mx-auto leading-relaxed">
-                Plan trips, explore destinations, and build memories across India and beyond with our comprehensive
+                Plan trips, explore destinations, and build memories across the globe with our comprehensive
                 itinerary planner.
             </p>
             <div
@@ -606,113 +606,114 @@
 
     <!-- Interactive Route Map -->
     <section class="py-20 relative overflow-hidden">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="w-full px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-10">
                 <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-surface text-white/50 text-[10px] font-extrabold uppercase tracking-widest mb-4">
-                    <span class="w-1.5 h-1.5 rounded-full bg-white/30 animate-pulse"></span> Interactive Route
+                    <span class="w-1.5 h-1.5 rounded-full bg-white/30 animate-pulse"></span> AI-Powered Travel
                 </span>
-                <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white">Visualise Your Journey</h2>
-                <p class="text-white/70 font-medium mt-3">See your itinerary come to life on our
-                    interactive map.</p>
+                <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white">Plan It. Pack It. Go.</h2>
+                <p class="text-white/70 font-medium mt-3">40+ countries, infinite possibilities — let AI craft your perfect itinerary in seconds.</p>
             </div>
             <div
-                class="relative rounded-[2rem] w-full overflow-hidden border border-white/[0.06] shadow-elevated group hover:border-white/[0.12] transition-all duration-500"
-                style="aspect-ratio: 1536 / 1024; max-height: 85vh;">
-                <img alt="Full India Map"
-                    class="absolute inset-0 w-full h-full object-cover"
+                class="relative rounded-[2rem] w-full overflow-hidden border border-white/[0.06] shadow-elevated group hover:border-white/[0.12] transition-all duration-500 bg-black/40">
+                <img alt="World Map"
+                    class="w-full h-auto block"
+                    style="max-height: 85vh;"
                     src="{{ url_for('static', filename='img/map.png') }}" />
                 <svg class="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible"
                     preserveAspectRatio="xMidYMid slice" viewBox="0 0 1000 600">
                     <defs>
-                        <linearGradient id="routeGradient" x1="0%" x2="100%" y1="0%" y2="0%">
-                            <stop offset="0%" stop-color="#0A0A0A" stop-opacity="1"></stop>
-                            <stop offset="100%" stop-color="#0A0A0A" stop-opacity="1"></stop>
-                        </linearGradient>
-                        <filter height="140%" id="glow" width="140%" x="-20%" y="-20%">
-                            <feGaussianBlur result="blur" stdDeviation="4"></feGaussianBlur>
-                            <feComposite in="SourceGraphic" in2="blur" operator="over"></feComposite>
+                        <filter id="pinGlow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/>
+                            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
                         </filter>
+                        <radialGradient id="pinPulse" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.4"/>
+                            <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+                        </radialGradient>
                     </defs>
-                    <path class="animate-[dash_4s_linear_infinite]"
-                        d="M 250 350 C 400 350, 500 250, 650 250 S 900 400, 1050 300" fill="none" filter="url(#glow)"
-                        stroke="url(#routeGradient)" stroke-dasharray="12 8" stroke-width="4"></path>
-                    <circle class="shadow-lg animate-pulse" cx="250" cy="350" fill="#FFFFFF" r="8" stroke="rgba(255,255,255,0.15)"
-                        stroke-width="4"></circle>
-                    <circle class="shadow-lg" cx="650" cy="250" fill="#FFFFFF" r="8" stroke="rgba(255,255,255,0.15)" stroke-width="4">
+
+                    <!-- Pulse rings on select pins -->
+                    <circle cx="200" cy="200" r="12" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1">
+                        <animate attributeName="r" from="6" to="18" dur="2.5s" repeatCount="indefinite"/>
+                        <animate attributeName="opacity" from="0.5" to="0" dur="2.5s" repeatCount="indefinite"/>
                     </circle>
-                    <circle class="shadow-lg" cx="1050" cy="300" fill="#FFFFFF" r="8" stroke="rgba(255,255,255,0.15)" stroke-width="4">
+                    <circle cx="820" cy="220" r="12" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1">
+                        <animate attributeName="r" from="6" to="18" dur="3s" repeatCount="indefinite"/>
+                        <animate attributeName="opacity" from="0.5" to="0" dur="3s" repeatCount="indefinite"/>
                     </circle>
-                    <circle fill="#FFFFFF" r="5">
-                        <animateMotion dur="4s" path="M 250 350 C 400 350, 500 250, 650 250 S 900 400, 1050 300"
-                            repeatCount="indefinite"></animateMotion>
+                    <circle cx="720" cy="260" r="12" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1">
+                        <animate attributeName="r" from="6" to="18" dur="2.8s" repeatCount="indefinite"/>
+                        <animate attributeName="opacity" from="0.5" to="0" dur="2.8s" repeatCount="indefinite"/>
                     </circle>
+                    <circle cx="520" cy="195" r="12" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1">
+                        <animate attributeName="r" from="6" to="18" dur="2.6s" repeatCount="indefinite"/>
+                        <animate attributeName="opacity" from="0.5" to="0" dur="2.6s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="900" cy="430" r="12" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1">
+                        <animate attributeName="r" from="6" to="18" dur="3.2s" repeatCount="indefinite"/>
+                        <animate attributeName="opacity" from="0.5" to="0" dur="3.2s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="320" cy="380" r="12" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1">
+                        <animate attributeName="r" from="6" to="18" dur="2.7s" repeatCount="indefinite"/>
+                        <animate attributeName="opacity" from="0.5" to="0" dur="2.7s" repeatCount="indefinite"/>
+                    </circle>
+
+                    <!-- Location pins for all 40 countries -->
+                    <!-- North America -->
+                    <g filter="url(#pinGlow)"><circle cx="200" cy="200" r="4" fill="#FFFFFF"/><circle cx="200" cy="200" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>United States</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="200" cy="150" r="4" fill="#FFFFFF"/><circle cx="200" cy="150" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Canada</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="180" cy="250" r="4" fill="#FFFFFF"/><circle cx="180" cy="250" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Mexico</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="220" cy="290" r="4" fill="#FFFFFF"/><circle cx="220" cy="290" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Costa Rica</title></g>
+
+                    <!-- South America -->
+                    <g filter="url(#pinGlow)"><circle cx="320" cy="380" r="4" fill="#FFFFFF"/><circle cx="320" cy="380" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Brazil</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="260" cy="340" r="4" fill="#FFFFFF"/><circle cx="260" cy="340" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Peru</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="290" cy="430" r="4" fill="#FFFFFF"/><circle cx="290" cy="430" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Argentina</title></g>
+
+                    <!-- Europe -->
+                    <g filter="url(#pinGlow)"><circle cx="480" cy="170" r="4" fill="#FFFFFF"/><circle cx="480" cy="170" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>United Kingdom</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="470" cy="165" r="4" fill="#FFFFFF"/><circle cx="470" cy="165" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Ireland</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="490" cy="190" r="4" fill="#FFFFFF"/><circle cx="490" cy="190" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>France</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="475" cy="210" r="4" fill="#FFFFFF"/><circle cx="475" cy="210" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Spain</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="465" cy="210" r="4" fill="#FFFFFF"/><circle cx="465" cy="210" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Portugal</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="440" cy="120" r="4" fill="#FFFFFF"/><circle cx="440" cy="120" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Iceland</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="520" cy="195" r="4" fill="#FFFFFF"/><circle cx="520" cy="195" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Italy</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="505" cy="190" r="4" fill="#FFFFFF"/><circle cx="505" cy="190" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Switzerland</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="510" cy="180" r="4" fill="#FFFFFF"/><circle cx="510" cy="180" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Germany</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="500" cy="175" r="4" fill="#FFFFFF"/><circle cx="500" cy="175" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Netherlands</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="525" cy="195" r="4" fill="#FFFFFF"/><circle cx="525" cy="195" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Croatia</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="520" cy="185" r="4" fill="#FFFFFF"/><circle cx="520" cy="185" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Czech Republic</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="515" cy="190" r="4" fill="#FFFFFF"/><circle cx="515" cy="190" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Austria</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="545" cy="215" r="4" fill="#FFFFFF"/><circle cx="545" cy="215" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Greece</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="500" cy="130" r="4" fill="#FFFFFF"/><circle cx="500" cy="130" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Norway</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="540" cy="135" r="4" fill="#FFFFFF"/><circle cx="540" cy="135" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Finland</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="570" cy="210" r="4" fill="#FFFFFF"/><circle cx="570" cy="210" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Turkey</title></g>
+
+                    <!-- Africa -->
+                    <g filter="url(#pinGlow)"><circle cx="470" cy="225" r="4" fill="#FFFFFF"/><circle cx="470" cy="225" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Morocco</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="570" cy="240" r="4" fill="#FFFFFF"/><circle cx="570" cy="240" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Egypt</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="540" cy="430" r="4" fill="#FFFFFF"/><circle cx="540" cy="430" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>South Africa</title></g>
+
+                    <!-- Middle East -->
+                    <g filter="url(#pinGlow)"><circle cx="640" cy="260" r="4" fill="#FFFFFF"/><circle cx="640" cy="260" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>United Arab Emirates</title></g>
+
+                    <!-- Asia -->
+                    <g filter="url(#pinGlow)"><circle cx="720" cy="260" r="4" fill="#FFFFFF"/><circle cx="720" cy="260" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>India</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="725" cy="310" r="4" fill="#FFFFFF"/><circle cx="725" cy="310" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Sri Lanka</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="820" cy="220" r="4" fill="#FFFFFF"/><circle cx="820" cy="220" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>China</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="880" cy="210" r="4" fill="#FFFFFF"/><circle cx="880" cy="210" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>South Korea</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="900" cy="210" r="4" fill="#FFFFFF"/><circle cx="900" cy="210" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Japan</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="810" cy="280" r="4" fill="#FFFFFF"/><circle cx="810" cy="280" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Thailand</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="820" cy="280" r="4" fill="#FFFFFF"/><circle cx="820" cy="280" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Vietnam</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="840" cy="340" r="4" fill="#FFFFFF"/><circle cx="840" cy="340" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Indonesia</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="815" cy="330" r="4" fill="#FFFFFF"/><circle cx="815" cy="330" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Singapore</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="720" cy="310" r="4" fill="#FFFFFF"/><circle cx="720" cy="310" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Maldives</title></g>
+
+                    <!-- Oceania -->
+                    <g filter="url(#pinGlow)"><circle cx="900" cy="430" r="4" fill="#FFFFFF"/><circle cx="900" cy="430" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>Australia</title></g>
+                    <g filter="url(#pinGlow)"><circle cx="950" cy="460" r="4" fill="#FFFFFF"/><circle cx="950" cy="460" r="6" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><title>New Zealand</title></g>
                 </svg>
-                <div
-                    class="absolute top-[48%] left-[8%] w-56 glassmorphism p-4 rounded-2xl border border-white/[0.06] shadow-glass transform hover:scale-105 transition-transform cursor-pointer z-20">
-                    <div class="flex justify-between items-start mb-2">
-                        <span
-                            class="px-2 py-1 rounded-md bg-[#0A0A0A] text-[10px] font-bold text-white/60 uppercase tracking-wide">Day
-                            1-2</span>
-                        <span class="material-icons-round text-white/50 text-sm">temple_buddhist</span>
-                    </div>
-                    <h4 class="font-bold text-base text-white">Kochi Fort</h4>
-                    <p class="text-xs text-white/70 mt-1 line-clamp-1">Colonial
-                        history &amp; fishing nets.</p>
-                    <div class="flex items-center gap-2 mt-3 pt-3 border-t border-white/[0.06]">
-                        <div class="flex items-center gap-1 text-xs font-semibold text-white/70">
-                            <span class="material-icons-round text-sm text-white/70">directions_car</span> 2h Drive
-                        </div>
-                    </div>
-                </div>
-                <div
-                    class="absolute top-[28%] left-[40%] w-56 glassmorphism p-4 rounded-2xl border border-white/[0.06] shadow-glass transform hover:scale-105 transition-transform cursor-pointer z-20">
-                    <div class="flex justify-between items-start mb-2">
-                        <span
-                            class="px-2 py-1 rounded-md bg-[#0A0A0A] text-[10px] font-bold text-white/60 uppercase tracking-wide">Day
-                            3-4</span>
-                        <span class="material-icons-round text-white/50 text-sm">landscape</span>
-                    </div>
-                    <h4 class="font-bold text-base text-white">Munnar Hills</h4>
-                    <p class="text-xs text-white/70 mt-1 line-clamp-1">Tea gardens
-                        &amp; misty peaks.</p>
-                    <div class="flex items-center gap-2 mt-3 pt-3 border-t border-white/[0.06]">
-                        <div class="flex items-center gap-1 text-xs font-semibold text-white/70">
-                            <span class="material-icons-round text-sm text-white/70">train</span> Scenic Rail
-                        </div>
-                    </div>
-                </div>
-                <div
-                    class="absolute top-[38%] right-[10%] w-56 glassmorphism p-4 rounded-2xl border border-white/[0.06] shadow-glass transform hover:scale-105 transition-transform cursor-pointer z-20">
-                    <div class="flex justify-between items-start mb-2">
-                        <span
-                            class="px-2 py-1 rounded-md bg-[#0A0A0A] text-[10px] font-bold text-white/60 uppercase tracking-wide">Day
-                            5</span>
-                        <span class="material-icons-round text-white/50 text-sm">forest</span>
-                    </div>
-                    <h4 class="font-bold text-base text-white">Thekkady</h4>
-                    <p class="text-xs text-white/70 mt-1 line-clamp-1">Periyar
-                        wildlife sanctuary.</p>
-                    <div class="flex items-center gap-2 mt-3 pt-3 border-t border-white/[0.06]">
-                        <div class="flex items-center gap-1 text-xs font-semibold text-white/70">
-                            <span class="material-icons-round text-sm text-white/70">hiking</span> Nature Walk
-                        </div>
-                    </div>
-                </div>
-                <div
-                    class="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-8 glass-surface px-8 py-4 rounded-2xl shadow-elevated z-20">
-                    <div class="flex flex-col items-center px-4 border-r border-white/[0.06]">
-                        <span class="text-[10px] uppercase tracking-wider font-bold text-white/70 mb-1">Total
-                            Distance</span>
-                        <span class="text-lg font-extrabold text-white">450
-                            km</span>
-                    </div>
-                    <div class="flex flex-col items-center px-4 border-r border-white/[0.06]">
-                        <span class="text-[10px] uppercase tracking-wider font-bold text-white/70 mb-1">Travel
-                            Time</span>
-                        <span class="text-lg font-extrabold text-white">12h
-                            30m</span>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
@@ -816,22 +817,22 @@
                     eyes of fellow travelers</p>
             </div>
             <div class="story-spotlight grid md:grid-cols-2">
-                <img src="{{ url_for('static', filename='popular destination/manali.jpg') }}" alt=""
+                <img src="{{ url_for('static', filename='popular destination/kerala.jpg') }}" alt=""
                     class="hidden md:block absolute inset-0 w-full h-full object-cover blur-2xl scale-110 opacity-20 pointer-events-none select-none"
                     aria-hidden="true" />
                 <div class="relative z-10 min-h-[320px] md:min-h-[460px]">
-                    <img src="{{ url_for('static', filename='popular destination/manali.jpg') }}" alt="Mountain valley landscape in Manali"
+                    <img src="{{ url_for('static', filename='popular destination/kerala.jpg') }}" alt="Backwater landscape in Kerala"
                         class="w-full h-full object-cover" />
                 </div>
                 <div class="story-right-panel story-copy relative z-10 px-6 py-8 sm:p-10 lg:p-12 flex flex-col justify-center">
                     <span class="story-tag inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/[0.06] glass-surface text-white/60 text-xs font-semibold tracking-[0.16em] uppercase w-fit">
                         Featured Story
                     </span>
-                    <h2 class="text-4xl md:text-5xl font-bold text-white mt-5">Manali</h2>
+                    <h2 class="text-4xl md:text-5xl font-bold text-white mt-5">Kerala</h2>
                     <div class="w-16 h-1 rounded-full bg-white/20 mt-4 mb-6"></div>
                     <p class="text-white/50 leading-relaxed text-base md:text-lg max-w-xl">
-                        "At sunrise, the valley of Manali felt untouched. Pine-scented air drifted through old village lanes,
-                        the river moved like silver under the hills, and every turn opened into another quiet view of snow and sky.
+                        "At sunrise, the backwaters of Kerala felt untouched. Coconut-scented air drifted through quiet village lanes,
+                        the water moved like silver under the palms, and every turn opened into another lush view of green and sky.
                         It was not only a destination to see, but a place that slowed time enough to feel."
                     </p>
                     <a href="{{ url_for('main.explore') }}"

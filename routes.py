@@ -18,6 +18,11 @@ from uuid import uuid4
 from werkzeug.utils import secure_filename
 from sqlalchemy import func
 from authlib.integrations.base_client.errors import MismatchingStateError
+from global_countries import (
+    get_all_destination_names, get_daily_destinations, get_country_info,
+    get_tts_voice, get_tts_fallback_lang, search_destinations,
+    get_country_center_coords, ALL_COUNTRY_NAMES, ALL_COUNTRIES_BY_CODE
+)
 
 main_bp = Blueprint('main', __name__)
 
@@ -149,20 +154,46 @@ def _delete_local_profile_image(image_url):
     if os.path.isfile(absolute_path):
         os.remove(absolute_path)
 
-INDIA_PROMPT_DESTINATIONS = [
+GLOBAL_PROMPT_DESTINATIONS = [
     "Goa", "Jaipur", "Udaipur", "Jaisalmer", "Rishikesh", "Manali", "Shimla", "Dharamshala",
     "Leh", "Srinagar", "Amritsar", "Varanasi", "Agra", "Delhi", "Mumbai", "Pune", "Bengaluru",
     "Mysuru", "Coorg", "Ooty", "Kodaikanal", "Chennai", "Pondicherry", "Hyderabad", "Hampi",
     "Kochi", "Munnar", "Alleppey", "Thekkady", "Madurai", "Kolkata", "Darjeeling", "Gangtok",
-    "Shillong", "Kaziranga", "Guwahati", "Bhubaneswar", "Puri", "Konark", "Andaman", "Lakshadweep",
-    "Auli", "Nainital", "Mussoorie", "Khajuraho"
+    "Kyoto", "Tokyo", "Osaka", "Hiroshima", "Nara", "Hakone",
+    "Paris", "Nice", "Lyon", "Marseille", "Bordeaux", "Strasbourg",
+    "Rome", "Florence", "Venice", "Amalfi", "Cinque Terre", "Milan",
+    "Barcelona", "Madrid", "Seville", "Granada", "Ibiza", "Valencia",
+    "New York", "Los Angeles", "San Francisco", "Las Vegas", "Miami", "Chicago",
+    "Queenstown", "Auckland", "Rotorua", "Wellington",
+    "Santorini", "Athens", "Mykonos", "Crete",
+    "Zurich", "Interlaken", "Lucerne", "Geneva",
+    "Sydney", "Melbourne", "Brisbane", "Perth",
+    "Bangkok", "Chiang Mai", "Phuket", "Krabi",
+    "London", "Edinburgh", "Bath", "Oxford",
+    "Toronto", "Vancouver", "Montreal",
+    "Istanbul", "Cappadocia", "Antalya",
+    "Cairo", "Luxor", "Alexandria",
+    "Cape Town", "Johannesburg", "Durban",
+    "Reykjavik", "Bali", "Hanoi", "Ha Long Bay",
+    "Berlin", "Munich", "Hamburg", "Frankfurt",
+    "Seoul", "Busan", "Jeju",
+    "Dubai", "Abu Dhabi", "Amsterdam", "Rotterdam",
+    "Dubrovnik", "Split", "Plitvice Lakes", "Hvar",
+    "Dublin", "Galway", "Cork", "Killarney",
+    "Marina Bay", "Sentosa", "Gardens by the Bay",
+    "Prague", "Cesky Krumlov", "Karlovy Vary", "Brno",
+    "Sigiriya", "Kandy", "Galle", "Ella",
+    "Marrakech", "Fez", "Chefchaouen", "Essaouira",
+    "Buenos Aires", "Bariloche", "El Calafate", "Ushuaia",
+    "Helsinki", "Rovaniemi", "Levi", "Lapland",
+    "Beijing", "Shanghai", "Xi'an", "Guilin", "Chengdu"
 ]
 
 
 def _get_daily_ai_inspiration_prompts():
-    """Return 15 India trip prompt inspirations that rotate daily (IST)."""
-    ist_today = (datetime.utcnow() + timedelta(hours=5, minutes=30)).date()
-    rng = random.Random(f"daily-ai-prompts-{ist_today.isoformat()}")
+    """Return 15 global trip prompt inspirations that rotate daily (UTC)."""
+    today = datetime.utcnow().date()
+    rng = random.Random(f"daily-ai-prompts-{today.isoformat()}")
 
     durations = [3, 4, 5, 6, 7, 8, 9, 10]
     groups = [
@@ -182,7 +213,7 @@ def _get_daily_ai_inspiration_prompts():
         "relaxed itinerary with less travel time"
     ]
 
-    destinations = INDIA_PROMPT_DESTINATIONS[:]
+    destinations = GLOBAL_PROMPT_DESTINATIONS[:]
     rng.shuffle(destinations)
 
     prompts = []
@@ -341,7 +372,7 @@ def _send_password_reset_email(user):
     )
     msg.body = f'''RoutheonSkups
 
-Your gateway to smarter travel planning. Plan trips, explore destinations, and discover India like never before.
+Your gateway to smarter travel planning. Plan trips, explore destinations, and discover the world like never before.
 
 Reset your password here:
 {reset_url}
@@ -354,7 +385,7 @@ If you didn't request this, you can safely ignore this email.'''
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#000000;padding:40px 20px;">
 <tr><td align="center">
   <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:#FFFFFF;letter-spacing:-0.02em;">RoutheonSkups</h1>
-  <p style="margin:0 0 24px;font-size:13px;color:rgba(255,255,255,0.4);font-style:italic;">Your gateway to smarter travel planning. Plan trips, explore destinations, and discover India like never before.</p>
+  <p style="margin:0 0 24px;font-size:13px;color:rgba(255,255,255,0.4);font-style:italic;">Your gateway to smarter travel planning. Plan trips, explore destinations, and discover the world like never before.</p>
   <a href="{reset_url}" style="display:inline-block;padding:12px 32px;background:#FFFFFF;color:#000000;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;">Reset Password</a>
   <p style="margin:24px 0 0;font-size:12px;color:rgba(255,255,255,0.35);">If you didn't request this, you can safely ignore this email.</p>
 </td></tr>
@@ -810,24 +841,7 @@ def destination_chatbot(name):
 @main_bp.route('/create-trip')
 @login_required
 def create_trip():
-    india_destinations = [
-        "Goa", "Jaipur", "Udaipur", "Jaisalmer", "Rishikesh", "Manali", "Shimla", "Dharamshala",
-        "Leh", "Srinagar", "Amritsar", "Varanasi", "Agra", "Delhi", "Mumbai", "Pune", "Bengaluru",
-        "Mysuru", "Coorg", "Ooty", "Kodaikanal", "Chennai", "Pondicherry", "Hyderabad", "Hampi",
-        "Kochi", "Munnar", "Alleppey", "Thekkady", "Madurai", "Kolkata", "Darjeeling", "Gangtok",
-        "Shillong", "Kaziranga", "Guwahati", "Bhubaneswar", "Puri", "Konark", "Andaman", "Lakshadweep",
-        "Auli", "Nainital", "Mussoorie", "Khajuraho"
-    ]
-
-    # Rotate by IST date so the list changes once per day and stays stable throughout that day.
-    ist_today = (datetime.utcnow() + timedelta(hours=5, minutes=30)).date()
-    day_number = ist_today.toordinal()
-    start_index = (day_number * 7) % len(india_destinations)
-    daily_destinations = [
-        india_destinations[(start_index + i) % len(india_destinations)]
-        for i in range(20)
-    ]
-    random.Random(f"india-popular-{ist_today.isoformat()}").shuffle(daily_destinations)
+    daily_destinations = get_daily_destinations(count=20)
 
     return render_template('plan_trip_step1.html', popular_destinations=daily_destinations)
 
@@ -1504,8 +1518,8 @@ def get_story_voice():
         if not tts_text:
             return jsonify({"error": "Text required"}), 400
 
-        # Use a natural-sounding neural voice (India English by default)
-        voice = request.args.get('voice', 'en-IN-NeerjaNeural')
+        # Use a natural-sounding neural voice (global default)
+        voice = request.args.get('voice', 'en-US-GuyNeural')
         rate = request.args.get('rate', '+0%')
 
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp:
@@ -1528,7 +1542,7 @@ def get_story_voice():
             from gtts import gTTS
             import io
             from flask import send_file
-            tts = gTTS(text=text[:5000], lang='en', tld='co.in', slow=False)
+            tts = gTTS(text=text[:5000], lang='en', tld='com', slow=False)
             fp = io.BytesIO()
             tts.write_to_fp(fp)
             fp.seek(0)
@@ -1573,7 +1587,7 @@ def api_destination_chat():
         from config import Config
         client = Groq(api_key=Config.GROQ_API_KEY)
         
-        system_prompt = f"""You are Skupheon AI, an expert travel guide for {destination}, India. 
+        system_prompt = f"""You are Skupheon AI, an expert travel guide for {destination}. 
 You are knowledgeable about:
 - Local attractions, hidden gems, and must-visit places
 - Best restaurants, street food, and local cuisine
@@ -2229,9 +2243,8 @@ def contact():
 
         try:
             try:
-                from zoneinfo import ZoneInfo
-                submitted_dt = datetime.now(ZoneInfo("Asia/Kolkata"))
-                submitted_on = submitted_dt.strftime("%d %b %Y, %I:%M %p %Z")
+                submitted_dt = datetime.utcnow()
+                submitted_on = submitted_dt.strftime("%d %b %Y, %I:%M %p UTC")
             except Exception:
                 submitted_dt = datetime.utcnow()
                 submitted_on = submitted_dt.strftime("%d %b %Y, %I:%M %p UTC")
@@ -2413,3 +2426,75 @@ def faq_chat():
     except Exception as e:
         print(f"FAQ chat error: {e}")
         return jsonify({"response": "I am having trouble right now. Please try again shortly."}), 200
+
+
+# ── Cascading Location Selection API ──────────────────────────────────────
+
+@main_bp.route('/api/countries')
+def api_countries():
+    """Return all 31 supported countries with metadata."""
+    from global_countries import COUNTRIES
+    countries = []
+    for name, data in COUNTRIES.items():
+        countries.append({
+            "name": name,
+            "code": data["code"],
+            "continent": data["continent"],
+            "currency": data["currency"],
+            "currency_symbol": data["currency_symbol"],
+            "timezone": data["timezone"],
+            "region_label": data["region_label"],
+            "center": get_country_center_coords(name),
+        })
+    countries.sort(key=lambda c: c["name"])
+    return jsonify(countries)
+
+
+@main_bp.route('/api/regions/<country_name>')
+def api_regions(country_name):
+    """Return regions/states/prefectures for a given country."""
+    from global_countries import get_regions, get_region_label
+    regions = get_regions(country_name)
+    if not regions:
+        return jsonify({"error": f"Country '{country_name}' not found"}), 404
+    return jsonify({
+        "country": country_name,
+        "region_label": get_region_label(country_name),
+        "regions": sorted(regions),
+    })
+
+
+@main_bp.route('/api/cities/<country_name>/<region_name>')
+def api_cities(country_name, region_name):
+    """Return cities for a given region within a country."""
+    from global_countries import get_cities
+    cities = get_cities(country_name, region_name)
+    if not cities:
+        return jsonify({"error": f"Region '{region_name}' not found in '{country_name}'"}), 404
+    return jsonify({
+        "country": country_name,
+        "region": region_name,
+        "cities": sorted(cities),
+    })
+
+
+@main_bp.route('/api/destinations/search')
+def api_destination_search():
+    """Search across all countries, regions, and cities."""
+    q = request.args.get('q', '').strip()
+    if not q or len(q) < 2:
+        return jsonify([])
+    results = search_destinations(q)
+    return jsonify(results[:20])
+
+
+@main_bp.route('/api/trip-types')
+def api_trip_types():
+    """Return supported trip type options for the planner."""
+    return jsonify({
+        "trip_types": [
+            {"id": "single_country", "label": "Single Country", "description": "Explore one country in depth"},
+            {"id": "multi_country", "label": "Multi-Country", "description": "Travel across multiple countries with optimized routes"},
+        ],
+        "countries": ALL_COUNTRY_NAMES,
+    })

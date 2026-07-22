@@ -68,7 +68,7 @@
 
   /* ── Daily Content Pool ──────────────────────── */
   const SUGGESTION_POOL = [
-    { icon: 'route', title: 'Plan a Trip', desc: 'Full itinerary with hotels, transport & budget', prompt: 'Plan a 5-day trip to Himachal Pradesh with a budget of 25000' },
+    { icon: 'route', title: 'Plan a Trip', desc: 'Full itinerary with hotels, transport & budget', prompt: 'Plan a 5-day trip to Himachal Pradesh with a budget of 25000 INR' },
     { icon: 'calendar_month', title: 'Best Time to Visit', desc: 'Seasonal recommendations for any destination', prompt: 'Suggest the best time to visit Rajasthan and why' },
     { icon: 'account_balance_wallet', title: 'Budget Planner', desc: 'Detailed cost breakdown for any trip', prompt: 'Create a budget breakdown for a solo trip to North Goa for 4 days' },
     { icon: 'compare_arrows', title: 'Compare Destinations', desc: 'Side-by-side comparison with recommendations', prompt: 'Compare Manali vs Shimla for a honeymoon trip' },
@@ -81,28 +81,28 @@
     { icon: 'wb_sunny', title: 'Summer Escapes', desc: 'Beat the heat with these cool spots', prompt: 'Suggest the coolest hill stations in India to visit in May with budget breakdown' },
     { icon: 'card_travel', title: 'Solo Travel', desc: 'Safe & exciting solo destinations', prompt: 'Plan a safe solo trip to Spiti Valley with itinerary, stays and safety tips' },
     { icon: 'flight', title: 'Flight Planning', desc: 'Best routes, timing & airline tips', prompt: 'Find the best time to book flights for a Delhi to Goa trip and suggest airlines' },
-    { icon: 'temple_buddhist', title: 'Pilgrimage Trips', desc: 'Sacred journeys across India', prompt: 'Plan a Char Dham Yatra itinerary with routes, stays and essential tips' },
+    { icon: 'temple_buddhist', title: 'Pilgrimage Trips', desc: 'Sacred journeys across the world', prompt: 'Plan a Char Dham Yatra itinerary with routes, stays and essential tips' },
     { icon: 'celebration', title: 'Honeymoon Planner', desc: 'Romantic destinations & experiences', prompt: 'Plan a 6-day honeymoon trip to Andaman with romantic activities and budget' },
     { icon: 'local_florist', title: 'Garden City Trips', desc: 'Botanical gardens & nature walks', prompt: 'Plan a peaceful trip to Munnar and Thekkady with garden and plantation visits' },
     { icon: 'downhill_skiing', title: 'Winter Sports', desc: 'Skiing, snow & adventure', prompt: 'Suggest winter adventure activities in Auli with skiing details and stay options' },
     { icon: 'wallet', title: 'Trip Budgeter', desc: 'AI-powered cost estimation', prompt: 'Create a detailed day-by-day budget for a 5-day trip to Manali for 2 people' },
     { icon: 'hotel', title: 'Hotel Finder', desc: 'Best stays at every price point', prompt: 'Suggest the best boutique hotels in Jaipur under 3000 per night with reviews' },
-    { icon: 'train', title: 'Train Routes', desc: 'Scenic rail journeys across India', prompt: 'Suggest the most scenic train routes in India with class options and booking tips' },
+    { icon: 'train', title: 'Train Routes', desc: 'Scenic rail journeys around the world', prompt: 'Suggest the most scenic train routes in Switzerland with class options and booking tips' },
     { icon: 'local_bar', title: 'Weekend Drinks', desc: 'Winery & brewery tours', prompt: 'Plan a weekend winery tour near Mumbai with tastings and stays' },
     { icon: 'surfing', title: 'Coastal Explorer', desc: 'Beaches, cliffs & coastal drives', prompt: 'Plan a coastal road trip from Goa to Gokarna with beach stops and stays' },
     { icon: 'backpack', title: 'Backpacking Guide', desc: 'Light travel, big adventures', prompt: 'Plan a 10-day backpacking trip across Himachal Pradesh on a tight budget' },
     { icon: 'local_cafe', title: 'Cafe Hopping', desc: 'Best cafe culture destinations', prompt: 'Create a cafe hopping itinerary for Pondicherry with top cafes and beaches' },
     { icon: 'park', title: 'Wildlife Safari', desc: 'Jungle safaris & animal encounters', prompt: 'Plan a wildlife safari trip to Ranthambore with booking tips and best zones' },
     { icon: 'temple_hindu', title: 'Heritage Trail', desc: 'Historic forts, palaces & temples', prompt: 'Suggest a 5-day heritage trail across Rajasthan with must-visit monuments' },
-    { icon: 'restaurant', title: 'Food Trail', desc: 'Best street food routes across India', prompt: 'Create a food trail itinerary for Delhi covering the best street food spots' },
+    { icon: 'restaurant', title: 'Food Trail', desc: 'Best street food routes around the world', prompt: 'Create a food trail itinerary for Delhi covering the best street food spots' },
     { icon: 'beach_access', title: 'Beach Escape', desc: 'Pristine beaches & coastal towns', prompt: 'Suggest the best quiet beaches in Goa for a relaxing 4-day trip' },
     { icon: 'hiking', title: 'Trek Adventure', desc: 'Top trekking routes for all levels', prompt: 'Recommend easy to moderate treks near Manali with trail details and stay options' },
     { icon: 'flight_takeoff', title: 'International Trips', desc: 'Visa, flights & destination guides', prompt: 'Suggest budget-friendly international trips from India with visa requirements' },
-    { icon: 'local_florist', title: 'Wellness Retreat', desc: 'Yoga, meditation & Ayurveda', prompt: 'Plan a 5-day wellness retreat in Rishikesh with yoga and Ayurveda treatments' },
-    { icon: 'castle', title: 'Fort Trail', desc: 'Royal heritage across India', prompt: 'Create a Rajasthan fort trail covering Mehrangarh, Amber, Kumbhalgarh and Chittorgarh' },
+    { icon: 'local_florist', title: 'Wellness Retreat', desc: 'Yoga, meditation & spa', prompt: 'Plan a 5-day wellness retreat in Rishikesh with yoga and Ayurveda treatments' },
+    { icon: 'castle', title: 'Fort Trail', desc: 'Royal heritage across the world', prompt: 'Create a Rajasthan fort trail covering Mehrangarh, Amber, Kumbhalgarh and Chittorgarh' },
     { icon: 'kayaking', title: 'River Adventures', desc: 'Rafting, kayaking & more', prompt: 'Plan a river adventure trip to Rishikesh with rafting, cliff jumping and camping' },
     { icon: 'sports_motorsports', title: 'Epic Drive', desc: 'Self-drive circuits & routes', prompt: 'Plan an epic self-drive circuit from Delhi through Rajasthan covering 5 cities' },
-    { icon: 'scuba_diving', title: 'Scuba Trips', desc: 'Underwater adventures in India', prompt: 'Best scuba diving spots in India with certification options and costs' },
+    { icon: 'scuba_diving', title: 'Scuba Trips', desc: 'Underwater adventures around the world', prompt: 'Best scuba diving spots in India with certification options and costs' },
   ];
 
   const CHIP_POOL = [
