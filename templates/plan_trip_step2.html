@@ -300,6 +300,7 @@
     <canvas id="ks-particles-canvas"></canvas>
 
     {% include 'components/navbar.html' %}
+    {% include 'components/back_button.html' %}
 
     <main style="position:relative;z-index:1;display:flex;align-items:center;justify-content:center;padding:160px 16px 48px;min-height:100vh;flex-direction:column">
         <div class="w-full max-w-4xl">
@@ -711,7 +712,7 @@
                 qp.set('end_date', toYMD(endDate));
                 qp.set('flexible', isFlexible);
 
-                window.location.href = "{{ url_for('main.plan_trip_step2_0') }}?" + qp.toString();
+                window.location.href = "{{ url_for('main.plan_trip_step3') }}?" + qp.toString();
             });
         }
 

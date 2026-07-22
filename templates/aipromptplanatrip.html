@@ -89,14 +89,7 @@
 
     {% include 'components/navbar.html' %}
 
-    <button type="button" onclick="goBackOrPlan()"
-        class="fixed top-20 left-4 md:left-6 z-40 inline-flex items-center justify-center w-9 h-9 rounded-full transition-all duration-300"
-        style="background:#0A0A0A;border:1px solid rgba(255,255,255,0.06);color:#FFFFFF;"
-        onmouseover="this.style.background='#111111';this.style.color='#FFFFFF';"
-        onmouseout="this.style.background='#0A0A0A';this.style.color='#FFFFFF';"
-        aria-label="Go back">
-        <span class="material-symbols-outlined" style="font-size:18px">arrow_back</span>
-    </button>
+    {% include 'components/back_button.html' %}
 
     <main style="position:relative;z-index:1;flex-grow:relative;padding:128px 16px 96px;overflow:hidden">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -163,14 +156,6 @@
     </footer>
 
     <script>
-        function goBackOrPlan() {
-            if (window.history.length > 1) {
-                window.history.back();
-                return;
-            }
-            window.location.href = "{{ url_for('main.plan_trip') }}";
-        }
-
         function fillPreset(text) {
             const promptEl = document.getElementById('trip-prompt');
             promptEl.value = text;
@@ -251,7 +236,7 @@
                 data.interests = urlParams.get('styles');
 
                 sessionStorage.setItem('ai_trip_data', JSON.stringify(data));
-                window.location.href = "{{ url_for('main.plan_trip_step4') }}";
+                window.location.href = "{{ url_for('main.created_itinerary') }}";
             } catch (error) {
                 console.error(error);
                 alert("Failed to generate plan. Please try again.");

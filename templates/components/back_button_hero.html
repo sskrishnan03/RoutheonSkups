@@ -1,9 +1,0 @@
-﻿{% set back_url = fallback_url|default('javascript:void(0)') %}
-<button type="button" onclick="window.location.href = document.referrer || '{{ back_url | safe }}'"
-    class="fixed top-20 left-4 md:left-6 z-40 inline-flex items-center justify-center w-9 h-9 rounded-full transition-all duration-300"
-    style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);color:#FFFFFF;"
-    onmouseover="this.style.background='#111111';this.style.color='#FFFFFF';"
-    onmouseout="this.style.background='#0A0A0A';this.style.color='#FFFFFF';"
-    aria-label="Go back">
-    <span class="material-symbols-outlined text-[18px] md:text-[20px]">arrow_back</span>
-</button>

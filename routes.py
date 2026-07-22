@@ -155,38 +155,86 @@ def _delete_local_profile_image(image_url):
         os.remove(absolute_path)
 
 GLOBAL_PROMPT_DESTINATIONS = [
-    "Goa", "Jaipur", "Udaipur", "Jaisalmer", "Rishikesh", "Manali", "Shimla", "Dharamshala",
-    "Leh", "Srinagar", "Amritsar", "Varanasi", "Agra", "Delhi", "Mumbai", "Pune", "Bengaluru",
-    "Mysuru", "Coorg", "Ooty", "Kodaikanal", "Chennai", "Pondicherry", "Hyderabad", "Hampi",
-    "Kochi", "Munnar", "Alleppey", "Thekkady", "Madurai", "Kolkata", "Darjeeling", "Gangtok",
-    "Kyoto", "Tokyo", "Osaka", "Hiroshima", "Nara", "Hakone",
-    "Paris", "Nice", "Lyon", "Marseille", "Bordeaux", "Strasbourg",
-    "Rome", "Florence", "Venice", "Amalfi", "Cinque Terre", "Milan",
-    "Barcelona", "Madrid", "Seville", "Granada", "Ibiza", "Valencia",
-    "New York", "Los Angeles", "San Francisco", "Las Vegas", "Miami", "Chicago",
-    "Queenstown", "Auckland", "Rotorua", "Wellington",
+    # Italy
+    "Rome", "Florence", "Venice", "Amalfi Coast", "Milan",
+    # Japan
+    "Tokyo", "Kyoto", "Osaka", "Hiroshima", "Hokkaido",
+    # France
+    "Paris", "Nice", "Lyon", "Bordeaux", "Strasbourg",
+    # Spain
+    "Barcelona", "Madrid", "Seville", "Granada", "Ibiza",
+    # United States
+    "New York", "Los Angeles", "San Francisco", "Las Vegas", "Miami",
+    # New Zealand
+    "Queenstown", "Auckland", "Rotorua", "Milford Sound",
+    # Greece
     "Santorini", "Athens", "Mykonos", "Crete",
-    "Zurich", "Interlaken", "Lucerne", "Geneva",
-    "Sydney", "Melbourne", "Brisbane", "Perth",
+    # Switzerland
+    "Zurich", "Interlaken", "Lucerne", "Zermatt",
+    # Australia
+    "Sydney", "Melbourne", "Great Barrier Reef", "Gold Coast",
+    # Thailand
     "Bangkok", "Chiang Mai", "Phuket", "Krabi",
-    "London", "Edinburgh", "Bath", "Oxford",
-    "Toronto", "Vancouver", "Montreal",
-    "Istanbul", "Cappadocia", "Antalya",
-    "Cairo", "Luxor", "Alexandria",
-    "Cape Town", "Johannesburg", "Durban",
-    "Reykjavik", "Bali", "Hanoi", "Ha Long Bay",
-    "Berlin", "Munich", "Hamburg", "Frankfurt",
-    "Seoul", "Busan", "Jeju",
-    "Dubai", "Abu Dhabi", "Amsterdam", "Rotterdam",
+    # United Kingdom
+    "London", "Edinburgh", "Bath", "Lake District",
+    # Canada
+    "Toronto", "Vancouver", "Montreal", "Banff",
+    # Maldives
+    "Malé", "Baa Atoll", "Ari Atoll",
+    # Portugal
+    "Lisbon", "Porto", "Sintra", "Algarve",
+    # Iceland
+    "Reykjavik", "Golden Circle", "Blue Lagoon", "Akureyri",
+    # Brazil
+    "Rio de Janeiro", "Salvador", "São Paulo", "Iguazu Falls",
+    # Costa Rica
+    "San José", "Manuel Antonio", "Monteverde", "La Fortuna",
+    # Mexico
+    "Cancún", "Mexico City", "Tulum", "Oaxaca",
+    # Vietnam
+    "Hanoi", "Ha Long Bay", "Ho Chi Minh City", "Hội An",
+    # Austria
+    "Vienna", "Salzburg", "Hallstatt", "Innsbruck",
+    # Egypt
+    "Cairo", "Luxor", "Aswan", "Sharm El Sheikh",
+    # South Africa
+    "Cape Town", "Kruger National Park", "Johannesburg", "Garden Route",
+    # Norway
+    "Tromsø", "Lofoten Islands", "Bergen", "Oslo",
+    # Turkey
+    "Istanbul", "Cappadocia", "Antalya", "Pamukkale",
+    # Peru
+    "Machu Picchu", "Cusco", "Sacred Valley", "Lima",
+    # Indonesia
+    "Bali", "Komodo Island", "Yogyakarta", "Lombok",
+    # United Arab Emirates
+    "Dubai", "Abu Dhabi", "Palm Jumeirah",
+    # Germany
+    "Berlin", "Munich", "Neuschwanstein", "Hamburg",
+    # South Korea
+    "Seoul", "Busan", "Jeju Island", "Gyeongju",
+    # Netherlands
+    "Amsterdam", "Rotterdam", "The Hague", "Utrecht",
+    # India
+    "Goa", "Jaipur", "Udaipur", "Kerala", "Varanasi",
+    # Croatia
     "Dubrovnik", "Split", "Plitvice Lakes", "Hvar",
-    "Dublin", "Galway", "Cork", "Killarney",
+    # Ireland
+    "Dublin", "Galway", "Cork", "Cliffs of Moher",
+    # Singapore
     "Marina Bay", "Sentosa", "Gardens by the Bay",
-    "Prague", "Cesky Krumlov", "Karlovy Vary", "Brno",
+    # Czech Republic
+    "Prague", "Český Krumlov", "Karlovy Vary",
+    # Sri Lanka
     "Sigiriya", "Kandy", "Galle", "Ella",
+    # Morocco
     "Marrakech", "Fez", "Chefchaouen", "Essaouira",
+    # Argentina
     "Buenos Aires", "Bariloche", "El Calafate", "Ushuaia",
-    "Helsinki", "Rovaniemi", "Levi", "Lapland",
-    "Beijing", "Shanghai", "Xi'an", "Guilin", "Chengdu"
+    # Finland
+    "Helsinki", "Rovaniemi", "Lapland", "Levi",
+    # China
+    "Beijing", "Shanghai", "Xi'an", "Guilin",
 ]
 
 
@@ -829,15 +877,6 @@ def destination_info(name):
     _track_activity(current_user, name, 'view')
     return render_template('destination.html', name=name, data=data, weather=weather)
 
-@main_bp.route('/destination/<name>/chatbot')
-@login_required
-def destination_chatbot(name):
-    data = AIService.get_destination_detail(name)
-    lat = data.get('center_coords', {}).get('lat')
-    lon = data.get('center_coords', {}).get('lng')
-    weather = WeatherService.get_forecast(name, lat=lat, lon=lon)
-    return render_template('aichatbot.html', name=name, data=data, weather=weather)
-
 @main_bp.route('/create-trip')
 @login_required
 def create_trip():
@@ -851,19 +890,6 @@ def plan_trip_step2():
     destination = request.args.get('destination', '')
     return render_template('plan_trip_step2.html', destination=destination)
 
-@main_bp.route('/plan-trip-step2.0')
-@login_required
-def plan_trip_step2_0():
-    destination = request.args.get('destination', '')
-    start_date = request.args.get('start_date', '')
-    end_date = request.args.get('end_date', '')
-    flexible = request.args.get('flexible', 'false')
-    return render_template('plan_trip_step2.0.html', 
-                          destination=destination, 
-                          start_date=start_date, 
-                          end_date=end_date, 
-                          flexible=flexible)
-
 @main_bp.route('/plan-trip-step3')
 @login_required
 def plan_trip_step3():
@@ -871,18 +897,31 @@ def plan_trip_step3():
     start_date = request.args.get('start_date', '')
     end_date = request.args.get('end_date', '')
     flexible = request.args.get('flexible', 'false')
-    styles = request.args.get('styles', '')
     return render_template('plan_trip_step3.html', 
+                          destination=destination, 
+                          start_date=start_date, 
+                          end_date=end_date, 
+                          flexible=flexible)
+
+@main_bp.route('/plan-trip-step4')
+@login_required
+def plan_trip_step4():
+    destination = request.args.get('destination', '')
+    start_date = request.args.get('start_date', '')
+    end_date = request.args.get('end_date', '')
+    flexible = request.args.get('flexible', 'false')
+    styles = request.args.get('styles', '')
+    return render_template('plan_trip_step4.html', 
                           destination=destination, 
                           start_date=start_date, 
                           end_date=end_date, 
                           flexible=flexible,
                           styles=styles)
 
-@main_bp.route('/plan-trip-step4')
+@main_bp.route('/created-itinerary')
 @login_required
-def plan_trip_step4():
-    return render_template('plan_trip_step4.html')
+def created_itinerary():
+    return render_template('created_itinerary.html')
 
 @main_bp.route('/view-trip/<int:trip_id>')
 @login_required
@@ -1599,9 +1638,11 @@ You are knowledgeable about:
 - Best times to visit, weather, and seasonal activities
 - Budget tips and itinerary suggestions
 
+You can also discuss travel in any of the 40 countries supported by RoutheonSkups: Italy, Japan, France, Spain, United States, New Zealand, Greece, Switzerland, Australia, Thailand, United Kingdom, Canada, Maldives, Portugal, Iceland, Brazil, Costa Rica, Mexico, Vietnam, Austria, Egypt, South Africa, Norway, Turkey, Peru, Indonesia, United Arab Emirates, Germany, South Korea, Netherlands, India, Croatia, Ireland, Singapore, Czech Republic, Sri Lanka, Morocco, Argentina, Finland, and China.
+
 Be warm, conversational, and helpful. Use emojis sparingly for friendliness.
 Keep responses concise but informative (2-4 paragraphs max).
-If asked about something unrelated to travel or {destination}, gently redirect to travel topics."""
+If asked about something unrelated to travel, gently redirect to travel topics."""
         
         messages = [{"role": "system", "content": system_prompt}]
         for h in history[-10:]:
@@ -2412,7 +2453,7 @@ def faq_chat():
 
 @main_bp.route('/api/countries')
 def api_countries():
-    """Return all 31 supported countries with metadata."""
+    """Return all 40 supported countries with metadata."""
     from global_countries import COUNTRIES
     countries = []
     for name, data in COUNTRIES.items():

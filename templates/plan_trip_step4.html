@@ -4,17 +4,13 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Trip Itinerary - RoutheonSkups</title>
+    <title>Plan a Trip - Step 4 | RoutheonSkups</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/static/css/charcoal.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
-    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js" defer></script>
     <link rel="stylesheet" href="/static/css/tailwind-output.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -23,6 +19,7 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: #000000;
             color: #FFFFFF;
+            min-height: 100vh;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
@@ -33,12 +30,18 @@
             border-radius: 24px;
             position: relative;
             overflow: hidden;
-            transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s cubic-bezier(0.22,1,0.36,1);
         }
-
-        .glass-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 20px 60px -10px #111111;
+        .stepper-btn {
+            width: 40px; height: 40px; border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; justify-content: center;
+            background: transparent; color: rgba(255,255,255,0.7);
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+        }
+        .stepper-btn:hover {
+            background: #111111;
+            color: #FFFFFF;
         }
         .btn-glass {
             background: #0A0A0A;
@@ -48,14 +51,9 @@
             font-weight: 700;
             cursor: pointer;
             transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
             position: relative;
             overflow: hidden;
         }
-
         .btn-glass:hover {
             background: #0A0A0A;
         }
@@ -63,1303 +61,277 @@
             background: #111111;
             color: #FFFFFF;
             border: 1px solid rgba(255,255,255,0.06);
-            font-weight: 700;
+            border-radius: 9999px;
+            font-weight: 800;
             cursor: pointer;
             transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
             position: relative;
             overflow: hidden;
         }
-
         .btn-primary:hover {
             background: #0A0A0A;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 40px #0A0A0A;
         }
-        .floating-back-btn {
-            position: absolute;
-            top: 7rem;
-            left: 0.75rem;
-            z-index: 80;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            color: rgba(255,255,255,0.7);
-            text-shadow: 0 3px 16px rgba(0, 0, 0, 0.75);
-            transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), color 0.35s cubic-bezier(0.22,1,0.36,1);
-            cursor: pointer;
-            background: none;
-            border: none;
-        }
-        .floating-back-btn:hover {
-            transform: translateY(-2px);
-            color: #ffffff;
-        }
-        @media (min-width: 768px) {
-            .floating-back-btn {
-                top: 7.5rem;
-                left: 1rem;
-            }
-        }
-        .hero-gradient {
-            background: linear-gradient(to top, #000000 0%, rgba(0,0,0,0) 60%);
-        }
-        .plan-chat-shell {
+        .budget-btn {
+            text-align: left;
             background: #0A0A0A;
-            border: 1px solid rgba(255,255,255,0.06);
+            border: 2px solid rgba(255,255,255,0.06);
             border-radius: 24px;
+            padding: 24px;
+            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
-        .plan-chat-header {
+        .budget-btn:hover {
+            box-shadow: 0 10px 40px #0A0A0A;
+        }
+        .budget-btn.active {
+            border-color: #111111;
             background: #0A0A0A;
+            box-shadow: 0 0 0 2px #0A0A0A;
         }
-        .plan-chat-bubble {
-            padding: 16px;
-            font-size: 12px;
-            line-height: 1.6;
-            max-width: 85%;
-            width: fit-content;
-            border-radius: 16px;
+        .step-num {
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 700;
+            transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
         }
-        .plan-chat-bubble.ai {
-            background: #0A0A0A;
-            border: 1px solid rgba(255,255,255,0.06);
-            color: #FFFFFF;
-            border-top-left-radius: 4px;
-            box-shadow: 0 10px 26px rgba(0,0,0,0.1);
-        }
-        .plan-chat-bubble.user {
+        .step-done .step-num {
             background: #0A0A0A;
             border: 1px solid #111111;
-            color: #FFFFFF;
-            margin-left: auto;
-            border-top-right-radius: 4px;
+            color: rgba(255,255,255,0.7);
         }
-        .plan-chat-input {
-            width: 100%;
-            border: none;
-            border-radius: 16px;
-            padding: 12px 48px 12px 16px;
-            font-size: 12px;
-            font-family: 'Inter', sans-serif;
-            color: #FFFFFF;
-            background: #0A0A0A;
-            border: 1px solid rgba(255,255,255,0.06);
-            outline: none;
-        }
-        .plan-chat-input:focus {
-            border-color: rgba(255,255,255,0.15);
-        }
-        .plan-chat-input::placeholder { color: rgba(255,255,255,0.7); }
-        .plan-chat-send-btn {
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 26px;
-            height: 26px;
-            border-radius: 10px;
+        .step-active .step-num {
             background: #111111;
+            border: 1px solid rgba(255,255,255,0.06);
             color: #FFFFFF;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border: none;
-            transition: background 0.35s cubic-bezier(0.22,1,0.36,1);
-        }
-        .plan-chat-send-btn:hover {
-            background: #0A0A0A;
-        }
-        @media print {
-            body.print-plan-itinerary-only {
-                background: #000000 !important;
-            }
-            body.print-plan-itinerary-only > *:not(#plan-itinerary-print-root) {
-                display: none !important;
-            }
-            #plan-itinerary-print-root {
-                display: none;
-            }
-            body.print-plan-itinerary-only #plan-itinerary-print-root {
-                display: block !important;
-                background: #000000 !important;
-                color: #FFFFFF !important;
-                width: 100% !important;
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-            body.print-plan-itinerary-only #plan-itinerary-print-root .print-inner {
-                width: 100%;
-                max-width: 1080px;
-                margin: 0 auto;
-                padding: 0;
-                background: #000000 !important;
-            }
-            body.print-plan-itinerary-only #plan-itinerary-print-root .print-cover-page,
-            body.print-plan-itinerary-only #plan-itinerary-print-root .print-day-page,
-            body.print-plan-itinerary-only #plan-itinerary-print-root .print-total-page {
-                width: 100%;
-                background: #000000 !important;
-                padding: 8px 0;
-            }
-            body.print-plan-itinerary-only #plan-itinerary-print-root .print-cover-page,
-            body.print-plan-itinerary-only #plan-itinerary-print-root .print-day-page {
-                break-after: page !important;
-                page-break-after: always !important;
-            }
-            body.print-plan-itinerary-only #plan-itinerary-print-root img {
-                max-width: 100% !important;
-                page-break-inside: avoid !important;
-            }
-            body.print-plan-itinerary-only #plan-itinerary-print-root section,
-            body.print-plan-itinerary-only #plan-itinerary-print-root .itinerary-activity-card {
-                break-inside: avoid !important;
-                page-break-inside: avoid !important;
-            }
-            @page {
-                size: A4;
-                margin: 12mm;
-            }
         }
     </style>
 </head>
 
-<body class="antialiased">
+<body>
     <div class="ks-cinema-bg"></div>
     <div class="ks-grain"></div>
     <div class="ks-vignette"></div>
     <canvas id="ks-particles-canvas"></canvas>
 
     {% include 'components/navbar.html' %}
+    {% include 'components/back_button.html' %}
 
-    <div class="relative w-full overflow-hidden" style="height:80vh;min-height:700px;margin-top:0">
-        <button type="button" class="floating-back-btn" aria-label="Go back" onclick="goBackOrPlan()">
-            <span class="material-symbols-outlined" style="font-size:42px">arrow_back</span>
-        </button>
-        <img id="hero-image-dynamic" alt="Trip Hero" class="w-full h-full object-cover scale-105"
-            src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2000&auto=format&fit=crop" />
-        <div class="absolute inset-0 hero-gradient"></div>
-        <div class="absolute inset-0 flex flex-col justify-end max-w-[1920px] mx-auto px-12 pb-24 text-white">
-            <div id="hero-pill-dynamic"
-                style="display:inline-flex;align-items:center;padding:6px 16px;border-radius:9999px;background:#0A0A0A;color:#FFFFFF;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.2em;margin-bottom:24px;width:fit-content;border: 1px solid rgba(255,255,255,0.06)">
-                KERALA
+    <main style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;padding:160px 16px 96px;min-height:100vh">
+        <!-- Step Wizard -->
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:48px">
+            <div class="step-done" style="display:flex;align-items:center;gap:8px">
+                <div class="step-num"><span class="material-icons-round" style="font-size:16px">check</span></div>
+                <div style="width:48px;height:2px;background:#0A0A0A;border-radius:1px;margin-left:4px"></div>
             </div>
-            <h1 id="hero-title-dynamic" style="font-size:clamp(3rem,6vw,4.5rem);font-weight:900;letter-spacing:-0.03em;line-height:1.05;margin-bottom:24px;text-shadow:0 4px 30px #111111">Planning Your Journey...</h1>
-            <p id="hero-desc-dynamic" style="font-size:1.25rem;max-width:640px;color:#FFFFFF;font-weight:500;line-height:1.7;text-shadow:0 2px 10px #0A0A0A">
-                We are crafting a cinematic experience tailored just for you.
+            <div class="step-done" style="display:flex;align-items:center;gap:8px">
+                <div class="step-num"><span class="material-icons-round" style="font-size:16px">check</span></div>
+                <div style="width:48px;height:2px;background:#0A0A0A;border-radius:1px;margin-left:4px"></div>
+            </div>
+            <div class="step-done" style="display:flex;align-items:center;gap:8px">
+                <div class="step-num"><span class="material-icons-round" style="font-size:16px">check</span></div>
+                <div style="width:48px;height:2px;background:#111111;border-radius:1px;margin-left:4px"></div>
+            </div>
+            <div class="step-active" style="display:flex;align-items:center">
+                <div class="step-num" style="box-shadow:0 0 20px #0A0A0A">4</div>
+            </div>
+        </div>
+
+        <div class="text-center max-w-2xl mx-auto mb-10">
+            <h1 style="font-size:clamp(2rem,4vw,3rem);font-weight:900;margin-bottom:16px;letter-spacing:-0.03em;color:#FFFFFF">
+                Who is joining you and what is your budget?
+            </h1>
+            <p style="font-size:1.1rem;color:#FFFFFF;font-weight:500">
+                Let's customize your journey based on your travel party and spending style.
             </p>
         </div>
-    </div>
 
-    <main style="max-width:1920px;margin:0 auto;padding:48px;background:#0A0A0A;position:relative;z-index:1">
-        <div class="grid grid-cols-1 lg:grid-cols-3" style="gap:32px 64px">
-            <div class="lg:col-span-2 space-y-12">
-                <div class="flex">
-                    <button id="btn-regenerate-full"
-                        class="btn-glass py-3 px-8 flex items-center gap-3 text-sm" style="border-radius:9999px">
-                        <span class="material-icons-round group-hover:rotate-180 transition-transform duration-500" style="font-size:20px;transition:transform 0.5s">refresh</span>
-                        Regenerate Full Itinerary
-                    </button>
-                </div>
-                <div class="space-y-24" id="plan-itinerary-days">
-                    <div class="flex flex-col items-center justify-center py-32 text-center" style="opacity:0.7">
-                        <span class="material-icons-round animate-spin" style="font-size:48px;color:#FFFFFF;margin-bottom:24px">sync</span>
-                        <h3 style="font-size:1.25rem;font-weight:700;color:#FFFFFF;margin-bottom:8px">Loading Itinerary...</h3>
+        <div class="glass-card w-full max-w-4xl" style="padding:32px 48px">
+            <div class="space-y-12">
+                <!-- Travelers Section -->
+                <section>
+                    <div class="flex items-center gap-3 mb-8">
+                        <div style="width:40px;height:40px;border-radius:12px;background:#0A0A0A;display:flex;align-items:center;justify-content:center">
+                            <span class="material-icons-round" style="color:#FFFFFF">group</span>
+                        </div>
+                        <h2 style="font-size:1.4rem;font-weight:800;color:#FFFFFF">Travelers</h2>
                     </div>
-                </div>
-            </div>
-
-            <aside class="lg:col-span-1 space-y-8">
-                <div class="sticky space-y-8" style="top:112px">
-                    <!-- Route Map -->
-                    <div class="glass-card overflow-hidden group">
-                        <div style="padding:24px;border-bottom: 1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between">
-                            <h3 style="font-size:11px;font-weight:700;color:#FFFFFF;text-transform:uppercase;letter-spacing:0.2em">Route Overview</h3>
-                            <div class="flex items-center gap-4">
-                                <button id="optimize-route-btn" style="font-size:10px;font-weight:700;color:#FFFFFF;padding:4px 12px;background:#0A0A0A;border-radius:9999px;display:flex;align-items:center;gap:4px;cursor:pointer;border: 1px solid rgba(255,255,255,0.06);transition:all 0.25s">
-                                    <span class="material-icons-round" style="font-size:12px">auto_fix_high</span>
-                                    OPTIMIZE
-                                </button>
-                                <span style="font-size:10px;font-weight:700;color:#FFFFFF;display:flex;align-items:center;gap:4px">
-                                    <span style="width:6px;height:6px;background:#0A0A0A;border-radius:50%;animation:pulse 2s infinite"></span>
-                                    LIVE ROUTE
-                                </span>
-                            </div>
-                        </div>
-                        <div style="aspect-ratio:1/1;min-height:400px;width:100%;position:relative;background:#0A0A0A;overflow:hidden">
-                            <div id="route-map" class="absolute inset-0 z-10 w-full h-full"></div>
-                        </div>
-                        <div style="padding:16px;background:#0A0A0A;display:flex;justify-content:space-between;align-items:center">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);border-radius:16px;padding:24px;display:flex;align-items:center;justify-content:space-between">
                             <div>
-                                <span style="font-size:10px;font-weight:700;color:#FFFFFF;text-transform:uppercase;letter-spacing:0.1em">Route Path</span>
-                                <span style="font-size:10px;font-weight:700;color:#FFFFFF;display:flex;align-items:center;gap:4px;margin-top:4px">
-                                    <span class="material-icons-round" style="font-size:12px">route</span>
-                                    <span id="total-distance">-</span> km total
-                                </span>
+                                <h3 style="font-weight:700;font-size:1.1rem;color:#FFFFFF">Adults</h3>
+                                <p style="font-size:13px;color:#FFFFFF;font-weight:500">Ages 13 or above</p>
                             </div>
-                            <span id="destinations-count-label" style="font-size:10px;font-weight:700;color:#FFFFFF;text-transform:uppercase;letter-spacing:0.1em">- Destinations</span>
-                        </div>
-                    </div>
-
-                    <!-- Weather -->
-                    <div class="glass-card" style="padding:32px" id="weather-card">
-                        <h3 style="font-size:11px;font-weight:700;color:#FFFFFF;text-transform:uppercase;letter-spacing:0.2em;margin-bottom:32px" id="weather-title">Destination Weather</h3>
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px">
-                            <div class="flex items-center gap-4">
-                                <div style="width:56px;height:56px;border-radius:16px;background:#0A0A0A;display:flex;align-items:center;justify-content:center">
-                                    <span class="material-icons-round" style="font-size:28px;color:#FFFFFF">wb_sunny</span>
-                                </div>
-                                <div>
-                                    <p style="font-size:1.5rem;font-weight:800" id="weather-current-temp">30°C</p>
-                                    <p style="font-size:12px;color:#FFFFFF;font-weight:600" id="weather-current-condition">Mainly Sunny</p>
-                                </div>
-                            </div>
-                            <div style="text-align:right">
-                                <p style="font-size:11px;font-weight:700;color:#FFFFFF;text-transform:uppercase">humidity</p>
-                                <p style="font-size:14px;font-weight:700" id="weather-current-humidity">72%</p>
+                            <div style="display:flex;align-items:center;gap:20px;background:#0A0A0A;padding:8px;border-radius:9999px;border: 1px solid rgba(255,255,255,0.06)">
+                                <button class="stepper-btn" id="adults-minus">
+                                    <span class="material-icons-round" style="font-size:18px">remove</span>
+                                </button>
+                                <span id="adults-count" style="font-size:1.2rem;font-weight:800;color:#FFFFFF;min-width:24px;text-align:center">2</span>
+                                <button class="stepper-btn" id="adults-plus">
+                                    <span class="material-icons-round" style="font-size:18px">add</span>
+                                </button>
                             </div>
                         </div>
-                        <div class="grid grid-cols-7 gap-1" id="weather-mini-forecast">
-                            <div class="text-center" style="padding:8px;border-radius:12px;background:#0A0A0A">
-                                <p style="font-size:9px;font-weight:700;color:#FFFFFF;margin-bottom:4px">M</p>
-                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">wb_sunny</span>
+                        <div style="background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);border-radius:16px;padding:24px;display:flex;align-items:center;justify-content:space-between">
+                            <div>
+                                <h3 style="font-weight:700;font-size:1.1rem;color:#FFFFFF">Children</h3>
+                                <p style="font-size:13px;color:#FFFFFF;font-weight:500">Ages 2 – 12</p>
                             </div>
-                            <div class="text-center" style="padding:8px">
-                                <p style="font-size:9px;font-weight:700;color:#FFFFFF;margin-bottom:4px">T</p>
-                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">wb_sunny</span>
-                            </div>
-                            <div class="text-center" style="padding:8px">
-                                <p style="font-size:9px;font-weight:700;color:#FFFFFF;margin-bottom:4px">W</p>
-                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">cloud</span>
-                            </div>
-                            <div class="text-center" style="padding:8px">
-                                <p style="font-size:9px;font-weight:700;color:#FFFFFF;margin-bottom:4px">T</p>
-                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">wb_sunny</span>
-                            </div>
-                            <div class="text-center" style="padding:8px">
-                                <p style="font-size:9px;font-weight:700;color:#FFFFFF;margin-bottom:4px">F</p>
-                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">wb_sunny</span>
-                            </div>
-                            <div class="text-center" style="padding:8px">
-                                <p style="font-size:9px;font-weight:700;color:#FFFFFF;margin-bottom:4px">S</p>
-                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">water_drop</span>
-                            </div>
-                            <div class="text-center" style="padding:8px">
-                                <p style="font-size:9px;font-weight:700;color:#FFFFFF;margin-bottom:4px">S</p>
-                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">wb_sunny</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- AI Chat -->
-                    <div class="plan-chat-shell overflow-hidden">
-                        <div class="plan-chat-header" style="padding:24px;border-bottom: 1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between">
-                            <div class="flex items-center gap-3">
-                                <div style="width:40px;height:40px;border-radius:12px;background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center">
-                                    <span class="material-symbols-outlined" style="font-size:20px;color:#FFFFFF">smart_toy</span>
-                                </div>
-                                <div>
-                                    <p style="font-size:14px;font-weight:700">Skupheon AI</p>
-                                    <p style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#FFFFFF">Online</p>
-                                </div>
-                            </div>
-                            <button style="width:32px;height:32px;border-radius:50%;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;transition:background 0.2s">
-                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">more_horiz</span>
-                            </button>
-                        </div>
-                        <div id="plan-chat-messages" style="height:256px;padding:24px;display:flex;flex-direction:column;gap:16px;overflow-y:auto;background:#0A0A0A">
-                            <div class="plan-chat-bubble ai">
-                                <p id="trip-chat-default-assistant" style="font-size:12px;line-height:1.6;color:#FFFFFF">Hi! I have optimized your trip. Ask me to refine activities, timing, routes, or weather-based changes.</p>
-                            </div>
-                            <div class="plan-chat-bubble user">
-                                <p id="trip-chat-default-user" style="font-size:12px;line-height:1.6">Suggest the best evening plan for this destination.</p>
-                            </div>
-                        </div>
-                        <div style="padding:16px;background:#0A0A0A;border-top: 1px solid rgba(255,255,255,0.06)">
-                            <div class="relative">
-                                <input class="plan-chat-input" placeholder="Ask AI anything..." type="text" />
-                                <button class="plan-chat-send-btn">
-                                    <span class="material-icons-round" style="font-size:12px">arrow_upward</span>
+                            <div style="display:flex;align-items:center;gap:20px;background:#0A0A0A;padding:8px;border-radius:9999px;border: 1px solid rgba(255,255,255,0.06)">
+                                <button class="stepper-btn" id="children-minus">
+                                    <span class="material-icons-round" style="font-size:18px">remove</span>
+                                </button>
+                                <span id="children-count" style="font-size:1.2rem;font-weight:800;color:#FFFFFF;min-width:24px;text-align:center">0</span>
+                                <button class="stepper-btn" id="children-plus">
+                                    <span class="material-icons-round" style="font-size:18px">add</span>
                                 </button>
                             </div>
                         </div>
                     </div>
+                </section>
 
-                    <!-- Save Actions -->
-                    <div class="grid grid-cols-1 gap-4">
-                        <button id="save-itinerary-btn"
-                            class="btn-primary w-full py-5 rounded-2xl flex items-center justify-center gap-3 font-bold" style="box-shadow:0 10px 40px #0A0A0A">
-                            <span class="material-icons-round" style="font-size:20px" id="save-icon">bookmark</span>
-                            <span id="save-text">Save Itinerary</span>
+                <!-- Budget Section -->
+                <section>
+                    <div class="flex items-center gap-3 mb-8">
+                        <div style="width:40px;height:40px;border-radius:12px;background:#0A0A0A;display:flex;align-items:center;justify-content:center">
+                            <span class="material-icons-round" style="font-size:24px;color:#FFFFFF">account_balance_wallet</span>
+                        </div>
+                        <h2 style="font-size:1.4rem;font-weight:800;color:#FFFFFF">Budget Level</h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="budget-options">
+                        <button data-budget="Economy"
+                            class="budget-btn">
+                            <div class="check-icon" style="position:absolute;top:16px;right:16px;display:none">
+                                <div style="width:24px;height:24px;border-radius:50%;background:#111111;display:flex;align-items:center;justify-content:center">
+                                    <span class="material-icons-round" style="font-size:16px;color:#FFFFFF">check</span>
+                                </div>
+                            </div>
+                            <div style="margin-bottom:16px;color:#FFFFFF">
+                                <span class="material-icons-round" style="font-size:28px">payments</span>
+                            </div>
+                            <h3 style="font-weight:800;font-size:1.2rem;margin-bottom:8px;color:#FFFFFF">Economy</h3>
+                            <p style="font-size:13px;color:#FFFFFF;line-height:1.6">Focus on value, street food, hostels, and local transport.</p>
+                            <div style="margin-top:16px;display:flex;gap:4px">
+                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">currency_rupee</span>
+                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">currency_rupee</span>
+                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">currency_rupee</span>
+                            </div>
                         </button>
-                        <div class="grid grid-cols-2 gap-4">
-                            <button id="btn-save-plan-pdf"
-                                class="btn-glass py-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2" style="border-radius:16px">
-                                <span class="material-icons-round" style="font-size:18px;color:#FFFFFF">picture_as_pdf</span>
-                                Save PDF
-                            </button>
-                            <button onclick="navigator.clipboard.writeText(window.location.href); alert('Link copied to clipboard!')"
-                                class="btn-glass py-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2" style="border-radius:16px">
-                                <span class="material-icons-round" style="font-size:18px;color:#FFFFFF">ios_share</span>
-                                Share
-                            </button>
-                        </div>
+                        <button data-budget="Comfort"
+                            class="budget-btn active">
+                            <div class="check-icon" style="position:absolute;top:16px;right:16px">
+                                <div style="width:24px;height:24px;border-radius:50%;background:#111111;display:flex;align-items:center;justify-content:center">
+                                    <span class="material-icons-round" style="font-size:16px;color:#FFFFFF">check</span>
+                                </div>
+                            </div>
+                            <div style="margin-bottom:16px;color:#FFFFFF">
+                                <span class="material-icons-round" style="font-size:28px">king_bed</span>
+                            </div>
+                            <h3 style="font-weight:800;font-size:1.2rem;margin-bottom:8px;color:#FFFFFF">Comfort</h3>
+                            <p style="font-size:13px;color:#FFFFFF;line-height:1.6">Balanced trip with 3-4 star hotels, varied dining, and convenience.</p>
+                            <div style="margin-top:16px;display:flex;gap:4px">
+                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">currency_rupee</span>
+                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">currency_rupee</span>
+                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">currency_rupee</span>
+                            </div>
+                        </button>
+                        <button data-budget="Luxury"
+                            class="budget-btn">
+                            <div class="check-icon" style="position:absolute;top:16px;right:16px;display:none">
+                                <div style="width:24px;height:24px;border-radius:50%;background:#111111;display:flex;align-items:center;justify-content:center">
+                                    <span class="material-icons-round" style="font-size:16px;color:#FFFFFF">check</span>
+                                </div>
+                            </div>
+                            <div style="margin-bottom:16px;color:#FFFFFF">
+                                <span class="material-icons-round" style="font-size:28px">diamond</span>
+                            </div>
+                            <h3 style="font-weight:800;font-size:1.2rem;margin-bottom:8px;color:#FFFFFF">Luxury</h3>
+                            <p style="font-size:13px;color:#FFFFFF;line-height:1.6">High-end experiences, 5-star stays, and private transfers.</p>
+                            <div style="margin-top:16px;display:flex;gap:4px">
+                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">currency_rupee</span>
+                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">currency_rupee</span>
+                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">currency_rupee</span>
+                            </div>
+                        </button>
                     </div>
+                </section>
+            </div>
+        </div>
 
-                    <!-- Budget -->
-                    <div class="glass-card" style="padding:32px">
-                        <div class="flex justify-between items-center" style="margin-bottom:32px">
-                            <h3 style="font-size:11px;font-weight:700;color:#FFFFFF;text-transform:uppercase;letter-spacing:0.2em">Trip Budget</h3>
-                            <span style="padding:4px 12px;background:#0A0A0A;border: 1px solid rgba(255,255,255,0.06);font-size:10px;font-weight:700;border-radius:8px;text-transform:uppercase;letter-spacing:0.1em;color:#FFFFFF">Estimated</span>
-                        </div>
-                        <div style="display:flex;flex-direction:column;gap:24px">
-                            <div class="flex items-center justify-between">
-                                <span style="font-size:14px;font-weight:500;color:#FFFFFF">Adults</span>
-                                <div class="flex items-center gap-4">
-                                    <button id="trip-budget-adults-minus"
-                                        class="btn-glass" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;font-size:14px">-</button>
-                                    <span style="font-weight:700" id="trip-budget-adults-count">2</span>
-                                    <button id="trip-budget-adults-plus"
-                                        class="btn-glass" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;font-size:14px">+</button>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span style="font-size:14px;font-weight:500;color:#FFFFFF">Children</span>
-                                <div class="flex items-center gap-4">
-                                    <button id="trip-budget-children-minus"
-                                        class="btn-glass" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;font-size:14px">-</button>
-                                    <span style="font-weight:700" id="trip-budget-children-count">0</span>
-                                    <button id="trip-budget-children-plus"
-                                        class="btn-glass" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;font-size:14px">+</button>
-                                </div>
-                            </div>
-                            <div style="padding-top:24px;border-top: 1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;gap:12px">
-                                <div class="flex justify-between" style="font-size:11px;font-weight:700;color:#FFFFFF;text-transform:uppercase;letter-spacing:0.1em">
-                                    <span>Activities</span>
-                                    <span id="preview-activities">$0</span>
-                                </div>
-                                <div class="flex justify-between" style="font-size:11px;font-weight:700;color:#FFFFFF;text-transform:uppercase;letter-spacing:0.1em">
-                                    <span>Stay & Food</span>
-                                    <span id="preview-stay-food">$0</span>
-                                </div>
-                                <div style="padding-top:12px;border-top: 1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between;align-items:flex-end">
-                                    <span style="font-size:11px;color:#FFFFFF;font-weight:700;text-transform:uppercase;letter-spacing:0.1em">Total Est.</span>
-                                    <span style="font-size:1.8rem;font-weight:900;color:#FFFFFF" id="preview-total">$0</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </aside>
+        <div class="w-full max-w-4xl mt-10 flex items-center justify-between">
+            <button onclick="history.back()"
+                class="btn-glass flex items-center gap-2"
+                style="padding:14px 32px">
+                <span class="material-icons-round" style="font-size:20px">arrow_back</span> Back
+            </button>
+            <button id="generate-itinerary-btn"
+                class="btn-primary flex items-center gap-3"
+                style="padding:16px 40px;box-shadow:0 10px 40px #0A0A0A">
+                <span>Generate Itinerary</span>
+                <span class="material-symbols-outlined" style="font-weight:700">auto_awesome</span>
+            </button>
         </div>
     </main>
 
-    {% include 'components/footer.html' %}
+    <footer style="padding:32px 0;border-top: 1px solid rgba(255,255,255,0.06);margin-top:auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p style="font-size:12px;color:#FFFFFF;text-transform:uppercase;letter-spacing:0.12em;font-weight:700">
+                Step 4 of 4 • Plan Your Journey
+            </p>
+        </div>
+    </footer>
 
     <script>
-        function goBackOrPlan() {
-            if (window.history.length > 1) {
-                window.history.back();
-                return;
-            }
-            window.location.href = "{{ url_for('main.plan_trip') }}";
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
-            let routeMapInstance = null;
-            let routePolyline = null;
-            let routeMarkers = [];
-            let currentDestinationName = 'your destination';
-            let budgetPartyAdults = 2;
-            let budgetPartyChildren = 0;
-            let budgetLevel = 'Comfort';
-            let latestActTotal = 0;
-            let latestHasInr = true;
+            let adults = 2;
+            let children = 0;
+            let selectedBudget = 'Comfort';
 
-            function safeNumber(value, fallback = 0) {
-                const n = Number(value);
-                return Number.isFinite(n) ? n : fallback;
-            }
+            const adultsCountEl = document.getElementById('adults-count');
+            const childrenCountEl = document.getElementById('children-count');
 
-            function getBudgetFactor(level) {
-                const normalized = String(level || '').toLowerCase();
-                if (normalized === 'economy') return 0.8;
-                if (normalized === 'luxury') return 1.8;
-                return 1;
-            }
-
-            function refreshBudgetPreview(daysCount = 0) {
-                const currency = latestHasInr ? '₹' : '$';
-                const baseStayFoodPerDay = latestHasInr ? 4500 : 150;
-                const partyWeight = budgetPartyAdults + (budgetPartyChildren * 0.65);
-                const effectiveParty = Math.max(1, partyWeight);
-                const budgetFactor = getBudgetFactor(budgetLevel);
-                const stayFoodTotal = Math.round(baseStayFoodPerDay * daysCount * effectiveParty * budgetFactor);
-                const activityTotal = Math.round(latestActTotal * effectiveParty);
-                const grandTotal = activityTotal + stayFoodTotal;
-
-                document.getElementById('preview-activities').innerText = currency + activityTotal.toLocaleString();
-                document.getElementById('preview-stay-food').innerText = currency + stayFoodTotal.toLocaleString();
-                document.getElementById('preview-total').innerText = currency + grandTotal.toLocaleString();
-            }
-
-            function bindBudgetPartyControls(daysCountProvider) {
-                const adultsMinus = document.getElementById('trip-budget-adults-minus');
-                const adultsPlus = document.getElementById('trip-budget-adults-plus');
-                const childrenMinus = document.getElementById('trip-budget-children-minus');
-                const childrenPlus = document.getElementById('trip-budget-children-plus');
-                const adultsCountEl = document.getElementById('trip-budget-adults-count');
-                const childrenCountEl = document.getElementById('trip-budget-children-count');
-
-                function paintCounts() {
-                    adultsCountEl.textContent = String(budgetPartyAdults);
-                    childrenCountEl.textContent = String(budgetPartyChildren);
-                }
-
-                function persistPartyToSession() {
-                    try {
-                        const raw = sessionStorage.getItem('ai_trip_data');
-                        if (!raw) return;
-                        const parsed = JSON.parse(raw);
-                        parsed.adults = budgetPartyAdults;
-                        parsed.children = budgetPartyChildren;
-                        sessionStorage.setItem('ai_trip_data', JSON.stringify(parsed));
-                    } catch (_) {}
-                }
-
-                adultsMinus.addEventListener('click', () => {
-                    if (budgetPartyAdults > 1) budgetPartyAdults -= 1;
-                    paintCounts();
-                    persistPartyToSession();
-                    refreshBudgetPreview(daysCountProvider());
-                });
-                adultsPlus.addEventListener('click', () => {
-                    budgetPartyAdults += 1;
-                    paintCounts();
-                    persistPartyToSession();
-                    refreshBudgetPreview(daysCountProvider());
-                });
-                childrenMinus.addEventListener('click', () => {
-                    if (budgetPartyChildren > 0) budgetPartyChildren -= 1;
-                    paintCounts();
-                    persistPartyToSession();
-                    refreshBudgetPreview(daysCountProvider());
-                });
-                childrenPlus.addEventListener('click', () => {
-                    budgetPartyChildren += 1;
-                    paintCounts();
-                    persistPartyToSession();
-                    refreshBudgetPreview(daysCountProvider());
-                });
-
-                paintCounts();
-            }
-
-            const dataStr = sessionStorage.getItem('ai_trip_data');
-            if (dataStr) {
-                try {
-                    const data = JSON.parse(dataStr);
-                    sessionStorage.setItem('ai_trip_data', JSON.stringify(data));
-
-                    const heroTitle = document.querySelector('h1.text-7xl') || document.getElementById('hero-title-dynamic');
-                    if (heroTitle && data.duration && data.destination) {
-                        heroTitle.innerHTML = `${data.duration} Immersive Journey <br />through ${data.destination}`;
-                    }
-                    if (data.destination) {
-                        currentDestinationName = data.destination;
-                    }
-
-                    const heroSubtitle = document.querySelector('p.text-xl.max-w-2xl') || document.getElementById('hero-desc-dynamic');
-                    if (heroSubtitle && data.tagline) {
-                        heroSubtitle.innerText = data.tagline;
-                    }
-
-                    const heroImg = document.getElementById('hero-image-dynamic');
-                    const defaultImage = "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2000&auto=format&fit=crop";
-
-                    const pill = document.getElementById('hero-pill-dynamic');
-                    if (pill && data.destination) {
-                        pill.innerText = data.destination;
-                    }
-
-                    const weatherTitle = document.getElementById('weather-title');
-                    if (weatherTitle && data.destination) {
-                        weatherTitle.textContent = `${data.destination} Weather`;
-                    }
-                    const defaultAssistant = document.getElementById('trip-chat-default-assistant');
-                    if (defaultAssistant && data.destination) {
-                        defaultAssistant.textContent = `Hi! I've optimized your ${data.destination} trip. Ask me to refine activities, timings, routes, or weather-based changes.`;
-                    }
-                    const defaultUser = document.getElementById('trip-chat-default-user');
-                    if (defaultUser && data.destination) {
-                        defaultUser.textContent = `Suggest the best evening plan in ${data.destination}.`;
-                    }
-
-                    if (heroImg && data.destination) {
-                        const imageToLoad = data.hero_image || data.image_url || defaultImage;
-                        heroImg.src = imageToLoad;
-
-                        heroImg.onerror = function() {
-                            if (this.src !== defaultImage) {
-                                this.src = defaultImage;
-                            }
-                        };
-
-                        fetch('/api/destination-hero?name=' + encodeURIComponent(data.destination))
-                            .then(res => {
-                                if (!res.ok) {
-                                    if (res.status === 401 || res.status === 403) {
-                                        window.location.href = '/login';
-                                        return;
-                                    }
-                                    throw new Error(`Server error (${res.status})`);
-                                }
-                                return res.json();
-                            })
-                            .then(heroData => {
-                                if (heroData && heroData.url) {
-                                    if (!heroData.url.includes('1469854523086')) {
-                                        heroImg.src = heroData.url;
-                                    }
-                                }
-                            }).catch(e => console.error('Hero fetch failed:', e));
-
-                        loadDestinationWeather(data.destination);
-                    }
-
-                    if (data.destination) {
-                        document.title = `${data.duration} ${data.destination} Itinerary - RoutheonSkups`;
-                    }
-                    budgetPartyAdults = Math.max(1, safeNumber(data.adults, 2));
-                    budgetPartyChildren = Math.max(0, safeNumber(data.children, 0));
-                    budgetLevel = data.budget || 'Comfort';
-
-                    const daysContainer = document.querySelector('.space-y-24');
-                    if (daysContainer && data.itinerary && Array.isArray(data.itinerary)) {
-
-                        let html = '';
-                        let totalDestinations = 0;
-
-                        data.itinerary.forEach((day, index) => {
-                            const dayNumber = day.day || (index + 1);
-                            let activitiesHtml = '';
-                            if (day.activities && Array.isArray(day.activities)) {
-                                day.activities.forEach((act, actIndex) => {
-                                    totalDestinations++;
-                                    const imgUrl = act.image_url || "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=1000&auto=format&fit=crop";
-                                    const activityKey = `${dayNumber}-${actIndex}`;
-
-                                    activitiesHtml += `
-                                    <div class="glass-card p-3 group itinerary-activity-card" data-activity-key="${activityKey}" id="activity-card-${activityKey}">
-                                        <div style="aspect-ratio:16/10;border-radius:1.5rem;overflow:hidden;margin-bottom:24px;position:relative">
-                                            <img alt="${act.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="${imgUrl}" />
-                                            <div style="position:absolute;top:12px;right:12px;width:32px;height:32px;background:#0A0A0A;border-radius:50%;display:flex;align-items:center;justify-content:center;border: 1px solid rgba(255,255,255,0.06);transition:all 0.3s" class="group-hover:bg-white/10">
-                                                <span class="material-icons-round" style="font-size:14px;color:#FFFFFF">${act.icon || 'explore'}</span>
-                                            </div>
-                                        </div>
-                                        <div style="padding:0 20px 24px">
-                                            <div class="flex items-center gap-2" style="margin-bottom:12px">
-                                                <span class="material-symbols-outlined" style="font-size:14px;color:#FFFFFF">schedule</span>
-                                                <span style="font-size:12px;font-weight:700;color:#FFFFFF">Time: ${act.time}</span>
-                                            </div>
-                                            <h3 style="font-size:1.25rem;font-weight:800;margin-bottom:8px;color:#FFFFFF" class="group-hover:text-white transition-colors">${act.name}</h3>
-                                            <p style="font-size:14px;color:#FFFFFF;line-height:1.6;margin-bottom:16px">${act.description}</p>
-                                            ${(act.estimated_cost_inr || act.estimated_cost_usd) ? `
-                                            <div class="flex items-center gap-2" style="padding-top:16px;border-top: 1px solid rgba(255,255,255,0.06)">
-                                                <span class="material-symbols-outlined" style="font-size:12px;color:#FFFFFF">payments</span>
-                                                <span style="font-size:10px;font-weight:700;color:#FFFFFF;text-transform:uppercase">EST. COST:
-                                                    ${act.estimated_cost_inr ? '₹' + act.estimated_cost_inr : '$' + act.estimated_cost_usd}
-                                                </span>
-                                            </div>
-                                            ` : ''}
-                                        </div>
-                                    </div>
-                                    `;
-                                });
-                            }
-
-                            html += `
-                            <section class="space-y-10">
-                                <div class="flex items-center gap-6">
-                                    <h2 style="font-size:1.75rem;font-weight:900;color:#FFFFFF;white-space:nowrap">Day ${dayNumber}: ${day.theme}</h2>
-                                    <div style="height:1px;flex:1;background:#0A0A0A"></div>
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    ${activitiesHtml}
-                                </div>
-                            </section>
-                            `;
-                        });
-
-                        daysContainer.innerHTML = html;
-
-                        let actTotal = 0;
-                        let hasInr = false;
-                        data.itinerary.forEach(day => {
-                            day.activities.forEach(act => {
-                                actTotal += (act.estimated_cost_inr || act.estimated_cost_usd || 0);
-                                if (act.estimated_cost_inr) hasInr = true;
-                            });
-                        });
-
-                        const currency = hasInr ? '₹' : '$';
-                        latestActTotal = actTotal;
-                        latestHasInr = hasInr;
-                        refreshBudgetPreview(data.itinerary.length);
-
-                        initRouteMap(data);
-                    }
-                } catch (e) {
-                    console.error("Error parsing itinerary data:", e);
-                }
-            }
-
-            bindBudgetPartyControls(() => {
-                try {
-                    const raw = sessionStorage.getItem('ai_trip_data');
-                    if (!raw) return 0;
-                    const parsed = JSON.parse(raw);
-                    return Array.isArray(parsed.itinerary) ? parsed.itinerary.length : 0;
-                } catch (_) {
-                    return 0;
-                }
+            document.getElementById('adults-minus').addEventListener('click', () => {
+                if (adults > 1) { adults--; adultsCountEl.innerText = adults; }
+            });
+            document.getElementById('adults-plus').addEventListener('click', () => {
+                adults++; adultsCountEl.innerText = adults;
             });
 
-            function getWeatherDayLabel(dayItem) {
-                if (dayItem?.date_label && String(dayItem.date_label).trim()) {
-                    return String(dayItem.date_label).trim().slice(0, 3).toUpperCase();
-                }
-                if (dayItem?.date) {
-                    const dt = new Date(dayItem.date);
-                    if (!Number.isNaN(dt.getTime())) {
-                        return dt.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
-                    }
-                }
-                return '--';
-            }
+            document.getElementById('children-minus').addEventListener('click', () => {
+                if (children > 0) { children--; childrenCountEl.innerText = children; }
+            });
+            document.getElementById('children-plus').addEventListener('click', () => {
+                children++; childrenCountEl.innerText = children;
+            });
 
-            async function loadDestinationWeather(destination) {
-                if (!destination) return;
-                try {
-                    const res = await fetch(`/api/destination-weather?name=${encodeURIComponent(destination)}`);
-                    const data = await res.json();
-                    if (!res.ok || !data || !data.forecast || !Array.isArray(data.forecast.forecastday) || !data.forecast.forecastday.length) {
-                        return;
-                    }
-
-                    const today = data.forecast.forecastday[0];
-                    const tempEl = document.getElementById('weather-current-temp');
-                    const condEl = document.getElementById('weather-current-condition');
-                    const humEl = document.getElementById('weather-current-humidity');
-                    const miniEl = document.getElementById('weather-mini-forecast');
-
-                    if (tempEl) tempEl.textContent = `${today.day.avgtemp_c}°C`;
-                    if (condEl) condEl.textContent = today.day.condition.text || 'Weather';
-                    if (humEl) humEl.textContent = `${today.day.humidity}%`;
-
-                    if (miniEl) {
-                        miniEl.innerHTML = data.forecast.forecastday.slice(0, 7).map((d, i) => `
-                            <div class="text-center" style="padding:8px 4px;${i === 0 ? 'border-radius:12px;background:#0A0A0A' : ''}">
-                                <p style="font-size:9px;font-weight:700;color:#FFFFFF;margin-bottom:4px">${getWeatherDayLabel(d)}</p>
-                                <img src="${d.day.condition.icon}" alt="${d.day.condition.text || 'weather'}" style="width:14px;height:14px;margin:0 auto 4px;display:block" />
-                                <p style="font-size:10px;font-weight:800;color:#FFFFFF;line-height:1">${d.day.avgtemp_c}°</p>
-                                <p style="font-size:8px;color:#FFFFFF;line-height:1.3;margin-top:4px">${d.day.condition.text || ''}</p>
-                            </div>
-                        `).join('');
-                    }
-                } catch (e) {
-                    console.warn('Weather load failed:', e);
-                }
-            }
-            function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
-                const R = 6371;
-                const dLat = (lat2 - lat1) * Math.PI / 180;
-                const dLon = (lon2 - lon1) * Math.PI / 180;
-                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                return R * c;
-            }
-
-            function optimizeRouteDijkstra(data) {
-                if (!data.itinerary || data.itinerary.length === 0) return data;
-
-                let allActivities = [];
-                data.itinerary.forEach(day => {
-                    if (day.activities) {
-                        day.activities.forEach(act => {
-                            const parsedLatLng = parseLatLngFromItem(act);
-                            if (parsedLatLng) {
-                                allActivities.push({ ...act, originalDay: day.day, lat: parsedLatLng[0], lng: parsedLatLng[1] });
-                            }
-                        });
-                    }
-                });
-
-                if (allActivities.length <= 1) return data;
-
-                let optimized = [];
-                let unvisited = [...allActivities];
-
-                let current = unvisited.shift();
-                optimized.push(current);
-
-                while (unvisited.length > 0) {
-                    let closestIndex = -1;
-                    let minDistance = Infinity;
-
-                    for (let i = 0; i < unvisited.length; i++) {
-                        let dist = calculateHaversineDistance(
-                            current.lat, current.lng,
-                            unvisited[i].lat, unvisited[i].lng
-                        );
-                        if (dist < minDistance) {
-                            minDistance = dist;
-                            closestIndex = i;
-                        }
-                    }
-
-                    current = unvisited.splice(closestIndex, 1)[0];
-                    optimized.push(current);
-                }
-
-                let actsPerDay = Math.ceil(optimized.length / data.itinerary.length);
-                data.itinerary.forEach((day, i) => {
-                    day.activities = optimized.slice(i * actsPerDay, (i + 1) * actsPerDay);
-                });
-
-                return data;
-            }
-
-            function escapeHtml(value) {
-                return String(value || '')
-                    .replace(/&/g, '&amp;')
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
-                    .replace(/"/g, '&quot;')
-                    .replace(/'/g, '&#39;');
-            }
-
-            function buildRoutePopupCard(item, fallbackCategory) {
-                const placeName = item.name || item.title || 'Destination Spot';
-                const category = item.category || item.tag || fallbackCategory || 'Nature / Exploration';
-                const description = item.description || item.summary || `Explore ${placeName} with route-optimized recommendations.`;
-                const bestTime = item.best_time || item.time || 'Morning / Afternoon / Evening';
-                const duration = item.duration || item.duration_required || '1.5 - 2 hours';
-                const imageUrl = item.image_url || (Array.isArray(item.images) && item.images[0]) || 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=900&q=80';
-
-                return `
-                    <div style="width:260px;border-radius:14px;overflow:hidden;background:#0A0A0A;box-shadow:0 12px 28px #0A0A0A;font-family:Inter,system-ui,sans-serif">
-                        <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(placeName)}" style="width:100%;height:120px;object-fit:cover" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=900&q=80'" />
-                        <div style="padding:10px 12px">
-                            <h4 style="margin:0 0 2px 0;font-size:15px;font-weight:800;color:#FFFFFF">${escapeHtml(placeName)}</h4>
-                            <p style="margin:0 0 8px 0;font-size:11px;font-weight:700;color:#888888">Category: ${escapeHtml(category)}</p>
-                            <p style="margin:0 0 9px 0;font-size:11px;line-height:1.45;color:#BBBBBB">${escapeHtml(description)}</p>
-                            <div style="display:flex;justify-content:space-between;gap:8px">
-                                <div style="font-size:10px;color:#BBBBBB"><span style="font-weight:700">Best time:</span> ${escapeHtml(bestTime)}</div>
-                                <div style="font-size:10px;color:#BBBBBB;text-align:right"><span style="font-weight:700">⏱</span> ${escapeHtml(duration)}</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-
-            function parseLatLngFromItem(item) {
-                if (!item) return null;
-                const direct = [parseFloat(item.lat), parseFloat(item.lng)];
-                if (Number.isFinite(direct[0]) && Number.isFinite(direct[1])) return direct;
-                if (Array.isArray(item.coords) && item.coords.length >= 2) {
-                    const lat = parseFloat(item.coords[0]);
-                    const lng = parseFloat(item.coords[1]);
-                    if (Number.isFinite(lat) && Number.isFinite(lng)) return [lat, lng];
-                }
-                if (typeof item.coords === 'string') {
-                    const parts = item.coords.split(',').map(v => parseFloat(v.trim()));
-                    if (parts.length >= 2 && Number.isFinite(parts[0]) && Number.isFinite(parts[1])) return [parts[0], parts[1]];
-                }
-                return null;
-            }
-
-            function scrollToActivityCard(activityKey) {
-                if (!activityKey) return;
-                const selector = `[data-activity-key="${activityKey}"]`;
-                const card = document.querySelector(selector);
-                if (!card) return;
-                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                card.style.boxShadow = '0 0 0 2px #0A0A0A';
-                setTimeout(() => {
-                    card.style.boxShadow = '';
-                }, 1800);
-            }
-
-            function spreadOverlappingLatLng(latlng, dedupeMap, step) {
-                const key = `${latlng[0].toFixed(5)},${latlng[1].toFixed(5)}`;
-                const used = dedupeMap.get(key) || 0;
-                dedupeMap.set(key, used + 1);
-                if (used === 0) return latlng;
-                const angle = used * 1.7;
-                const delta = step * used;
-                return [
-                    latlng[0] + Math.sin(angle) * delta,
-                    latlng[1] + Math.abs(Math.cos(angle) * delta * 0.4)
-                ];
-            }
-
-            function getDisplayLatLngForActivity(act, center, index, dedupeMap) {
-                const parsedLatLng = parseLatLngFromItem(act);
-                if (parsedLatLng) {
-                    return {
-                        display: spreadOverlappingLatLng(parsedLatLng, dedupeMap, 0.00035),
-                        raw: parsedLatLng
-                    };
-                }
-
-                const radius = 0.003 + (index * 0.0008);
-                const angle = index * 1.45;
-                const fallback = [
-                    center[0] + Math.sin(angle) * radius,
-                    center[1] + Math.abs(Math.cos(angle) * radius * 0.5)
-                ];
-                return {
-                    display: spreadOverlappingLatLng(fallback, dedupeMap, 0.00035),
-                    raw: fallback
-                };
-            }
-
-            function addRoute(map, waypoints, color) {
-                if (!waypoints || waypoints.length < 2) return;
-                if (typeof L.Routing === 'undefined') {
-                    L.polyline(waypoints, { color: color || '#FFFFFF', weight: 4, opacity: 0.3, dashArray: '10, 10' }).addTo(map);
-                    return;
-                }
-                try {
-                    const routingControl = L.Routing.control({
-                        waypoints: waypoints.map(wp => L.latLng(wp[0], wp[1])),
-                        routeWhileDragging: false,
-                        addWaypoints: false,
-                        draggableWaypoints: false,
-                        fitSelectedRoutes: false,
-                        show: false,
-                        createMarker: () => null,
-                        lineOptions: {
-                            styles: [{ color: color || '#FFFFFF', weight: 5, opacity: 0.4 }]
-                        },
-                        router: L.Routing.osrmv1({
-                            serviceUrl: 'https://router.project-osrm.org/route/v1'
-                        })
-                    }).addTo(map);
-                    routingControl.on('routesfound', function() {
-                        const container = document.querySelector('.leaflet-routing-container');
-                        if (container) container.style.display = 'none';
-                    });
-                } catch(e) {
-                    console.warn('Routing failed, falling back to polyline:', e);
-                    L.polyline(waypoints, { color: color || '#FFFFFF', weight: 4, opacity: 0.3, dashArray: '10, 10' }).addTo(map);
-                }
-            }
-
-            function initRouteMap(data) {
-                if (!data.itinerary) return;
-
-                const mapElement = document.getElementById('route-map');
-                if (!mapElement) return;
-
-                if (routeMapInstance) {
-                    routeMapInstance.remove();
-                }
-
-                let center = [28.6139, 77.2090];
-                if (data.center_coords) {
-                    center = [data.center_coords.lat, data.center_coords.lng];
-                }
-
-                try {
-                    routeMapInstance = L.map('route-map', {
-                        zoomControl: false,
-                        scrollWheelZoom: false
-                    }).setView(center, 12);
-
-                    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                        attribution: '&copy; OpenStreetMap &copy; CARTO'
-                    }).addTo(routeMapInstance);
-
-                    setTimeout(() => {
-                        routeMapInstance.invalidateSize();
-                    }, 100);
-
-                    routeMarkers = [];
-                    const routeCoords = [];
-                    let totalDestinations = 0;
-                    let totalDistance = 0;
-
-                    if (data.itinerary && Array.isArray(data.itinerary)) {
-                        const usedCoords = new Map();
-                        let markerIndex = 0;
-                        data.itinerary.forEach((day, dayIdx) => {
-                            const dayNumber = day.day || (dayIdx + 1);
-                            const dayCoords = [];
-                            if (day.activities && Array.isArray(day.activities)) {
-                                day.activities.forEach((act, actIdx) => {
-                                    totalDestinations++;
-                                    markerIndex++;
-                                    const activityKey = `${dayNumber}-${actIdx}`;
-                                    const latLngData = getDisplayLatLngForActivity(act, center, markerIndex, usedCoords);
-                                    const latlng = latLngData.display;
-                                    const rawLatLng = latLngData.raw;
-
-                                    if (routeCoords.length > 0) {
-                                        const prev = routeCoords[routeCoords.length - 1];
-                                        totalDistance += calculateHaversineDistance(prev[0], prev[1], rawLatLng[0], rawLatLng[1]);
-                                    }
-
-                                    const marker = L.marker(latlng)
-                                        .bindPopup(buildRoutePopupCard({
-                                            ...act,
-                                            tag: act.tag || `Day ${dayNumber} Activity`,
-                                            best_time: act.best_time || act.time || 'Morning / Afternoon / Evening',
-                                            duration: act.duration || '1.5 - 2 hours'
-                                        }, 'Itinerary Stop'))
-                                        .addTo(routeMapInstance);
-                                    marker.on('click', () => scrollToActivityCard(activityKey));
-                                    routeMarkers.push(marker);
-                                    routeCoords.push(rawLatLng);
-                                    dayCoords.push(rawLatLng);
-                                });
-                            }
-                            if (dayCoords.length >= 2) {
-                                addRoute(routeMapInstance, dayCoords, '#FFFFFF');
-                            }
-                        });
-                    }
-
-                    const distanceEl = document.getElementById('total-distance');
-                    if (distanceEl) distanceEl.innerText = totalDistance.toFixed(1);
-
-                    const countEl = document.getElementById('destinations-count-label');
-                    if (countEl) countEl.innerText = `${totalDestinations} Destinations`;
-
-                    if (routeCoords.length > 0) {
-                        setTimeout(() => {
-                            routeMapInstance.invalidateSize();
-                        }, 500);
-
-                        const group = new L.featureGroup(routeMarkers);
-                        routeMapInstance.fitBounds(group.getBounds().pad(0.2));
-                    }
-
-                    L.control.zoom({ position: 'topright' }).addTo(routeMapInstance);
-
-                    mapElement.addEventListener('click', function (ev) {
-                        const link = ev.target && ev.target.closest ? ev.target.closest('a') : null;
-                        if (link) {
-                            ev.preventDefault();
-                            ev.stopPropagation();
-                        }
+            const budgetBtns = document.querySelectorAll('.budget-btn');
+            budgetBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    budgetBtns.forEach(b => {
+                        b.classList.remove('active');
+                        const icon = b.querySelector('.check-icon');
+                        if (icon) icon.style.display = 'none';
                     });
 
-                    setTimeout(() => {
-                        routeMapInstance.invalidateSize();
-                    }, 500);
+                    const targetBtn = e.currentTarget;
+                    targetBtn.classList.add('active');
+                    const icon = targetBtn.querySelector('.check-icon');
+                    if (icon) icon.style.display = 'block';
 
-                } catch (err) {
-                    console.error("Leaflet init error:", err);
-                }
-            }
-
-            const optimizeBtn = document.getElementById('optimize-route-btn');
-            if (optimizeBtn) {
-                optimizeBtn.addEventListener('click', () => {
-                    const dataStr = sessionStorage.getItem('ai_trip_data');
-                    if (!dataStr) return;
-
-                    let data = JSON.parse(dataStr);
-
-                    optimizeBtn.innerHTML = `<span class="material-icons-round" style="font-size:12px;animation:spin 1s linear infinite">sync</span> OPTIMIZING...`;
-                    optimizeBtn.disabled = true;
-
-                    setTimeout(() => {
-                        const optimizedData = optimizeRouteDijkstra(data);
-                        sessionStorage.setItem('ai_trip_data', JSON.stringify(optimizedData));
-                        location.reload();
-                    }, 800);
+                    selectedBudget = targetBtn.getAttribute('data-budget');
                 });
-            }
+            });
 
-            const regenerateBtn = document.getElementById('btn-regenerate-full');
-            if (regenerateBtn) {
-                regenerateBtn.addEventListener('click', async () => {
-                    const dataStr = sessionStorage.getItem('ai_trip_data');
-                    if (!dataStr) {
-                        alert("No trip data found to regenerate.");
-                        return;
-                    }
+            document.getElementById('generate-itinerary-btn').addEventListener('click', () => {
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.set('adults', adults);
+                urlParams.set('children', children);
+                urlParams.set('budget', selectedBudget);
 
-                    const existing = JSON.parse(dataStr);
-                    const prompt = [
-                        `Plan a ${existing.duration || ''}-day trip to ${existing.destination || 'the world'}.`,
-                        existing.budget ? `Budget: ${existing.budget}.` : '',
-                        existing.interests ? `Travel style/preferences: ${existing.interests}.` : '',
-                        (existing.start_date && existing.end_date) ? `Dates: ${existing.start_date} to ${existing.end_date}.` : '',
-                        existing.adults ? `Adults: ${existing.adults}.` : '',
-                        existing.children ? `Children: ${existing.children}.` : '',
-                        'Create a realistic itinerary with estimated costs, route-friendly ordering, and diverse activities each day.'
-                    ].filter(Boolean).join(' ');
-
-                    const originalMarkup = regenerateBtn.innerHTML;
-                    const icon = regenerateBtn.querySelector('.material-icons-round');
-                    regenerateBtn.disabled = true;
-                    regenerateBtn.style.opacity = '0.7';
-                    regenerateBtn.style.cursor = 'not-allowed';
-                    if (icon) icon.style.animation = 'spin 1s linear infinite';
-                    regenerateBtn.innerHTML = '<span class="material-icons-round" style="animation:spin 1s linear infinite;font-size:20px">refresh</span><span>Regenerating...</span>';
-
-                    try {
-                        const response = await fetch('/api/ai-plan', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            cache: 'no-store',
-                            body: JSON.stringify({ prompt })
-                        });
-                        const regenerated = await response.json();
-                        if (!response.ok || regenerated.error) {
-                            throw new Error(regenerated.error || 'Failed to regenerate itinerary.');
-                        }
-
-                        regenerated.destination = existing.destination || regenerated.destination;
-                        regenerated.start_date = existing.start_date || regenerated.start_date;
-                        regenerated.end_date = existing.end_date || regenerated.end_date;
-                        regenerated.adults = (existing.adults ?? regenerated.adults);
-                        regenerated.children = (existing.children ?? regenerated.children);
-                        regenerated.budget = existing.budget || regenerated.budget;
-                        regenerated.interests = existing.interests || regenerated.interests;
-
-                        sessionStorage.setItem('ai_trip_data', JSON.stringify(regenerated));
-                        location.reload();
-                    } catch (error) {
-                        console.error('Regeneration failed:', error);
-                        alert(error.message || 'Failed to regenerate itinerary. Please try again.');
-                        regenerateBtn.innerHTML = originalMarkup;
-                        regenerateBtn.disabled = false;
-                        regenerateBtn.style.opacity = '';
-                        regenerateBtn.style.cursor = '';
-                    }
-                });
-            }
-
-            const saveBtn = document.getElementById('save-itinerary-btn');
-            const savePdfBtn = document.getElementById('btn-save-plan-pdf');
-
-            function openPlanItineraryPdfView() {
-                const itineraryDays = document.getElementById('plan-itinerary-days');
-                const totalAmountEl = document.getElementById('preview-total');
-                if (!itineraryDays || !totalAmountEl) return;
-
-                const timelineText = (itineraryDays.textContent || '').trim();
-                if (!timelineText || timelineText.includes('Loading Itinerary')) {
-                    alert('Please wait for the itinerary to finish loading, then try again.');
-                    return;
-                }
-
-                let printRoot = document.getElementById('plan-itinerary-print-root');
-                if (printRoot) {
-                    printRoot.remove();
-                }
-                printRoot = document.createElement('section');
-                printRoot.id = 'plan-itinerary-print-root';
-                printRoot.setAttribute('aria-hidden', 'true');
-
-                const printInner = document.createElement('div');
-                printInner.className = 'print-inner';
-
-                const coverPage = document.createElement('section');
-                coverPage.className = 'print-cover-page';
-                coverPage.innerHTML = `
-                    <div style="background:#0A0A0A;border-radius:24px;padding:32px;border: 1px solid rgba(255,255,255,0.06)">
-                        <p style="font-size:11px;font-weight:700;color:#FFFFFF;text-transform:uppercase;letter-spacing:0.2em;margin-bottom:16px">Trip Itinerary</p>
-                        <h1 style="font-size:2.5rem;font-weight:900;color:#FFFFFF;line-height:1.2;margin-bottom:12px">${escapeHtml(currentDestinationName)}</h1>
-                        <p style="font-size:14px;color:#FFFFFF;font-weight:600">Day-wise itinerary plan</p>
-                    </div>
-                `;
-                printInner.appendChild(coverPage);
-
-                const daySections = Array.from(itineraryDays.querySelectorAll(':scope > section'));
-                if (!daySections.length) {
-                    alert('No day-wise itinerary found to print.');
-                    return;
-                }
-
-                daySections.forEach((sectionEl) => {
-                    const dayPage = document.createElement('section');
-                    dayPage.className = 'print-day-page';
-                    dayPage.appendChild(sectionEl.cloneNode(true));
-                    printInner.appendChild(dayPage);
-                });
-
-                const totalPage = document.createElement('section');
-                totalPage.className = 'print-total-page';
-                totalPage.innerHTML = `
-                    <div style="background:#0A0A0A;border-radius:24px;padding:32px;border: 1px solid rgba(255,255,255,0.06)">
-                        <p style="font-size:11px;font-weight:700;color:#FFFFFF;text-transform:uppercase;letter-spacing:0.2em;margin-bottom:12px">Trip Total Amount</p>
-                        <h2 style="font-size:2.5rem;font-weight:900;color:#FFFFFF">${escapeHtml(totalAmountEl.textContent || '₹0')}</h2>
-                    </div>
-                `;
-                printInner.appendChild(totalPage);
-                printRoot.appendChild(printInner);
-                document.body.appendChild(printRoot);
-
-                const cleanup = () => {
-                    document.body.classList.remove('print-plan-itinerary-only');
-                    const node = document.getElementById('plan-itinerary-print-root');
-                    if (node) node.remove();
-                    window.removeEventListener('afterprint', cleanup);
-                };
-
-                window.addEventListener('afterprint', cleanup);
-                document.body.classList.add('print-plan-itinerary-only');
-                setTimeout(() => window.print(), 150);
-            }
-
-            function collectWeatherSnapshot() {
-                const title = document.getElementById('weather-title')?.textContent?.trim() || '';
-                const currentTemp = document.getElementById('weather-current-temp')?.textContent?.trim() || '';
-                const currentCondition = document.getElementById('weather-current-condition')?.textContent?.trim() || '';
-                const currentHumidity = document.getElementById('weather-current-humidity')?.textContent?.trim() || '';
-                const miniItems = Array.from(document.querySelectorAll('#weather-mini-forecast > div')).map((el) => ({
-                    day: el.querySelector('p')?.textContent?.trim() || '',
-                    icon: el.querySelector('.material-icons-round')?.textContent?.trim() || ''
-                }));
-                return { title, currentTemp, currentCondition, currentHumidity, miniForecast: miniItems };
-            }
-
-            function collectChatSnapshot() {
-                const container = document.getElementById('plan-chat-messages');
-                if (!container) return [];
-                return Array.from(container.children).map((el) => {
-                    const isUser = (el.className || '').includes('user');
-                    const text = (el.textContent || '').trim();
-                    return { role: isUser ? 'user' : 'assistant', content: text };
-                }).filter((m) => m.content);
-            }
-
-            if (saveBtn) {
-                saveBtn.addEventListener('click', async () => {
-                    const dataStr = sessionStorage.getItem('ai_trip_data');
-                    if (!dataStr) {
-                        alert("No trip data found to save.");
-                        return;
-                    }
-
-                    const data = JSON.parse(dataStr);
-                    const btnText = document.getElementById('save-text');
-                    const btnIcon = document.getElementById('save-icon');
-
-                    saveBtn.disabled = true;
-                    btnText.innerText = "Saving Journey...";
-                    btnIcon.innerText = "autorenew";
-                    btnIcon.style.animation = 'spin 1s linear infinite';
-
-                    try {
-                        const response = await fetch('/api/save-itinerary', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                destination: data.destination,
-                                start_date: data.start_date,
-                                end_date: data.end_date,
-                                budget: data.budget,
-                                adults: budgetPartyAdults,
-                                children: budgetPartyChildren,
-                                interests: data.interests,
-                                itinerary: data.itinerary,
-                                weather: collectWeatherSnapshot(),
-                                chat: collectChatSnapshot()
-                            })
-                        });
-
-                        const result = await response.json();
-                        if (result.success) {
-                            btnText.innerText = "Saved to Trips";
-                            btnIcon.innerText = "check_circle";
-                            btnIcon.style.animation = '';
-                        } else {
-                            throw new Error(result.error);
-                        }
-                    } catch (error) {
-                        console.error("Save Error:", error);
-                        alert("Failed to save trip. Please try again.");
-                        btnText.innerText = "Save Itinerary";
-                        btnIcon.innerText = "bookmark";
-                        btnIcon.style.animation = '';
-                        saveBtn.disabled = false;
-                    }
-                });
-            }
-            if (savePdfBtn) {
-                savePdfBtn.addEventListener('click', openPlanItineraryPdfView);
-            }
-
-            const chatInput = document.querySelector('input[placeholder="Ask AI anything..."]');
-            const sendBtn = chatInput.nextElementSibling;
-            const chatContainer = document.getElementById('plan-chat-messages');
-
-            function addChatMessage(role, text) {
-                const div = document.createElement('div');
-                if (role === 'user') {
-                    div.className = 'plan-chat-bubble user';
-                } else {
-                    div.className = 'plan-chat-bubble ai';
-                }
-                div.innerHTML = `<p style="font-size:12px;line-height:1.6">${text}</p>`;
-                chatContainer.appendChild(div);
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-            }
-
-            async function handleChat() {
-                const message = chatInput.value.trim();
-                if (!message) return;
-
-                addChatMessage('user', message);
-                chatInput.value = '';
-
-                const typingId = 'typing-' + Date.now();
-                const typingDiv = document.createElement('div');
-                typingDiv.id = typingId;
-                typingDiv.className = 'plan-chat-bubble ai';
-                typingDiv.style.opacity = '0.5';
-                typingDiv.innerHTML = `<p style="font-size:12px;line-height:1.6">...</p>`;
-                chatContainer.appendChild(typingDiv);
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-
-                try {
-                    let dest = currentDestinationName || 'your trip';
-                    const dataStr = sessionStorage.getItem('ai_trip_data');
-                    if (dataStr) {
-                        try {
-                            dest = JSON.parse(dataStr).destination || dest;
-                        } catch(e) {}
-                    }
-
-                    const response = await fetch('/api/destination-chat', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ message: message, destination: dest })
-                    });
-                    const data = await response.json();
-                    document.getElementById(typingId).remove();
-                    if (data.reply) {
-                        addChatMessage('assistant', data.reply);
-                    }
-                } catch (err) {
-                    console.error(err);
-                    document.getElementById(typingId).remove();
-                    addChatMessage('assistant', "Sorry, I'm having trouble connecting right now.");
-                }
-            }
-
-            sendBtn.addEventListener('click', handleChat);
-            chatInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleChat();
-                }
+                window.location.href = "{{ url_for('main.ai_prompt') }}?" + urlParams.toString();
             });
         });
     </script>

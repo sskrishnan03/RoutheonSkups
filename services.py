@@ -10,8 +10,20 @@ from config import Config
 from global_countries import (
     get_country_info, get_currency, get_currency_symbol, get_tts_voice,
     get_serper_gl_code, get_country_center_coords, search_destinations,
-    get_tts_fallback_lang, ALL_COUNTRY_NAMES
+    get_tts_fallback_lang, ALL_COUNTRY_NAMES, COUNTRIES
 )
+
+
+def _build_global_country_knowledge():
+    """Build a concise knowledge string of all 40 countries for the AI system prompt."""
+    lines = []
+    for name, data in COUNTRIES.items():
+        top_dests = ", ".join(data.get("popular_destinations", [])[:8])
+        lines.append(
+            f"- {name} ({data['continent']}): Currency={data['currency']} ({data['currency_symbol']}), "
+            f"Timezone={data['timezone']}, Top destinations: {top_dests}"
+        )
+    return "\n".join(lines)
 
 class GraphService:
     @staticmethod
@@ -484,11 +496,22 @@ class AIService:
         try:
             client = Groq(api_key=Config.GROQ_API_KEY)
             
-            system_msg = """
-            You are Skupheon, the intelligent travel assistant for RoutheonSkups. 
-            You are helpful, friendly, and expert in all things travel.
+            _global_knowledge = _build_global_country_knowledge()
+            system_msg = f"""
+            You are Skupheon, the intelligent travel assistant for RoutheonSkups.
+            You are helpful, friendly, and expert in all things travel across the ENTIRE WORLD.
             Your goal is to assist the user with their travel queries, provide destination insights, help with budgets, or just chat about their upcoming trips.
-            Keep your responses concise but insightful. 
+            Keep your responses concise but insightful.
+
+            IMPORTANT: You have deep knowledge of ALL 40 countries supported by RoutheonSkups.
+            You can help users plan trips, compare destinations, suggest itineraries, discuss budgets, local cuisine, culture, weather, visa info, and travel tips for ANY of these countries — not just India.
+
+            Here is your complete global country knowledge base:
+{_global_knowledge}
+
+            When a user asks about a destination, ALWAYS use the correct currency, timezone, and regional context for that country.
+            You can discuss destinations across Europe, Asia, North America, South America, Africa, and Oceania.
+            If a user mentions a place, identify which country it belongs to and respond with accurate, country-specific travel advice.
             """
             
             if my_trip_context:
@@ -562,14 +585,17 @@ Here is the user's data:
             
             # System prompt to guide the AI to act as a travel planner
             system_msg = """
-            You are a smart travel assistant. Your goal is to help users plan trips.
-            if the user asks to plan a trip or gives enough details (destination, days), 
+            You are a smart travel assistant named Skupheon with expertise across ALL 40 countries supported by RoutheonSkups: Italy, Japan, France, Spain, United States, New Zealand, Greece, Switzerland, Australia, Thailand, United Kingdom, Canada, Maldives, Portugal, Iceland, Brazil, Costa Rica, Mexico, Vietnam, Austria, Egypt, South Africa, Norway, Turkey, Peru, Indonesia, United Arab Emirates, Germany, South Korea, Netherlands, India, Croatia, Ireland, Singapore, Czech Republic, Sri Lanka, Morocco, Argentina, Finland, and China.
+            
+            Your goal is to help users plan trips to ANY destination worldwide.
+            If the user asks to plan a trip or gives enough details (destination, days), 
             extract the following information in a JSON block at the END of your response (after your natural language reply).
             
             JSON Structure:
             {{
                 "intent": "plan_trip",
                 "destination": "Paris",
+                "country": "France",
                 "days": 3,
                 "preferences": "museums, food"
             }}
@@ -577,6 +603,7 @@ Here is the user's data:
             If the user is just asking general questions, just reply normally.
             If the user mentions a place but doesn't explicitly ask for a full plan yet, verify if they want images.
             
+            Use the correct currency for the destination country (EUR for Europe, JPY for Japan, THB for Thailand, USD for US, GBP for UK, etc.).
             Make your natural language response friendly and engaging.
             """
             
