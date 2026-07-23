@@ -1252,7 +1252,7 @@ def delete_profile_image():
 @main_bp.route('/calendar')
 @login_required
 def calendar():
-    return redirect(url_for('main.landing'))
+    return redirect(url_for('main.profile') + '#trips')
 
 @main_bp.route('/settings')
 @login_required
@@ -1788,60 +1788,6 @@ def save_itinerary():
         traceback.print_exc()
         return jsonify({"success": False, "error": str(e)}), 500
 
-
-@main_bp.route('/api/add-destination-to-calendar', methods=['POST'])
-@login_required
-def add_destination_to_calendar():
-    try:
-        data = request.get_json(silent=True) or {}
-        destination = (data.get('destination') or '').strip()
-        itinerary_days = data.get('days') if isinstance(data.get('days'), list) else []
-
-        if not destination:
-            return jsonify({"success": False, "error": "Destination is required."}), 400
-
-        start_date = datetime.now().date()
-        total_days = max(1, len(itinerary_days))
-        end_date = start_date + timedelta(days=total_days - 1)
-
-        saved_payload = {
-            "schema_version": 2,
-            "source": "destination_itinerary_add_to_calendar",
-            "added_at": datetime.utcnow().isoformat() + "Z",
-            "destination": destination,
-            "start_date": start_date.isoformat(),
-            "end_date": end_date.isoformat(),
-            "itinerary": itinerary_days
-        }
-
-        trip = Trip(
-            user_id=current_user.id,
-            destination=destination[:100],
-            start_date=start_date,
-            end_date=end_date,
-            budget="Destination Itinerary",
-            interests="Added from destination page",
-            itinerary_text=json.dumps(saved_payload)
-        )
-        db.session.add(trip)
-
-        created_notifications = []
-        notif_settings = _get_notification_settings(current_user)
-        if notif_settings.get('notifications_enabled', True) and notif_settings.get('trip_alerts', True):
-            display_name = _notification_display_name(current_user)
-            created_notifications.append(_create_notification(
-                current_user,
-                f"{display_name}, {destination} was added to your calendar.",
-                'success',
-                f"Trip Added: {destination}"
-            ))
-
-        db.session.commit()
-        _track_activity(current_user, destination, 'trip_create', {'source': 'add_to_calendar'})
-        _send_created_notification_emails(current_user, created_notifications)
-        return jsonify({"success": True, "trip_id": trip.id})
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
 
 @main_bp.route('/api/trip/<int:trip_id>/delete', methods=['POST'])
 @login_required

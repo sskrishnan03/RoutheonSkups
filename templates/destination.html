@@ -619,7 +619,7 @@
         }
         #save-btn, #favorite-btn, #share-btn, #ai-guide-btn,
         #btn-regenerate, #btn-refresh-gallery, #btn-load-more-gallery,
-        #btn-add-to-calendar, #btn-download-itinerary-pdf {
+        #btn-download-itinerary-pdf {
             position: relative;
             overflow: hidden;
             transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
@@ -2284,33 +2284,6 @@
                     .replace(/;/g, '\\;');
             }
 
-            async function addItineraryToProfileCalendar() {
-                const itinerary = window._latestItineraryData;
-                const days = itinerary?.days || [];
-                if (!days.length) {
-                    alert('Please load the itinerary first, then try Add to My Calendar.');
-                    return;
-                }
-
-                try {
-                    const response = await fetch('/api/add-destination-to-calendar', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            destination: DEST_NAME,
-                            days
-                        })
-                    });
-                    const result = await response.json();
-                    if (!response.ok || !result.success) {
-                        throw new Error(result.error || 'Failed to add itinerary to your calendar.');
-                    }
-                    alert('Added to your profile calendar successfully.');
-                    window.location.href = '/calendar';
-                } catch (error) {
-                    alert(error.message || 'Failed to add itinerary to your calendar.');
-                }
-            }
 
             function sanitizeMaterialIcon(rawIcon) {
                 const normalized = String(rawIcon || '')
@@ -2365,10 +2338,7 @@
                 pdfBtn.addEventListener('click', openItineraryPdfView);
             }
 
-            const addCalendarBtn = document.getElementById('btn-add-to-calendar');
-            if (addCalendarBtn) {
-                addCalendarBtn.addEventListener('click', addItineraryToProfileCalendar);
-            }
+
             // --- Load Gallery via API ---
             function loadGallery() {
                 galleryLoaded = true;
