@@ -116,6 +116,61 @@
             border-color: #111111;
             color: #FFFFFF;
         }
+        .autocomplete-wrapper { position: relative; }
+        .autocomplete-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            margin-top: 8px;
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            overflow: hidden;
+            z-index: 50;
+            max-height: 320px;
+            overflow-y: auto;
+            display: none;
+        }
+        .autocomplete-list.open { display: block; }
+        .autocomplete-item {
+            padding: 16px 32px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .autocomplete-item:last-child { border-bottom: none; }
+        .autocomplete-item:hover,
+        .autocomplete-item.highlighted {
+            background: rgba(255,255,255,0.04);
+        }
+        .autocomplete-item-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.04);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .autocomplete-item-text {
+            display: flex;
+            flex-direction: column;
+        }
+        .autocomplete-item-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #FFFFFF;
+        }
+        .autocomplete-item-sub {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+            margin-top: 2px;
+        }
     </style>
 </head>
 
@@ -147,7 +202,12 @@
                     <div style="width:32px;height:2px;background:#0A0A0A"></div>
                     <div class="step-inactive" style="display:flex;align-items:center;gap:8px">
                         <div class="step-num">3</div>
-                        <span style="font-size:13px;font-weight:700;color:#FFFFFF">Preferences</span>
+                        <span style="font-size:13px;font-weight:700;color:#FFFFFF">Style</span>
+                    </div>
+                    <div style="width:32px;height:2px;background:#0A0A0A"></div>
+                    <div class="step-inactive" style="display:flex;align-items:center;gap:8px">
+                        <div class="step-num">4</div>
+                        <span style="font-size:13px;font-weight:700;color:#FFFFFF">Budget</span>
                     </div>
                 </div>
             </div>
@@ -160,14 +220,16 @@
             </div>
 
             <div class="mb-10">
-                <div class="relative group">
+                <div class="autocomplete-wrapper relative group">
                     <div style="position:absolute;left:32px;top:50%;transform:translateY(-50%);pointer-events:none">
                         <span class="material-symbols-outlined" style="font-size:28px;color:#FFFFFF;transition:color 0.3s">location_on</span>
                     </div>
                     <input
+                        id="destination-input"
                         class="glass-input w-full"
                         style="padding:28px 32px 28px 80px;font-size:1.15rem;font-weight:500"
-                        placeholder="Search states, cities or specific destinations..." type="text" />
+                        placeholder="Search states, cities or specific destinations..." type="text" autocomplete="off" />
+                    <div id="autocomplete-dropdown" class="autocomplete-list"></div>
                 </div>
             </div>
 
@@ -201,13 +263,103 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const inputField = document.querySelector('input[type="text"]');
+            const inputField = document.getElementById('destination-input');
+            const dropdown = document.getElementById('autocomplete-dropdown');
             const popularButtons = document.querySelectorAll('.flex-wrap button');
             const nextButton = document.getElementById('next-step-btn');
+
+            let highlightIndex = -1;
+            let currentResults = [];
+            let hasSelectedFromDropdown = false;
+            let debounceTimer = null;
+
+            function closeDropdown() {
+                dropdown.classList.remove('open');
+                dropdown.innerHTML = '';
+                highlightIndex = -1;
+                currentResults = [];
+            }
+
+            function renderDropdown(results) {
+                if (!results.length) { closeDropdown(); return; }
+                currentResults = results;
+                highlightIndex = -1;
+                dropdown.innerHTML = results.map((r, i) => {
+                    const sub = [r.state, r.country].filter(Boolean).join(', ');
+                    const icon = r.type === 'city' ? 'location_city' : r.type === 'state' ? 'map' : 'public';
+                    return `<div class="autocomplete-item" data-index="${i}">
+                        <div class="autocomplete-item-icon">
+                            <span class="material-symbols-outlined" style="font-size:20px;color:rgba(255,255,255,0.6)">${icon}</span>
+                        </div>
+                        <div class="autocomplete-item-text">
+                            <div class="autocomplete-item-name">${r.name}</div>
+                            ${sub ? `<div class="autocomplete-item-sub">${sub}</div>` : ''}
+                        </div>
+                    </div>`;
+                }).join('');
+                dropdown.classList.add('open');
+
+                dropdown.querySelectorAll('.autocomplete-item').forEach(item => {
+                    item.addEventListener('mousedown', (e) => {
+                        e.preventDefault();
+                        const idx = parseInt(item.dataset.index);
+                        selectResult(results[idx]);
+                    });
+                });
+            }
+
+            function selectResult(r) {
+                const display = [r.name, r.state, r.country].filter(Boolean).join(', ');
+                inputField.value = display;
+                hasSelectedFromDropdown = true;
+                closeDropdown();
+            }
+
+            function updateHighlight() {
+                dropdown.querySelectorAll('.autocomplete-item').forEach((el, i) => {
+                    el.classList.toggle('highlighted', i === highlightIndex);
+                });
+            }
+
+            inputField.addEventListener('input', () => {
+                hasSelectedFromDropdown = false;
+                const q = inputField.value.trim();
+                clearTimeout(debounceTimer);
+                if (q.length < 2) { closeDropdown(); return; }
+                debounceTimer = setTimeout(() => {
+                    fetch('/api/destinations/search?q=' + encodeURIComponent(q))
+                        .then(r => r.json())
+                        .then(data => renderDropdown(data))
+                        .catch(() => closeDropdown());
+                }, 250);
+            });
+
+            inputField.addEventListener('keydown', (e) => {
+                if (!dropdown.classList.contains('open')) return;
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    highlightIndex = Math.min(highlightIndex + 1, currentResults.length - 1);
+                    updateHighlight();
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    highlightIndex = Math.max(highlightIndex - 1, -1);
+                    updateHighlight();
+                } else if (e.key === 'Enter' && highlightIndex >= 0) {
+                    e.preventDefault();
+                    selectResult(currentResults[highlightIndex]);
+                } else if (e.key === 'Escape') {
+                    closeDropdown();
+                }
+            });
+
+            inputField.addEventListener('blur', () => {
+                setTimeout(closeDropdown, 150);
+            });
 
             popularButtons.forEach(btn => {
                 btn.addEventListener('click', () => {
                     inputField.value = btn.innerText.trim();
+                    hasSelectedFromDropdown = true;
                     nextButton.click();
                 });
             });
@@ -217,6 +369,11 @@
                 const dest = inputField.value.trim();
                 if (!dest) {
                     alert('Please provide a destination to continue!');
+                    return;
+                }
+                if (!hasSelectedFromDropdown) {
+                    alert('Please select a destination from the suggestions list.');
+                    inputField.focus();
                     return;
                 }
                 window.location.href = "{{ url_for('main.plan_trip_step2') }}?destination=" + encodeURIComponent(dest);

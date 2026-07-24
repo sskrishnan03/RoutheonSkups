@@ -224,11 +224,26 @@
     <main style="max-width:1920px;margin:0 auto;padding:48px;position:relative;z-index:1">
         <div class="grid grid-cols-1 lg:grid-cols-3" style="gap:32px 64px">
             <div class="lg:col-span-2 space-y-12">
-                <div class="flex">
+                <div class="flex flex-wrap items-center gap-3">
                     <button id="btn-regenerate-full"
                         class="btn-glass py-3 px-8 flex items-center gap-3 text-sm" style="border-radius:9999px">
                         <span class="material-icons-round group-hover:rotate-180 transition-transform duration-500" style="font-size:20px;transition:transform 0.5s">refresh</span>
-                        Regenerate Full Itinerary
+                        Regenerate
+                    </button>
+                    <button id="save-itinerary-btn"
+                        class="btn-primary py-3 px-8 flex items-center gap-3 text-sm" style="border-radius:9999px">
+                        <span class="material-icons-round" style="font-size:20px" id="save-icon">bookmark</span>
+                        <span id="save-text">Save Itinerary</span>
+                    </button>
+                    <button id="btn-save-plan-pdf"
+                        class="btn-glass py-3 px-6 flex items-center gap-2 text-sm" style="border-radius:9999px">
+                        <span class="material-icons-round" style="font-size:18px;color:#FFFFFF">picture_as_pdf</span>
+                        PDF
+                    </button>
+                    <button onclick="navigator.clipboard.writeText(window.location.href); alert('Link copied to clipboard!')"
+                        class="btn-glass py-3 px-6 flex items-center gap-2 text-sm" style="border-radius:9999px">
+                        <span class="material-icons-round" style="font-size:18px;color:#FFFFFF">ios_share</span>
+                        Share
                     </button>
                 </div>
                 <div class="space-y-24" id="plan-itinerary-days">
@@ -352,27 +367,6 @@
                                     <span class="material-icons-round" style="font-size:12px">arrow_upward</span>
                                 </button>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Save Actions -->
-                    <div class="grid grid-cols-1 gap-4">
-                        <button id="save-itinerary-btn"
-                            class="btn-primary w-full py-5 rounded-2xl flex items-center justify-center gap-3 font-bold" style="box-shadow:0 10px 40px #0A0A0A">
-                            <span class="material-icons-round" style="font-size:20px" id="save-icon">bookmark</span>
-                            <span id="save-text">Save Itinerary</span>
-                        </button>
-                        <div class="grid grid-cols-2 gap-4">
-                            <button id="btn-save-plan-pdf"
-                                class="btn-glass py-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2" style="border-radius:16px">
-                                <span class="material-icons-round" style="font-size:18px;color:#FFFFFF">picture_as_pdf</span>
-                                Save PDF
-                            </button>
-                            <button onclick="navigator.clipboard.writeText(window.location.href); alert('Link copied to clipboard!')"
-                                class="btn-glass py-4 rounded-2xl font-bold text-xs flex items-center justify-center gap-2" style="border-radius:16px">
-                                <span class="material-icons-round" style="font-size:18px;color:#FFFFFF">ios_share</span>
-                                Share
-                            </button>
                         </div>
                     </div>
 
