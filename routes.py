@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash, current_app, Response, session
-from models import db, User, Trip, Destination, Itinerary, SavedDestination, FavoriteDestination, Notification, ChatSession, ChatMessage, DestinationActivity
+from models import db, User, Trip, Destination, Itinerary, SavedDestination, FavoriteDestination, Notification, ChatSession, ChatMessage, DestinationActivity, ContactSubmission, ApiUsageLog, PageAnalytic
 from services import AIService, WeatherService
 # from graph_service import graph_service
 import json
@@ -137,6 +137,41 @@ def _track_activity(user, destination_name, action_type, extra_data=None):
     except Exception as e:
         db.session.rollback()
         print(f"Track activity error: {e}")
+
+
+def _track_page_view(page, action=None):
+    try:
+        analytic = PageAnalytic(
+            user_id=current_user.id if current_user.is_authenticated else None,
+            page=page[:200],
+            action=action,
+            extra_data={}
+        )
+        db.session.add(analytic)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        print(f"Track page view error: {e}")
+
+
+def _log_api_usage(service, endpoint, method=None, tokens_used=None, latency_ms=None, success=True, error_message=None, extra_data=None):
+    try:
+        log = ApiUsageLog(
+            user_id=current_user.id if current_user.is_authenticated else None,
+            service=service[:50],
+            endpoint=endpoint[:200],
+            method=method,
+            tokens_used=tokens_used,
+            latency_ms=latency_ms,
+            success=success,
+            error_message=error_message,
+            extra_data=extra_data
+        )
+        db.session.add(log)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        print(f"Log API usage error: {e}")
 
 
 def _is_local_profile_image(image_url):
@@ -602,6 +637,7 @@ def home():
 @main_bp.route('/landing')
 @login_required
 def landing():
+    _track_page_view('/landing')
     return render_template('landing_page.html')
 
 @main_bp.route('/register', methods=['GET', 'POST'])
@@ -770,11 +806,13 @@ def dashboard():
 @main_bp.route('/plan-trip')
 @login_required
 def plan_trip():
+    _track_page_view('/plan-trip')
     return render_template('plan_a_trip.html')
 
 @main_bp.route('/ai-prompt')
 @login_required
 def ai_prompt():
+    _track_page_view('/ai-prompt')
     inspiration_prompts = _get_daily_ai_inspiration_prompts()
     return render_template('aipromptplanatrip.html', inspiration_prompts=inspiration_prompts)
 
@@ -793,6 +831,7 @@ def api_ai_plan():
 @main_bp.route('/explore')
 @login_required
 def explore():
+    _track_page_view('/explore')
     return render_template('explore.html')
 
 @main_bp.route('/my-trips')
@@ -865,11 +904,13 @@ def favorites():
 @main_bp.route('/skupheon')
 @login_required
 def skupheon():
+    _track_page_view('/skupheon')
     return render_template('skupheon.html')
 
 @main_bp.route('/destination/<name>')
 @login_required
 def destination_info(name):
+    _track_page_view(f'/destination/{name}')
     data = AIService.get_destination_detail(name)
     lat = data.get('center_coords', {}).get('lat')
     lon = data.get('center_coords', {}).get('lng')
@@ -2175,11 +2216,13 @@ def _build_my_trip_context_for_ai(user, scope=None):
 @main_bp.route('/about')
 @login_required
 def about():
+    _track_page_view('/about')
     return render_template('about.html')
 
 @main_bp.route('/contact', methods=['GET', 'POST'])
 @login_required
 def contact():
+    _track_page_view('/contact')
     if request.method == 'POST':
         name = (request.form.get('name') or '').strip()
         email = (request.form.get('email') or '').strip()
@@ -2208,6 +2251,8 @@ def contact():
             flash('Contact email is not configured yet. Please try again shortly.', 'danger')
             return redirect(url_for('main.contact'))
 
+        admin_sent = False
+        user_sent = False
         try:
             try:
                 submitted_dt = datetime.utcnow()
@@ -2287,6 +2332,7 @@ def contact():
             </div>
             """
             mail.send(admin_msg)
+            admin_sent = True
 
             user_msg = Message(
                 subject="We received your message - RoutheonSkups",
@@ -2333,11 +2379,31 @@ def contact():
             </div>
             """
             mail.send(user_msg)
+            user_sent = True
 
             flash('Your message was sent successfully. A confirmation email has also been sent to your inbox.', 'success')
         except Exception as e:
             print(f"Contact form email error: {e}")
             flash('We could not send your message right now. Please try again shortly.', 'danger')
+
+        contact_record = ContactSubmission(
+            user_id=current_user.id if current_user.is_authenticated else None,
+            name=name,
+            email=email,
+            phone=phone or None,
+            subject=subject_key,
+            trip_reference=trip_reference or None,
+            message=message_text,
+            consent=bool(consent),
+            email_sent_to_admin=admin_sent,
+            email_sent_to_user=user_sent,
+        )
+        try:
+            db.session.add(contact_record)
+            db.session.commit()
+        except Exception as ce:
+            db.session.rollback()
+            print(f"Contact submission save error: {ce}")
 
         return redirect(url_for('main.contact'))
 
@@ -2372,6 +2438,7 @@ def track_destination_click():
 @main_bp.route('/faq')
 @login_required
 def faq():
+    _track_page_view('/faq')
     return render_template('faq.html')
 
 @main_bp.route('/api/faq-chat', methods=['POST'])

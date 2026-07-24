@@ -323,7 +323,22 @@ class SerperService:
         api_key = Config.SERPER_API_KEY
         if not api_key:
             return []
-            
+
+        import hashlib
+        query_hash = hashlib.sha256(query.lower().strip().encode()).hexdigest()
+        try:
+            from models import db, ImageSearchCache
+            from datetime import datetime, timedelta
+            now = datetime.utcnow()
+            cached = ImageSearchCache.query.filter_by(query_hash=query_hash).first()
+            if cached and cached.expires_at > now:
+                return cached.images
+            if cached:
+                db.session.delete(cached)
+                db.session.commit()
+        except Exception:
+            pass
+
         gl_code = SerperService._get_gl_code_for_query(query)
         api_url = "https://google.serper.dev/images"
         payload = json.dumps({
@@ -361,6 +376,21 @@ class SerperService:
                         break
 
                 if images:
+                    try:
+                        from models import db, ImageSearchCache
+                        from datetime import datetime, timedelta
+                        now = datetime.utcnow()
+                        cache_record = ImageSearchCache(
+                            query_hash=query_hash,
+                            query_text=query[:500],
+                            images=images,
+                            fetched_at=now,
+                            expires_at=now + timedelta(hours=6)
+                        )
+                        db.session.add(cache_record)
+                        db.session.commit()
+                    except Exception:
+                        pass
                     return images
 
                 # Secondary pass
@@ -368,7 +398,24 @@ class SerperService:
                 strict_payload = json.dumps({"q": strict_query, "num": 10})
                 strict_resp = requests.request("POST", api_url, headers=headers, data=strict_payload, timeout=5)
                 if strict_resp.status_code == 200:
-                    return [img.get('imageUrl') for img in strict_resp.json().get('images', []) if img.get('imageUrl')]
+                    result_imgs = [img.get('imageUrl') for img in strict_resp.json().get('images', []) if img.get('imageUrl')]
+                    if result_imgs:
+                        try:
+                            from models import db, ImageSearchCache
+                            from datetime import datetime, timedelta
+                            now = datetime.utcnow()
+                            cache_record = ImageSearchCache(
+                                query_hash=query_hash,
+                                query_text=query[:500],
+                                images=result_imgs,
+                                fetched_at=now,
+                                expires_at=now + timedelta(hours=6)
+                            )
+                            db.session.add(cache_record)
+                            db.session.commit()
+                        except Exception:
+                            pass
+                    return result_imgs
                 
                 return []
             
@@ -1640,6 +1687,46 @@ class WeatherService:
     _cache = {}
     _cache_ttl_seconds = 15 * 60
 
+    @staticmethod
+    def _get_db_cache(city_key):
+        try:
+            from models import db, WeatherCache
+            from datetime import datetime, timedelta
+            now = datetime.utcnow()
+            record = WeatherCache.query.filter_by(city_key=city_key).first()
+            if record and record.expires_at > now:
+                return record.data
+            if record:
+                db.session.delete(record)
+                db.session.commit()
+        except Exception:
+            pass
+        return None
+
+    @staticmethod
+    def _set_db_cache(city_key, data):
+        try:
+            from models import db, WeatherCache
+            from datetime import datetime, timedelta
+            now = datetime.utcnow()
+            existing = WeatherCache.query.filter_by(city_key=city_key).first()
+            if existing:
+                existing.data = data
+                existing.fetched_at = now
+                existing.expires_at = now + timedelta(seconds=WeatherService._cache_ttl_seconds)
+            else:
+                record = WeatherCache(
+                    city_key=city_key,
+                    data=data,
+                    fetched_at=now,
+                    expires_at=now + timedelta(seconds=WeatherService._cache_ttl_seconds)
+                )
+                db.session.add(record)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            print(f"Weather DB cache error: {e}")
+
     # WMO weather interpretation codes → (description, main category, icon code)
     _WMO_CODES = {
         0: ("Clear Sky", "Clear", "01d"),
@@ -1732,6 +1819,12 @@ class WeatherService:
             cached = WeatherService._cache.get(cache_key)
             if cached and (now_ts - cached.get("ts", 0) < WeatherService._cache_ttl_seconds):
                 return cached.get("data")
+
+            db_cache_key = f"{cache_key[0]}:{cache_key[1]}:{cache_key[2]}"
+            db_cached = WeatherService._get_db_cache(db_cache_key)
+            if db_cached:
+                WeatherService._cache[cache_key] = {"ts": now_ts, "data": db_cached}
+                return db_cached
 
             clean_city = city.split(",")[0].strip()
 
@@ -1835,6 +1928,7 @@ class WeatherService:
                 },
             }
             WeatherService._cache[cache_key] = {"ts": now_ts, "data": payload}
+            WeatherService._set_db_cache(db_cache_key, payload)
             return payload
 
         except requests.exceptions.Timeout:

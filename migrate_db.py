@@ -1,36 +1,40 @@
-import sqlite3
+"""
+Database migration script for RoutheonSkups (PostgreSQL via Neon).
+
+This replaces the old SQLite migration script.
+Run this after updating models.py to apply schema changes.
+"""
 import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from dotenv import load_dotenv
+load_dotenv()
+
+from app import create_app
+from models import db
+
 
 def migrate():
-    db_path = 'database/db.sqlite3'
-    if not os.path.exists(db_path):
-        # Create directory if missing
-        os.makedirs('database', exist_ok=True)
-        print(f"Database not found at {db_path}, it will be created on first run.")
-        return
+    app = create_app()
+    with app.app_context():
+        print("Connecting to Neon PostgreSQL...")
+        db_uri = app.config.get('SQLALCHEMY_DATABASE_URI', '')
+        masked = db_uri[:35] + '...' if len(db_uri) > 40 else db_uri
+        print(f"Database: {masked}")
 
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
+        print("\nApplying schema (db.create_all)...")
+        db.create_all()
 
-    try:
-        # Check if phone column exists
-        cursor.execute("PRAGMA table_info(user)")
-        columns = [column[1] for column in cursor.fetchall()]
-        
-        if 'phone' not in columns:
-            print("Adding 'phone' column to 'user' table...")
-            cursor.execute("ALTER TABLE user ADD COLUMN phone VARCHAR(20)")
-        
-        if 'city' not in columns:
-            print("Adding 'city' column to 'user' table...")
-            cursor.execute("ALTER TABLE user ADD COLUMN city VARCHAR(100)")
-            
-        conn.commit()
-        print("Migration completed successfully!")
-    except Exception as e:
-        print(f"Error during migration: {e}")
-    finally:
-        conn.close()
+        from sqlalchemy import inspect
+        inspector = inspect(db.engine)
+        tables = sorted(inspector.get_table_names())
+        print(f"\nAll {len(tables)} tables verified on Neon PostgreSQL.")
+        for t in tables:
+            cols = [c['name'] for c in inspector.get_columns(t)]
+            print(f"  {t} ({len(cols)} columns)")
+
 
 if __name__ == "__main__":
     migrate()

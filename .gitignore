@@ -8,11 +8,29 @@ wheels/
 
 # Virtual environments
 .venv
+venv/
 
 # Environment variables / secrets
 .env
 
 # Node.js
 node_modules/
+
+# Old SQLite database files (now using Neon PostgreSQL)
+server.db
+database/*.sqlite3
+instance/*.db
+instance/*.db-journal
+
+# Uploads (user-generated)
+static/uploads/profile_images/
+
+# Logs
+flask.log
+*.log
+
+# IDE
+.vscode/
+.idea/
 
 
