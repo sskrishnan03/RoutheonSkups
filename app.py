@@ -19,6 +19,7 @@ login_manager.login_message_category = 'info'
 oauth = OAuth()
 mail = Mail()
 
+
 def _sanitize_proxy_env():
     bad_proxy_markers = ('127.0.0.1:9', 'localhost:9')
     proxy_vars = ['HTTP_PROXY', 'HTTPS_PROXY', 'ALL_PROXY', 'http_proxy', 'https_proxy', 'all_proxy']
@@ -30,20 +31,20 @@ def _sanitize_proxy_env():
 
 def create_app():
     _sanitize_proxy_env()
-    app = Flask(__name__)
-    app.config.from_object(Config)
-    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1)
+    application = Flask(__name__)
+    application.config.from_object(Config)
+    application.wsgi_app = ProxyFix(application.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1)
 
-    db.init_app(app)
-    bcrypt.init_app(app)
-    login_manager.init_app(app)
-    oauth.init_app(app)
-    mail.init_app(app)
+    db.init_app(application)
+    bcrypt.init_app(application)
+    login_manager.init_app(application)
+    oauth.init_app(application)
+    mail.init_app(application)
 
     oauth.register(
         name='google',
-        client_id=app.config['GOOGLE_CLIENT_ID'],
-        client_secret=app.config['GOOGLE_CLIENT_SECRET'],
+        client_id=application.config['GOOGLE_CLIENT_ID'],
+        client_secret=application.config['GOOGLE_CLIENT_SECRET'],
         server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
         client_kwargs={
             'scope': 'openid email profile'
@@ -55,9 +56,9 @@ def create_app():
         return User.query.get(int(user_id))
 
     from routes import main_bp
-    app.register_blueprint(main_bp)
+    application.register_blueprint(main_bp)
 
-    with app.app_context():
+    with application.app_context():
         db.create_all()
 
     try:
@@ -66,9 +67,9 @@ def create_app():
     except Exception as e:
         logger.exception("Failed to start notification scheduler: %s", e)
 
-    return app
+    return application
 
-app = create_app()
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8000)))
+    application = create_app()
+    application.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8000)))
