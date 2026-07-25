@@ -669,7 +669,6 @@ def _generate_smart_notifications(user, force=False):
               link_url=f"{base_url}/profile")
 
     if created or meta_changed:
-        _set_notification_meta(user, meta)
         meta['last_notification_sent_at'] = now.isoformat()
         _set_notification_meta(user, meta)
         db.session.commit()
@@ -1952,6 +1951,38 @@ def mark_all_read():
         Notification.is_read: True,
         Notification.updated_at: datetime.utcnow()
     })
+    db.session.commit()
+    return jsonify({'success': True})
+
+
+@main_bp.route('/api/notifications/<int:notif_id>/read', methods=['POST'])
+@login_required
+def mark_notification_read(notif_id):
+    notif = Notification.query.filter_by(id=notif_id, user_id=current_user.id).first()
+    if not notif:
+        return jsonify({'success': False, 'error': 'Not found'}), 404
+    if not notif.is_read:
+        notif.is_read = True
+        notif.updated_at = datetime.utcnow()
+        db.session.commit()
+    return jsonify({'success': True})
+
+
+@main_bp.route('/api/notifications/<int:notif_id>', methods=['DELETE'])
+@login_required
+def delete_notification(notif_id):
+    notif = Notification.query.filter_by(id=notif_id, user_id=current_user.id).first()
+    if not notif:
+        return jsonify({'success': False, 'error': 'Not found'}), 404
+    db.session.delete(notif)
+    db.session.commit()
+    return jsonify({'success': True})
+
+
+@main_bp.route('/api/notifications/clear', methods=['POST'])
+@login_required
+def clear_all_notifications():
+    Notification.query.filter_by(user_id=current_user.id).delete()
     db.session.commit()
     return jsonify({'success': True})
 

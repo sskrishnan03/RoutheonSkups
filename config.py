@@ -7,7 +7,10 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-key-please-change'
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
+    _db_url = os.environ.get('DATABASE_URL') or ''
+    if _db_url.startswith('postgres://'):
+        _db_url = 'postgresql://' + _db_url[len('postgres://'):]
+    SQLALCHEMY_DATABASE_URI = _db_url or \
         'sqlite:///' + os.path.join(basedir, 'database', 'db.sqlite3')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     GROQ_API_KEY = os.environ.get('GROQ_API_KEY')
@@ -16,7 +19,7 @@ class Config:
     GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
     GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
     ADMIN_EMAIL = (os.environ.get('ADMIN_EMAIL') or 'routheonskups@gmail.com').strip().lower()
-    PREFERRED_URL_SCHEME = os.environ.get('PREFERRED_URL_SCHEME', 'http')
+    PREFERRED_URL_SCHEME = os.environ.get('PREFERRED_URL_SCHEME', 'https')
 
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = os.environ.get('SESSION_COOKIE_SAMESITE', 'Lax')

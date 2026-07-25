@@ -28,7 +28,7 @@ _NOTIFICATION_TYPE_META = {
 
 
 def _get_logo_cid():
-    logo_path = os.path.join('static', 'img', 'logo.png')
+    logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'img', 'logo.png')
     if os.path.exists(logo_path):
         mime_type = mimetypes.guess_type(logo_path)[0] or 'image/png'
         with open(logo_path, 'rb') as f:
