@@ -14,7 +14,7 @@ class User(db.Model, UserMixin):
     google_id = db.Column(db.String(200), unique=True, nullable=True)
     phone = db.Column(db.String(20), nullable=True)
     city = db.Column(db.String(100), nullable=True)
-    image_url = db.Column(db.String(500), nullable=True)
+    image_url = db.Column(db.Text, nullable=True)
     preferences = db.Column(db.JSON, nullable=True)
     is_admin = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

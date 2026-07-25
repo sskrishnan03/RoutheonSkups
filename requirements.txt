@@ -14,3 +14,4 @@ itsdangerous
 psycopg2-binary
 APScheduler
 gunicorn
+Pillow

@@ -6,7 +6,7 @@ import json
 from datetime import datetime, timedelta, timezone, date
 import random
 from flask_login import login_user, current_user, logout_user, login_required
-from extensions import bcrypt, mail
+from app import bcrypt, mail
 from flask_mail import Message
 from email_templates import build_notification_email
 import os
@@ -178,17 +178,11 @@ def _log_api_usage(service, endpoint, method=None, tokens_used=None, latency_ms=
 def _is_local_profile_image(image_url):
     if not image_url:
         return False
-    normalized = str(image_url).replace('\\', '/')
-    return normalized.startswith('/static/uploads/profile_images/')
+    return str(image_url).startswith('data:image/')
 
 
 def _delete_local_profile_image(image_url):
-    if not _is_local_profile_image(image_url):
-        return
-    relative_path = str(image_url).replace('/static/', '', 1).replace('/', os.sep)
-    absolute_path = os.path.join(current_app.root_path, 'static', relative_path)
-    if os.path.isfile(absolute_path):
-        os.remove(absolute_path)
+    pass
 
 GLOBAL_PROMPT_DESTINATIONS = [
     # Italy
@@ -434,15 +428,70 @@ def _send_notification_email(user, subject, message, created_at=None, notif_type
     display_name = _notification_display_name(user)
     base_url = _get_base_url()
     link_label = None
+    details = None
+    hero_title = subject
+
     if link_url:
-        if '/view-trip/' in str(link_url):
+        url_str = str(link_url)
+        if '/view-trip/' in url_str:
             link_label = 'View Your Trip'
-        elif '/explore' in str(link_url):
-            link_label = 'Explore Destination'
-        elif '/destination/' in str(link_url):
+            try:
+                trip_id = url_str.rstrip('/').split('/view-trip/')[-1].split('?')[0].split('#')[0]
+                if str(trip_id).isdigit():
+                    trip = Trip.query.get(int(trip_id))
+                    if trip:
+                        start_str = trip.start_date.strftime('%B %d, %Y')
+                        end_str = trip.end_date.strftime('%B %d, %Y')
+                        duration = (trip.end_date - trip.start_date).days
+                        hero_title = f"Trip to {trip.destination}"
+                        details = {
+                            'Destination': trip.destination,
+                            'Start Date': start_str,
+                            'End Date': end_str,
+                            'Duration': f'{duration} days',
+                        }
+                        if trip.budget:
+                            details['Budget'] = trip.budget
+                        if trip.interests:
+                            details['Interests'] = trip.interests
+                        if trip.itinerary_text:
+                            itinerary_preview = trip.itinerary_text[:200]
+                            if len(trip.itinerary_text) > 200:
+                                itinerary_preview += '...'
+                            details['Itinerary Preview'] = itinerary_preview
+            except Exception:
+                pass
+        elif '/explore' in url_str:
+            link_label = 'Explore on RoutheonSkups'
+            try:
+                from urllib.parse import urlparse, parse_qs
+                parsed = urlparse(url_str)
+                params = parse_qs(parsed.query)
+                dest_name = params.get('dest', [None])[0]
+                if dest_name:
+                    dest = Destination.query.filter(Destination.name.ilike(dest_name)).first()
+                    if not dest:
+                        dest = Destination.query.filter(Destination.name.ilike(f'%{dest_name}%')).first()
+                    if dest:
+                        hero_title = f"Explore {dest.name}"
+                        details = {
+                            'Destination': dest.name,
+                            'Category': dest.category,
+                            'Location': dest.location,
+                            'Best Time to Visit': dest.best_time or 'Year-round',
+                        }
+                        if dest.description:
+                            desc_preview = dest.description[:200]
+                            if len(dest.description) > 200:
+                                desc_preview += '...'
+                            details['About'] = desc_preview
+            except Exception:
+                pass
+        elif '/destination/' in url_str:
             link_label = 'View Destination'
         else:
-            link_label = 'View Details'
+            link_label = 'View on RoutheonSkups'
+
     plain_body, html_body = build_notification_email(
         display_name=display_name,
         subject=subject,
@@ -452,6 +501,8 @@ def _send_notification_email(user, subject, message, created_at=None, notif_type
         link_label=link_label,
         base_url=base_url,
         created_at=created_at,
+        details=details,
+        hero_title=hero_title,
     )
     msg = Message(subject=subject, recipients=[user.email], sender=sender)
     msg.body = plain_body
@@ -616,12 +667,13 @@ def _generate_smart_notifications(user, force=False):
             start_str = trip.start_date.strftime('%B %d')
             end_str = trip.end_date.strftime('%B %d')
             duration = (trip.end_date - trip.start_date).days
+            budget_str = f" | Budget: {trip.budget}" if trip.budget else ""
             if days_left == 0:
-                msg = f"Your {trip.destination} trip starts today! Duration: {duration} days ({start_str} to {end_str}). Safe travels and enjoy every moment. Check your itinerary for today's plan."
+                msg = f"Your {trip.destination} trip starts today! Duration: {duration} days ({start_str} to {end_str}){budget_str}. Safe travels and enjoy every moment. Check your itinerary for today's plan."
             elif days_left == 1:
-                msg = f"Your {trip.destination} trip starts tomorrow! ({start_str} to {end_str}, {duration} days). A quick pack check now can make tomorrow smoother. Review your itinerary to finalize."
+                msg = f"Your {trip.destination} trip starts tomorrow! ({start_str} to {end_str}, {duration} days{budget_str}). A quick pack check now can make tomorrow smoother. Review your itinerary to finalize."
             else:
-                msg = f"Your {trip.destination} trip is coming up in {days_left} days ({start_str} to {end_str}, {duration} days). This is a great time to lock your final plan and check the weather forecast."
+                msg = f"Your {trip.destination} trip is coming up in {days_left} days ({start_str} to {end_str}, {duration} days{budget_str}). This is a great time to lock your final plan and check the weather forecast."
             maybe_add('trip_alerts', f"trip_alert:{trip.id}:{days_left}", 3, msg, notif_type='trip', email_subject=f"Trip Alert: {trip.destination}", link_url=trip_link)
 
     month = now.month
@@ -652,13 +704,14 @@ def _generate_smart_notifications(user, force=False):
         focus = combined_names[0]
         top_three = ", ".join(combined_names[:3])
         focus_link = combined_links.get(focus, f"{base_url}/explore?dest={focus.replace(' ', '+')}")
+        dest_count = len(combined_names)
         if ai_settings.get('proactive_tips', True):
             maybe_add('ai_suggestions', f"ai_suggestion:{month}:{focus}", 72,
-                      f"Based on your interest in {focus}, {season} is a great time to explore {top_three}. Each destination offers unique experiences this season. Discover what awaits you!",
+                      f"Based on your interest in {focus}, {season} is a great time to explore {top_three}. You have {dest_count} destinations saved. Each destination offers unique experiences this season.",
                       notif_type='info', email_subject=f"AI Suggestion: Explore {focus}",
                       link_url=focus_link)
         maybe_add('seasonal_recommendations', f"seasonal:{month}", 72,
-                  f"Your {season} travel picks are ready! Top recommendations: {top_three}. Start with {focus} for the best seasonal experience.",
+                  f"Your {season} travel picks are ready! Top recommendations: {top_three} ({dest_count} destinations). Start with {focus} for the best seasonal experience.",
                   notif_type='info', email_subject=f"{season} Travel Recommendations",
                   link_url=combined_links.get(combined_names[0], focus_link))
 
@@ -1309,16 +1362,35 @@ def upload_profile_image():
             return jsonify({'success': False, 'message': 'Unsupported file type. Please upload an image.'})
         return redirect(url_for('main.landing'))
 
-    upload_dir = os.path.join(current_app.static_folder, PROFILE_UPLOAD_DIR)
-    os.makedirs(upload_dir, exist_ok=True)
-    unique_name = f"user_{current_user.id}_{uuid4().hex}.{extension or 'jpg'}"
-    save_path = os.path.join(upload_dir, unique_name)
-    file.save(save_path)
+    try:
+        from PIL import Image
+        import io as _io
+
+        img = Image.open(file.stream)
+
+        if img.mode in ('RGBA', 'P'):
+            img = img.convert('RGB')
+
+        max_size = (400, 400)
+        img.thumbnail(max_size, Image.LANCZOS)
+
+        buf = _io.BytesIO()
+        img.save(buf, format='JPEG', quality=82, optimize=True)
+        buf.seek(0)
+        img_bytes = buf.read()
+    except ImportError:
+        img_bytes = file.read()
+    except Exception:
+        file.stream.seek(0)
+        img_bytes = file.read()
+
+    b64 = base64.b64encode(img_bytes).decode('utf-8')
+    mime = 'image/jpeg' if img_bytes[:2] == b'\xff\xd8' else (content_type or 'image/png')
+    data_uri = f"data:{mime};base64,{b64}"
 
     old_image_url = current_user.image_url
-    current_user.image_url = url_for('static', filename=f"{PROFILE_UPLOAD_DIR.replace(os.sep, '/')}/{unique_name}")
+    current_user.image_url = data_uri
     db.session.commit()
-    _delete_local_profile_image(old_image_url)
 
     if request.form.get('iframe_submit'):
         return jsonify({'success': True, 'message': 'Profile image updated successfully.'})
