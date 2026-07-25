@@ -12,3 +12,4 @@ edge-tts
 flask-mail
 itsdangerous
 psycopg2-binary
+APScheduler

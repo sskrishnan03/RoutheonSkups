@@ -6,7 +6,10 @@ from flask_bcrypt import Bcrypt
 from authlib.integrations.flask_client import OAuth
 from flask_mail import Mail
 import os
+import logging
 from werkzeug.middleware.proxy_fix import ProxyFix
+
+logger = logging.getLogger(__name__)
 
 bcrypt = Bcrypt()
 login_manager = LoginManager()
@@ -56,6 +59,12 @@ def create_app():
 
     with app.app_context():
         db.create_all()
+
+    try:
+        from scheduler import start_scheduler
+        start_scheduler(interval_hours=3)
+    except Exception as e:
+        logger.exception("Failed to start notification scheduler: %s", e)
 
     return app
 

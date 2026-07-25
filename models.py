@@ -122,6 +122,7 @@ class Notification(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     message = db.Column(db.String(255), nullable=False)
     type = db.Column(db.String(50), default='info')
+    link_url = db.Column(db.String(500), nullable=True)
     is_read = db.Column(db.Boolean, default=False)
     email_sent_at = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

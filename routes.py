@@ -8,6 +8,7 @@ import random
 from flask_login import login_user, current_user, logout_user, login_required
 from app import bcrypt, mail
 from flask_mail import Message
+from email_templates import build_notification_email
 import os
 import mimetypes
 import html
@@ -387,6 +388,11 @@ def _notification_display_name(user):
     return full_name if full_name else "Traveler"
 
 
+def _get_base_url():
+    from flask import current_app
+    return current_app.config.get('BASE_URL', 'http://localhost:8000').rstrip('/')
+
+
 def _get_mail_sender(purpose):
     sender = current_app.config.get('MAIL_DEFAULT_SENDER') or current_app.config.get('MAIL_USERNAME')
     required_config = {
@@ -412,13 +418,13 @@ def _send_mail_message(msg, purpose, user_id=None):
         return False
 
 
-def _create_notification(user, message, notif_type='info', email_subject=None):
-    notif = Notification(user_id=user.id, message=message, type=notif_type)
+def _create_notification(user, message, notif_type='info', email_subject=None, link_url=None):
+    notif = Notification(user_id=user.id, message=message, type=notif_type, link_url=link_url)
     db.session.add(notif)
     return notif, email_subject or "RoutheonSkups Notification"
 
 
-def _send_notification_email(user, subject, message, created_at=None):
+def _send_notification_email(user, subject, message, created_at=None, notif_type='info', link_url=None):
     if not user.email:
         current_app.logger.warning("Notification email skipped: user has no email address.")
         return False
@@ -426,16 +432,30 @@ def _send_notification_email(user, subject, message, created_at=None):
     if not sender:
         return False
     display_name = _notification_display_name(user)
-    sent_at = created_at.strftime('%d %b %Y, %I:%M %p UTC') if created_at else datetime.now(timezone.utc).strftime('%d %b %Y, %I:%M %p UTC')
-    msg = Message(subject=subject, recipients=[user.email], sender=sender)
-    msg.body = (
-        f"Hi {display_name},\n\n"
-        "Here is a quick update from RoutheonSkups.\n\n"
-        f"Time: {sent_at}\n"
-        f"Message: {message}\n\n"
-        "Open RoutheonSkups to see the full details.\n\n"
-        "RoutheonSkups Team"
+    base_url = _get_base_url()
+    link_label = None
+    if link_url:
+        if '/view-trip/' in str(link_url):
+            link_label = 'View Your Trip'
+        elif '/explore' in str(link_url):
+            link_label = 'Explore Destination'
+        elif '/destination/' in str(link_url):
+            link_label = 'View Destination'
+        else:
+            link_label = 'View Details'
+    plain_body, html_body = build_notification_email(
+        display_name=display_name,
+        subject=subject,
+        message=message,
+        notif_type=notif_type,
+        link_url=link_url,
+        link_label=link_label,
+        base_url=base_url,
+        created_at=created_at,
     )
+    msg = Message(subject=subject, recipients=[user.email], sender=sender)
+    msg.body = plain_body
+    msg.html = html_body
     return _send_mail_message(msg, "Notification", getattr(user, 'id', None))
 
 
@@ -480,18 +500,25 @@ If you didn't request this, you can safely ignore this email.'''
 
 def _notification_email_subject(notif):
     subject_by_type = {
-        'trip': 'Trip Alert from RoutheonSkups',
-        'success': 'RoutheonSkups Update',
-        'warning': 'System Notification',
-        'info': 'RoutheonSkups Notification'
+        'trip': '✈ Trip Alert — RoutheonSkups',
+        'success': '✓ Update from RoutheonSkups',
+        'warning': '⚠ System Notice — RoutheonSkups',
+        'info': '💡 Suggestion from RoutheonSkups'
     }
-    return subject_by_type.get((getattr(notif, 'type', '') or '').lower(), 'RoutheonSkups Notification')
+    return subject_by_type.get((getattr(notif, 'type', '') or '').lower(), 'RoutheonSkups Update')
 
 
 def _send_notification_record_email(user, notif, subject=None):
     if getattr(notif, 'email_sent_at', None):
         return False
-    if _send_notification_email(user, subject or _notification_email_subject(notif), notif.message, notif.created_at):
+    if _send_notification_email(
+        user,
+        subject or _notification_email_subject(notif),
+        notif.message,
+        notif.created_at,
+        notif_type=getattr(notif, 'type', 'info') or 'info',
+        link_url=getattr(notif, 'link_url', None),
+    ):
         notif.email_sent_at = datetime.utcnow()
         return True
     return False
@@ -546,9 +573,10 @@ def _generate_smart_notifications(user, force=False):
     prefs = _get_user_preferences(user)
     meta = dict(prefs.get('notification_meta', {}) if isinstance(prefs.get('notification_meta', {}), dict) else {})
     display_name = _notification_display_name(user)
+    base_url = _get_base_url()
     created = []
     meta_changed = False
-    global_cooldown_hours = 24
+    global_cooldown_hours = 3
 
     if not force:
         last_any_iso = meta.get('last_notification_sent_at')
@@ -560,7 +588,7 @@ def _generate_smart_notifications(user, force=False):
             except Exception:
                 pass
 
-    def maybe_add(setting_key, meta_key, cooldown_hours, message, notif_type='info', email_subject=None):
+    def maybe_add(setting_key, meta_key, cooldown_hours, message, notif_type='info', email_subject=None, link_url=None):
         nonlocal meta_changed
         if not settings.get(setting_key, True):
             return
@@ -572,7 +600,7 @@ def _generate_smart_notifications(user, force=False):
                     return
             except Exception:
                 pass
-        created.append(_create_notification(user, message, notif_type, email_subject))
+        created.append(_create_notification(user, message, notif_type, email_subject, link_url=link_url))
         meta[meta_key] = now.isoformat()
         meta_changed = True
 
@@ -584,34 +612,61 @@ def _generate_smart_notifications(user, force=False):
     for trip in upcoming_trips:
         days_left = (trip.start_date - today).days
         if days_left in (0, 1, 3, 7):
+            trip_link = f"{base_url}/view-trip/{trip.id}"
+            start_str = trip.start_date.strftime('%B %d')
+            end_str = trip.end_date.strftime('%B %d')
+            duration = (trip.end_date - trip.start_date).days
             if days_left == 0:
-                msg = f"{display_name}, your {trip.destination} trip starts today. Safe travels and enjoy every moment!"
+                msg = f"Your {trip.destination} trip starts today! Duration: {duration} days ({start_str} to {end_str}). Safe travels and enjoy every moment. Check your itinerary for today's plan."
             elif days_left == 1:
-                msg = f"{display_name}, your {trip.destination} trip starts tomorrow. A quick pack check now can make tomorrow smoother."
+                msg = f"Your {trip.destination} trip starts tomorrow! ({start_str} to {end_str}, {duration} days). A quick pack check now can make tomorrow smoother. Review your itinerary to finalize."
             else:
-                msg = f"{display_name}, {trip.destination} starts in {days_left} days. This is a great time to lock your final plan."
-            maybe_add('trip_alerts', f"trip_alert:{trip.id}:{days_left}", 24, msg, notif_type='trip', email_subject=f"Trip Alert: {trip.destination}")
+                msg = f"Your {trip.destination} trip is coming up in {days_left} days ({start_str} to {end_str}, {duration} days). This is a great time to lock your final plan and check the weather forecast."
+            maybe_add('trip_alerts', f"trip_alert:{trip.id}:{days_left}", 3, msg, notif_type='trip', email_subject=f"Trip Alert: {trip.destination}", link_url=trip_link)
 
     month = now.month
     season_map = {1: "Winter", 2: "Winter", 3: "Summer", 4: "Summer", 5: "Summer", 6: "Monsoon", 7: "Monsoon", 8: "Monsoon", 9: "Monsoon", 10: "Post-Monsoon", 11: "Winter", 12: "Winter"}
     season = season_map.get(month, "Season")
 
-    saved_names = [s.name for s in SavedDestination.query.filter_by(user_id=user.id).order_by(SavedDestination.created_at.desc()).limit(8).all() if s.name]
-    trip_names = [t.destination for t in Trip.query.filter_by(user_id=user.id).order_by(Trip.created_at.desc()).limit(6).all() if t.destination]
+    saved_dests = SavedDestination.query.filter_by(user_id=user.id).order_by(SavedDestination.created_at.desc()).limit(8).all()
+    saved_names = [s.name for s in saved_dests if s.name]
+    saved_links = {s.name: f"{base_url}/explore?dest={s.name.replace(' ', '+')}" for s in saved_dests if s.name}
+
+    trips = Trip.query.filter_by(user_id=user.id).order_by(Trip.created_at.desc()).limit(6).all()
+    trip_names = [t.destination for t in trips if t.destination]
+    trip_links = {t.destination: f"{base_url}/view-trip/{t.id}" for t in trips if t.destination}
+
+    favs = FavoriteDestination.query.filter_by(user_id=user.id).order_by(FavoriteDestination.created_at.desc()).limit(5).all()
+    fav_names = [f.name for f in favs if f.name]
+    fav_links = {f.name: f"{base_url}/explore?dest={f.name.replace(' ', '+')}" for f in favs if f.name}
+
     combined_names = []
-    for name in saved_names + trip_names:
+    combined_links = {}
+    for name, link in [(n, saved_links.get(n) or trip_links.get(n) or fav_links.get(n)) for n in saved_names + trip_names + fav_names]:
         if name and name not in combined_names:
             combined_names.append(name)
+            if link:
+                combined_links[name] = link
 
     if combined_names:
         focus = combined_names[0]
         top_three = ", ".join(combined_names[:3])
+        focus_link = combined_links.get(focus, f"{base_url}/explore?dest={focus.replace(' ', '+')}")
         if ai_settings.get('proactive_tips', True):
-            maybe_add('ai_suggestions', f"ai_suggestion:{month}:{focus}", 168, f"{display_name}, based on your interest in {focus}, {season} is a great time to explore {top_three}.", notif_type='info', email_subject="AI Suggestion for Your Next Trip")
-        maybe_add('seasonal_recommendations', f"seasonal:{month}", 168, f"{display_name}, your {season} picks are ready: {top_three}. Want to start with {focus}?", notif_type='info', email_subject=f"{season} Travel Recommendation")
+            maybe_add('ai_suggestions', f"ai_suggestion:{month}:{focus}", 72,
+                      f"Based on your interest in {focus}, {season} is a great time to explore {top_three}. Each destination offers unique experiences this season. Discover what awaits you!",
+                      notif_type='info', email_subject=f"AI Suggestion: Explore {focus}",
+                      link_url=focus_link)
+        maybe_add('seasonal_recommendations', f"seasonal:{month}", 72,
+                  f"Your {season} travel picks are ready! Top recommendations: {top_three}. Start with {focus} for the best seasonal experience.",
+                  notif_type='info', email_subject=f"{season} Travel Recommendations",
+                  link_url=combined_links.get(combined_names[0], focus_link))
 
     month_key = now.strftime('%Y-%m')
-    maybe_add('system_notifications', f"system:{month_key}", 720, f"{display_name}, quick system update: reliability checks are complete and your account data looks healthy.", notif_type='warning', email_subject="System Notification")
+    maybe_add('system_notifications', f"system:{month_key}", 72,
+              f"Quick system update: all reliability checks are complete and your account data looks healthy. Your travel preferences and saved destinations are all synced.",
+              notif_type='warning', email_subject="RoutheonSkups System Update",
+              link_url=f"{base_url}/profile")
 
     if created or meta_changed:
         _set_notification_meta(user, meta)
@@ -1798,6 +1853,9 @@ def save_itinerary():
             "chat": chat if isinstance(chat, list) else []
         }
 
+        start_str = start_date.strftime('%B %d') if start_date else 'TBD'
+        end_str = end_date.strftime('%B %d') if end_date else 'TBD'
+
         trip = Trip(
             user_id=current_user.id,
             destination=destination,
@@ -1808,17 +1866,22 @@ def save_itinerary():
             itinerary_text=json.dumps(saved_payload)
         )
         db.session.add(trip)
+        db.session.flush()
         _track_activity(current_user, destination, 'trip_create', {'budget': budget, 'adults': adults, 'children': children})
         
         created_notifications = []
         notif_settings = _get_notification_settings(current_user)
         if notif_settings.get('notifications_enabled', True) and notif_settings.get('trip_alerts', True):
             display_name = _notification_display_name(current_user)
+            base_url = _get_base_url()
+            duration = (end_date - start_date).days
+            trip_link = f"{base_url}/view-trip/{trip.id}"
             created_notifications.append(_create_notification(
                 current_user,
-                f"Nice one, {display_name}! Your trip to {destination} has been saved and is ready whenever you are.",
+                f"Your trip to {destination} has been saved! {start_str} to {end_str} ({duration} days). Your itinerary is ready whenever you are.",
                 'success',
-                f"Trip Saved: {destination}"
+                f"Trip Saved: {destination}",
+                link_url=trip_link
             ))
         
         db.session.commit()
@@ -1864,6 +1927,7 @@ def get_notifications():
             'id': n.id,
             'message': n.message,
             'type': n.type,
+            'link_url': getattr(n, 'link_url', None),
             'is_read': n.is_read,
             'created_at': n.created_at.strftime('%b %d, %Y %H:%M') if n.created_at else '',
             'created_at_iso': created_utc.isoformat() if created_utc else None
