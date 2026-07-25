@@ -2,22 +2,19 @@ from flask import Flask
 from config import Config
 from models import db, User
 from flask_login import LoginManager
-from flask_bcrypt import Bcrypt
 from authlib.integrations.flask_client import OAuth
-from flask_mail import Mail
+from extensions import bcrypt, mail
 import os
 import logging
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 logger = logging.getLogger(__name__)
 
-bcrypt = Bcrypt()
 login_manager = LoginManager()
 login_manager.login_view = 'main.login'
 login_manager.login_message_category = 'info'
 
 oauth = OAuth()
-mail = Mail()
 
 
 def _sanitize_proxy_env():

@@ -6,7 +6,7 @@ import json
 from datetime import datetime, timedelta, timezone, date
 import random
 from flask_login import login_user, current_user, logout_user, login_required
-from app import bcrypt, mail
+from extensions import bcrypt, mail
 from flask_mail import Message
 from email_templates import build_notification_email
 import os
