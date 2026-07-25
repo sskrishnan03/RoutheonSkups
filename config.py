@@ -25,9 +25,6 @@ class Config:
     SQLALCHEMY_ENGINE_OPTIONS = {
         'pool_pre_ping': True,
         'pool_recycle': 300,
-        'connect_args': {
-            'connect_timeout': 10,
-        }
     }
 
     MAIL_SERVER = 'smtp.gmail.com'
