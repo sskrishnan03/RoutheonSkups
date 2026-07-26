@@ -8,7 +8,8 @@ import random
 from flask_login import login_user, current_user, logout_user, login_required
 from app import bcrypt, mail
 from flask_mail import Message
-from email_templates import build_notification_email
+
+
 import os
 import mimetypes
 import html
@@ -134,10 +135,8 @@ def _track_activity(user, destination_name, action_type, extra_data=None):
             extra_data=extra_data or {}
         )
         db.session.add(activity)
-        db.session.commit()
     except Exception as e:
-        db.session.rollback()
-        print(f"Track activity error: {e}")
+        pass
 
 
 def _track_page_view(page, action=None):
@@ -149,10 +148,8 @@ def _track_page_view(page, action=None):
             extra_data={}
         )
         db.session.add(analytic)
-        db.session.commit()
     except Exception as e:
-        db.session.rollback()
-        print(f"Track page view error: {e}")
+        pass
 
 
 def _log_api_usage(service, endpoint, method=None, tokens_used=None, latency_ms=None, success=True, error_message=None, extra_data=None):
@@ -169,7 +166,6 @@ def _log_api_usage(service, endpoint, method=None, tokens_used=None, latency_ms=
             extra_data=extra_data
         )
         db.session.add(log)
-        db.session.commit()
     except Exception as e:
         db.session.rollback()
         print(f"Log API usage error: {e}")
@@ -404,11 +400,21 @@ def _get_mail_sender(purpose):
 
 
 def _send_mail_message(msg, purpose, user_id=None):
+    import threading
+    from flask import current_app
+    app = current_app._get_current_object()
+    def _do_send():
+        try:
+            with app.app_context():
+                mail.send(msg)
+        except Exception as e:
+            app.logger.exception("%s email send error for user_id=%s: %s", purpose, user_id, e)
     try:
-        mail.send(msg)
+        t = threading.Thread(target=_do_send, daemon=True)
+        t.start()
         return True
     except Exception as e:
-        current_app.logger.exception("%s email send error for user_id=%s: %s", purpose, user_id, e)
+        current_app.logger.exception("%s email thread error for user_id=%s: %s", purpose, user_id, e)
         return False
 
 
@@ -426,43 +432,40 @@ def _send_notification_email(user, subject, message, created_at=None, notif_type
     if not sender:
         return False
     display_name = _notification_display_name(user)
-    base_url = _get_base_url()
-    link_label = None
-    details = None
-    hero_title = subject
+
+    lines = [
+        "RoutheonSkups",
+        "",
+        f"Hi {display_name},",
+        "",
+        subject,
+        "",
+        message,
+    ]
 
     if link_url:
         url_str = str(link_url)
         if '/view-trip/' in url_str:
-            link_label = 'View Your Trip'
             try:
                 trip_id = url_str.rstrip('/').split('/view-trip/')[-1].split('?')[0].split('#')[0]
                 if str(trip_id).isdigit():
                     trip = Trip.query.get(int(trip_id))
                     if trip:
-                        start_str = trip.start_date.strftime('%B %d, %Y')
-                        end_str = trip.end_date.strftime('%B %d, %Y')
                         duration = (trip.end_date - trip.start_date).days
-                        hero_title = f"Trip to {trip.destination}"
-                        details = {
-                            'Destination': trip.destination,
-                            'Start Date': start_str,
-                            'End Date': end_str,
-                            'Duration': f'{duration} days',
-                        }
+                        lines += [
+                            "",
+                            f"Destination: {trip.destination}",
+                            f"Start Date: {trip.start_date.strftime('%B %d, %Y')}",
+                            f"End Date: {trip.end_date.strftime('%B %d, %Y')}",
+                            f"Duration: {duration} days",
+                        ]
                         if trip.budget:
-                            details['Budget'] = trip.budget
+                            lines.append(f"Budget: {trip.budget}")
                         if trip.interests:
-                            details['Interests'] = trip.interests
-                        if trip.itinerary_text:
-                            itinerary_preview = trip.itinerary_text[:200]
-                            if len(trip.itinerary_text) > 200:
-                                itinerary_preview += '...'
-                            details['Itinerary Preview'] = itinerary_preview
+                            lines.append(f"Interests: {trip.interests}")
             except Exception:
                 pass
         elif '/explore' in url_str:
-            link_label = 'Explore on RoutheonSkups'
             try:
                 from urllib.parse import urlparse, parse_qs
                 parsed = urlparse(url_str)
@@ -473,40 +476,29 @@ def _send_notification_email(user, subject, message, created_at=None, notif_type
                     if not dest:
                         dest = Destination.query.filter(Destination.name.ilike(f'%{dest_name}%')).first()
                     if dest:
-                        hero_title = f"Explore {dest.name}"
-                        details = {
-                            'Destination': dest.name,
-                            'Category': dest.category,
-                            'Location': dest.location,
-                            'Best Time to Visit': dest.best_time or 'Year-round',
-                        }
-                        if dest.description:
-                            desc_preview = dest.description[:200]
-                            if len(dest.description) > 200:
-                                desc_preview += '...'
-                            details['About'] = desc_preview
+                        lines += [
+                            "",
+                            f"Destination: {dest.name}",
+                            f"Category: {dest.category}",
+                            f"Location: {dest.location}",
+                            f"Best Time to Visit: {dest.best_time or 'Year-round'}",
+                        ]
             except Exception:
                 pass
-        elif '/destination/' in url_str:
-            link_label = 'View Destination'
-        else:
-            link_label = 'View on RoutheonSkups'
 
-    plain_body, html_body = build_notification_email(
-        display_name=display_name,
-        subject=subject,
-        message=message,
-        notif_type=notif_type,
-        link_url=link_url,
-        link_label=link_label,
-        base_url=base_url,
-        created_at=created_at,
-        details=details,
-        hero_title=hero_title,
-    )
+        lines += ["", f"Link: {link_url}"]
+
+    lines += [
+        "",
+        "Manage notification settings: " + (_get_base_url() or '') + "/profile",
+        "",
+        "RoutheonSkups - Your gateway to smarter travel planning.",
+    ]
+
+    plain_body = "\n".join(lines)
+
     msg = Message(subject=subject, recipients=[user.email], sender=sender)
     msg.body = plain_body
-    msg.html = html_body
     return _send_mail_message(msg, "Notification", getattr(user, 'id', None))
 
 
@@ -517,6 +509,7 @@ def _send_password_reset_email(user):
     sender = _get_mail_sender("Password reset")
     if not sender:
         return False
+    display_name = _notification_display_name(user)
     token = user.get_reset_token()
     reset_url = url_for('main.reset_token', token=token, _external=True)
     msg = Message(
@@ -526,26 +519,16 @@ def _send_password_reset_email(user):
     )
     msg.body = f'''RoutheonSkups
 
-Your gateway to smarter travel planning. Plan trips, explore destinations, and discover the world like never before.
+Hi {display_name},
 
-Reset your password here:
+Reset Your Password
+
+Click the link below to reset your password:
 {reset_url}
 
-If you didn't request this, you can safely ignore this email.'''
-    msg.html = f'''<!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"></head>
-<body style="margin:0;padding:0;background:#000000;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#000000;padding:40px 20px;">
-<tr><td align="center">
-  <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:#FFFFFF;letter-spacing:-0.02em;">RoutheonSkups</h1>
-  <p style="margin:0 0 24px;font-size:13px;color:rgba(255,255,255,0.4);font-style:italic;">Your gateway to smarter travel planning. Plan trips, explore destinations, and discover the world like never before.</p>
-  <a href="{reset_url}" style="display:inline-block;padding:12px 32px;background:#FFFFFF;color:#000000;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;">Reset Password</a>
-  <p style="margin:24px 0 0;font-size:12px;color:rgba(255,255,255,0.35);">If you didn't request this, you can safely ignore this email.</p>
-</td></tr>
-</table>
-</body>
-</html>'''
+If you didn't request this, you can safely ignore this email.
+
+RoutheonSkups - Your gateway to smarter travel planning.'''
     return _send_mail_message(msg, "Password reset", getattr(user, 'id', None))
 
 
@@ -811,17 +794,20 @@ def logout():
 def reset_password():
     if request.method == 'POST':
         email = (request.form.get('email') or '').strip().lower()
-        user = User.query.filter(db.func.lower(User.email) == email).first()
-        
+        try:
+            user = User.query.filter(db.func.lower(User.email) == email).first()
+        except Exception:
+            user = None
+
         if user:
-            if _send_password_reset_email(user):
-                flash('An email has been sent with instructions to reset your password.', 'success')
-            else:
-                flash('There was an error sending the reset email. Please try again later.', 'danger')
-        else:
-            # For security reasons, we still show the success message even if the user doesn't exist
+            try:
+                _send_password_reset_email(user)
+            except Exception:
+                pass
             flash('If an account exists with that email, a password reset link has been sent.', 'success')
-            
+        else:
+            flash('If an account exists with that email, a password reset link has been sent.', 'success')
+
         return redirect(url_for('main.login'))
     return render_template('forgot_password.html')
 
@@ -1005,7 +991,7 @@ def api_trip_cost_estimate():
 @main_bp.route('/favorites')
 @login_required
 def favorites():
-    favorite_destinations = FavoriteDestination.query.filter_by(user_id=current_user.id).order_by(FavoriteDestination.created_at.desc()).all()
+    favorite_destinations = FavoriteDestination.query.filter_by(user_id=current_user.id).order_by(FavoriteDestination.created_at.desc()).limit(50).all()
     return render_template('favorites.html', favorite_destinations=favorite_destinations)
 
 @main_bp.route('/skupheon')
@@ -1241,14 +1227,14 @@ def profile_embed():
     saved_destinations = current_user.saved_destinations
     user_prefs = _get_user_preferences(current_user).get('categories', [])
 
-    all_trips = Trip.query.filter_by(user_id=current_user.id).order_by(Trip.start_date.asc()).all()
+    all_trips = Trip.query.filter_by(user_id=current_user.id).order_by(Trip.start_date.asc()).limit(100).all()
     upcoming_trips = [t for t in all_trips if t.start_date > today]
     past_trips = [t for t in all_trips if t.end_date < today]
 
-    all_saved = SavedDestination.query.filter_by(user_id=current_user.id).order_by(SavedDestination.created_at.desc()).all()
+    all_saved = SavedDestination.query.filter_by(user_id=current_user.id).order_by(SavedDestination.created_at.desc()).limit(50).all()
     recent_saved = all_saved[:2]
 
-    explored_trips_raw = Trip.query.filter_by(user_id=current_user.id).order_by(Trip.created_at.desc()).all()
+    explored_trips_raw = Trip.query.filter_by(user_id=current_user.id).order_by(Trip.created_at.desc()).limit(20).all()
 
     recent_explore_items = []
     for s in all_saved:
@@ -1984,10 +1970,6 @@ def get_notifications():
             'notifications': [],
             'unread_count': 0
         })
-    should_generate = (request.args.get('generate', '1') != '0')
-    if should_generate:
-        _generate_smart_notifications(current_user)
-    _send_pending_notification_emails(current_user)
     notifications = Notification.query.filter_by(user_id=current_user.id).order_by(Notification.created_at.desc()).limit(10).all()
     unread_count = Notification.query.filter_by(user_id=current_user.id, is_read=False).count()
     
@@ -2187,7 +2169,7 @@ def get_my_trip_context():
     today = datetime.now().date()
 
     # Fetch all trips for the user
-    all_trips = Trip.query.filter_by(user_id=current_user.id).order_by(Trip.start_date.desc()).all()
+    all_trips = Trip.query.filter_by(user_id=current_user.id).order_by(Trip.start_date.desc()).limit(30).all()
     trips_data = []
     for t in all_trips:
         trip_info = {
@@ -2222,7 +2204,7 @@ def get_my_trip_context():
         trips_data.append(trip_info)
 
     # Fetch saved destinations
-    saved = SavedDestination.query.filter_by(user_id=current_user.id).order_by(SavedDestination.created_at.desc()).all()
+    saved = SavedDestination.query.filter_by(user_id=current_user.id).order_by(SavedDestination.created_at.desc()).limit(20).all()
     saved_data = []
     for s in saved:
         saved_data.append({
@@ -2232,7 +2214,7 @@ def get_my_trip_context():
         })
 
     # Fetch favorite destinations
-    favs = FavoriteDestination.query.filter_by(user_id=current_user.id).order_by(FavoriteDestination.created_at.desc()).all()
+    favs = FavoriteDestination.query.filter_by(user_id=current_user.id).order_by(FavoriteDestination.created_at.desc()).limit(20).all()
     favs_data = []
     for f in favs:
         favs_data.append({
@@ -2291,7 +2273,7 @@ def send_chat_message():
     
     # Prepare history for AI
     history = []
-    past_messages = ChatMessage.query.filter_by(session_id=session.id).order_by(ChatMessage.created_at.asc()).all()
+    past_messages = ChatMessage.query.filter_by(session_id=session.id).order_by(ChatMessage.created_at.asc()).limit(50).all()
     for m in past_messages:
         history.append({'role': m.role, 'content': m.content})
     

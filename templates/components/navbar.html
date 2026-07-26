@@ -533,7 +533,6 @@ document.addEventListener('DOMContentLoaded', function() {
     var notifFooter = document.getElementById('ks-notif-footer');
     var notifMarkAll = document.getElementById('ks-notif-mark-all');
     var notifClearAll = document.getElementById('ks-notif-clear-all');
-    var notifLoaded = false;
     var notifPollTimer = null;
 
     var notifTypeIcons = {
@@ -610,7 +609,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function fetchNotifications() {
         try {
-            var r = await fetch('/api/notifications?generate=1');
+            notifList.innerHTML = '<div class="ks-notif-loading"><div class="ks-notif-spinner"></div></div>';
+            var r = await fetch('/api/notifications');
             if (!r.ok) throw new Error();
             var data = await r.json();
             var notifs = data.notifications || [];
@@ -630,7 +630,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 html += renderNotifItem(notifs[i]);
             }
             notifList.innerHTML = html;
-            notifLoaded = true;
         } catch (e) {
             notifList.innerHTML =
                 '<div class="ks-notif-empty">'
@@ -646,7 +645,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.ks-dropdown').forEach(function(d) { d.classList.remove('open'); });
             var wasOpen = notifPanel.classList.contains('open');
             notifPanel.classList.toggle('open');
-            if (!wasOpen && !notifLoaded) {
+            if (!wasOpen) {
                 fetchNotifications();
             }
         });

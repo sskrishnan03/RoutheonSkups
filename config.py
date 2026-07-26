@@ -15,7 +15,6 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     GROQ_API_KEY = os.environ.get('GROQ_API_KEY')
     WEATHER_API_KEY = os.environ.get('WEATHER_API_KEY')
-    SERPER_API_KEY = os.environ.get('SERPER_API_KEY')
     GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
     GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
     ADMIN_EMAIL = (os.environ.get('ADMIN_EMAIL') or 'routheonskups@gmail.com').strip().lower()

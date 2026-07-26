@@ -51,7 +51,7 @@ class User(db.Model, UserMixin):
 class Trip(db.Model):
     __tablename__ = 'trips'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
     destination = db.Column(db.String(100), nullable=False)
     start_date = db.Column(db.Date, nullable=False)
     end_date = db.Column(db.Date, nullable=False)
@@ -93,7 +93,7 @@ class Itinerary(db.Model):
 class SavedDestination(db.Model):
     __tablename__ = 'saved_destinations'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
     tag = db.Column(db.String(50), nullable=True)
@@ -106,7 +106,7 @@ class SavedDestination(db.Model):
 class FavoriteDestination(db.Model):
     __tablename__ = 'favorite_destinations'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
     tag = db.Column(db.String(50), nullable=True)
@@ -119,11 +119,11 @@ class FavoriteDestination(db.Model):
 class Notification(db.Model):
     __tablename__ = 'notifications'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
     message = db.Column(db.String(255), nullable=False)
     type = db.Column(db.String(50), default='info')
     link_url = db.Column(db.String(500), nullable=True)
-    is_read = db.Column(db.Boolean, default=False)
+    is_read = db.Column(db.Boolean, default=False, index=True)
     email_sent_at = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -132,7 +132,7 @@ class Notification(db.Model):
 class ChatSession(db.Model):
     __tablename__ = 'chat_sessions'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
     title = db.Column(db.String(150), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -142,7 +142,7 @@ class ChatSession(db.Model):
 class ChatMessage(db.Model):
     __tablename__ = 'chat_messages'
     id = db.Column(db.Integer, primary_key=True)
-    session_id = db.Column(db.Integer, db.ForeignKey('chat_sessions.id'), nullable=False)
+    session_id = db.Column(db.Integer, db.ForeignKey('chat_sessions.id'), nullable=False, index=True)
     role = db.Column(db.String(20), nullable=False)
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -152,7 +152,7 @@ class ChatMessage(db.Model):
 class DestinationActivity(db.Model):
     __tablename__ = 'destination_activities'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True, index=True)
     destination_name = db.Column(db.String(200), nullable=False)
     action_type = db.Column(db.String(50), nullable=False)
     extra_data = db.Column(db.JSON, nullable=True)
@@ -162,7 +162,7 @@ class DestinationActivity(db.Model):
 class ContactSubmission(db.Model):
     __tablename__ = 'contact_submissions'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True, index=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(20), nullable=True)
@@ -178,7 +178,7 @@ class ContactSubmission(db.Model):
 class ApiUsageLog(db.Model):
     __tablename__ = 'api_usage_log'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True, index=True)
     service = db.Column(db.String(50), nullable=False)
     endpoint = db.Column(db.String(200), nullable=False)
     method = db.Column(db.String(10), nullable=True)
@@ -193,7 +193,7 @@ class ApiUsageLog(db.Model):
 class PageAnalytic(db.Model):
     __tablename__ = 'page_analytics'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True, index=True)
     page = db.Column(db.String(200), nullable=False)
     action = db.Column(db.String(50), nullable=True)
     referrer = db.Column(db.String(500), nullable=True)

@@ -6,9 +6,7 @@ logger = logging.getLogger(__name__)
 scheduler = BackgroundScheduler(daemon=True)
 
 
-def _run_daily_emails():
-    from app import create_app
-    app = create_app()
+def _run_daily_emails(app):
     with app.app_context():
         from models import db, User
         from routes import (
@@ -38,7 +36,7 @@ def _run_daily_emails():
             logger.exception("Daily email job error: %s", e)
 
 
-def start_scheduler():
+def start_scheduler(app):
     try:
         scheduler.add_job(
             _run_daily_emails,
@@ -47,8 +45,9 @@ def start_scheduler():
             id='daily_email_job',
             replace_existing=True,
             max_instances=1,
+            args=[app],
         )
         scheduler.start()
-        logger.info("Scheduler started: daily email every 24 hours.")
+        logger.warning("Scheduler started: daily email every 24 hours.")
     except Exception as e:
         logger.exception("Failed to start scheduler: %s", e)

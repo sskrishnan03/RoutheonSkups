@@ -10,7 +10,7 @@ from groq import Groq
 from config import Config
 from global_countries import (
     get_country_info, get_currency, get_currency_symbol, get_tts_voice,
-    get_serper_gl_code, get_country_center_coords, search_destinations,
+    get_country_center_coords, search_destinations,
     get_tts_fallback_lang, ALL_COUNTRY_NAMES, COUNTRIES
 )
 
@@ -218,21 +218,58 @@ def _get_fallback_image(query):
     return _DEFAULT_IMAGES[idx]
 
 
-class SerperService:
-    @staticmethod
-    def _get_gl_code_for_query(query):
-        """Determine the best gl code for a Serper query based on destination context."""
-        try:
-            from global_countries import search_destinations as _search_dests
-            results = _search_dests(query)
-            if results:
-                country = results[0].get('country')
-                if country:
-                    return get_serper_gl_code(country)
-        except Exception:
-            pass
-        return "us"
+class DuckDuckGoService:
+    """Free search service using DuckDuckGo. No API key required."""
 
+    @staticmethod
+    def search(query, max_results=5):
+        """Web search via DuckDuckGo. Returns list of dicts with title, url, snippet."""
+        try:
+            from ddgs import DDGS
+            with DDGS() as ddgs:
+                results = list(ddgs.text(query, max_results=max_results))
+            return [
+                {'title': r.get('title', ''), 'url': r.get('href', ''), 'snippet': r.get('body', '')}
+                for r in results
+            ]
+        except Exception as e:
+            print(f"DuckDuckGo search error: {e}")
+            return []
+
+    @staticmethod
+    def search_images(query, max_results=15):
+        """Image search via DuckDuckGo. Returns list of image URL strings."""
+        try:
+            from ddgs import DDGS
+            with DDGS() as ddgs:
+                results = list(ddgs.images(query, max_results=max_results))
+            urls = []
+            seen = set()
+            for r in results:
+                url = r.get('image', '')
+                if url and url not in seen:
+                    seen.add(url)
+                    urls.append(url)
+            return urls
+        except Exception as e:
+            print(f"DuckDuckGo image search error: {e}")
+            return []
+
+    @staticmethod
+    def search_with_fallback(query, num_results=5):
+        """Search that returns results in a standard format."""
+        results = DuckDuckGoService.search(query, max_results=num_results)
+        if not results:
+            return {}
+        return {
+            'organic': [
+                {'title': r['title'], 'link': r['url'], 'snippet': r['snippet']}
+                for r in results
+            ]
+        }
+
+
+class SearchService:
     @staticmethod
     def _tokenize_query(text):
         stop = {
@@ -321,12 +358,10 @@ class SerperService:
 
     @staticmethod
     def get_images(query):
-        api_key = Config.SERPER_API_KEY
-        if not api_key:
-            return []
-
         import hashlib
         query_hash = hashlib.sha256(query.lower().strip().encode()).hexdigest()
+
+        # Check cache first
         try:
             from models import db, ImageSearchCache
             from datetime import datetime, timedelta
@@ -340,119 +375,58 @@ class SerperService:
         except Exception:
             pass
 
-        gl_code = SerperService._get_gl_code_for_query(query)
-        api_url = "https://google.serper.dev/images"
-        payload = json.dumps({
-            "q": query,
-            "num": 30,
-            "gl": gl_code,
-            "hl": "en"
-        })
-        headers = {
-            'X-API-KEY': api_key,
-            'Content-Type': 'application/json'
-        }
-        
-        try:
-            response = requests.request("POST", api_url, headers=headers, data=payload, timeout=5)
-            if response.status_code == 200:
-                results = response.json()
-                ranked = []
-                required_tokens = SerperService._tokenize_query(query)
-                for img in results.get('images', []):
-                    url = str(img.get('imageUrl') or '')
-                    if not SerperService._looks_like_real_photo(url, img):
-                        continue
-                    score = SerperService._score_image_candidate(img, required_tokens)
-                    ranked.append((score, url))
+        images = []
 
-                ranked.sort(key=lambda x: x[0], reverse=True)
-                images = []
-                seen = set()
-                for _, url in ranked:
-                    if url and url not in seen:
-                        seen.add(url)
-                        images.append(url)
-                    if len(images) >= 12:
-                        break
+        # DuckDuckGo (free, no billing required)
+        images = DuckDuckGoService.search_images(query)
 
-                if images:
-                    try:
-                        from models import db, ImageSearchCache
-                        from datetime import datetime, timedelta
-                        now = datetime.utcnow()
-                        cache_record = ImageSearchCache(
-                            query_hash=query_hash,
-                            query_text=query[:500],
-                            images=images,
-                            fetched_at=now,
-                            expires_at=now + timedelta(hours=6)
-                        )
-                        db.session.add(cache_record)
-                        db.session.commit()
-                    except Exception:
-                        pass
-                    return images
+        # Cache results
+        if images:
+            try:
+                from models import db, ImageSearchCache
+                from datetime import datetime, timedelta
+                now = datetime.utcnow()
+                db.session.add(ImageSearchCache(
+                    query_hash=query_hash,
+                    query_text=query[:500],
+                    images=images,
+                    fetched_at=now,
+                    expires_at=now + timedelta(hours=6)
+                ))
+                db.session.commit()
+            except Exception:
+                pass
 
-                # Secondary pass
-                strict_query = f"{query} travel"
-                strict_payload = json.dumps({"q": strict_query, "num": 10})
-                strict_resp = requests.request("POST", api_url, headers=headers, data=strict_payload, timeout=5)
-                if strict_resp.status_code == 200:
-                    result_imgs = [img.get('imageUrl') for img in strict_resp.json().get('images', []) if img.get('imageUrl')]
-                    if result_imgs:
-                        try:
-                            from models import db, ImageSearchCache
-                            from datetime import datetime, timedelta
-                            now = datetime.utcnow()
-                            cache_record = ImageSearchCache(
-                                query_hash=query_hash,
-                                query_text=query[:500],
-                                images=result_imgs,
-                                fetched_at=now,
-                                expires_at=now + timedelta(hours=6)
-                            )
-                            db.session.add(cache_record)
-                            db.session.commit()
-                        except Exception:
-                            pass
-                    return result_imgs
-                
-                return []
-            
-            print(f"Serper API Error: {response.status_code} - {response.text}")
-            return []
-        except Exception as e:
-            print(f"Serper API Error: {e}")
-            return []
+        return images
 
     @staticmethod
     def get_search_results(query):
-        api_key = Config.SERPER_API_KEY
-        if not api_key:
-            return {}
-            
-        gl_code = SerperService._get_gl_code_for_query(query)
-        url = "https://google.serper.dev/search"
-        payload = json.dumps({
-            "q": query,
-            "num": 5,
-            "gl": gl_code,
-            "hl": "en"
-        })
-        headers = {
-            'X-API-KEY': api_key,
-            'Content-Type': 'application/json'
-        }
-        
-        try:
-            response = requests.request("POST", url, headers=headers, data=payload)
-            if response.status_code == 200:
-                return response.json()
-            return {}
-        except Exception as e:
-            print(f"Serper Search API Error: {e}")
-            return {}
+        # DuckDuckGo (free, no billing required)
+        ddg_result = DuckDuckGoService.search_with_fallback(query)
+        if ddg_result:
+            return ddg_result
+        return {}
+
+    @staticmethod
+    def get_images_parallel(queries):
+        """Fetch images for multiple queries concurrently instead of sequentially."""
+        if not queries:
+            return []
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+        results = {}
+        def _fetch(idx, q):
+            try:
+                imgs = SearchService.get_images(q)
+                return idx, imgs
+            except Exception:
+                return idx, []
+        with ThreadPoolExecutor(max_workers=min(len(queries), 8)) as pool:
+            futures = {pool.submit(_fetch, i, q): i for i, q in enumerate(queries)}
+            for f in as_completed(futures):
+                idx, imgs = f.result()
+                results[idx] = imgs
+        return [results.get(i, []) for i in range(len(queries))]
+
 
 class AIService:
     @staticmethod
@@ -698,7 +672,7 @@ Here is the user's data:
             
             if destination:
                 print(f"Fetching images for chatbot destination: {destination}")
-                images = SerperService.get_images(f"{destination} tourist attractions sightseeing high quality")
+                images = SearchService.get_images(f"{destination} tourist attractions sightseeing high quality")
                 print(f"Found {len(images)} images for {destination}")
             
             return {
@@ -774,26 +748,25 @@ Here is the user's data:
             text = completion.choices[0].message.content
             itinerary = json.loads(text)
             
-            # Enrich with real images and robust coordinates
+            # Enrich with real images and robust coordinates - PARALLEL image fetch
             dest_name = itinerary.get('destination', destination)
             ctx = AIService._get_country_context(dest_name)
             if not itinerary.get('center_coords'):
                 itinerary['center_coords'] = ctx['center_coords']
-                
+
+            act_queries = []
+            act_refs = []
             for day in itinerary.get('days', []):
                 for act in day.get('activities', []):
-                    # Fetch real image for the activity
-                    query = f"{act.get('title')} {dest_name} sightseeing"
-                    images = SerperService.get_images(query)
-                    if images:
-                        act['image_url'] = images[0]
-                    else:
-                        act['image_url'] = _get_fallback_image(f"{act.get('title', '')} {dest_name}")
-                    
-                    # Ensure coords
-                    if 'lat' not in act or 'lng' not in act:
-                        act['lat'] = itinerary['center_coords']['lat']
-                        act['lng'] = itinerary['center_coords']['lng']
+                    act_queries.append(f"{act.get('title')} {dest_name} sightseeing")
+                    act_refs.append(act)
+            all_images = SearchService.get_images_parallel(act_queries)
+            for i, act in enumerate(act_refs):
+                imgs = all_images[i] if i < len(all_images) else []
+                act['image_url'] = imgs[0] if imgs else _get_fallback_image(f"{act.get('title', '')} {dest_name}")
+                if 'lat' not in act or 'lng' not in act:
+                    act['lat'] = itinerary['center_coords']['lat']
+                    act['lng'] = itinerary['center_coords']['lng']
             
             return itinerary
         except Exception as e:
@@ -855,12 +828,14 @@ Here is the user's data:
                 text_clean = text.replace('```json', '').replace('```', '').strip()
                 data = json.loads(text_clean)
             
-            # Add images using Serper
-            place_images = SerperService.get_images(f"{place} travel destination tourism high resolution")
-            data['images'] = place_images if place_images else [_get_fallback_image(f"{place} landscape")]
-            for attr in data['attractions']:
-                attr_images = SerperService.get_images(f"{attr['name']} {place} tourist attraction")
-                attr['images'] = attr_images if attr_images else [_get_fallback_image(f"{attr['name']} {place}")]
+            # Add images - PARALLEL
+            place_query = f"{place} travel destination tourism high resolution"
+            attr_queries = [f"{attr['name']} {place} tourist attraction" for attr in data['attractions']]
+            all_images = SearchService.get_images_parallel([place_query] + attr_queries)
+            data['images'] = all_images[0] if all_images[0] else [_get_fallback_image(f"{place} landscape")]
+            for i, attr in enumerate(data['attractions']):
+                imgs = all_images[i + 1] if i + 1 < len(all_images) else []
+                attr['images'] = imgs if imgs else [_get_fallback_image(f"{attr['name']} {place}")]
             
             # Calculate shortest path between first and last attraction as a showcase
             if len(data['attractions']) >= 2:
@@ -932,7 +907,7 @@ Here is the user's data:
             
             # Add images for each place
             for stop in data['route']:
-                stop['images'] = SerperService.get_images(f"{stop['place']} sightseeing travel")
+                stop['images'] = SearchService.get_images(f"{stop['place']} sightseeing travel")
                 
             return data
         except Exception as e:
@@ -1043,7 +1018,7 @@ Here is the user's data:
 
     @staticmethod
     def explore_destinations(state=None, category=None, search_query=None, page=1):
-        """Generate destination list for explore page using Groq + Serper."""
+        """Generate destination list for explore page using Groq + search."""
         try:
             client = Groq(api_key=Config.GROQ_API_KEY)
             
@@ -1100,11 +1075,12 @@ Here is the user's data:
                 text_clean = text.replace('```json', '').replace('```', '').strip()
                 data = json.loads(text_clean)
             
-            # Enrich each destination with an image from Serper (with Unsplash fallback)
-            for dest in data.get('destinations', []):
-                geo_context = state if state else "world"
-                images = SerperService.get_images(f"{dest['name']} {geo_context} tourist sightseeing iconic")
-                dest['image'] = images[0] if images else _get_fallback_image(f"{dest['name']} {geo_context}")
+            # Enrich each destination with an image (with Unsplash fallback) - PARALLEL
+            dest_queries = [f"{d['name']} {state or 'world'} tourist sightseeing iconic" for d in data.get('destinations', [])]
+            all_images = SearchService.get_images_parallel(dest_queries)
+            for i, dest in enumerate(data.get('destinations', [])):
+                imgs = all_images[i] if i < len(all_images) else []
+                dest['image'] = imgs[0] if imgs else _get_fallback_image(f"{dest['name']} {state or 'world'}")
              
             return data
         except Exception as e:
@@ -1115,7 +1091,7 @@ Here is the user's data:
 
     @staticmethod
     def get_destination_detail(name):
-        """Generate comprehensive destination detail using Groq + Serper."""
+        """Generate comprehensive destination detail using Groq + search."""
         try:
             client = Groq(api_key=Config.GROQ_API_KEY)
             ctx = AIService._get_country_context(name)
@@ -1198,18 +1174,18 @@ Here is the user's data:
                 text_clean = text.replace('```json', '').replace('```', '').strip()
                 data = json.loads(text_clean)
             
-            # Fetch hero image
-            hero_images = SerperService.get_images(f"{name} {data.get('state', '')} tourism landscape cinematic 4K")
-            data['hero_image'] = hero_images[0] if hero_images else _get_fallback_image(f"{name} landscape")
-            
-            # Fetch images for highlights
-            for h in data.get('highlights', []):
-                imgs = SerperService.get_images(f"{h.get('keyword', h['name'])} {name}")
+            # Fetch hero, highlight images, and map image in PARALLEL
+            hero_query = f"{name} {data.get('state', '')} tourism landscape cinematic 4K"
+            highlight_queries = [f"{h.get('keyword', h['name'])} {name}" for h in data.get('highlights', [])]
+            map_query = f"{name} terrain satellite aerial view"
+            all_queries = [hero_query] + highlight_queries + [map_query]
+            all_images = SearchService.get_images_parallel(all_queries)
+            data['hero_image'] = all_images[0][0] if all_images[0] else _get_fallback_image(f"{name} landscape")
+            for i, h in enumerate(data.get('highlights', [])):
+                imgs = all_images[i + 1] if i + 1 < len(all_images) else []
                 h['image'] = imgs[0] if imgs else _get_fallback_image(f"{h.get('keyword', h['name'])} {name}")
-            
-            # Fetch map image
-            map_images = SerperService.get_images(f"{name} terrain satellite aerial view")
-            data['map_image'] = map_images[0] if map_images else _get_fallback_image(f"{name} aerial")
+            map_imgs = all_images[-1] if all_images else []
+            data['map_image'] = map_imgs[0] if map_imgs else _get_fallback_image(f"{name} aerial")
             
             return data
         except Exception as e:
@@ -1243,7 +1219,7 @@ Here is the user's data:
 
     @staticmethod
     def get_attractions(name):
-        """Generate attractions list for a destination using Groq + Serper."""
+        """Generate attractions list for a destination using Groq + search."""
         try:
             client = Groq(api_key=Config.GROQ_API_KEY)
             ctx = AIService._get_country_context(name)
@@ -1295,21 +1271,29 @@ Here is the user's data:
                 text_clean = text.replace('```json', '').replace('```', '').strip()
                 data = json.loads(text_clean)
             
-            # Enrich each attraction with a Serper image and timing
-            for attr in data.get('attractions', []):
+            # Enrich each attraction with an image and timing - images PARALLEL
+            attractions = data.get('attractions', [])
+            attr_image_queries = []
+            for attr in attractions:
+                attr_name = (attr.get('name') or '').strip() or f"{name} Attraction"
+                attr_image_queries.append(f"{attr_name} {name} {data.get('state', '')} tourism landmark sightseeing")
+            map_query = f"{name} aerial satellite terrain view"
+            all_queries = attr_image_queries + [map_query]
+            all_images = SearchService.get_images_parallel(all_queries)
+
+            for i, attr in enumerate(attractions):
                 try:
                     attr_name = (attr.get('name') or '').strip()
                     if not attr_name:
                         attr_name = f"{name} Attraction"
                         attr['name'] = attr_name
 
-                    # Fetch image
-                    images = SerperService.get_images(f"{attr_name} {name} {data.get('state', '')} tourism landmark sightseeing")
-                    attr['image'] = images[0] if images else _get_fallback_image(f"{attr_name} {name}")
+                    imgs = all_images[i] if i < len(all_images) else []
+                    attr['image'] = imgs[0] if imgs else _get_fallback_image(f"{attr_name} {name}")
 
-                    # Fetch timing using Serper Search
+                    # Fetch timing using search
                     search_query = f"{attr_name} {name} opening closing hours timings"
-                    search_results = SerperService.get_search_results(search_query)
+                    search_results = SearchService.get_search_results(search_query)
 
                     timing = attr.get('timings') or attr.get('opening_hours') or attr.get('hours')
 
@@ -1368,9 +1352,9 @@ Here is the user's data:
                     attr['timings'] = attr.get('timings') or 'Check local timing'
                     if not attr.get('image'):
                         attr['image'] = _get_fallback_image(f"{attr.get('name', name)} {name}")
-            # Get map image
-            map_images = SerperService.get_images(f"{name} aerial satellite terrain view")
-            data['map_image'] = map_images[0] if map_images else _get_fallback_image(f"{name} aerial")
+            # Map image already fetched in parallel above
+            map_imgs = all_images[-1] if all_images else []
+            data['map_image'] = map_imgs[0] if map_imgs else _get_fallback_image(f"{name} aerial")
             
             return data
         except Exception as e:
@@ -1382,7 +1366,7 @@ Here is the user's data:
 
     @staticmethod
     def get_itinerary(name, days=3):
-        """Generate a multi-day itinerary for a destination using Groq + Serper."""
+        """Generate a multi-day itinerary for a destination using Groq + search."""
         try:
             client = Groq(api_key=Config.GROQ_API_KEY)
             ctx = AIService._get_country_context(name)
@@ -1450,11 +1434,11 @@ Here is the user's data:
             for day in data.get('days', []):
                 for act in day.get('activities', []):
                     keyword = act.get('keyword', act['name'])
-                    images = SerperService.get_images(f"{keyword} {name}")
+                    images = SearchService.get_images(f"{keyword} {name}")
                     act['image'] = images[0] if images else _get_fallback_image(f"{keyword} {name}")
             
             # Fetch route map image
-            map_images = SerperService.get_images(f"{name} map route tourist trail")
+            map_images = SearchService.get_images(f"{name} map route tourist trail")
             data['route_map'] = map_images[0] if map_images else _get_fallback_image(f"{name} panorama")
             
             return data
@@ -1466,7 +1450,7 @@ Here is the user's data:
 
     @staticmethod
     def get_gallery(name, count=20):
-        """Fetch a gallery of images for a destination using Serper."""
+        """Fetch a gallery of images for a destination."""
         try:
             queries = [
                 f"\"{name}\" tourism landmarks travel photography",
@@ -1478,7 +1462,7 @@ Here is the user's data:
             all_images = []
             seen = set()
             for q in queries:
-                images = SerperService.get_images(q)
+                images = SearchService.get_images(q)
                 for img in images:
                     if img not in seen:
                         seen.add(img)
@@ -1496,7 +1480,7 @@ Here is the user's data:
                     f"\"{name}\" aerial destination photo",
                 ]
                 for q in booster_queries:
-                    for img in SerperService.get_images(q):
+                    for img in SearchService.get_images(q):
                         if img not in seen:
                             seen.add(img)
                             all_images.append(img)
@@ -1533,9 +1517,9 @@ Here is the user's data:
             ]
             
             for q in queries:
-                images = SerperService.get_images(q)
+                images = SearchService.get_images(q)
                 if images:
-                    # SerperService already ranks these by quality/source/aspect-ratio
+                    # SearchService already ranks these by quality/source/aspect-ratio
                     return {"url": images[0], "query": q, "success": True}
             
             return {"url": _get_fallback_image(f"{name} landscape"), "success": False, "error": "No images found"}
@@ -1657,27 +1641,24 @@ You MUST detect the country the user is asking about and use that country's curr
                 ctx = AIService._get_country_context(dest_name)
                 plan['center_coords'] = ctx['center_coords']
             
+            # Fetch ALL images in PARALLEL
+            act_queries = []
+            act_refs = []
             for day in plan.get('itinerary', []):
                 for act in day.get('activities', []):
-                    query = act.get('image_query') or f"{act.get('name')} {dest_name} {dest_country} tourist attraction"
-                    
-                    images = SerperService.get_images(query)
-                    if images:
-                        act['image_url'] = images[0]
-                    else:
-                        act['image_url'] = _get_fallback_image(f"{act.get('name', '')} {dest_name}")
-                    
-                    if 'lat' not in act or 'lng' not in act:
-                        act['lat'] = plan.get('center_coords', {}).get('lat', 20.0)
-                        act['lng'] = plan.get('center_coords', {}).get('lng', 0.0)
-            
-            # Fetch hero image
+                    q = act.get('image_query') or f"{act.get('name')} {dest_name} {dest_country} tourist attraction"
+                    act_queries.append(q)
+                    act_refs.append(act)
             hero_query = plan.get('hero_image_query') or f"{dest_name} travel background"
-            hero_images = SerperService.get_images(hero_query)
-            if hero_images:
-                plan['hero_image'] = hero_images[0]
-            else:
-                plan['hero_image'] = "https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&q=80&w=2000"
+            all_images = SearchService.get_images_parallel(act_queries + [hero_query])
+            for i, act in enumerate(act_refs):
+                imgs = all_images[i] if i < len(all_images) else []
+                act['image_url'] = imgs[0] if imgs else _get_fallback_image(f"{act.get('name', '')} {dest_name}")
+                if 'lat' not in act or 'lng' not in act:
+                    act['lat'] = plan.get('center_coords', {}).get('lat', 20.0)
+                    act['lng'] = plan.get('center_coords', {}).get('lng', 0.0)
+            hero_imgs = all_images[-1] if all_images else []
+            plan['hero_image'] = hero_imgs[0] if hero_imgs else "https://images.unsplash.com/photo-1548013146-72479768bbaa?auto=format&fit=crop&q=80&w=2000"
             
             return plan
         except Exception as e:

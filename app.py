@@ -9,8 +9,11 @@ import os
 import logging
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARNING, format='%(levelname)s: %(message)s')
+logging.getLogger('werkzeug').setLevel(logging.INFO)
+logging.getLogger('apscheduler').setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.WARNING)
 
 login_manager = LoginManager()
 login_manager.login_view = 'main.login'
@@ -92,7 +95,7 @@ def create_app():
 
     try:
         from scheduler import start_scheduler
-        start_scheduler()
+        start_scheduler(application)
     except Exception as e:
         logger.exception("Failed to start scheduler: %s", e)
 
@@ -102,5 +105,4 @@ def create_app():
 if __name__ == '__main__':
     application = create_app()
     port = int(os.environ.get('PORT', 8000))
-    logger.info("Starting app on port %d", port)
     application.run(host='0.0.0.0', port=port)
