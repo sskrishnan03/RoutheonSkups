@@ -722,16 +722,18 @@
         /* ═══════════════════════════════════════════════════════
            RESULT CARDS — Rounded Premium Style
            ═══════════════════════════════════════════════════════ */
-        #popular-grid .glass-card,
-        #ai-grid .glass-card,
-        .glass-card.result-card {
-            border-radius: 20px;
-            overflow: hidden;
-            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+#popular-grid .glass-card,
+#ai-grid .glass-card,
+#all-grid .glass-card,
+.glass-card.result-card {
+    border-radius: 20px;
+    overflow: hidden;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
                         box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
         }
         #popular-grid .glass-card:hover,
-        #ai-grid .glass-card:hover {
+        #ai-grid .glass-card:hover,
+        #all-grid .glass-card:hover {
             transform: translateY(-6px);
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
@@ -1224,6 +1226,7 @@
                 loadRegions(selectedCountry);
                 currentPage = 1;
                 hasMore = true;
+                doSearchOnFilterChange();
             });
 
             regionSelect.addEventListener('change', function () {
@@ -1232,22 +1235,33 @@
                 loadCities(selectedCountry, selectedRegion);
                 currentPage = 1;
                 hasMore = true;
+                doSearchOnFilterChange();
             });
 
             citySelect.addEventListener('change', function () {
                 selectedCity = this.value;
                 currentPage = 1;
                 hasMore = true;
+                doSearchOnFilterChange();
             });
 
             const urlParams = new URLSearchParams(window.location.search);
             const queryParam = urlParams.get('q');
             const countryParam = urlParams.get('country');
+            const cityParam = urlParams.get('city');
             const categoryParam = urlParams.get('category');
 
             if (queryParam) {
                 searchInput.value = queryParam;
                 currentSearch = queryParam;
+            }
+
+            if (countryParam) {
+                const opt = countrySelect.querySelector(`option[value="${countryParam}"]`);
+                if (opt) {
+                    countrySelect.value = countryParam;
+                    selectedCountry = countryParam;
+                }
             }
 
             if (categoryParam) {
@@ -1260,7 +1274,7 @@
 
             const restoredFromSession = restoreExploreState();
 
-            if (!restoredFromSession && (currentSearch || selectedCategories.size > 0)) {
+            if (!restoredFromSession && (currentSearch || selectedCategories.size > 0 || selectedCountry)) {
                 if (resultsContainer) resultsContainer.style.display = 'block';
                 if (initialState) initialState.style.display = 'none';
                 fetchDestinations();
@@ -1276,6 +1290,15 @@
             });
             renderActiveTags();
 
+            function doSearchOnFilterChange() {
+                currentSearch = searchInput ? searchInput.value.trim() : '';
+                currentPage = 1;
+                hasMore = true;
+                if (resultsContainer) resultsContainer.style.display = 'block';
+                if (initialState) initialState.style.display = 'none';
+                fetchDestinations();
+            }
+
             categoryBtns.forEach(btn => {
                 btn.addEventListener('click', function () {
                     const label = this.querySelector('span:last-child');
@@ -1288,8 +1311,7 @@
                     }
                     updateCategoryButtonStyles();
                     renderActiveTags();
-                    currentPage = 1;
-                    hasMore = true;
+                    doSearchOnFilterChange();
                 });
             });
 
@@ -1301,8 +1323,7 @@
                 }
                 updateCategoryButtonStyles();
                 renderActiveTags();
-                currentPage = 1;
-                hasMore = true;
+                doSearchOnFilterChange();
             };
 
             function saveExploreState() {
@@ -1386,8 +1407,7 @@
                 selectedCategories.delete(cat);
                 updateCategoryButtonStyles();
                 renderActiveTags();
-                currentPage = 1;
-                hasMore = true;
+                doSearchOnFilterChange();
             };
 
             function updateCategoryButtonStyles() {
@@ -1412,19 +1432,19 @@
                 });
             }
 
+            function triggerSearch() {
+                currentSearch = searchInput ? searchInput.value.trim() : '';
+                currentPage = 1;
+                hasMore = true;
+                if (resultsContainer) resultsContainer.style.display = 'block';
+                if (initialState) initialState.style.display = 'none';
+                fetchDestinations();
+            }
+
             if (searchBtn) {
                 searchBtn.addEventListener('click', function (e) {
                     e.preventDefault();
-                    currentSearch = searchInput ? searchInput.value.trim() : '';
-                    if (!selectedCountry && selectedCategories.size === 0 && !currentSearch) {
-                        alert('Please choose at least one filter: destination text, country, or category.');
-                        return;
-                    }
-                    currentPage = 1;
-                    hasMore = true;
-                    if (resultsContainer) resultsContainer.style.display = 'block';
-                    if (initialState) initialState.style.display = 'none';
-                    fetchDestinations();
+                    triggerSearch();
                     setTimeout(() => { resultsContainer?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 300);
                 });
             }
@@ -1432,16 +1452,7 @@
                 searchInput.addEventListener('keypress', function (e) {
                     if (e.key === 'Enter') {
                         e.preventDefault();
-                        currentSearch = this.value.trim();
-                        if (!selectedCountry && selectedCategories.size === 0 && !currentSearch) {
-                            alert('Please choose at least one filter: destination text, country, or category.');
-                            return;
-                        }
-                        currentPage = 1;
-                        hasMore = true;
-                        if (resultsContainer) resultsContainer.style.display = 'block';
-                        if (initialState) initialState.style.display = 'none';
-                        fetchDestinations();
+                        triggerSearch();
                         setTimeout(() => { resultsContainer?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 300);
                     }
                 });
@@ -1508,8 +1519,25 @@
                 const destinations = data.destinations || [];
                 const totalCount = data.total_count || destinations.length;
                 const catLabel = data.category && data.category !== 'All' ? data.category + ' ' : '';
-                const locationLabel = data.state || selectedRegion || selectedCountry || '';
+                const locParts = [];
+                if (data.city && data.city !== 'All') locParts.push(data.city);
+                if (data.state && data.state !== 'Global') locParts.push(data.state);
+                if (data.country && data.country !== 'Worldwide') locParts.push(data.country);
+                const locationLabel = locParts.join(', ') || 'Worldwide';
                 if (!isLoadMore) {
+                    if (destinations.length === 0) {
+                        const popularGrid = document.getElementById('popular-grid');
+                        if (popularGrid) popularGrid.innerHTML = `<div class="col-span-full text-center py-16"><span class="material-symbols-outlined text-[64px] mb-4 block" style="color:#FFFFFF;">search_off</span><h3 class="text-xl font-bold text-white mb-2">No destinations found</h3><p style="color:#FFFFFF;">Try adjusting your filters or search terms to discover more places.</p></div>`;
+                        const allGrid = document.getElementById('all-grid');
+                        if (allGrid) allGrid.innerHTML = '';
+                        const popularHeading = document.getElementById('popular-heading');
+                        if (popularHeading) popularHeading.textContent = 'No Results';
+                        const allHeading = document.getElementById('all-heading');
+                        if (allHeading) allHeading.innerHTML = `Destinations <span id="count-heading" class="text-xl font-medium ml-2" style="color:#FFFFFF;">(0)</span>`;
+                        const countHeading = document.getElementById('count-heading');
+                        if (countHeading) countHeading.textContent = '(0)';
+                        return;
+                    }
                     const popular = destinations.slice(0, 3);
                     const allDests = destinations.slice(3);
                     const popularHeading = document.getElementById('popular-heading');
@@ -1523,6 +1551,10 @@
                     const allGrid = document.getElementById('all-grid');
                     if (allGrid) allGrid.innerHTML = allDests.map(dest => createCardHTML(dest, false)).join('');
                 } else {
+                    if (destinations.length === 0) {
+                        hasMore = false;
+                        return;
+                    }
                     const allGrid = document.getElementById('all-grid');
                     if (allGrid) { console.info('Appending to grid...', { count: destinations.length }); allGrid.insertAdjacentHTML('beforeend', destinations.map(dest => createCardHTML(dest, false)).join('')); }
                 }

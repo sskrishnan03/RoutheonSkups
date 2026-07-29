@@ -1017,27 +1017,37 @@ Here is the user's data:
             }
 
     @staticmethod
-    def explore_destinations(state=None, category=None, search_query=None, page=1):
+    def explore_destinations(country=None, state=None, city=None, category=None, search_query=None, page=1):
         """Generate destination list for explore page using Groq + search."""
         try:
             client = Groq(api_key=Config.GROQ_API_KEY)
             
-            # Build the prompt based on filters.
-            # Supports: state-only, category-only, search-only, and all combinations.
-            location_scope = f'in the region of "{state}"' if state else "across the world"
-            category_filter = f' belonging to any of these categories: "{category}"' if category else ''
-            search_filter = f' strongly matching this destination name/keyword query: "{search_query}"' if search_query else ''
+            parts = []
+            if country:
+                parts.append(f'in the country of "{country}"')
+            if state:
+                parts.append(f'in the region/state of "{state}"')
+            if city:
+                parts.append(f'in the city of "{city}"')
+            if category:
+                parts.append(f'belonging to any of these categories: "{category}"')
+            if search_query:
+                parts.append(f'strongly matching this search: "{search_query}"')
+            
+            location_scope = ', '.join(parts) if parts else "across the world"
             page_context = f" This is page {page} of results, so ensure you provide 9 unique destinations that haven't been listed on previous pages." if page > 1 else ""
             
             prompt = f"""
-            List exactly 9 popular and high-quality travel destinations {location_scope}{category_filter}{search_filter}.
+            List exactly 9 popular and high-quality travel destinations {location_scope}.
             {page_context}
              
             Format the output strictly as a JSON object:
             {{
+                "country": "{country or 'Worldwide'}",
                 "state": "{state or 'Global'}",
+                "city": "{city or 'All'}",
                 "category": "{category or 'All'}",
-                "total_count": <estimated total number of such destinations in this state>,
+                "total_count": <estimated total number of such destinations worldwide>,
                 "destinations": [
                     {{
                         "name": "Destination Name",
@@ -1063,7 +1073,6 @@ Here is the user's data:
             )
             
             text = completion.choices[0].message.content
-            # Robust JSON extraction
             json_match = re.search(r'(\{.*\})', text, re.DOTALL)
             if json_match:
                 try:
@@ -1075,12 +1084,12 @@ Here is the user's data:
                 text_clean = text.replace('```json', '').replace('```', '').strip()
                 data = json.loads(text_clean)
             
-            # Enrich each destination with an image (with Unsplash fallback) - PARALLEL
-            dest_queries = [f"{d['name']} {state or 'world'} tourist sightseeing iconic" for d in data.get('destinations', [])]
+            location_for_img = city or state or country or 'world'
+            dest_queries = [f"{d['name']} {location_for_img} tourist sightseeing iconic" for d in data.get('destinations', [])]
             all_images = SearchService.get_images_parallel(dest_queries)
             for i, dest in enumerate(data.get('destinations', [])):
                 imgs = all_images[i] if i < len(all_images) else []
-                dest['image'] = imgs[0] if imgs else _get_fallback_image(f"{dest['name']} {state or 'world'}")
+                dest['image'] = imgs[0] if imgs else _get_fallback_image(f"{dest['name']} {location_for_img}")
              
             return data
         except Exception as e:

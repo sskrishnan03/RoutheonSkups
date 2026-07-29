@@ -1484,35 +1484,22 @@ def profile_ai():
 @main_bp.route('/api/explore-destinations')
 @login_required
 def api_explore_destinations():
+    country = (request.args.get('country') or '').strip()
     state = (request.args.get('state') or '').strip()
-    if state == "Select State":
-        state = ''
-
+    city = (request.args.get('city') or '').strip()
     category = (request.args.get('category') or '').strip()
     search_query = (request.args.get('q') or '').strip()
     page = request.args.get('page', 1, type=int)
 
-    # No filters selected: return empty result so initial explore UI can stay in welcome state.
-    if not state and not category and not search_query:
-        return jsonify({'destinations': [], 'total_count': 0, 'state': '', 'category': 'All'})
-    
-    # If no category selected, auto-apply user's saved travel preferences from profile
-    auto_applied_prefs = False
-    if not category and (state or search_query):
-        user_prefs = _get_user_preferences(current_user)
-        prefs_categories = user_prefs.get('categories', [])
-        if prefs_categories:
-            category = ','.join(prefs_categories)
-            auto_applied_prefs = True
-    
     data = AIService.explore_destinations(
+        country=country if country else None,
         state=state if state else None,
+        city=city if city else None,
         category=category if category else None,
         search_query=search_query if search_query else None,
         page=page
     )
     data = _sanitize_destination_payload_icons(data)
-    data['auto_applied_prefs'] = auto_applied_prefs
     return jsonify(data)
 
 @main_bp.route('/api/destination-attractions')
